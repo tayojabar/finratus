@@ -15,7 +15,21 @@ router.get('/users', function(req, res, next) {
   	});
 });
 
-/* GET vehicles details. */
+/* GET Specific User. */
+router.get('/users/:id', function(req, res, next) {
+    var query = 'SELECT * from users where id = ?';
+	connection.query(query, [req.params.id], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET vehicles listing. */
 router.get('/vehicles', function(req, res, next) {
     var query = 'SELECT * from vehicles';
 	connection.query(query, function (error, results, fields) {
@@ -29,10 +43,38 @@ router.get('/vehicles', function(req, res, next) {
   	});
 });
 
-/* GET Car Brands */
-router.get('/brands', function(req, res, next) {
-    var query = 'SELECT * from car-brands';
+/* GET specific vehicle. */
+router.get('/vehicles/:id', function(req, res, next) {
+    var query = 'SELECT * from vehicles where id =?';
+	connection.query(query, [req.params.id] ,function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET Car Makes */
+router.get('/vehicle-makes', function(req, res, next) {
+    var query = 'SELECT distinct(make) from vehiclemakes';
 	connection.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET Car Models */
+router.get('/models/:make', function(req, res, next) {
+    var query = 'SELECT distinct(model) from vehiclemakes where make =?';
+	connection.query(query, [req.params.make], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
