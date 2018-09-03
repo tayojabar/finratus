@@ -12,8 +12,8 @@ app.use(function(req, res, next){
 	global.connection = mysql.createConnection({
       host     : 'localhost',
       port :'3306',
-      user     : 'root',
-      password : 'password',
+      user     : 'loan35',
+      password : 'Password35',
       database : 'vehicle_inspection',
       insecureAuth: true
 	});
