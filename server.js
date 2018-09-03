@@ -10,10 +10,10 @@ var index = require('./routes/index');
 //Database connection
 app.use(function(req, res, next){
 	global.connection = mysql.createConnection({
-      host     : '127.0.0.1',
-      port :'49436',
-      user     : 'root',
-      password : 'password',
+      host     : '140.86.3.244',
+      //port :'49436',
+      user     : 'appuser',
+      password : 'Pass@word1',
       database : 'vehicle_inspection',
       insecureAuth: true
 	});
