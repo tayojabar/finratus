@@ -1,6 +1,21 @@
 var express = require('express');
 var router = express.Router();
 
+/* Add New User */
+router.post('/addUser', function(req, res, next) {
+    var postData = req.body;  
+    var query =  'INSERT INTO users Set ?';
+	connection.query(query,postData, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /* GET users listing. */
 router.get('/users', function(req, res, next) {
     var query = 'SELECT * from users';
@@ -80,21 +95,6 @@ router.get('/models/:make', function(req, res, next) {
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
   			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
-  			//If there is no error, all is good and response is 200OK.
-	  	}
-  	});
-});
-
-/* Add New User */
-router.post('/addUser', function(req, res, next) {
-    var postData = req.body;  
-    var query =  'INSERT INTO users Set ?';
-	connection.query(query,postData, function (error, results, fields) {
-	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
-	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
