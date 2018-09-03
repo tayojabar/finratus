@@ -10,14 +10,21 @@ var index = require('./routes/index');
 //Database connection
 app.use(function(req, res, next){
 	global.connection = mysql.createConnection({
-      host     : 'localhost',
-      port :'3306',
-      user     : 'loan35',
-      password : 'Password35',
+      host     : '127.0.0.1',
+      port :'49436',
+      user     : 'root',
+      password : 'password',
       database : 'vehicle_inspection',
       insecureAuth: true
 	});
-	connection.connect();
+	connection.connect(function(err) {
+    if (err) {
+      console.error('error connecting: ' + err.stack);
+      return;
+    }
+   
+    console.log('connected as id ' + connection.threadId);
+  });
 	next();
 });
 
