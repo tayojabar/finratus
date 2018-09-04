@@ -1,3 +1,6 @@
+// Loads the environment variables from the .env file
+require('dotenv').config();
+
 var express = require('express');
 var mysql = require('mysql');
 var cookieParser = require('cookie-parser');
@@ -45,4 +48,7 @@ app.use(function(req, res, next) {
 
 module.exports = app;
 var server = http.createServer(app);
-server.listen(4000);
+console.log(process.env)
+server.listen(process.env.port || process.env.PORT || 4000, function () {
+    console.log('%s listening to %s', server.name, server.url);
+});
