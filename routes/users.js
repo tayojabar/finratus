@@ -14,7 +14,6 @@ users.post('/login', function(req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var user = {};
-    console.log(req.body)
     
     db.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
             if (err) {
@@ -25,7 +24,6 @@ users.post('/login', function(req, res) {
                 res.send(JSON.stringify(appData));
             } else {
                 user = rows[0];
-                console.log(user)
                 if (rows.length > 0) {
                     if (user.password == password) {
                         let token = jwt.sign({data:user}, process.env.SECRET_KEY, {
