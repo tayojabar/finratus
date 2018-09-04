@@ -48,7 +48,7 @@ app.use(function(req, res, next) {
 
 module.exports = app;
 var server = http.createServer(app);
-console.log(process.env)
+
 server.listen(process.env.port || process.env.PORT || 4000, function () {
     console.log('%s listening to %s', server.name, server.url);
 });
