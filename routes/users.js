@@ -13,6 +13,7 @@ users.post('/login', function(req, res) {
     var appData = {};
     var username = req.body.username;
     var password = req.body.password;
+    
     connection.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
             if (err) {
                 appData.error = 1;
