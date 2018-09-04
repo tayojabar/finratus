@@ -1,6 +1,6 @@
 var express = require('express');
 var users = express.Router();
-//var database = require('../Database/database');
+var db = require('../db');
 var cors = require('cors')
 var jwt = require('jsonwebtoken');
 var token;
@@ -15,7 +15,7 @@ users.post('/login', function(req, res) {
     var password = req.body.password;
     var user = {};
     
-    connection.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
+    db.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
             if (err) {
                 appData.error = 1;
                 appData["data"] = "Error Occured!";
