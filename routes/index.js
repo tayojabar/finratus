@@ -4,6 +4,8 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/users', function(req, res, next) {
     var query = 'SELECT * from users';
+    console.log('Im here')
+	console.log(query)
 	connection.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 

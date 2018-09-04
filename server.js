@@ -18,11 +18,11 @@ app.use(function(req, res, next){
       insecureAuth: true
 	});
 	connection.connect(function(err) {
+	    console.log('mysql connection works')
     if (err) {
       console.error('error connecting: ' + err.stack);
       return;
     }
-   
     console.log('connected as id ' + connection.threadId);
   });
 	next();
