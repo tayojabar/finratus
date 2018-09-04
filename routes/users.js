@@ -22,9 +22,9 @@ users.post('/login', function(req, res) {
             } else {
                 if (rows.length > 0) {
                     if (rows[0].password == password) {
-                        let token = jwt.sign(rows[0], process.env.SECRET_KEY, {
-                            expiresIn: 1440
-                        });
+                        // let token = jwt.sign(rows[0], process.env.SECRET_KEY, {
+                        //     expiresIn: 1440
+                        // });
                         appData.status = 0;
                         appData["token"] = token;
                         appData["role"] = rows[0].user_role;
