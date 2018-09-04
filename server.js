@@ -9,6 +9,8 @@ var http = require('http');
 
 var app = express();
 var index = require('./routes/index');
+var user = require('./routes/users');
+//var login = require('./routes/users/login');
 
 //Database connection
 app.use(function(req, res, next){
@@ -38,6 +40,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.use('/', index);
+app.use('/user', user);
+//app.use('/login', login);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

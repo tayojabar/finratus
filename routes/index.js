@@ -1,23 +1,23 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
-router.get('/users', function(req, res, next) {
-    var query = 'SELECT * from users';
-    console.log('Im here')
-	console.log(query)
-	connection.query(query, function (error, results, fields) {
+/* Add New Vehicle */
+router.post('/addVehicle', function(req, res, next) {
+	var postData = req.body;  
+	payload = [];
+    var query =  'INSERT INTO vehicles Set ?';
+	connection.query(query,postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": "New Vehicle Added!"}));
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
 });
 
-/* GET vehicles details. */
+/* GET vehicles listing. */
 router.get('/vehicles', function(req, res, next) {
     var query = 'SELECT * from vehicles';
 	connection.query(query, function (error, results, fields) {
@@ -31,9 +31,65 @@ router.get('/vehicles', function(req, res, next) {
   	});
 });
 
-/* GET Car Brands */
-router.get('/brands', function(req, res, next) {
-    var query = 'SELECT * from car-brands';
+/* GET specific vehicle by id */
+router.get('/vehicles/:number_plate', function(req, res, next) {
+    var query = 'SELECT * from vehicles where number_plate =?';
+	connection.query(query, [req.params.number_plate] ,function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET specific vehicle by owner */
+router.get('/vehicles/:owner', function(req, res, next) {
+    var query = 'SELECT * from vehicles where owner =?';
+	connection.query(query, [req.params.owner] ,function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET specific vehicle by inspector */
+router.get('/inspected-by/:inspector', function(req, res, next) {
+    var query = 'SELECT * from vehicles where inspector =?';
+	connection.query(query, [req.params.inspector] ,function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET specific vehicle by make */
+router.get('/vehicles/:make', function(req, res, next) {
+    var query = 'SELECT * from vehicles where make =?';
+	connection.query(query, [req.params.make] ,function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET Car Makes */
+router.get('/vehicle-makes', function(req, res, next) {
+    var query = 'SELECT distinct(make) from vehiclemakes';
 	connection.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -45,47 +101,15 @@ router.get('/brands', function(req, res, next) {
   	});
 });
 
-/* Add New User */
-router.post('/addUser', function(req, res, next) {
-    var postData = req.body;  
-    var query =  'INSERT INTO users Set ?';
-	connection.query(query,postData, function (error, results, fields) {
+/* GET Car Models */
+router.get('/models/:make', function(req, res, next) {
+    var query = 'SELECT distinct(model) from vehiclemakes where make =?';
+	connection.query(query, [req.params.make], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
-  			//If there is no error, all is good and response is 200OK.
-	  	}
-  	});
-});
-
-router.post('/editUser/:id', function(req, res, next) {
-    var postData = req.body;    
-    var payload = [postData.username, postData.name, postData.password, postData.id];
-    var query = 'Update users SET username = ?, name=?, password=? where id=?';
-    connection.query(query, payload, function (error, results, fields) {                   ;
-	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
-	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
-  			//If there is no error, all is good and response is 200OK.
-	  	}
-  	});
-});
-
-/* Add New Vehicle */
-router.post('/addVehicle', function(req, res, next) {
-	var postData = req.body;  
-	payload = [];
-    var query =  'INSERT INTO vehicles Set ?';
-	connection.query(query,postData, function (error, results, fields) {
-	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
-	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "New Vehicle Added!"}));
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
