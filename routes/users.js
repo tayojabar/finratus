@@ -13,6 +13,7 @@ users.post('/login', function(req, res) {
     var appData = {};
     var username = req.body.username;
     var password = req.body.password;
+    var user = {};
     
     connection.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
             if (err) {
@@ -21,14 +22,15 @@ users.post('/login', function(req, res) {
                 //res.status(400).json(appData);
                 res.send(JSON.stringify(appData));
             } else {
+                user = rows[0];
                 if (rows.length > 0) {
-                    if (rows[0].password == password) {
-                        let token = jwt.sign(rows[0], process.env.SECRET_KEY, {
+                    if (user.password == password) {
+                        let token = jwt.sign({data:user}, process.env.SECRET_KEY, {
                             expiresIn: 1440
                         });
                         appData.status = 0;
                         appData["token"] = token;
-                        appData["role"] = rows[0].user_role;
+                        appData["user"] = user;
                         // res.status(200).json(appData);
                         res.send(JSON.stringify(appData));
                     } else {
