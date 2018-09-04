@@ -17,6 +17,7 @@ users.post('/login', function(req, res) {
     
     db.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
             if (err) {
+                console.log(err)
                 appData.error = 1;
                 appData["data"] = "Error Occured!";
                 //res.status(400).json(appData);
