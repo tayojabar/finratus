@@ -11,7 +11,7 @@ process.env.SECRET_KEY = "devesh";
 /* User Authentication */
 users.post('/login', function(req, res) {
     var appData = {};
-    var username = req.body.email;
+    var username = req.body.username;
     var password = req.body.password;
     connection.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
             if (err) {
@@ -25,19 +25,19 @@ users.post('/login', function(req, res) {
                         let token = jwt.sign(rows[0], process.env.SECRET_KEY, {
                             expiresIn: 1440
                         });
-                        appData.error = 0;
+                        appData.status = 0;
                         appData["token"] = token;
                         appData["role"] = rows[0].user_role;
                         // res.status(200).json(appData);
                         res.send(JSON.stringify(appData));
                     } else {
-                        appData.error = 1;
+                        appData.status = 1;
                         appData["data"] = "Username and Password do not match";
                         // res.status(204).json(appData);
                         res.send(JSON.stringify(appData)); 
                     }
                 } else {
-                    appData.error = 1;
+                    appData.status = 1;
                     appData["data"] = "Email does not exists!";
                     //res.status(204).json(appData);
                     res.send(JSON.stringify(appData)); 
@@ -106,6 +106,20 @@ users.post('/editUser/:id', function(req, res, next) {
   	});
 });
 
+/* GET Vehicle Owners listing. */
+users.get('/owners', function(req, res, next) {
+    var query = 'SELECT * from vehicle_owners';
+	connection.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /* Add New Vehicle Owner*/
 users.post('/new-owner', function(req, res, next) {
 	var postData = req.body;  
@@ -117,20 +131,6 @@ users.post('/new-owner', function(req, res, next) {
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
   			res.send(JSON.stringify({"status": 200, "error": null, "response": "New Vehicle Owner Added!"}));
-  			//If there is no error, all is good and response is 200OK.
-	  	}
-  	});
-});
-
-/* GET Vehicle Owners listing. */
-users.get('/owners', function(req, res, next) {
-    var query = 'SELECT * from vehicle_owners';
-	connection.query(query, function (error, results, fields) {
-	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
-	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
