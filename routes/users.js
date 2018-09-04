@@ -54,7 +54,7 @@ users.post('/login', function(req, res) {
 users.post('/new-user', function(req, res, next) {
     var postData = req.body;  
     var query =  'INSERT INTO users Set ?';
-	connection.query(query,postData, function (error, results, fields) {
+	db.query(query,postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -68,7 +68,7 @@ users.post('/new-user', function(req, res, next) {
 /* GET users listing. */
 users.get('/all-users', function(req, res, next) {
     var query = 'SELECT * from users';
-	connection.query(query, function (error, results, fields) {
+	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -82,7 +82,7 @@ users.get('/all-users', function(req, res, next) {
 /* GET Specific User. */
 users.get('/:id', function(req, res, next) {
     var query = 'SELECT * from users where id = ?';
-	connection.query(query, [req.params.id], function (error, results, fields) {
+	db.query(query, [req.params.id], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -98,7 +98,7 @@ users.post('/editUser/:id', function(req, res, next) {
     var postData = req.body;    
     var payload = [postData.username, postData.name, postData.password, postData.id];
     var query = 'Update users SET username = ?, name=?, password=? where id=?';
-    connection.query(query, payload, function (error, results, fields) {                   ;
+    db.query(query, payload, function (error, results, fields) {                   ;
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -112,7 +112,7 @@ users.post('/editUser/:id', function(req, res, next) {
 /* GET Vehicle Owners listing. */
 users.get('/owners', function(req, res, next) {
     var query = 'SELECT * from vehicle_owners';
-	connection.query(query, function (error, results, fields) {
+	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -128,7 +128,7 @@ users.post('/new-owner', function(req, res, next) {
 	var postData = req.body;  
 	payload = [];
     var query =  'INSERT INTO vehicle_owners Set ?';
-	connection.query(query,postData, function (error, results, fields) {
+	db.query(query,postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status

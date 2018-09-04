@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
+var db = require('../db');
 
 /* Add New Vehicle */
 router.post('/addVehicle', function(req, res, next) {
 	var postData = req.body;  
 	payload = [];
     var query =  'INSERT INTO vehicles Set ?';
-	connection.query(query,postData, function (error, results, fields) {
+	db.query(query,postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -20,7 +21,7 @@ router.post('/addVehicle', function(req, res, next) {
 /* GET Vehicle Owners listing. */
 router.get('/owners', function(req, res, next) {
     var query = 'SELECT * from vehicle_owners';
-	connection.query(query, function (error, results, fields) {
+	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -34,7 +35,7 @@ router.get('/owners', function(req, res, next) {
 /* GET vehicles listing. */
 router.get('/vehicles', function(req, res, next) {
     var query = 'SELECT * from vehicles';
-	connection.query(query, function (error, results, fields) {
+	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -48,7 +49,7 @@ router.get('/vehicles', function(req, res, next) {
 /* GET specific vehicle by id */
 router.get('/vehicles/:number_plate', function(req, res, next) {
     var query = 'SELECT * from vehicles where number_plate =?';
-	connection.query(query, [req.params.number_plate] ,function (error, results, fields) {
+	db.query(query, [req.params.number_plate] ,function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -62,7 +63,7 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
 /* GET specific vehicle by owner */
 router.get('/vehicles/:owner', function(req, res, next) {
     var query = 'SELECT * from vehicles where owner =?';
-	connection.query(query, [req.params.owner] ,function (error, results, fields) {
+	db.query(query, [req.params.owner] ,function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -76,7 +77,7 @@ router.get('/vehicles/:owner', function(req, res, next) {
 /* GET specific vehicle by inspector */
 router.get('/inspected-by/:inspector', function(req, res, next) {
     var query = 'SELECT * from vehicles where inspector =?';
-	connection.query(query, [req.params.inspector] ,function (error, results, fields) {
+	db.query(query, [req.params.inspector] ,function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -90,7 +91,7 @@ router.get('/inspected-by/:inspector', function(req, res, next) {
 /* GET specific vehicle by make */
 router.get('/vehicles/:make', function(req, res, next) {
     var query = 'SELECT * from vehicles where make =?';
-	connection.query(query, [req.params.make] ,function (error, results, fields) {
+	db.query(query, [req.params.make] ,function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -104,7 +105,7 @@ router.get('/vehicles/:make', function(req, res, next) {
 /* GET Car Makes */
 router.get('/vehicle-makes', function(req, res, next) {
     var query = 'SELECT distinct(make) from vehiclemakes';
-	connection.query(query, function (error, results, fields) {
+	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -118,7 +119,7 @@ router.get('/vehicle-makes', function(req, res, next) {
 /* GET Car Models */
 router.get('/models/:make', function(req, res, next) {
     var query = 'SELECT distinct(model) from vehiclemakes where make =?';
-	connection.query(query, [req.params.make], function (error, results, fields) {
+	db.query(query, [req.params.make], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -142,7 +143,7 @@ router.post('/editVehicle/:number_plate', function(req, res, next) {
                     'valuation=?, status=?, vehicle_type=?, date_registered=?, registered_by = ? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -157,7 +158,7 @@ router.post('/brakes/:number_plate', function(req, res, next) {
     var postData = req.body;  
     var payload = [postData.brake_pads, postData.discs, postData.parking_hand, postData.brakes_ok, postData.number_plate];
     var query = 'Update vehicles SET brake_pads=?, discs=?, parking_hand=?, brakes_ok=? where number_plate=?';
-	connection.query(query, payload, function (error, results, fields) {
+	db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -172,7 +173,7 @@ router.post('/ac_heater/:number_plate', function(req, res, next) {
     var postData = req.body;    
     var payload = [postData.cooling, postData.blower, postData.ac_fan, postData.condensor, postData.compressor, postData.ac_no_repair_history, postData.number_plate];
     var query = 'Update vehicles SET cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=? where number_plate=?';
-	connection.query(query, payload, function (error, results, fields) {
+	db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -190,7 +191,7 @@ router.post('/steeringControls/:number_plate', function(req, res, next) {
                     'cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -214,7 +215,7 @@ router.post('/engineCheck/:number_plate', function(req, res, next) {
                     'coolant_reservoir=?, engine_sludge=?, engine_smoke=?, engine_likely_smoke=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -232,7 +233,7 @@ router.post('/mirrors/:number_plate', function(req, res, next) {
                     'right_mirror=?, left_mirror=?, right_mirror_control=?, left_mirror_control=?, right_mirror_broken = ?, left_mirror_broken=?'+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -250,7 +251,7 @@ router.post('/electricals/:number_plate', function(req, res, next) {
                     'battery_terminals=?, battery_charging=?, battery_malfunction_indicator=?, battery_present=?, tampered_wiring_harness=?, '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -270,7 +271,7 @@ router.post('/upholstery/:number_plate', function(req, res, next) {
                     'boot_board=?, driver_seat_upholstery=?, passenger_seat_upholstery=?, rear_seat_upholstery=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -290,7 +291,7 @@ router.post('/dashboard/:number_plate', function(req, res, next) {
                     'audio=?, video=?, cigarette_lighter=?, fuel_cap_release_lever=?, bonnet_release_lever = ? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -314,7 +315,7 @@ router.post('/mechanical-check/:number_plate', function(req, res, next) {
                     'rear_spoiler = ? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -329,7 +330,7 @@ router.post('/equipment/:number_plate', function(req, res, next) {
     var postData = req.body;  
     var payload = [postData.tools, postData.jack, postData.jack_handle, postData.wheel_spanner, postData.caution_sign, postData.number_plate];
     var query = 'Update vehicles SET tools=?, jack=?, jack_handle=?, wheel_spanner=?, caution_sign=?, where number_plate=?';
-	connection.query(query, payload, function (error, results, fields) {
+	db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -347,7 +348,7 @@ router.post('/exhaust-check/:number_plate', function(req, res, next) {
                     'exhaust_sound=?, exhaust_joint=?, catalytic_converter=?, exhaust_leakage=?, exhaust_pipe_oil_trace = ? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -365,7 +366,7 @@ router.post('/transmission/:number_plate', function(req, res, next) {
                     'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, 4wd_active=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -385,7 +386,7 @@ router.post('/suspension-steering/:number_plate', function(req, res, next) {
                     'rear_brushes=?, rear_shocks=?, height_control=?, height_control_unit=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -403,7 +404,7 @@ router.post('/exterior-lights/:number_plate', function(req, res, next) {
                     'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -427,7 +428,7 @@ router.post('/body-frame/:number_plate', function(req, res, next) {
                     'engraved=?, converted=?, accident_history=?, roof=?, bonnet=?, rocker_panel_lh=?, rocker_panel_rh=?, chassis=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -446,7 +447,7 @@ router.post('/windows-central-lock/:number_plate', function(req, res, next) {
                     'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -466,7 +467,7 @@ router.post('/seats/:number_plate', function(req, res, next) {
                     'left_seat_belt=?, rear_seat_belt=?, head_rest=?, arm_rest=?, glove_box=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -490,7 +491,7 @@ router.post('/obd/:number_plate', function(req, res, next) {
                     'throttle_sensor=?, mil=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -514,7 +515,7 @@ router.post('/fluids-filters/:number_plate', function(req, res, next) {
                     'washer_fluid_leakage=?, washer_fluid_compartment=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -538,7 +539,7 @@ router.post('/documentation/:number_plate', function(req, res, next) {
                     'plate_number_allocation=?, plate_number_allocation_original=?, spare_key_available=?, vehicle_tracker=?, vehicle_security=? '+
                 'where number_plate=?';
     
-    connection.query(query, payload, function (error, results, fields) {
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
