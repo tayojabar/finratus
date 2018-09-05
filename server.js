@@ -10,6 +10,7 @@ var http = require('http');
 var app = express();
 var index = require('./routes/index');
 var user = require('./routes/users');
+var cors = require('cors');
 //var login = require('./routes/users/login');
 
 //Database connection
@@ -36,6 +37,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+
+// fix cors issues
+app.use(cors());
 
 app.use('/', index);
 app.use('/user', user);
