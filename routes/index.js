@@ -46,26 +46,30 @@ router.get('/vehicles', function(req, res, next) {
   	});
 });
 
-/* GET specific vehicle by id */
-router.get('/vehicles/:number_plate', function(req, res, next) {
+/* GET specific vehicle by parameter */
+/**
+ * @Query:
+ * number_plate
+ */
+router.get('/vehicles/:number_plate?', function(req, res, next) {
     var query = 'SELECT * from vehicles where number_plate =?';
-	db.query(query, [req.params.number_plate] ,function (error, results, fields) {
-	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
-	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
-  			//If there is no error, all is good and response is 200OK.
-	  	}
-  	});
+    db.query(query, [req.query.number_plate] ,function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
 });
 
 /* GET specific vehicle by owner */
-router.get('/vehicles/:owner', function(req, res, next) {
+router.get('/vehicles-owner/:owner', function(req, res, next) {
     var query = 'SELECT * from vehicles where owner =?';
 	db.query(query, [req.params.owner] ,function (error, results, fields) {
 	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
   			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
