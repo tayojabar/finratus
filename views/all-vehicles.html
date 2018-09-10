@@ -227,15 +227,15 @@
                   <table id="bootstrap-data-table" class="table table-striped table-bordered">
                     <thead>
                       <tr>
-                        <th>ID</th>
+                        <th>Number Plate</th>
                         <th>Brand</th>
-                        <th>Type</th>
-                        <th>Plate Number</th>
+                        <th>Model</th>
+                        <th>Owner</th>
                         <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
+                    <tbody id = "vehicles">
+                      <!-- <tr>
                         <td>Veh-001-18</td>
                         <td>Toyota</td>
                         <td>Hilux</td>
@@ -274,7 +274,7 @@
                           <a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>
                           <a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>
                         </td>
-                      </tr>
+                      </tr> -->
                     </tbody>
                   </table>
                         </div>
@@ -314,7 +314,45 @@
     <script type="text/javascript">
         $(document).ready(function() {
           $('#bootstrap-data-table-export').DataTable();
+          loadVehicles();
         } );
+
+        function loadVehicles(){
+
+
+
+            $.ajax({
+                'url': 'http://localhost:4000/vehicles',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    //document.getElementById("message_box").innerHTML = data;
+                    //alert(data);
+                    //$('#vehicles').clear()
+                    // var len = data.length;
+                    // alert(len);
+                    // for (var i = 0; i < len; i++) {
+                    //     var id = data[i].Number_Plate;
+                    //     var brand = data[i].Make;
+                    //     var model  = data[i].Model;
+                    //     var owner = data[i].Owner;
+                    //     var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
+                    //       '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
+                    //     $('#vehicles').append('<tr><td>'+id+'</td><td>'+brand+'</td><td>'+model+'</td><td>'+owner+'</td><td>'+action+'</td></tr>')
+                    // }
+                    
+                    var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
+                          '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
+                    $.each(data, function(k, v){
+                        $('#vehicles').append('<tr><td>'+v.Number_Plate+'</td><td>'+v.Make+'</td><td>'+v.Model+'</td><td>'+v.Owner+'</td><td>'+action+'</td></tr>')
+                    });
+                },
+                'error': function (err) {
+                    alert ('Error');
+                }
+            });
+        }
+
     </script>
 
 
