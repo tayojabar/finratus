@@ -7,6 +7,17 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
 var path = require('path');
+const fileUpload = require('express-fileupload');
+const fs = require('fs');
+
+// fs.stat('viewer/', function(err) {
+//   if (!err) {
+//       console.log('file or directory exists');
+//   }
+//   else if (err.code === 'ENOENT') {
+//       console.log('file or directory does not exist');
+//   }
+// });
 
 var app = express();
 var index = require('./routes/index');
@@ -19,7 +30,7 @@ app.use(express.static(__dirname + '/views'));
 //Database connection
 app.use(function(req, res, next){
 	global.connection = mysql.createConnection({
-      host     : '140.86.3.244',
+      host     : '140.86.3.185',
       //port :'49436',
       user     : 'appuser',
       password : 'Pass@word1',
@@ -35,6 +46,9 @@ app.use(function(req, res, next){
 	next();
 });
 
+//File Upload
+app.use(fileUpload());
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -46,9 +60,15 @@ app.use(cors());
 
 app.use('/', index);
 app.use('/user', user);
+
 app.get('/', function(req, res){
-  //res.sendFile('idex.html');
+  res.sendFile('index.html');
 });
+
+app.get('/vehicles', function(req, res){
+  res.sendFile('all-vehicles.html', { root: __dirname+'/views' });
+});
+
 //app.use('/login', login);
 
 // catch 404 and forward to error handler

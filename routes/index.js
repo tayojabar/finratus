@@ -1,6 +1,63 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+const fs = require('fs');
+
+router.post('/upload/:number_plate/:part', function(req, res) {
+	if (!req.files)
+	  return res.status(400).send('No files were uploaded.');
+   
+	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+	let sampleFile = req.files.file;
+	let name = sampleFile.name;
+	let extArray = sampleFile.mimetype.split("/");
+    let extension = extArray[extArray.length - 1];
+	let fileName = name+'.'+extension;
+	//console.log(name);
+
+	fs.stat('files/'+req.body.number_plate+'/', function(err) {
+		if (!err) {
+			console.log('file or directory exists');
+		}
+		else if (err.code === 'ENOENT') {
+			console.log('file or directory does not exist');
+			fs.mkdirSync('files/'+req.body.number_plate+'/');
+		}
+	});
+   
+	fs.stat('files/'+req.body.number_plate+'/'+req.body.number_plate+'_'+req.body.part+'.'+extension, function (err) {
+		//console.log(stats);//here we got all information of file in stats variable
+	 
+		if (err) {// If file doesn't exist
+			//return console.error(err);
+			// Use the mv() method to place the file somewhere on your server
+			sampleFile.mv('files/'+req.body.number_plate+'/'+req.body.number_plate+'_'+req.body.part+'.'+extension, function(err) {
+				if (err) return res.status(500).send(err);
+			
+				res.send('File uploaded!');
+			});
+		}
+		else{
+			fs.unlink('files/'+req.body.number_plate+'/'+req.body.number_plate+'_'+req.body.part+'.'+extension,function(err){
+				if(err){
+				   return console.log(err);
+				} 
+				else{
+				   sampleFile.mv('files/'+req.body.number_plate+'/'+req.body.number_plate+'_'+req.body.part+'.'+extension, function(err) {
+					   if (err)
+					   return res.status(500).send(err);
+				   
+					   res.send('File uploaded!');
+				   });
+				}
+				//console.log('file deleted successfully');
+		   }); 
+		}
+		 
+	});
+
+	
+  });
 
 /* Add New Vehicle */
 router.post('/addVehicle', function(req, res, next) {
