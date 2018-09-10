@@ -6,12 +6,15 @@ var mysql = require('mysql');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
+var path = require('path');
 
 var app = express();
 var index = require('./routes/index');
 var user = require('./routes/users');
 var cors = require('cors');
 //var login = require('./routes/users/login');
+
+app.use(express.static(__dirname + '/views'));
 
 //Database connection
 app.use(function(req, res, next){
@@ -43,6 +46,9 @@ app.use(cors());
 
 app.use('/', index);
 app.use('/user', user);
+app.get('/', function(req, res){
+  //res.sendFile('idex.html');
+});
 //app.use('/login', login);
 
 // catch 404 and forward to error handler
