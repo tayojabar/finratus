@@ -31,6 +31,7 @@ resources/android/
 resources/ios/
 www/
 $RECYCLE.BIN/
+files/
 
 .DS_Store
 Thumbs.db
