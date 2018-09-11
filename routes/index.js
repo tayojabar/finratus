@@ -118,6 +118,34 @@ router.get('/vehiclesCount', function(req, res, next) {
   	});
 });
 
+/* GET vehicle owners count. */
+router.get('/ownersCount', function(req, res, next) {
+    var query = 'SELECT count(*) as total from vehicle_owners';
+	db.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET car models count. */
+router.get('/modelsCount', function(req, res, next) {
+    var query = 'SELECT count(*) as total from vehiclemakes';
+	db.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /* GET specific vehicle by parameter */
 /**
  * @Query:

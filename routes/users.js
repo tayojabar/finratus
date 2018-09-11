@@ -78,6 +78,20 @@ users.get('/all-users', function(req, res, next) {
   	});
 });
 
+/* GET users count. */
+users.get('/usersCount', function(req, res, next) {
+    var query = 'SELECT count(*) as total from users';
+	db.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /* GET Specific User. */
 users.get('/:id', function(req, res, next) {
     var query = 'SELECT * from users where id = ?';

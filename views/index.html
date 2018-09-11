@@ -29,8 +29,10 @@
 
 </head>
 <body>
-
-
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function($){ countVehicles(); countOwners(); countCarModels(); countUsers(); });
+    </script>
         <!-- Left Panel -->
 
     <aside id="left-panel" class="left-panel">
@@ -259,14 +261,14 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="#">View All</a>
-                                    <a class="dropdown-item" href="#">New</a>
-                                    <a class="dropdown-item" href="#">Inspection</a>
+                                    <a class="dropdown-item" href="all-vehicles.html">View All</a>
+                                    <a class="dropdown-item" href="add-vehicles.html">New</a>
+                                    <a class="dropdown-item" href="all-vehicles.html">Inspection</a>
                                 </div>
                             </div>
                         </div>
                         <h4 class="mb-0">
-                            <span id="countVehicles" class="count">10468</span>
+                            <span id="countVehicles" class="count"></span>
                         </h4>
                         <p class="text-light">Vehicles</p>
 
@@ -289,20 +291,20 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" href="all-owners.html">View All</a>
+                                    <a class="dropdown-item" href="add-owners.html">Another action</a>
+                                    <!-- <a class="dropdown-item" href="#">Something else here</a> -->
                                 </div>
                             </div>
                         </div>
                         <h4 class="mb-0">
-                            <span class="count">10468</span>
+                            <span id="countOwners" class="count"></span>
                         </h4>
-                        <p class="text-light">Vehicles online</p>
+                        <p class="text-light">Vehicle Owners</p>
 
-                        <div class="chart-wrapper px-0" style="height:70px;" height="70">
+                        <!-- <div class="chart-wrapper px-0" style="height:70px;" height="70">
                             <canvas id="widgetChart2"></canvas>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
@@ -318,22 +320,22 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" href="#">All Models</a>
+                                    <a class="dropdown-item" href="#">New Model</a>
+                                    <!-- <a class="dropdown-item" href="#">Something else here</a> -->
                                 </div>
                             </div>
                         </div>
                         <h4 class="mb-0">
-                            <span class="count">10468</span>
+                            <span id = "countModels" class="count"></span>
                         </h4>
-                        <p class="text-light">Vehicles offline</p>
+                        <p class="text-light">Car Models</p>
 
                     </div>
 
-                        <div class="chart-wrapper px-0" style="height:70px;" height="70">
+                        <!-- <div class="chart-wrapper px-0" style="height:70px;" height="70">
                             <canvas id="widgetChart3"></canvas>
-                        </div>
+                        </div> -->
                 </div>
             </div>
             <!--/.col-->
@@ -347,20 +349,20 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" href="#">All Users</a>
+                                    <a class="dropdown-item" href="#">New User</a>
+                                    <!-- <a class="dropdown-item" href="#">Something else here</a> -->
                                 </div>
                             </div>
                         </div>
                         <h4 class="mb-0">
-                            <span class="count">10468</span>
+                            <span id = "countUsers" class="count">10468</span>
                         </h4>
-                        <p class="text-light">Routes</p>
+                        <p class="text-light">Users</p>
 
-                        <div class="chart-wrapper px-3" style="height:70px;" height="70">
+                        <!-- <div class="chart-wrapper px-3" style="height:70px;" height="70">
                             <canvas id="widgetChart4"></canvas>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
@@ -477,7 +479,7 @@
 
     <!-- Right Panel -->
 
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
@@ -490,7 +492,7 @@
     <script src="assets/js/lib/vector-map/country/jquery.vmap.world.js"></script>
     
     <script type="text/javascript">
-        jQuery(document).ready(function($){ countVehicles(); });
+        //jQuery(document).ready(function($){ countVehicles(); });
         
         function countVehicles(){
             jQuery.ajax({
@@ -499,13 +501,83 @@
                 'data': {},
                 'success': function (data) {
                     console.log(data);
+                    let total = 0;
                     var count = JSON.parse(data);
                     console.log(count);
                     jQuery.each(count, function(k, v){
                         console.log(v.total);
-                        const total = v.total;
+                        total = v.total;
                     });
                     jQuery('#countVehicles').html(total);
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+
+        function countOwners(){
+            jQuery.ajax({
+                'url': 'http://localhost:4000/ownersCount',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    console.log(data);
+                    let total = 0;
+                    var count = JSON.parse(data);
+                    console.log(count);
+                    jQuery.each(count, function(k, v){
+                        console.log(v.total);
+                        total = v.total;
+                    });
+                    jQuery('#countOwners').html(total);
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+        
+        function countCarModels(){
+            jQuery.ajax({
+                'url': 'http://localhost:4000/modelsCount',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    console.log(data);
+                    let total = 0;
+                    var count = JSON.parse(data);
+                    console.log(count);
+                    jQuery.each(count, function(k, v){
+                        console.log(v.total);
+                        total = v.total;
+                    });
+                    jQuery('#countModels').html(total);
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+
+        function countUsers(){
+            jQuery.ajax({
+                'url': 'http://localhost:4000/user/usersCount',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    console.log(data);
+                    let total = 0;
+                    var count = JSON.parse(data);
+                    console.log(count);
+                    jQuery.each(count, function(k, v){
+                        console.log(v.total);
+                        total = v.total;
+                    });
+                    jQuery('#countUsers').html(total);
                 },
                 'error': function (err) {
                     //alert ('Error');
