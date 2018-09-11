@@ -500,7 +500,8 @@
                 'success': function (data) {
                     console.log(data);
                     var count = JSON.parse(data);
-                    $.each(count, function(k, v){
+                    console.log(count);
+                    jQuery.each(count, function(k, v){
                         console.log(v.total);
                         const total = v.total;
                     });
