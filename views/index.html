@@ -493,15 +493,18 @@
         jQuery(document).ready(function($){ countVehicles(); });
         
         function countVehicles(){
-            $.ajax({
+            jQuery.ajax({
                 'url': 'http://localhost:4000/vehiclesCount',
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
                     console.log(data);
                     var count = JSON.parse(data);
-                    console.log(count.total);
-                    $('#countVehicles').html(count.total);
+                    $.each(count, function(k, v){
+                        console.log(v.total);
+                        const total = v.total;
+                    });
+                    jQuery('#countVehicles').html(total);
                 },
                 'error': function (err) {
                     //alert ('Error');
