@@ -324,16 +324,13 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    let vehicles = JSON.parse(data);
+                    console.log(data);
+                    var vehicles = JSON.parse(data);
                     populateDataTable(vehicles);
-                    //console.log(vehicles.length);
-                    
-                    // $.each(data, function(k, v){
-                    //     $('#vehicles').append('<tr><td>'+v.Number_Plate+'</td><td>'+v.Make+'</td><td>'+v.Model+'</td><td>'+v.Owner+'</td><td>'+action+'</td></tr>')
-                    // });
                 },
                 'error': function (err) {
-                    alert ('Error');
+                    //alert ('Error');
+                    console.log('Error');
                 }
             });
 
