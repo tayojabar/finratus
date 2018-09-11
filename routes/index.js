@@ -109,9 +109,9 @@ router.get('/vehicles', function(req, res, next) {
  * @Query:
  * number_plate
  */
-router.get('/vehicles/:number_plate?', function(req, res, next) {
+router.get('/vehicles/:number_plate', function(req, res, next) {
     var query = 'SELECT * from vehicles where number_plate =?';
-    db.query(query, [req.query.number_plate] ,function (error, results, fields) {
+    db.query(query, [req.params.number_plate] ,function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status
@@ -463,7 +463,7 @@ router.post('/exterior-lights/:number_plate', function(req, res, next) {
     var postData = req.body;   
     var payload =  [postData.right_headlight, postData.left_headlight, postData.right_taillight, postData.left_taillight, postData.reverse_light, postData.fog_lights, postData.number_plate];
     var query = 'Update vehicles SET '+
-                    'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, '+
+                    'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=? '+
                 'where number_plate=?';
     
     db.query(query, payload, function (error, results, fields) {
