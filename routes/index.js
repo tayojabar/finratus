@@ -152,13 +152,19 @@ router.get('/modelsCount', function(req, res, next) {
  * number_plate
  */
 router.get('/vehicles/:number_plate', function(req, res, next) {
-    var query = 'SELECT * from vehicles where number_plate =?';
+	var query = 'SELECT * from vehicles where number_plate =?';
+	var path = 'files/'+req.params.number_plate+'/';
     db.query(query, [req.params.number_plate] ,function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status
         } else {
-            res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+			fs.stat(path, function(err) {
+				if (!err){
+					res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": path}));
+				}
+				res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": "No Image Upladed Yet"}));
+			});
             //If there is no error, all is good and response is 200OK.
         }
     });
