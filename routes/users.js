@@ -53,7 +53,8 @@ users.post('/login', function(req, res) {
 
 /* Add New User */
 users.post('/new-user', function(req, res, next) {
-    var postData = req.body;  
+    var postData = req.body; 
+    postData.date_created = Date.now(); 
     var query =  'INSERT INTO users Set ?';
 	db.query(query,postData, function (error, results, fields) {
 	  	if(error){
@@ -197,7 +198,8 @@ users.get('/owners', function(req, res, next) {
 
 /* Add New Vehicle Owner*/
 users.post('/new-owner', function(req, res, next) {
-	var postData = req.body;  
+    var postData = req.body;  
+    postData.date_created = Date.now();
 	payload = [];
     var query =  'INSERT INTO vehicle_owners Set ?';
 	db.query(query,postData, function (error, results, fields) {
