@@ -64,6 +64,63 @@ users.post('/new-user', function(req, res, next) {
   	});
 });
 
+//File Upload - User Registration
+router.post('/upload/:id', function(req, res) {
+	if (!req.files) return res.status(400).send('No files were uploaded.');
+	if (!req.params) return res.status(400).send('No Number Plate specified!');
+	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+	let sampleFile = req.files.file;
+	let name = sampleFile.name;
+	let extArray = sampleFile.mimetype.split("/");
+    let extension = extArray[extArray.length - 1];
+	let fileName = name+'.'+extension;
+	//console.log(name);
+
+	fs.stat('files/users/'+req.params.id+'/', function(err) {
+		if (!err) {
+			console.log('file or directory exists');
+		}
+		else if (err.code === 'ENOENT') {
+			console.log('Directory does not exist');
+			console.log('Creating directory ...')
+			fs.mkdirSync('files/users/'+req.params.id+'/');
+		}
+	});
+   
+	fs.stat('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function (err) {
+		//console.log(stats);//here we got all information of file in stats variable
+	 
+		if (err) {// If file doesn't exist
+			//return console.error(err);
+			// Use the mv() method to place the file somewhere on your server
+			sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function(err) {
+				if (err) return res.status(500).send(err);
+			
+				res.send('File uploaded!');
+			});
+		}
+		else{
+			fs.unlink('files/users/'+req.params.id+'/'+req.params.id+'.'+extension,function(err){
+				if(err){
+				   console.log(err);
+				   res.send('Unable to delete file!');
+				} 
+				else{
+				   sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function(err) {
+					   if (err)
+					   return res.status(500).send(err);
+					   res.send('File uploaded!');
+				   });
+				}
+				//console.log('file deleted successfully');
+		   }); 
+		}
+		 
+	});
+
+	
+  });
+
 /* GET users listing. */
 users.get('/all-users', function(req, res, next) {
     var query = 'SELECT * from users';
