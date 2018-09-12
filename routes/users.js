@@ -3,6 +3,8 @@ var users = express.Router();
 var db = require('../db');
 var jwt = require('jsonwebtoken');
 var token;
+const fs = require('fs');
+var path = require('path');
 
 process.env.SECRET_KEY = "devesh";
 
@@ -65,7 +67,7 @@ users.post('/new-user', function(req, res, next) {
 });
 
 //File Upload - User Registration
-router.post('/upload/:id', function(req, res) {
+users.post('/upload/:id', function(req, res) {
 	if (!req.files) return res.status(400).send('No files were uploaded.');
 	if (!req.params) return res.status(400).send('No Number Plate specified!');
 	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
@@ -82,8 +84,9 @@ router.post('/upload/:id', function(req, res) {
 		}
 		else if (err.code === 'ENOENT') {
 			console.log('Directory does not exist');
-			console.log('Creating directory ...')
-			fs.mkdirSync('files/users/'+req.params.id+'/');
+            console.log('Creating directory ...')
+            
+			fs.mkdirSync(path.join('files','users',req.params.id));
 		}
 	});
    
