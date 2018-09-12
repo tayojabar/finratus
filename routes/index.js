@@ -161,7 +161,14 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
         } else {
 			fs.stat(path, function(err) {
 				if (!err){
-					res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": path}));
+					fs.readdir(path, function (err, files){
+						var items = [];
+						// files.forEach(function (file){
+						// 	results.push(file);
+						// });
+						// return res.json(results);
+					})
+					res.send(JSON.stringify({"status": 200, "error": null, "response": results, "images": items}));
 				}
 				res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": "No Image Upladed Yet"}));
 			});
