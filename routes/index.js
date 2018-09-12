@@ -531,7 +531,7 @@ router.post('/equipment/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	var np = req.params.number_plate;
     var payload = [postData.tools, postData.jack, postData.jack_handle, postData.wheel_spanner, postData.caution_sign, np];
-    var query = 'Update vehicles SET tools=?, jack=?, jack_handle=?, wheel_spanner=?, caution_sign=?, where number_plate=?';
+    var query = 'Update vehicles SET tools=?, jack=?, jack_handle=?, wheel_spanner=?, caution_sign=? where number_plate=?';
 	db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
