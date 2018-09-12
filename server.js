@@ -65,7 +65,7 @@ app.get('/', function(req, res){
   res.sendFile('index.html');
 });
 
-app.get('/vehicles', function(req, res){
+app.get('/all-vehicles', function(req, res){
   res.sendFile('all-vehicles.html', { root: __dirname+'/views' });
 });
 
