@@ -79,7 +79,7 @@ router.post('/vehicle-upload/:number_plate/', function(req, res) {
 		else if (err.code === 'ENOENT') {
 			console.log('file or directory does not exist');
 			console.log('Creating directory ...')
-			fs.mkdir('files/'+req.params.number_plate+'/');
+			fs.mkdirSync('files/'+req.params.number_plate+'/');
 		}
 	});
    

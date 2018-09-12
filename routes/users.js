@@ -84,9 +84,8 @@ users.post('/upload/:id', function(req, res) {
 		}
 		else if (err.code === 'ENOENT') {
 			console.log('Directory does not exist');
-            console.log('Creating directory ...')
-            
-			fs.mkdirSync(path.join('files','users',req.params.id));
+            console.log('Creating directory ...');
+            fs.mkdirSync('files/users/'+req.params.id+'/');
 		}
 	});
    
