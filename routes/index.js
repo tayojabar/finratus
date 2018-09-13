@@ -274,27 +274,20 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status
         } else {
-			fs.stat(path, function(err) {
-				
-				if (!err){
-					var items = [];
-					var obj = {};
-					fs.readdir(path, function (err, files){
-						files.forEach(function (file){
-							//items.push(file);
-							let part = file.split('.')[0].split('_')[1];
-							obj[part] = path+file;
-						});
-						//console.log(items);
-						//listDirectoryItems(path);
-						res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": obj}));
-					})	;
-					//items = getdirectoryItems(path, req, res);
-				}else{
-				res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": "No Image Uploaded Yet"}));
-				}
+            var items = [];
+            var obj = {};
+            var result = results[0];
+            fs.readdir(path, function (err, files){
+                var obj = {};
+                async.forEach(files, function (file, callback){
+                    let insP = file.split('.')[0].split('_')[1];
+                    obj[insP] = path+file;
+                    results.images = obj;
+                    callback();
+                }, function(data){
+                    res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": obj}));
+                });
 			});
-            //If there is no error, all is good and response is 200OK.
         }
     });
 });
