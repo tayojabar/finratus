@@ -220,7 +220,18 @@ router.get('/modelsCount', function(req, res, next) {
 });
 
 function listDirectoryItems(path){
-
+	var obj = {};
+	fs.readdir(path, function (err, files){
+		files.forEach(function (file){
+			//items.push(file);
+			//console.log(file.name);
+			let part = file.split('.')[0].split('_')[1];
+			obj[part] = file;
+			//console.log(obj);
+		});
+		console.log(obj);
+		//res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": items}));
+	})	;
 }
 
 /* GET specific vehicle by parameter */
@@ -231,15 +242,6 @@ function listDirectoryItems(path){
 router.get('/vehicles/:number_plate', function(req, res, next) {
 	var query = 'SELECT * from vehicles where number_plate =?';
 	var path = 'files/'+req.params.number_plate+'/';
-	// var results = [];
-	// fs.readdir(path, function (err, files){
-	// 	files.forEach(function (file){
-	// 		results.push(file);
-	// 	});
-	// 	return res.json(results);
-	// })
-	
-	
     db.query(query, [req.params.number_plate] ,function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -249,12 +251,16 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
 				
 				if (!err){
 					var items = [];
+					var obj = {};
 					fs.readdir(path, function (err, files){
 						files.forEach(function (file){
 							items.push(file);
+							let part = file.split('.')[0].split('_')[1];
+							obj[part] = file;
 						});
-						console.log(items);
-						res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": items}));
+						//console.log(items);
+						//listDirectoryItems(path);
+						res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": obj}));
 					})	;
 					//items = getdirectoryItems(path, req, res);
 				}else{
