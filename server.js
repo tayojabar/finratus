@@ -10,41 +10,29 @@ var path = require('path');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
 
-// fs.stat('viewer/', function(err) {
-//   if (!err) {
-//       console.log('file or directory exists');
-//   }
-//   else if (err.code === 'ENOENT') {
-//       console.log('file or directory does not exist');
-//   }
-// });
+//check and create uploads directory
+if (!fs.existsSync('./files')){
+    fs.mkdirSync('./files');
+    console.log('Files folder created');
+} else {
+    console.log('Files folder exists');
+}
+
+if (fs.existsSync('./files')){
+    if (!fs.existsSync('./files/users')){
+        fs.mkdirSync('./files/users');
+        console.log('Users folder created');
+    } else {
+        console.log('Users folder exists');
+    }
+}
 
 var app = express();
 var index = require('./routes/index');
 var user = require('./routes/users');
 var cors = require('cors');
-//var login = require('./routes/users/login');
 
 app.use(express.static(__dirname + '/views'));
-
-//Database connection
-// app.use(function(req, res, next){
-// 	global.connection = mysql.createConnection({
-//       host     : '140.86.3.185',
-//       //port :'49436',
-//       user     : 'appuser',
-//       password : 'Pass@word1',
-//       database : 'vehicle_inspection',
-//       insecureAuth: true
-// 	});
-// 	connection.connect(function(err) {
-//     if (err) {
-//       return console.error('error connecting: ' + err.stack);
-//     }
-//     console.log('connected as id ' + connection.threadId);
-//   });
-// 	next();
-// });
 
 //File Upload
 app.use(fileUpload());
