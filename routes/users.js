@@ -74,7 +74,7 @@ users.post('/upload/:id', function(req, res) {
 	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
 	let sampleFile = req.files.file;
 	let name = sampleFile.name;
-	let extArray = sampleFile.mimetype.split("/");
+	let extArray = sampleFile.name.split(".");
     let extension = extArray[extArray.length - 1];
 	let fileName = name+'.'+extension;
 	//console.log(name);
