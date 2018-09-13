@@ -112,6 +112,7 @@ users.post('/upload/:id', function(req, res) {
 				   sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function(err) {
 					   if (err)
 					   return res.status(500).send(err);
+					   console.log(req.files.file);
 					   res.send('File uploaded!');
 				   });
 				}

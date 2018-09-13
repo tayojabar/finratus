@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var async = require('async');
 var db = require('../db');
 const fs = require('fs');
 
@@ -151,33 +152,45 @@ router.get('/owners', function(req, res, next) {
 
 /* GET vehicles listing. */
 router.get('/vehicles', function(req, res, next) {
-    var query = 'SELECT * from vehicles';
+	var query = 'SELECT * from vehicles';
+	var array = [];
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-			results.forEach(function(k, v){
+			async.forEach(results, function(k, cb){
                 //k.image = 'goal';
-                var path = 'files/'+v.Number_Plate+'/';
+				var path = 'files/'+k.Number_Plate+'/';
+				//console.log(k);
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
-                        files.forEach(function (file){
-							if (file.split('.')[0].split('_')[1] == 'registration'){
+						console.log(path+': Exists, hence image');
+                        async.forEach(files, function (file, callback){
+							if (file.split('.')[0].split('_')[1] === 'registration'){
 								k.image = file;
 							}
-                            // let part = file.split('.')[0].split('_')[1];
-                            // obj[part] = file;
-                        });
+							else{
+								k.image = ('No Registration Image');
+							}
+							callback();
+                        }, function(data){
+							array.push(k);
+							cb();
+						});
                     })	;
                 }
                 else {
-                    k.image = "No Image";
+					console.log(path+': Doesnt Exist, no image');
+					k.image = "No Image";
+					array.push(k);
+					cb();
                 }
                 
-            });
-			res.send(JSON.stringify({"status": 200, "error": null, "response": results})); 
+            }, function(data){
+				res.send(JSON.stringify({"status": 200, "error": null, "response": array})); 
   			//If there is no error, all is good and response is 200OK.
+			});
 	  	}
   	});
 });
