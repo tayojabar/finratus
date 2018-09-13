@@ -154,7 +154,7 @@ users.get('/usersCount', function(req, res, next) {
 
 /* GET Specific User. */
 users.get('/:id', function(req, res, next) {
-    var query = 'SELECT * from users where id = ?';
+    var query = 'SELECT * from users where username = ?';
     var path = 'files/users/'+req.params.id+'/';
 	db.query(query, [req.params.id], function (error, results, fields) {
 	  	if(error){

@@ -254,7 +254,7 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
 					var obj = {};
 					fs.readdir(path, function (err, files){
 						files.forEach(function (file){
-							items.push(file);
+							//items.push(file);
 							let part = file.split('.')[0].split('_')[1];
 							obj[part] = file;
 						});
