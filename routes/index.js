@@ -311,15 +311,43 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
 /* GET specific vehicle by owner */
 router.get('/vehicles-owner/:owner', function(req, res, next) {
     var query = 'SELECT * from vehicles where owner =?';
-	db.query(query, [req.params.owner] ,function (error, results, fields) {
-	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
-  			//If there is no error, all is good and response is 200OK.
-	  	}
-  	});
+    var array = [];
+    var obj = {};
+    db.query(query, [req.params.owner] ,function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            async.forEach(results, function(k, cb){
+                //k.image = 'goal';
+                var path = 'files/'+k.Number_Plate+'/';
+                //console.log(k);
+                if (fs.existsSync(path)){
+                    fs.readdir(path, function (err, files){
+                        console.log(path+': Exists, hence image');
+                        async.forEach(files, function (file, callback){
+                            let part = file.split('.')[0].split('_')[1];
+                            obj[part] = file;
+                            k.images = obj;
+                            callback();
+                        }, function(data){
+                            array.push(k);
+                            cb();
+                        });
+                    })	;
+                }
+                else {
+                    console.log(path+': Doesnt Exist, no image');
+                    k.images = "No Image";
+                    array.push(k);
+                    cb();
+                }
+
+            }, function(data){
+                res.send(JSON.stringify({"status": 200, "error": null, "response": array}))
+                //If there is no error, all is good and response is 200OK.
+            });
+        }
+    });
 });
 
 /* GET specific vehicle by inspector */
