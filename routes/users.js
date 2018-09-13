@@ -88,7 +88,7 @@ users.post('/upload/:id', function(req, res) {
             console.log('Creating directory ...');
             fs.mkdirSync('files/users/'+req.params.id+'/');
 		}
-	});
+    });
    
 	fs.stat('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function (err) {
 		//console.log(stats);//here we got all information of file in stats variable
@@ -155,12 +155,34 @@ users.get('/usersCount', function(req, res, next) {
 /* GET Specific User. */
 users.get('/:id', function(req, res, next) {
     var query = 'SELECT * from users where id = ?';
+    var path = 'files/users/'+req.params.id+'/';
 	db.query(query, [req.params.id], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+            fs.stat(path, function(err) {
+				
+				if (!err){
+					var items = [];
+                    var obj = {};
+                    var image = "";
+					fs.readdir(path, function (err, files){
+						files.forEach(function (file){
+							image = file;
+							// let part = file.split('.')[0].split('_')[1];
+							// obj[part] = file;
+						});
+						//console.log(items);
+						//listDirectoryItems(path);
+						res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": image}));
+					})	;
+					//items = getdirectoryItems(path, req, res);
+				}else{
+				res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": "No Image Uploaded Yet"}));
+				}
+			});
+  			//res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
