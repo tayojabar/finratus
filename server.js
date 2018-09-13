@@ -48,6 +48,7 @@ app.use(cors());
 
 app.use('/', index);
 app.use('/user', user);
+app.use('/files', express.static(__dirname + '/files'));
 
 app.get('/', function(req, res){
   res.sendFile('index.html');
@@ -56,8 +57,6 @@ app.get('/', function(req, res){
 app.get('/all-vehicles', function(req, res){
   res.sendFile('all-vehicles.html', { root: __dirname+'/views' });
 });
-
-//app.use('/login', login);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
