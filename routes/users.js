@@ -136,10 +136,8 @@ users.get('/all-users', function(req, res, next) {
 	  		//If there is error, we send the error in the error section with 500 status
           } 
         else {
-            //console.log(results);
             async.forEach(results, function(k, cb){
-                //k.image = 'goal';
-                var path = 'files/users/'+v.username+'/';
+                var path = 'files/users/'+k.username+'/';
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
                         async.forEach(files, function (file, callback){
