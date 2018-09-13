@@ -34,7 +34,7 @@ router.post('/upload/:number_plate/:part', function(req, res) {
 			// Use the mv() method to place the file somewhere on your server
 			sampleFile.mv('files/'+req.params.number_plate+'/'+req.params.number_plate+'_'+req.params.part+'.'+extension, function(err) {
 				if (err) return res.status(500).send(err);
-			
+				console.log(req.params.number_plate+'_'+req.params.part+'.'+extension);
 				res.send('File uploaded!');
 			});
 		}
@@ -91,7 +91,7 @@ router.post('/vehicle-upload/:number_plate/', function(req, res) {
 			// Use the mv() method to place the file somewhere on your server
 			sampleFile.mv('files/'+req.params.number_plate+'/'+req.params.number_plate+'_registration.'+extension, function(err) {
 				if (err) return res.status(500).send(err);
-			
+				console.log(req.params.number_plate+'_registration.'+extension);
 				res.send('File uploaded!');
 			});
 		}
@@ -157,6 +157,25 @@ router.get('/vehicles', function(req, res, next) {
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
+			results.forEach(function(k, v){
+                //k.image = 'goal';
+                var path = 'files/'+v.Number_Plate+'/';
+                if (fs.existsSync(path)){
+                    fs.readdir(path, function (err, files){
+                        files.forEach(function (file){
+							if (file.split('.')[0].split('_')[1] == 'registration'){
+								k.image = file;
+							}
+                            // let part = file.split('.')[0].split('_')[1];
+                            // obj[part] = file;
+                        });
+                    })	;
+                }
+                else {
+                    k.image = "No Image";
+                }
+                
+            });
 			res.send(JSON.stringify({"status": 200, "error": null, "response": results})); 
   			//If there is no error, all is good and response is 200OK.
 	  	}

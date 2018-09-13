@@ -98,7 +98,7 @@ users.post('/upload/:id', function(req, res) {
 			// Use the mv() method to place the file somewhere on your server
 			sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function(err) {
 				if (err) return res.status(500).send(err);
-			
+                console.log(req.params.id+'/'+req.params.id+'.'+extension);
 				res.send('File uploaded!');
 			});
 		}
@@ -131,9 +131,28 @@ users.get('/all-users', function(req, res, next) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
-  			//If there is no error, all is good and response is 200OK.
+          } 
+        else {
+            //console.log(results);
+            results.forEach(function(k, v){
+                //k.image = 'goal';
+                var path = 'files/users/'+v.username+'/';
+                if (fs.existsSync(path)){
+                    fs.readdir(path, function (err, files){
+                        files.forEach(function (file){
+                            k.image = file;
+                            // let part = file.split('.')[0].split('_')[1];
+                            // obj[part] = file;
+                        });
+                    })	;
+                }
+                else {
+                    k.image = "No Image";
+                }
+                
+            });
+            res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+            //If there is no error, all is good and response is 200OK.
 	  	}
   	});
 });
