@@ -57,6 +57,8 @@ app.get('/all-vehicles', function(req, res){
   res.sendFile('all-vehicles.html', { root: __dirname+'/views' });
 });
 
+app.get('/files', express.static(__dirname + '/files'));
+
 //app.use('/login', login);
 
 // catch 404 and forward to error handler
