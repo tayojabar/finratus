@@ -98,7 +98,7 @@ users.post('/upload/:id', function(req, res) {
 			// Use the mv() method to place the file somewhere on your server
 			sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function(err) {
 				if (err) return res.status(500).send(err);
-                console.log(req.params.id+'/'+req.params.id+'.'+extension);
+                console.log(req.files.file);
 				res.send('File uploaded!');
 			});
 		}
