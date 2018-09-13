@@ -219,20 +219,20 @@ router.get('/modelsCount', function(req, res, next) {
   	});
 });
 
-function listDirectoryItems(path){
-	var obj = {};
-	fs.readdir(path, function (err, files){
-		files.forEach(function (file){
-			//items.push(file);
-			//console.log(file.name);
-			let part = file.split('.')[0].split('_')[1];
-			obj[part] = file;
-			//console.log(obj);
-		});
-		console.log(obj);
-		//res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": items}));
-	})	;
-}
+// function listDirectoryItems(path){
+// 	var obj = {};
+// 	fs.readdir(path, function (err, files){
+// 		files.forEach(function (file){
+// 			//items.push(file);
+// 			//console.log(file.name);
+// 			let part = file.split('.')[0].split('_')[1];
+// 			obj[part] = file;
+// 			//console.log(obj);
+// 		});
+// 		console.log(obj);
+// 		//res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": items}));
+// 	})	;
+// }
 
 /* GET specific vehicle by parameter */
 /**
