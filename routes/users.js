@@ -1,5 +1,6 @@
 var express = require('express');
 var users = express.Router();
+var async = require('async');
 var db = require('../db');
 var jwt = require('jsonwebtoken');
 var token;

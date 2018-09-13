@@ -10,8 +10,6 @@ var path = require('path');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
 
-
-
 //check and create uploads directory
 if (!fs.existsSync('./files')){
     fs.mkdirSync('./files');
