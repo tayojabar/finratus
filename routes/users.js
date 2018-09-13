@@ -127,7 +127,8 @@ users.post('/upload/:id', function(req, res) {
 
 /* GET users listing. */
 users.get('/all-users', function(req, res, next) {
-    var query = 'SELECT * from users';
+	var query = 'SELECT * from users';
+	var array = [];
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -135,25 +136,30 @@ users.get('/all-users', function(req, res, next) {
           } 
         else {
             //console.log(results);
-            results.forEach(function(k, v){
+            async.forEach(results, function(k, cb){
                 //k.image = 'goal';
                 var path = 'files/users/'+v.username+'/';
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
-                        files.forEach(function (file){
-                            k.image = file;
-                            // let part = file.split('.')[0].split('_')[1];
-                            // obj[part] = file;
-                        });
-                    })	;
+                        async.forEach(files, function (file, callback){
+							k.image = file;
+							callback();
+						}, function(data){
+							array.push(k);
+							cb();
+						});
+                    });
                 }
                 else {
-                    k.image = "No Image";
+					k.image = "No Image";
+					array.push(k);
+					cb();
                 }
                 
-            });
-            res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+            }, function(data){
+				res.send(JSON.stringify({"status": 200, "error": null, "response": array}));
             //If there is no error, all is good and response is 200OK.
+			});
 	  	}
   	});
 });

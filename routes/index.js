@@ -154,6 +154,7 @@ router.get('/owners', function(req, res, next) {
 router.get('/vehicles', function(req, res, next) {
 	var query = 'SELECT * from vehicles';
 	var array = [];
+	var obj = {};
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -167,12 +168,15 @@ router.get('/vehicles', function(req, res, next) {
                     fs.readdir(path, function (err, files){
 						console.log(path+': Exists, hence image');
                         async.forEach(files, function (file, callback){
-							if (file.split('.')[0].split('_')[1] === 'registration'){
-								k.image = file;
-							}
-							else{
-								k.image = ('No Registration Image');
-							}
+							// if (file.split('.')[0].split('_')[1] === 'registration'){
+							// 	k.image = file;
+							// }
+							// else{
+							// 	k.image = ('No Registration Image');
+							// }
+							let part = file.split('.')[0].split('_')[1];
+							obj[part] = file;
+							k.images = obj;
 							callback();
                         }, function(data){
 							array.push(k);
@@ -182,7 +186,7 @@ router.get('/vehicles', function(req, res, next) {
                 }
                 else {
 					console.log(path+': Doesnt Exist, no image');
-					k.image = "No Image";
+					k.images = "No Image";
 					array.push(k);
 					cb();
                 }
