@@ -141,7 +141,7 @@ users.get('/all-users', function(req, res, next) {
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
                         async.forEach(files, function (file, callback){
-							k.image = file;
+							k.image = path+file;
 							callback();
 						}, function(data){
 							array.push(k);
@@ -194,7 +194,7 @@ users.get('/:id', function(req, res, next) {
                     var image = "";
 					fs.readdir(path, function (err, files){
 						files.forEach(function (file){
-							image = file;
+							image = path+file;
 							// let part = file.split('.')[0].split('_')[1];
 							// obj[part] = file;
 						});

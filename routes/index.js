@@ -154,31 +154,21 @@ router.get('/owners', function(req, res, next) {
 router.get('/vehicles', function(req, res, next) {
 	var query = 'SELECT * from vehicles';
 	var array = [];
-	var obj = {};
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
 			async.forEach(results, function(k, cb){
-                //k.image = 'goal';
 				var path = 'files/'+k.Number_Plate+'/';
-				//console.log(k);
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
-						console.log(path+': Exists, hence image');
+						console.log(path+': Exists, hence image '+JSON.stringify(files));
+						var obj = {};
                         async.forEach(files, function (file, callback){
-							// if (file.split('.')[0].split('_')[1] === 'registration'){
-							// 	k.image = file;
-							// }
-							// else{
-							// 	k.image = ('No Registration Image');
-							// }
-							let part = file.split('.')[0].split('_')[1];
-							obj[part] = file;
+							let insP = file.split('.')[0].split('_')[1];
+							obj[insP] = path+file;
 							k.images = obj;
-							console.log(k.images);
-							
 							callback();
                         }, function(data){
 							array.push(k);
@@ -187,7 +177,6 @@ router.get('/vehicles', function(req, res, next) {
                     })	;
                 }
                 else {
-					console.log(path+': Doesnt Exist, no image');
 					k.images = "No Image";
 					array.push(k);
 					cb();
@@ -294,7 +283,7 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
 						files.forEach(function (file){
 							//items.push(file);
 							let part = file.split('.')[0].split('_')[1];
-							obj[part] = file;
+							obj[part] = path+file;
 						});
 						//console.log(items);
 						//listDirectoryItems(path);
@@ -314,7 +303,7 @@ router.get('/vehicles/:number_plate', function(req, res, next) {
 router.get('/vehicles-owner/:owner', function(req, res, next) {
     var query = 'SELECT * from vehicles where owner =?';
     var array = [];
-    var obj = {};
+    
     db.query(query, [req.params.owner] ,function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -325,10 +314,11 @@ router.get('/vehicles-owner/:owner', function(req, res, next) {
                 //console.log(k);
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
+						var obj = {};
                         console.log(path+': Exists, hence image');
                         async.forEach(files, function (file, callback){
                             let part = file.split('.')[0].split('_')[1];
-                            obj[part] = file;
+                            obj[part] = path+file;
                             k.images = obj;
                             callback();
                         }, function(data){
@@ -360,8 +350,36 @@ router.get('/inspected-by/:inspector', function(req, res, next) {
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
-  			//If there is no error, all is good and response is 200OK.
+			async.forEach(results, function(k, cb){
+                //k.image = 'goal';
+                var path = 'files/'+k.Number_Plate+'/';
+                //console.log(k);
+                if (fs.existsSync(path)){
+                    fs.readdir(path, function (err, files){
+						var obj = {};
+                        console.log(path+': Exists, hence image');
+                        async.forEach(files, function (file, callback){
+                            let part = file.split('.')[0].split('_')[1];
+                            obj[part] = path+file;
+                            k.images = obj;
+                            callback();
+                        }, function(data){
+                            array.push(k);
+                            cb();
+                        });
+                    })	;
+                }
+                else {
+                    console.log(path+': Doesnt Exist, no image');
+                    k.images = "No Image";
+                    array.push(k);
+                    cb();
+                }
+
+            }, function(data){
+                res.send(JSON.stringify({"status": 200, "error": null, "response": array}))
+                //If there is no error, all is good and response is 200OK.
+            });
 	  	}
   	});
 });
@@ -374,8 +392,36 @@ router.get('/vehicles/:make', function(req, res, next) {
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
-  			//If there is no error, all is good and response is 200OK.
+			async.forEach(results, function(k, cb){
+                //k.image = 'goal';
+                var path = 'files/'+k.Number_Plate+'/';
+                //console.log(k);
+                if (fs.existsSync(path)){
+                    fs.readdir(path, function (err, files){
+						var obj = {};
+                        console.log(path+': Exists, hence image');
+                        async.forEach(files, function (file, callback){
+                            let part = file.split('.')[0].split('_')[1];
+                            obj[part] = path+file;
+                            k.images = obj;
+                            callback();
+                        }, function(data){
+                            array.push(k);
+                            cb();
+                        });
+                    })	;
+                }
+                else {
+                    console.log(path+': Doesnt Exist, no image');
+                    k.images = "No Image";
+                    array.push(k);
+                    cb();
+                }
+
+            }, function(data){
+                res.send(JSON.stringify({"status": 200, "error": null, "response": array}))
+                //If there is no error, all is good and response is 200OK.
+            });
 	  	}
   	});
 });
