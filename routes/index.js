@@ -191,7 +191,7 @@ router.get('/vehicles', function(req, res, next) {
 });
 
 /* GET vehicles listing for admin. */
-router.get('/all-vehicles', function(req, res, next) {
+router.get('/vehicles-list', function(req, res, next) {
     var query = 'SELECT * from vehicles';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
@@ -269,32 +269,60 @@ router.get('/modelsCount', function(req, res, next) {
 router.get('/vehicles/:number_plate', function(req, res, next) {
 	var query = 'SELECT * from vehicles where number_plate =?';
 	var path = 'files/'+req.params.number_plate+'/';
+	var array = [];
     db.query(query, [req.params.number_plate] ,function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status
         } else {
-			fs.stat(path, function(err) {
+			// fs.stat(path, function(err) {
 				
-				if (!err){
-					var items = [];
-					var obj = {};
-					fs.readdir(path, function (err, files){
-						files.forEach(function (file){
-							//items.push(file);
-							let part = file.split('.')[0].split('_')[1];
-							obj[part] = path+file;
+			// 	if (!err){
+			// 		var items = [];
+			// 		var obj = {};
+			// 		fs.readdir(path, function (err, files){
+			// 			files.forEach(function (file){
+			// 				//items.push(file);
+			// 				let part = file.split('.')[0].split('_')[1];
+			// 				obj[part] = path+file;
+			// 			});
+			// 			//console.log(items);
+			// 			//listDirectoryItems(path);
+			// 			res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": obj}));
+			// 		})	;
+			// 		//items = getdirectoryItems(path, req, res);
+			// 	}else{
+			// 	res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": "No Image Uploaded Yet"}));
+			// 	}
+			// });
+			//If there is no error, all is good and response is 200OK.
+			async.forEach(results, function(k, cb){
+				var path = 'files/'+k.Number_Plate+'/';
+                if (fs.existsSync(path)){
+                    fs.readdir(path, function (err, files){
+						console.log(path+': Exists, hence image '+JSON.stringify(files));
+						var obj = {};
+                        async.forEach(files, function (file, callback){
+							let insP = file.split('.')[0].split('_')[1];
+							obj[insP] = path+file;
+							k.images = obj;
+							callback();
+                        }, function(data){
+							array.push(k);
+							cb();
 						});
-						//console.log(items);
-						//listDirectoryItems(path);
-						res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": obj}));
-					})	;
-					//items = getdirectoryItems(path, req, res);
-				}else{
-				res.send(JSON.stringify({"status": 200, "error": null, "response": results, "path": "No Image Uploaded Yet"}));
-				}
+                    })	;
+                }
+                else {
+					k.images = "No Image";
+					array.push(k);
+					cb();
+                }
+                
+            }, function(data){
+				res.send(JSON.stringify({"status": 200, "error": null, "response": array})); 
+  			//If there is no error, all is good and response is 200OK.
 			});
-            //If there is no error, all is good and response is 200OK.
         }
     });
 });
@@ -385,7 +413,7 @@ router.get('/inspected-by/:inspector', function(req, res, next) {
 });
 
 /* GET specific vehicle by make */
-router.get('/vehicles/:make', function(req, res, next) {
+router.get('/vehicle/:make', function(req, res, next) {
     var query = 'SELECT * from vehicles where make =?';
 	db.query(query, [req.params.make] ,function (error, results, fields) {
 	  	if(error){
