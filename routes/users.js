@@ -163,6 +163,32 @@ users.get('/all-users', function(req, res, next) {
   	});
 });
 
+users.get('/users-list', function(req, res, next) {
+    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users';
+	db.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+users.get('/user-roles', function(req, res, next) {
+    var query = 'SELECT * from user_roles';
+	db.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /* GET users count. */
 users.get('/usersCount', function(req, res, next) {
     var query = 'SELECT count(*) as total from users';
@@ -178,7 +204,7 @@ users.get('/usersCount', function(req, res, next) {
 });
 
 /* GET Specific User. */
-users.get('/:id', function(req, res, next) {
+users.get('/user/:id', function(req, res, next) {
     var query = 'SELECT * from users where username = ?';
     var path = 'files/users/'+req.params.id+'/';
 	db.query(query, [req.params.id], function (error, results, fields) {
@@ -230,8 +256,8 @@ users.post('/editUser/:id', function(req, res, next) {
 });
 
 /* GET Vehicle Owners listing. */
-users.get('/owners', function(req, res, next) {
-    var query = 'SELECT * from vehicle_owners';
+users.get('/owners/', function(req, res, next) {
+    var query = 'SELECT * from users where user_role = 4';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 

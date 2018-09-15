@@ -51,11 +51,43 @@ app.use('/user', user);
 app.use('/files', express.static(__dirname + '/files'));
 
 app.get('/admin', function(req, res){
-  res.sendFile('index.html');
+  res.sendFile('login.html', { root: __dirname+'/views' });
+});
+
+app.get('/dashboard', function(req, res){
+    res.sendFile('index.html', { root: __dirname+'/views' });
 });
 
 app.get('/all-vehicles', function(req, res){
   res.sendFile('all-vehicles.html', { root: __dirname+'/views' });
+});
+
+app.get('/all-users', function(req, res){
+    res.sendFile('all-users.html', { root: __dirname+'/views' });
+  });
+
+app.get('/all-models', function(req, res){
+  res.sendFile('all-models.html', { root: __dirname+'/views' });
+});
+
+app.get('/all-owners', function(req, res){
+    res.sendFile('all-owners.html', { root: __dirname+'/views' });
+  });
+
+app.get('/add-vehicle', function(req, res){
+    res.sendFile('add-vehicles.html', { root: __dirname+'/views' });
+});
+
+app.get('/add-user', function(req, res){
+    res.sendFile('add-user.html', { root: __dirname+'/views' });
+});
+
+app.get('/add-owner', function(req, res){
+    res.sendFile('add-owner.html', { root: __dirname+'/views' });
+});
+
+app.get('/add-model', function(req, res){
+    res.sendFile('add-model.html', { root: __dirname+'/views' });
 });
 
 // catch 404 and forward to error handler

@@ -42,45 +42,45 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="./">Loan 35</a>
-                <a class="navbar-brand hidden" href="./">35</a>
+                <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                <a class="navbar-brand hidden" href="/dashboard">35</a>
             </div>
 
             <div id="main-menu" class="main-menu collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li class="active">
-                        <a href="index.html"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                        <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
                     </li>
                     
                     <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
                         <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="all-vehicles.html">All Vehicles</a></li>
-                            <li><i class="fa fa-table"></i><a href="add-vehicles.html">Add Vehicles</a></li>
+                            <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
+                            <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
                         </ul>
                     </li>
 
-                    <li class="menu-item-has-children dropdown">
+                    <!-- <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicle Owners</a>
                         <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="all-vehicles.html">All Vehicle Owners</a></li>
-                            <li><i class="fa fa-table"></i><a href="add-vehicles.html">Add New Owner</a></li>
+                            <li><i class="fa fa-table"></i><a href="/all-owners">All Vehicle Owners</a></li>
+                            <li><i class="fa fa-table"></i><a href="/add-owner">Add New Owner</a></li>
                         </ul>
-                    </li>
+                    </li> -->
 
                     <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
                         <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="all-vehicles.html">All Models</a></li>
-                            <li><i class="fa fa-table"></i><a href="add-vehicles.html">New Model</a></li>
+                            <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
+                            <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
                         </ul>
                     </li>
 
                     <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
                         <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="all-vehicles.html">All Users</a></li>
-                            <li><i class="fa fa-table"></i><a href="add-vehicles.html">New User</a></li>
+                            <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                            <li><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -110,7 +110,7 @@
                             </form>
                         </div>
 
-                        <div class="dropdown for-notification">
+                        <!-- <div class="dropdown for-notification">
                           <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-bell"></i>
                             <span class="count bg-danger">5</span>
@@ -130,9 +130,9 @@
                                 <p>Server #3 overloaded.</p>
                             </a>
                           </div>
-                        </div>
+                        </div> -->
 
-                        <div class="dropdown for-message">
+                        <!-- <div class="dropdown for-message">
                           <button class="btn btn-secondary dropdown-toggle" type="button"
                                 id="message"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -174,7 +174,7 @@
                                 </span>
                             </a>
                           </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -195,7 +195,7 @@
                         </div>
                     </div>
 
-                    <div class="language-select dropdown" id="language-select">
+                    <!-- <div class="language-select dropdown" id="language-select">
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
                             <i class="flag-icon flag-icon-us"></i>
                         </a>
@@ -213,7 +213,7 @@
                                 <i class="flag-icon flag-icon-it"></i>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
@@ -261,9 +261,8 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="all-vehicles.html">View All</a>
-                                    <a class="dropdown-item" href="add-vehicles.html">New</a>
-                                    <a class="dropdown-item" href="all-vehicles.html">Inspection</a>
+                                    <a class="dropdown-item" href="/all-vehicles">View All</a>
+                                    <a class="dropdown-item" href="/add-vehicle">New</a>
                                 </div>
                             </div>
                         </div>
@@ -291,8 +290,8 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="all-owners.html">View All</a>
-                                    <a class="dropdown-item" href="add-owners.html">Another action</a>
+                                    <a class="dropdown-item" href="/all-owners">View All</a>
+                                    <a class="dropdown-item" href="/add-owner">Another action</a>
                                     <!-- <a class="dropdown-item" href="#">Something else here</a> -->
                                 </div>
                             </div>
@@ -320,8 +319,8 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="#">All Models</a>
-                                    <a class="dropdown-item" href="#">New Model</a>
+                                    <a class="dropdown-item" href="/all-models">All Models</a>
+                                    <a class="dropdown-item" href="/add-model">New Model</a>
                                     <!-- <a class="dropdown-item" href="#">Something else here</a> -->
                                 </div>
                             </div>
@@ -349,14 +348,14 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="dropdown-menu-content">
-                                    <a class="dropdown-item" href="#">All Users</a>
-                                    <a class="dropdown-item" href="#">New User</a>
+                                    <a class="dropdown-item" href="/all-users">All Users</a>
+                                    <a class="dropdown-item" href="/add-user">New User</a>
                                     <!-- <a class="dropdown-item" href="#">Something else here</a> -->
                                 </div>
                             </div>
                         </div>
                         <h4 class="mb-0">
-                            <span id = "countUsers" class="count">10468</span>
+                            <span id = "countUsers" class="count"></span>
                         </h4>
                         <p class="text-light">Users</p>
 
