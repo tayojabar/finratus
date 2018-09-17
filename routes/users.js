@@ -164,7 +164,7 @@ users.get('/all-users', function(req, res, next) {
 });
 
 users.get('/users-list', function(req, res, next) {
-    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users';
+    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users order by ID desc';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 

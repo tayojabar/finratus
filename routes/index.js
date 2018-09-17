@@ -192,8 +192,37 @@ router.get('/vehicles', function(req, res, next) {
 
 /* GET vehicles listing for admin. */
 router.get('/vehicles-list', function(req, res, next) {
-    var query = 'SELECT * from vehicles';
+    var query = 'SELECT * from vehicles order by ID desc';
 	db.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET all vehicle makes available for admin. */
+router.get('/makes-list', function(req, res, next) {
+    var query = 'SELECT distinct(make) from vehiclemakes group by make';
+	db.query(query, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET all vehicle models by make available for admin. */
+router.get('/models-list/:make', function(req, res, next) {
+	var query = 'SELECT model, year from vehiclemakes where make =?';
+	console.log(query);
+	db.query(query, [req.params.make], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
