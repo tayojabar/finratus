@@ -50,6 +50,10 @@ app.use('/', index);
 app.use('/user', user);
 app.use('/files', express.static(__dirname + '/files'));
 
+app.get('/login', function(req, res){
+    res.sendFile('login.html', { root: __dirname+'/views' });
+});
+
 app.get('/admin', function(req, res){
   res.sendFile('login.html', { root: __dirname+'/views' });
 });
