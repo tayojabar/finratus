@@ -399,6 +399,21 @@ router.get('/vehicles-owner/:owner', function(req, res, next) {
     });
 });
 
+/* GET specific vehicle by owner for admin. */
+router.get('/vehicle-owner/:owner', function(req, res, next) {
+	var query = 'SELECT * from vehicles where owner = (select u.ID from users u where u.fullname = ?)';
+	console.log(query);
+	db.query(query, [req.params.make], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /* GET specific vehicle by inspector */
 router.get('/inspected-by/:inspector', function(req, res, next) {
     var query = 'SELECT * from vehicles where inspector =?';
