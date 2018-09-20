@@ -296,11 +296,11 @@ router.get('/modelsCount', function(req, res, next) {
  * @Query:
  * number_plate
  */
-router.get('/vehicles/:number_plate', function(req, res, next) {
+router.get('/vehicles/:number_plate/:date', function(req, res, next) {
 	var query = 'SELECT * from vehicles where number_plate =?';
 	var path = 'files/'+req.params.number_plate+'/';
 	var array = [];
-    db.query(query, [req.params.number_plate] ,function (error, results, fields) {
+    db.query(query, [req.params.number_plate, req.params.date] ,function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status
@@ -584,13 +584,14 @@ router.post('/editVehicle/:number_plate', function(req, res, next) {
 
 router.post('/brakes/:number_plate', function(req, res, next) {
 	var postData = req.body; 
-	postData.Date_Inspected = Date.now();
-	postData.Vehicle = req.params.number_plate;
 	var np = req.params.number_plate;  
 	var payload = [postData.brake_pads, postData.discs, postData.parking_hand, postData.brakes_ok, Date.now(), np];
-	var query = 'insert into inspections set ?';
+	
     //var query = 'Update vehicles SET brake_pads=?, discs=?, parking_hand=?, brakes_ok=?, date_modified=? where number_plate=?';
-	db.query(query, postData, function (error, results, fields) {
+	postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -606,7 +607,7 @@ router.post('/ac_heater/:number_plate', function(req, res, next) {
 	var np = req.params.number_plate;  
     var payload = [postData.cooling, postData.blower, postData.ac_fan, postData.condensor, postData.compressor, postData.ac_no_repair_history, Date.now(), np];
     // var query = 'Update vehicles SET cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=?, date_modified=? where number_plate=?';
-	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -628,7 +629,7 @@ router.post('/steeringControls/:number_plate', function(req, res, next) {
     //                 'cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -656,7 +657,7 @@ router.post('/engineCheck/:number_plate', function(req, res, next) {
     //                 'coolant_reservoir=?, engine_sludge=?, engine_smoke=?, engine_likely_smoke=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -678,7 +679,7 @@ router.post('/mirrors/:number_plate', function(req, res, next) {
     //                 'right_mirror=?, left_mirror=?, right_mirror_control=?, left_mirror_control=?, right_mirror_broken = ?, left_mirror_broken=?, date_modified=?'+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -700,7 +701,7 @@ router.post('/electricals/:number_plate', function(req, res, next) {
     //                 'battery_terminals=?, battery_charging=?, battery_malfunction_indicator=?, battery_present=?, tampered_wiring_harness=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -724,7 +725,7 @@ router.post('/upholstery/:number_plate', function(req, res, next) {
     //                 'boot_board=?, driver_seat_upholstery=?, passenger_seat_upholstery=?, rear_seat_upholstery=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -748,7 +749,7 @@ router.post('/dashboard/:number_plate', function(req, res, next) {
     //                 'audio=?, video=?, cigarette_lighter=?, fuel_cap_release_lever=?, bonnet_release_lever = ?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -776,7 +777,7 @@ router.post('/mechanical-check/:number_plate', function(req, res, next) {
     //                 'rear_spoiler = ?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -795,7 +796,7 @@ router.post('/equipment/:number_plate', function(req, res, next) {
 	var np = req.params.number_plate;
     var payload = [postData.tools, postData.jack, postData.jack_handle, postData.wheel_spanner, postData.caution_sign, Date.now(), np];
     // var query = 'Update vehicles SET tools=?, jack=?, jack_handle=?, wheel_spanner=?, caution_sign=?, date_modified=? where number_plate=?';
-	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -817,7 +818,7 @@ router.post('/exhaust-check/:number_plate', function(req, res, next) {
     //                 'exhaust_sound=?, exhaust_joint=?, catalytic_converter=?, exhaust_leakage=?, exhaust_pipe_oil_trace = ?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -839,7 +840,7 @@ router.post('/transmission/:number_plate', function(req, res, next) {
     //                 'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, 4wd_active=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -863,7 +864,7 @@ router.post('/suspension-steering/:number_plate', function(req, res, next) {
     //                 'rear_brushes=?, rear_shocks=?, height_control=?, height_control_unit=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -885,7 +886,7 @@ router.post('/exterior-lights/:number_plate', function(req, res, next) {
     //                 'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -936,7 +937,7 @@ router.post('/windows-central-lock/:number_plate', function(req, res, next) {
     //                 'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -960,7 +961,7 @@ router.post('/seats/:number_plate', function(req, res, next) {
     //                 'left_seat_belt=?, rear_seat_belt=?, head_rest=?, arm_rest=?, glove_box=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -988,7 +989,7 @@ router.post('/obd/:number_plate', function(req, res, next) {
     //                 'throttle_sensor=?, mil=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -1016,7 +1017,7 @@ router.post('/fluids-filters/:number_plate', function(req, res, next) {
     //                 'washer_fluid_leakage=?, washer_fluid_compartment=?, date_modified=? '+
     //             'where number_plate=?';
     
-    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
@@ -1043,7 +1044,7 @@ router.post('/documentation/:number_plate', function(req, res, next) {
     //                 'purchase_receipt=?, purchase_receipt_ownership=?, tinted_permit=?, tinted_permit_original=?, number_plates = ?, number_plates_original=?, '+
     //                 'plate_number_allocation=?, plate_number_allocation_original=?, spare_key_available=?, vehicle_tracker=?, vehicle_security=?, date_modified=? '+
     //             'where number_plate=?';
-	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
     var query = 'insert into inspections set ?';
     db.query(query, postData, function (error, results, fields) {
