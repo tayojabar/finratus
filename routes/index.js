@@ -605,8 +605,11 @@ router.post('/ac_heater/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	var np = req.params.number_plate;  
     var payload = [postData.cooling, postData.blower, postData.ac_fan, postData.condensor, postData.compressor, postData.ac_no_repair_history, Date.now(), np];
-    var query = 'Update vehicles SET cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=?, date_modified=? where number_plate=?';
-	db.query(query, payload, function (error, results, fields) {
+    // var query = 'Update vehicles SET cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=?, date_modified=? where number_plate=?';
+	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -621,11 +624,14 @@ router.post('/steeringControls/:number_plate', function(req, res, next) {
     var postData = req.body;  
 	var np = req.params.number_plate;  
     var payload =  [postData.lights_lever, postData.washer_lever, postData.wind_screen_lever, postData.wind_screen_lever, postData.steering_wheel, postData.horn, postData.volume_control, postData.temperature_control, postData.phone_dial_control, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'cooling=?, blower=?, ac_fan=?, condensor=?, compressor = ?, ac_no_repair_history=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -643,14 +649,17 @@ router.post('/engineCheck/:number_plate', function(req, res, next) {
                     postData.gear_mount, postData.radiator_fan, postData.radiator, postData.suction_fan, postData.starter_operation, 
                     postData.engine_vibration, postData.engine_worked_on, postData.engine_misfire, postData.tappet_sound, postData.knock_sound, postData.overheating_history,
                     postData.coolant_reservoir, postData.engine_sludge, postData.engine_smoke, postData.engine_likely_smoke, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'wires=?, hoses=?, belt=?, pulley=?, head_gasket = ?, engine_noise=?, '+
-                    'engine_mount=?, gear_mount=?, radiator_fan=?, radiator=?, suction_fan = ?, starter_operation=?, '+
-                    'engine_vibration=?, engine_worked_on=?, engine_misfire=?, tappet_sound=?, knock_sound = ?, overheating_history=?, '+
-                    'coolant_reservoir=?, engine_sludge=?, engine_smoke=?, engine_likely_smoke=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'wires=?, hoses=?, belt=?, pulley=?, head_gasket = ?, engine_noise=?, '+
+    //                 'engine_mount=?, gear_mount=?, radiator_fan=?, radiator=?, suction_fan = ?, starter_operation=?, '+
+    //                 'engine_vibration=?, engine_worked_on=?, engine_misfire=?, tappet_sound=?, knock_sound = ?, overheating_history=?, '+
+    //                 'coolant_reservoir=?, engine_sludge=?, engine_smoke=?, engine_likely_smoke=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -665,11 +674,14 @@ router.post('/mirrors/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	var np = req.params.number_plate; 
     var payload =  [postData.right_mirror, postData.left_mirror, postData.right_mirror_control, postData.left_mirror_control, postData.right_mirror_broken, postData.left_mirror_broken, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'right_mirror=?, left_mirror=?, right_mirror_control=?, left_mirror_control=?, right_mirror_broken = ?, left_mirror_broken=?, date_modified=?'+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'right_mirror=?, left_mirror=?, right_mirror_control=?, left_mirror_control=?, right_mirror_broken = ?, left_mirror_broken=?, date_modified=?'+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -684,11 +696,14 @@ router.post('/electricals/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	var np = req.params.number_plate; 
     var payload =  [postData.battery_terminals, postData.battery_charging, postData.battery_malfunction_indicator, postData.battery_present, postData.tampered_wiring_harness, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'battery_terminals=?, battery_charging=?, battery_malfunction_indicator=?, battery_present=?, tampered_wiring_harness=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'battery_terminals=?, battery_charging=?, battery_malfunction_indicator=?, battery_present=?, tampered_wiring_harness=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -704,12 +719,15 @@ router.post('/upholstery/:number_plate', function(req, res, next) {
 	var np = req.params.number_plate;   
     var payload =  [postData.roof_upholstery, postData.floor_upholstery, postData.door_upholstery, postData.clean_dashboard, postData.sunshades, postData.boot_carpet, postData.boot_board, 
                     postData.driver_seat_upholstery, postData.passenger_seat_upholstery, postData.rear_seat_upholstery, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'roof_upholstery=?, floor_upholstery=?, door_upholstery=?, clean_dashboard=?, sunshades = ?, boot_carpet=?, '+
-                    'boot_board=?, driver_seat_upholstery=?, passenger_seat_upholstery=?, rear_seat_upholstery=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'roof_upholstery=?, floor_upholstery=?, door_upholstery=?, clean_dashboard=?, sunshades = ?, boot_carpet=?, '+
+    //                 'boot_board=?, driver_seat_upholstery=?, passenger_seat_upholstery=?, rear_seat_upholstery=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -725,12 +743,15 @@ router.post('/dashboard/:number_plate', function(req, res, next) {
 	var np = req.params.number_plate;  
     var payload =  [postData.dashboard_lights, postData.interior_lights, postData.dashboard_control_ac, postData.dashboard_control_defog, postData.dashboard_control_hazard_lights, postData.dashboard_control_parking_button, postData.audio, 
                     postData.video, postData.cigarette_lighter, postData.fuel_cap_release_lever, postData.bonnet_release_lever, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'dashboard_lights=?, interior_lights=?, dashboard_control_ac=?, dashboard_control_defog=?, dashboard_control_hazard_lights = ?, dashboard_control_parking_button=?, '+
-                    'audio=?, video=?, cigarette_lighter=?, fuel_cap_release_lever=?, bonnet_release_lever = ?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'dashboard_lights=?, interior_lights=?, dashboard_control_ac=?, dashboard_control_defog=?, dashboard_control_hazard_lights = ?, dashboard_control_parking_button=?, '+
+    //                 'audio=?, video=?, cigarette_lighter=?, fuel_cap_release_lever=?, bonnet_release_lever = ?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -748,14 +769,17 @@ router.post('/mechanical-check/:number_plate', function(req, res, next) {
                     postData.front_door_levers_lh, postData.rear_door_levers_rh, postData.rear_door_levers_lh, postData.front_windshield, postData.rear_windshield, 
                     postData.front_door_window_rh, postData.front_door_window_lh, postData.rear_door_window_rh, postData.rear_door_window_lh, postData.underbody_shields, postData.fender_shields, 
                     postData.front_spoiler, postData.rear_spoiler, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'trunk_lock=?, front_door_fitting_rh=?, front_door_fitting_lh=?, rear_door_fitting_rh=?, rear_door_fitting_lh = ?, front_door_levers_rh=?, '+
-                    'front_door_levers_lh=?, rear_door_levers_rh=?, rear_door_levers_lh=?, front_windshield=?, rear_windshield = ?, front_door_window_rh = ? '+
-                    ', front_door_window_lh = ?, rear_door_window_rh = ?, rear_door_window_lh = ?, underbody_shields = ?, fender_shields = ?, front_spoiler = ? '+
-                    'rear_spoiler = ?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'trunk_lock=?, front_door_fitting_rh=?, front_door_fitting_lh=?, rear_door_fitting_rh=?, rear_door_fitting_lh = ?, front_door_levers_rh=?, '+
+    //                 'front_door_levers_lh=?, rear_door_levers_rh=?, rear_door_levers_lh=?, front_windshield=?, rear_windshield = ?, front_door_window_rh = ? '+
+    //                 ', front_door_window_lh = ?, rear_door_window_rh = ?, rear_door_window_lh = ?, underbody_shields = ?, fender_shields = ?, front_spoiler = ? '+
+    //                 'rear_spoiler = ?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -770,8 +794,11 @@ router.post('/equipment/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	var np = req.params.number_plate;
     var payload = [postData.tools, postData.jack, postData.jack_handle, postData.wheel_spanner, postData.caution_sign, Date.now(), np];
-    var query = 'Update vehicles SET tools=?, jack=?, jack_handle=?, wheel_spanner=?, caution_sign=?, date_modified=? where number_plate=?';
-	db.query(query, payload, function (error, results, fields) {
+    // var query = 'Update vehicles SET tools=?, jack=?, jack_handle=?, wheel_spanner=?, caution_sign=?, date_modified=? where number_plate=?';
+	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -786,11 +813,14 @@ router.post('/exhaust-check/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	var np = req.params.number_plate; 
     var payload =  [postData.exhaust_sound, postData.exhaust_joint, postData.catalytic_converter, postData.exhaust_leakage, postData.exhaust_pipe_oil_trace, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'exhaust_sound=?, exhaust_joint=?, catalytic_converter=?, exhaust_leakage=?, exhaust_pipe_oil_trace = ?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'exhaust_sound=?, exhaust_joint=?, catalytic_converter=?, exhaust_leakage=?, exhaust_pipe_oil_trace = ?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -805,11 +835,14 @@ router.post('/transmission/:number_plate', function(req, res, next) {
     var postData = req.body;  
 	var np = req.params.number_plate;  
     var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData.fwd_active, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, 4wd_active=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, 4wd_active=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -825,12 +858,15 @@ router.post('/suspension-steering/:number_plate', function(req, res, next) {
 	var np = req.params.number_plate;  
     var payload =  [postData.ball_joints, postData.zlinks, postData.front_brushes, postData.front_shocks, postData.tie_rod, postData.rack_end, postData.rear_brushes, 
                     postData.rear_shocks, postData.height_control, postData.height_control_unit, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'ball_joints=?, zlinks=?, front_brushes=?, front_shocks=?, tie_rod = ?, rack_end=?, '+
-                    'rear_brushes=?, rear_shocks=?, height_control=?, height_control_unit=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'ball_joints=?, zlinks=?, front_brushes=?, front_shocks=?, tie_rod = ?, rack_end=?, '+
+    //                 'rear_brushes=?, rear_shocks=?, height_control=?, height_control_unit=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -845,11 +881,14 @@ router.post('/exterior-lights/:number_plate', function(req, res, next) {
 	var postData = req.body; 
 	var np = req.params.number_plate;    
     var payload =  [postData.right_headlight, postData.left_headlight, postData.right_taillight, postData.left_taillight, postData.reverse_light, postData.fog_lights, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -863,8 +902,6 @@ router.post('/exterior-lights/:number_plate', function(req, res, next) {
 router.post('/body-frame/:number_plate', function(req, res, next) {
 	var postData = req.body; 
 	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-	console.log(postData.Date_Inspected);
-	//console.log(moment());
 	postData.Vehicle = req.params.number_plate;
 	var np = req.params.number_plate;  
     var payload =  [postData.radiator_core_support, postData.right_strut_tower_apron, postData.left_strut_tower_apron, postData.right_front_rail, postData.left_front_rail, postData.cowl_panel_firewall, 
@@ -894,12 +931,15 @@ router.post('/windows-central-lock/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	var np = req.params.number_plate; 
     var payload =  [postData.right_headlight, postData.left_headlight, postData.right_taillight, postData.left_taillight, postData.reverse_light, postData.fog_lights, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'rightF_window_lever=?, leftF_window_lever=?, rightR_window_lever=?, leftR_window_lever=?, autolock = ?, window_safety_lock=?, '+
-                    'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'rightF_window_lever=?, leftF_window_lever=?, rightR_window_lever=?, leftR_window_lever=?, autolock = ?, window_safety_lock=?, '+
+    //                 'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -915,12 +955,15 @@ router.post('/seats/:number_plate', function(req, res, next) {
 	var np = req.params.number_plate; 
     var payload =  [postData.right_seat_adjuster_recliner, postData.left_seat_adjuster_recliner, postData.right_seat_adjuster_lear_track, postData.left_seat_adjuster_lear_track, postData.seat_adjuster_tracker, postData.right_seat_belt, postData.left_seat_belt, 
                     postData.rear_seat_belt, postData.head_rest, postData.arm_rest, postData.glove_box, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'right_seat_adjuster_recliner=?, left_seat_adjuster_recliner=?, right_seat_adjuster_lear_track=?, left_seat_adjuster_lear_track=?, seat_adjuster_tracker = ?, right_seat_belt=?, '+
-                    'left_seat_belt=?, rear_seat_belt=?, head_rest=?, arm_rest=?, glove_box=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'right_seat_adjuster_recliner=?, left_seat_adjuster_recliner=?, right_seat_adjuster_lear_track=?, left_seat_adjuster_lear_track=?, seat_adjuster_tracker = ?, right_seat_belt=?, '+
+    //                 'left_seat_belt=?, rear_seat_belt=?, head_rest=?, arm_rest=?, glove_box=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -938,14 +981,17 @@ router.post('/obd/:number_plate', function(req, res, next) {
                     postData.airflow_sensor, postData.tpms, postData.evap, postData.abs, postData.srs, postData.bcm, 
                     postData.pcm, postData.detonation_sensor, postData.egr_sensor, postData.vehicle_speed, postData.gear_solenoid, postData.catalyst_sensor,
                     postData.throttle_sensor, postData.mil, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'crank_shaft_censor=?, camshaft_sensor=?, oxygen_sensor=?, map_sensor=?, throttle_position_sensor = ?, coolant_sensor=?, '+
-                    'airflow_sensor=?, tpms=?, evap=?, abs=?, srs = ?, bcm=?, '+
-                    'pcm=?, detonation_sensor=?, egr_sensor=?, vehicle_speed=?, gear_solenoid = ?, catalyst_sensor=?, '+
-                    'throttle_sensor=?, mil=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'crank_shaft_censor=?, camshaft_sensor=?, oxygen_sensor=?, map_sensor=?, throttle_position_sensor = ?, coolant_sensor=?, '+
+    //                 'airflow_sensor=?, tpms=?, evap=?, abs=?, srs = ?, bcm=?, '+
+    //                 'pcm=?, detonation_sensor=?, egr_sensor=?, vehicle_speed=?, gear_solenoid = ?, catalyst_sensor=?, '+
+    //                 'throttle_sensor=?, mil=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -963,14 +1009,17 @@ router.post('/fluids-filters/:number_plate', function(req, res, next) {
                     postData.gear_oil, postData.brake_oil, postData.brake_oil_leakage, postData.brake_oil_hose_leakage, postData.brake_caliper, postData.brake_oil_pipe_leakage, 
                     postData.power_steering_oil_gauge, postData.power_steering_oil, postData.power_steering, postData.power_steering_oil_pump, postData.power_steering_oil_leakage, postData.washer_fluid,
                     postData.washer_fluid_leakage, postData.washer_fluid_compartment, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'engine_oil=?, oilpump_leakage=?, engine_oil_valve_cover=?, axe_oil_leakage=?, gear_oil_leakage = ?, gear_oil_seal=?, '+
-                    'gear_oil=?, brake_oil=?, brake_oil_leakage=?, brake_oil_hose_leakage=?, brake_caliper = ?, brake_oil_pipe_leakage=?, '+
-                    'power_steering_oil_gauge=?, power_steering_oil=?, power_steering=?, power_steering_oil_pump=?, power_steering_oil_leakage = ?, washer_fluid=?, '+
-                    'washer_fluid_leakage=?, washer_fluid_compartment=?, date_modified=? '+
-                'where number_plate=?';
+    // var query = 'Update vehicles SET '+
+    //                 'engine_oil=?, oilpump_leakage=?, engine_oil_valve_cover=?, axe_oil_leakage=?, gear_oil_leakage = ?, gear_oil_seal=?, '+
+    //                 'gear_oil=?, brake_oil=?, brake_oil_leakage=?, brake_oil_hose_leakage=?, brake_caliper = ?, brake_oil_pipe_leakage=?, '+
+    //                 'power_steering_oil_gauge=?, power_steering_oil=?, power_steering=?, power_steering_oil_pump=?, power_steering_oil_leakage = ?, washer_fluid=?, '+
+    //                 'washer_fluid_leakage=?, washer_fluid_compartment=?, date_modified=? '+
+    //             'where number_plate=?';
     
-    db.query(query, payload, function (error, results, fields) {
+    postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -988,14 +1037,16 @@ router.post('/documentation/:number_plate', function(req, res, next) {
                     postData.road_worthiness, postData.road_worthiness_original, postData.insurance_clearance, postData.insurance_clearance_original, postData.custom_clearance, postData.custom_clearance_original, 
                     postData.purchase_receipt, postData.purchase_receipt_ownership, postData.tinted_permit, postData.tinted_permit_original, postData.number_plates, postData.number_plates_original,
                     postData.plate_number_allocation, postData.plate_number_allocation_original, postData.spare_key_available, postData.vehicle_tracker, postData.vehicle_security, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'license=?, license_original=?, ecmr=?, ecmr_original=?, proof_ownership = ?, proof_ownership_original=?, '+
-                    'road_worthiness=?, road_worthiness_original=?, insurance_clearance=?, insurance_clearance_original=?, custom_clearance = ?, custom_clearance_original=?, '+
-                    'purchase_receipt=?, purchase_receipt_ownership=?, tinted_permit=?, tinted_permit_original=?, number_plates = ?, number_plates_original=?, '+
-                    'plate_number_allocation=?, plate_number_allocation_original=?, spare_key_available=?, vehicle_tracker=?, vehicle_security=?, date_modified=? '+
-                'where number_plate=?';
-    
-    db.query(query, payload, function (error, results, fields) {
+    // var query = 'Update vehicles SET '+
+    //                 'license=?, license_original=?, ecmr=?, ecmr_original=?, proof_ownership = ?, proof_ownership_original=?, '+
+    //                 'road_worthiness=?, road_worthiness_original=?, insurance_clearance=?, insurance_clearance_original=?, custom_clearance = ?, custom_clearance_original=?, '+
+    //                 'purchase_receipt=?, purchase_receipt_ownership=?, tinted_permit=?, tinted_permit_original=?, number_plates = ?, number_plates_original=?, '+
+    //                 'plate_number_allocation=?, plate_number_allocation_original=?, spare_key_available=?, vehicle_tracker=?, vehicle_security=?, date_modified=? '+
+    //             'where number_plate=?';
+	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status

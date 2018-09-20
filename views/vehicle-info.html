@@ -754,6 +754,9 @@
                 $("#inspections").dataTable().fnClearTable();
             }else{
                 $.each(inspections, function(k, v){
+                    var d1 = Date.parse(v.Date_Inspected);
+                    alert(v.Date_Inspected);
+                    alert(d1.toString('dd/mm/yyyy'));  
                     var date = '<td><span role="button" id = "'+v.Vehicle+'" class="date" date = "'+v.Date_Inspected+'">'+v.Date_Inspected+'</span></td>';
                     $('#inspections').dataTable().fnAddData( [
                         date, action
