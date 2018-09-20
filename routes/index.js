@@ -401,9 +401,39 @@ router.get('/vehicles-owner/:owner', function(req, res, next) {
 
 /* GET specific vehicle by owner for admin. */
 router.get('/vehicle-owner/:owner', function(req, res, next) {
-	var query = 'SELECT * from vehicles where owner = (select u.ID from users u where u.fullname = ?)';
+	var query = 'SELECT * from vehicles where owner = ?';
 	console.log(query);
-	db.query(query, [req.params.make], function (error, results, fields) {
+	db.query(query, [req.params.owner], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET specific inspections for vehicle for admin. */
+router.get('/vehicle-inspections/:number', function(req, res, next) {
+	var query = 'SELECT Vehicle, Date_Inspected from inspections where vehicle = ?';
+	console.log(query);
+	db.query(query, [req.params.number], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET inspection details for specific vehicle for admin. */
+router.get('/inspection/:number/:date', function(req, res, next) {
+	var query = 'SELECT * from inspections where vehicle = ? and Date_Inspected = ?';
+	console.log(query);
+	db.query(query, [req.params.number, req.params.date], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -552,11 +582,14 @@ router.post('/editVehicle/:number_plate', function(req, res, next) {
 });
 
 router.post('/brakes/:number_plate', function(req, res, next) {
-    var postData = req.body; 
+	var postData = req.body; 
+	postData.Date_Inspected = Date.now();
+	postData.Vehicle = req.params.number_plate;
 	var np = req.params.number_plate;  
-    var payload = [postData.brake_pads, postData.discs, postData.parking_hand, postData.brakes_ok, Date.now(), np];
-    var query = 'Update vehicles SET brake_pads=?, discs=?, parking_hand=?, brakes_ok=?, date_modified=? where number_plate=?';
-	db.query(query, payload, function (error, results, fields) {
+	var payload = [postData.brake_pads, postData.discs, postData.parking_hand, postData.brakes_ok, Date.now(), np];
+	var query = 'insert into inspections set ?';
+    //var query = 'Update vehicles SET brake_pads=?, discs=?, parking_hand=?, brakes_ok=?, date_modified=? where number_plate=?';
+	db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status

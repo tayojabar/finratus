@@ -244,7 +244,7 @@
             <div class="animated fadeIn">
                 <div class="row">
 
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="card">
                             <div class="card-header">
                                 <strong class="card-title">All Vehicle Owners</strong>
@@ -263,7 +263,7 @@
                         </div>
                     </div> 
 
-                    <div class="col-sm-8">
+                    <div class="col-sm-9">
                         <div class="card">
                             <div class="card-header">
                                 <strong class="card-title">Vehicles owned by
@@ -271,11 +271,12 @@
                                 </strong>
                             </div>
                             <div class="card-body">
-                                <div id="content">
+                                <!-- Vehicle List for Selected Owner -->
+                                <div id="owners-vehicle">
                                     <table id="models" class="table table-striped table-bordered">
                                         <thead>
                                         <tr>
-                                            <th>Number_Plate</th>
+                                            <th>Number Plate</th>
                                             <th>Make</th>
                                             <th>Model</th>
                                             <th>Date Brought - in</th>
@@ -285,6 +286,243 @@
                                             
                                         </tbody>
                                     </table>
+                                </div>
+                                <!-- Vehicle List for Selected Owner -->
+                                <div id="inspection-dates">
+                                    <div class="card-header">
+                                        <strong class="card-title">
+                                            <span id="v-num"></span>
+                                        </strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <table id="inspections" class="table table-striped table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th>Inspection Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Inspection Details for Selected Inspection Date -->
+                                <div id="inspection-info" style="display: none">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <strong id="info-head" class="card-title">Inspection Information
+                                                <span id="brand_name"></span>
+                                            </strong>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class = "row">
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Card</strong>
+                                                        </div>
+                                                        <div class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -358,12 +596,55 @@
             }
         });
         
+        var myTable3 = $('#inspections')
+        .DataTable({
+            bAutoWidth: false,
+            "aoColumns": [
+                { "bSortable": true }, null
+                //null, { "bSortable": false }, null
+                // , null, { "bSortable": false },
+            ],
+            "aaSorting": [],
+            // "bFilter": false,
+            // "bInfo" : false,
+            select: {
+                style: 'multi'
+            }
+        });
+
         $(document).on("click", ".brand", function (e) {
             var id = $(this).attr("id");
             var name = $(this).attr("name");
             $('#brand_name').html(': '+name);
-            //$('#content').empty();
+            $('#inspection-dates').hide();
+            $('#owners-vehicle').show();
+            $('#inspection-info').show();
+            //$('#vehicle-info').show();
+            //$('#models').dataTable().clear();
+            myTable2.row().clear();
             loadVehicles(id);
+        });
+
+        $(document).on("click", ".vehicle", function (e) {
+            $('#owners-vehicle').hide();
+            $('#inspection-dates').show();
+            $('#inspection-info').show();
+            var id = $(this).attr("id");
+            var name = $(this).attr("name");
+            $('#v-num').html(name+' Inspection(s)');
+            $('#inspections').dataTable().fnClearTable();
+            loadVehicleInspections(id);
+        });
+        
+        $(document).on("click", ".date", function (e) {
+            $('#owners-vehicle').hide();
+            $('#inspection-dates').hide();
+            $('#inspection-info').show();
+            var id = $(this).attr("id");
+            var date = $(this).attr("date");
+            $('#v-num').html(name+' Inspection(s)');
+            $('#inspections').dataTable().fnClearTable();
+            loadInspectionDetails(id, date);
         });
 
         function loadOwners(){
@@ -384,11 +665,29 @@
             });
 
         }
+        
+        function populateOwnersTable(data) {
+            console.log("populating data table...");
+            // clear the table before populating it with more data
+            $("#bootstrap-data-table").DataTable().clear();
+            var length = data.length;
+            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
+                          '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
+            $.each(data, function(k, v){
+                var fullname = '<td><span role="button" id = "'+v.fullname+'" class="brand" name = "'+v.fullname+'">'+v.fullname+'</span></td>';
+                $('#makes').dataTable().fnAddData( [
+                    fullname
+                    // "Make",
+                    // "Make",
+                    // action
+                ]);
+            });
+        }
 
         function loadVehicles(owner){
             var id = owner;
             $.ajax({
-                'url': 'http://localhost:4000/vehicles-owner/'+id,
+                'url': 'http://localhost:4000/vehicle-owner/'+id,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -404,39 +703,92 @@
         }
 
         function populateVehiclesTable(models){
+            console.log(models.length);
             console.log("populating data table...");
             // clear the table before populating it with more data
-            $("#models").DataTable().clear();
+            //$("#models").dataTable().clear();
             console.log("cleared data table...");
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
-            $.each(models, function(k, v){
-                $('#models').dataTable().fnAddData( [
-                    v.Number_Plate, v.Make, v.Model, v.Date_Created
-                    // "Make",
-                    // "Make",
-                    // action
-                ]);
+            if (models.length == 0){
+                $("#models").dataTable().fnClearTable();
+            }else{
+                $.each(models, function(k, v){
+                    var number = '<td><span role="button" id = "'+v.Number_Plate+'" class="vehicle" name = "'+v.Number_Plate+'">'+v.Number_Plate+'</span></td>';
+                    $('#models').dataTable().fnAddData( [
+                        number, v.Make, v.Model, v.Date_Created
+                        // "Make",
+                        // "Make",
+                        // action
+                    ]);
+                });
+            }
+        }
+
+        function loadVehicleInspections(number){
+            $.ajax({
+                'url': 'http://localhost:4000/vehicle-inspections/'+number,
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    console.log(data);
+                    var inspections = JSON.parse(data);
+                    populateInspectionsTable(inspections);
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+        
+        function populateInspectionsTable(inspections){
+            console.log(inspections.length);
+            console.log("populating data table...");
+            // clear the table before populating it with more data
+            //$("#models").dataTable().clear();
+            console.log("cleared data table...");
+            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
+                          '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
+            if (inspections.length == 0){
+                $("#inspections").dataTable().fnClearTable();
+            }else{
+                $.each(inspections, function(k, v){
+                    var date = '<td><span role="button" id = "'+v.Vehicle+'" class="date" date = "'+v.Date_Inspected+'">'+v.Date_Inspected+'</span></td>';
+                    $('#inspections').dataTable().fnAddData( [
+                        date, action
+                        // "Make",
+                        // "Make",
+                        // action
+                    ]);
+                });
+            }
+        }
+
+        function loadInspectionDetails(number, date){
+            $.ajax({
+                'url': 'http://localhost:4000/inspection/'+number+'/'+date,
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    console.log(data);
+                    var details = JSON.parse(data);
+                    populateCards(details);
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
             });
         }
 
-        function populateOwnersTable(data) {
-            console.log("populating data table...");
-            // clear the table before populating it with more data
-            $("#bootstrap-data-table").DataTable().clear();
-            var length = data.length;
-            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
-                          '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
-            $.each(data, function(k, v){
-                var fullname = '<td><span role="button" id = "'+v.ID+'" class="brand" name = "'+v.fullname+'">'+v.fullname+'</span></td>';
-                $('#makes').dataTable().fnAddData( [
-                    fullname
-                    // "Make",
-                    // "Make",
-                    // action
-                ]);
+        function populateCards(details){
+            $.each(details, function(k, v){
+                var date = '<td><span role="button" id = "'+v.Vehicle+'" class="date" date = "'+v.Date_Inspected+'">'+v.Date_Inspected+'</span></td>';
+                $('#')
             });
         }
+
 
     </script>
 
