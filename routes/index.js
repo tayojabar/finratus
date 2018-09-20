@@ -3,6 +3,7 @@ var router = express.Router();
 var async = require('async');
 var db = require('../db');
 const fs = require('fs');
+const moment = require('moment');
 
 //File Upload - Inspection
 router.post('/upload/:number_plate/:part', function(req, res) {
@@ -861,9 +862,9 @@ router.post('/exterior-lights/:number_plate', function(req, res, next) {
 
 router.post('/body-frame/:number_plate', function(req, res, next) {
 	var postData = req.body; 
-	postData.Date_Inspected = Date.now();
+	postData.Date_Inspected = moment();
 	console.log(postData.Date_Inspected);
-	console.log(Date.now());
+	console.log(moment());
 	postData.Vehicle = req.params.number_plate;
 	var np = req.params.number_plate;  
     var payload =  [postData.radiator_core_support, postData.right_strut_tower_apron, postData.left_strut_tower_apron, postData.right_front_rail, postData.left_front_rail, postData.cowl_panel_firewall, 
