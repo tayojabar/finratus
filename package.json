@@ -20,7 +20,8 @@
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
-    "mysql": "^2.16.0"
+    "mysql": "^2.16.0",
+    "sweetalert": "^2.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.4"

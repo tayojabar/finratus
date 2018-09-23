@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
@@ -252,7 +253,7 @@
                                     <label class=" form-control-label">Full Name</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <input class="form-control">
+                                        <input id="fullname" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">ex. user123</small>
                                 </div>
@@ -260,7 +261,7 @@
                                     <label class=" form-control-label">Username</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <input class="form-control">
+                                        <input id="username" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">ex. user123</small>
                                 </div>
@@ -268,7 +269,7 @@
                                     <label class=" form-control-label">Password</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                        <input type="password" class="form-control">
+                                        <input id="password" type="password" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">ex. qwerty_*123</small>
                                 </div>
@@ -276,7 +277,7 @@
                                     <label class=" form-control-label">User Role</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-usd"></i></div>
-                                        <select class="form-control">
+                                        <select id="role" class="form-control">
                                                 <option>ATB Admin</option>
                                                 <option>Super User</option>
                                                 <option>Vehicle Inspector</option>
@@ -288,7 +289,7 @@
                                     <label class=" form-control-label">Email </label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-male"></i></div>
-                                        <input class="form-control">
+                                        <input type="email" id="email" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">ex. <Address>email@email.com</Address></small>
                                 </div>
@@ -296,7 +297,7 @@
                                     <label class=" form-control-label">Phone Number</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-phone"></i></div>
-                                        <input class="form-control">
+                                        <input id="phone" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">ex. +234 - 813 - 455 - 6944</small>
                                 </div>
@@ -304,11 +305,11 @@
                                     <label class=" form-control-label">Address</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                        <input class="form-control">
+                                        <input id="address" class="form-control">
                                     </div>
                                 </div>
                                 <div class = "form-group">
-                                        <a href="#" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30">Submit</a>
+                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New User"/>
                                 </div>
                             </div>
                         </div>
@@ -338,12 +339,56 @@
 
     <script>
         jQuery(document).ready(function() {
-            jQuery(".standardSelect").chosen({
-                disable_search_threshold: 10,
-                no_results_text: "Oops, nothing found!",
-                width: "100%"
-            });
+            getRoles();
         });
+
+        $("#addUser").click(function () {
+            createUser();
+        });
+
+        function getRoles(){
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:4000/user/user-roles/",
+                data: '{}',
+                success: function (response) {
+                    var role = $("[id*=owner]");
+                    role.empty().append('<option selected="selected" id="0">-- Select Vehicle Owner --</option>');
+                    $.each(JSON.parse(response), function (key, val) {
+                        $("#role").append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.role_name + '</option>');
+                    });
+                }
+            });
+        }
+        
+        function createUser(){
+            var obj = {};
+            obj.username = $('#username').val();
+            obj.password = $('#password').val();
+            obj.fullname = $('#fullname').val();
+            obj.phone = $('#phone').val();
+            obj.address = $('#address').val();
+            obj.email = $('#email').val();
+            obj.user_role = $('#role').find('option:selected').val();
+            var test={};
+            $.ajax({
+                'url': 'http://localhost:4000/user/new-user/',
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    if(test.status == 500){
+                        swal("Please recheck entered values");
+                    }
+                    else
+                        swal("User Registered!");
+                }
+            });
+
+        }
+
     </script>
 
 </body>

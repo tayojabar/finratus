@@ -125,7 +125,7 @@ router.post('/addVehicle', function(req, res, next) {
 	var postData = req.body;  
 	postData.Date_Created = Date.now();
 	payload = [];
-    var query =  'INSERT INTO vehicles Set ?';
+    var query =  'INSERT INTO vehicles set ?';
 	db.query(query,postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 

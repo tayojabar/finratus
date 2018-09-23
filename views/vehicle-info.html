@@ -272,7 +272,7 @@
                             </div>
                             <div class="card-body">
                                 <!-- Vehicle List for Selected Owner -->
-                                <div id="owners-vehicle">
+                                <div id="owners-vehicle"  style="display: none">
                                     <table id="models" class="table table-striped table-bordered">
                                         <thead>
                                         <tr>
@@ -288,7 +288,7 @@
                                     </table>
                                 </div>
                                 <!-- Vehicle List for Selected Owner -->
-                                <div id="inspection-dates">
+                                <div id="inspection-dates" style="display: none">
                                     <div class="card-header">
                                         <strong class="card-title">
                                             <span id="v-num"></span>
@@ -309,7 +309,7 @@
                                     </div>
                                 </div>
                                 <!-- Inspection Details for Selected Inspection Date -->
-                                <div id="inspection-info" style="display: none">
+                                <div id="inspection-info">
                                     <div class="card">
                                         <div class="card-header">
                                             <strong id="info-head" class="card-title">Inspection Information
@@ -321,67 +321,33 @@
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Documentation</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="documentation" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Body - Frame Checklist</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="bodyframe" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Mechanical Check</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="mech" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Exterior Lights</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class = "row">
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="ext_lt" class="card-body"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -389,67 +355,33 @@
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Mirrors</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="mirrors" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Equipment</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="equipment" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Fluid / Filters</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="fl_ft" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Exhaust Check</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class = "row">
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
-                                                        </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="exhaust" class="card-body"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -457,33 +389,33 @@
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Engine Check</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="engine_check" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Transmission</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="transmission" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Brakes</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="brakes" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Suspension Steering Controls</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="sus_st_ct" class="card-body"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -491,33 +423,67 @@
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Steering Controls</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="st_ct" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">OBD</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id = "obd" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Seats</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="seats" class="card-body"></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Card</strong>
+                                                            <strong class="card-title">Power / Manual Windows and Central Lock</strong>
                                                         </div>
-                                                        <div class="card-body"></div>
+                                                        <div id="power" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Dashboard / Roof Controls</strong>
+                                                        </div>
+                                                        <div id="dashboard" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">General Upholstery</strong>
+                                                        </div>
+                                                        <div id="upholstery" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">AC / Heater</strong>
+                                                        </div>
+                                                        <div id="ac_heater" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Electrical Electronics</strong>
+                                                        </div>
+                                                        <div id="elect" class="card-body"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -755,8 +721,8 @@
             }else{
                 $.each(inspections, function(k, v){
                     var d1 = Date.parse(v.Date_Inspected);
-                    alert(v.Date_Inspected);
-                    alert(d1.toString('dd/mm/yyyy'));  
+                    //alert(k);
+                    //alert(d1.toString('dd/mm/yyyy'));  
                     var date = '<td><span role="button" id = "'+v.Vehicle+'" class="date" date = "'+v.Date_Inspected+'">'+v.Date_Inspected+'</span></td>';
                     $('#inspections').dataTable().fnAddData( [
                         date, action
@@ -786,10 +752,160 @@
         }
 
         function populateCards(details){
+            $('#equipment').empty();
+            $('#documentation').empty();
+            $('#bodyframe').empty();
+            $('#mech').empty();
+            $('#ext_lt').empty();
+            $('#mirrors').empty();
+            $('#fl_ft').empty();
+            $('#exhaust').empty();
+            $('#engine').empty();
+            $('#transmission').empty();
+            $('#brakes').empty();
+            $('#sus_st_ct').empty();
+            $('#st_ct').empty();
+            $('#dashboard').empty();
+            $('#seats').empty();
+            $('#power').empty();
+            $('#upholstery').empty();
+            $('#ac_heater').empty();
+            $('#elect').empty();
+            $('#obd').empty();
+
+            var dets = {};
             $.each(details, function(k, v){
-                var date = '<td><span role="button" id = "'+v.Vehicle+'" class="date" date = "'+v.Date_Inspected+'">'+v.Date_Inspected+'</span></td>';
-                $('#')
+                $.each(v, function(key, value){
+                    dets[key] = value;
+                });
             });
+
+            var equipment = '<table class="table table-striped table-bordered">'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var exhaust = '<table>'+
+                                '<tr><td>Sound: </td><td><strong>'+dets.Exhaust_Sound+'</strong></td></tr>'+
+                                '<tr><td>Joint: </td><td><strong>'+dets.Exhaust_Joint+'</strong></td></tr>'+
+                                '<tr><td>Catalytic Converter: </td><td><strong>'+dets.Catalytic_Converter+'</strong></td></tr>'+
+                                '<tr><td>Leakage: </td><td><strong>'+dets.Exhaust_Leakage+'</strong></td></tr>'+
+                                '<tr><td>Oil Trace: </td><td><strong>'+dets.Exhaust_Pipe_Oil_Trace+'</strong></td></tr>'+
+                            '</table>';
+                
+            var elect = '<table>'+
+                                '<tr><td>Battery Terminals: </td><td><strong>'+dets.Battery_Terminals+'</strong></td></tr>'+
+                                '<tr><td>Battery Charging: </td><td><strong>'+dets.Battery_Charging+'</strong></td></tr>'+
+                                '<tr><td>Battery Malfunction Indicator: </td><td><strong>'+dets.Battery_Malfunction_Indicator+'</strong></td></tr>'+
+                                '<tr><td>Battery Present: </td><td><strong>'+dets.Battery_Present+'</strong></td></tr>'+
+                                '<tr><td>Tampered Wiring: </td><td><strong>'+dets.Tampered_Wiring_Harness+'</strong></td></tr>'+
+                            '</table>';
+                
+            var mirrors = '<table>'+
+                                '<tr><td>Right Mirror: </td><td><strong>'+dets.Right_Mirror+'</strong></td></tr>'+
+                                '<tr><td>Left Mirror: </td><td><strong>'+dets.Left_Mirror+'</strong></td></tr>'+
+                                '<tr><td>Right Mirror Control: </td><td><strong>'+dets.Right_Mirror_Control+'</strong></td></tr>'+
+                                '<tr><td>Left Mirror Control: </td><td><strong>'+dets.Left_Mirror_Control+'</strong></td></tr>'+
+                                '<tr><td>Right Mirror Broken: </td><td><strong>'+dets.Right_Mirror_Broken+'</strong></td></tr>'+
+                                '<tr><td>Left Mirror Broken: </td><td><strong>'+dets.Left_Mirror_Broken+'</strong></td></tr>'+
+                            '</table>';
+                
+            var brakes = '<table>'+
+                                '<tr><td>Brake Pads: </td><td><strong>'+dets.Brake_Pads+'</strong></td></tr>'+
+                                '<tr><td>Discs: </td><td><strong>'+dets.Discs+'</strong></td></tr>'+
+                                '<tr><td>Parking Hand: </td><td><strong>'+dets.Parking_Hand+'</strong></td></tr>'+
+                                '<tr><td>Brakes OK: </td><td><strong>'+dets.Brakes_OK+'</strong></td></tr>'+
+                            '</table>';
+                
+            var ext_lt = '<table>'+
+                                '<tr><td>Right Head Light: </td><td><strong>'+dets.Right_Headlight+'</strong></td></tr>'+
+                                '<tr><td>Left Head Light: </td><td><strong>'+dets.Left_Headlight+'</strong></td></tr>'+
+                                '<tr><td>Right Tail Light: </td><td><strong>'+dets.Right_Taillight+'</strong></td></tr>'+
+                                '<tr><td>Left Tail Light: </td><td><strong>'+dets.Left_Taillight+'</strong></td></tr>'+
+                                '<tr><td>Reverse Light: </td><td><strong>'+dets.Reverse_Light+'</strong></td></tr>'+
+                                '<tr><td>Fog Lights: </td><td><strong>'+dets.Fog_Lights+'</strong></td></tr>'+
+                            '</table>';
+                
+            var transmission = '<table>'+
+                                '<tr><td>Gear Converted: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Gear Delay: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Gear Surge: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Gear Repair History: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>Gear Jerk: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                                '<tr><td>4WD Active: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var trans = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+                
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+
+            $('#equipment').append(equipment);
+            $('#exhaust').append(exhaust);
+            $('#mirrors').append(mirrors);
+            $('#brakes').append(brakes);
         }
 
 

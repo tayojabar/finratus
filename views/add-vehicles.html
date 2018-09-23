@@ -24,7 +24,8 @@
     <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
@@ -253,30 +254,38 @@
                                     <label class=" form-control-label">Vehicle Owner</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <select class="form-control">
-                                            <option>Alan Strange</option>
+                                        <select id ="owner" class="form-control">
+                                            <!-- <option>Alan Strange</option>
                                             <option>Keisuke Honda</option>
                                             <option>Mich Bentley</option>
                                             <option>Aston Martin</option>
                                             <option>Mikel Benz</option>
                                             <option>Ford Harrison</option>
-                                            <option>Jack Rover</option>
+                                            <option>Jack Rover</option> -->
                                         </select>
                                     </div>
                                     <small class="form-text text-muted">ex. Ajani Tailor</small>
                                 </div>
                                 <div class="form-group">
+                                    <label class=" form-control-label">Number Plate</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <input id="number_plate" class="form-control">
+                                    </div>
+                                    <small class="form-text text-muted">ex. 180 miles</small>
+                                </div>
+                                <div class="form-group">
                                     <label class=" form-control-label">Vehicle Make</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-phone"></i></div>
-                                        <select class="form-control">
-                                            <option>Toyota</option>
+                                        <select id="make" class="form-control">
+                                            <!-- <option>Toyota</option>
                                             <option>Honda</option>
                                             <option>Bentley</option>
                                             <option>Aston Martin</option>
                                             <option>Mercedes Benz</option>
                                             <option>Ford</option>
-                                            <option>Range Rover</option>
+                                            <option>Range Rover</option> -->
                                         </select>
                                     </div>
                                     <small class="form-text text-muted">ex. (999) 999-9999</small>
@@ -285,7 +294,9 @@
                                     <label class=" form-control-label">Vehicle Model</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-usd"></i></div>
-                                        <input class="form-control">
+                                        <select id="model" class="form-control">
+
+                                        </select>
                                     </div>
                                     <small class="form-text text-muted">ex. 99-9999999</small>
                                 </div>
@@ -293,7 +304,7 @@
                                     <label class=" form-control-label">Year Bought</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-male"></i></div>
-                                        <select class="form-control">
+                                        <select id="year" class="form-control">
                                             <option>2010</option>
                                             <option>2011</option>
                                             <option>2012</option>
@@ -311,7 +322,7 @@
                                     <label class=" form-control-label">Bought Condition</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                        <select class="form-control">
+                                        <select id="condition" class="form-control">
                                             <option>Brand New</option>
                                             <option>Tokunbo</option>
                                         </select>
@@ -321,100 +332,100 @@
                                     <label class=" form-control-label">Mileage</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                        <input class="form-control">
+                                        <input id="mileage" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">ex. 180 miles</small>
                                 </div>
                                 <div class="form-group">
-                                        <label class=" form-control-label">Price</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                            <input class="form-control">
-                                        </div>
-                                        <small class="form-text text-muted">ex. 1500000</small>
+                                    <label class=" form-control-label">Price</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <input id="price" class="form-control">
+                                    </div>
+                                    <small class="form-text text-muted">ex. 1500000</small>
                                 </div>
                                 <div class="form-group">
-                                        <label class=" form-control-label">Transmission</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                            <select class="form-control">
-                                                <option>Manual</option>
-                                                <option>Automatic</option>
-                                            </select>
-                                        </div>
-                                        <small class="form-text text-muted">ex. 9999 9999 9999 9999</small>
+                                    <label class=" form-control-label">Transmission</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <select id="transmission" class="form-control">
+                                            <option>Manual</option>
+                                            <option>Automatic</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted">ex. 9999 9999 9999 9999</small>
                                 </div>
                                 <div class="form-group">
-                                        <label class=" form-control-label">Fuel Type</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                            <select class="form-control">
-                                                <option>Petrol</option>
-                                                <option>Diesel</option>
-                                            </select>
-                                        </div>
-                                        <small class="form-text text-muted">ex. 9999 9999 9999 9999</small>
+                                    <label class=" form-control-label">Fuel Type</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <select id="fuel_type" class="form-control">
+                                            <option>Petrol</option>
+                                            <option>Diesel</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted">ex. 9999 9999 9999 9999</small>
                                 </div>
                                 <div class="form-group">
-                                        <label class=" form-control-label">Capacity</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                            <select class="form-control">
-                                                <option>1</option>
-                                                <option>1.5</option>
-                                                <option>2</option>
-                                            </select>
-                                        </div>
-                                        <small class="form-text text-muted">ex. 9999 9999 9999 9999</small>
+                                    <label class=" form-control-label">Capacity</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <select id="capacity" class="form-control">
+                                            <option>1</option>
+                                            <option>1.5</option>
+                                            <option>2</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted">ex. 9999 9999 9999 9999</small>
                                 </div>
                                 <div class="form-group">
-                                        <label class=" form-control-label">Color</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                            <select class="form-control">
-                                                <option>Red</option>
-                                                <option>Orange</option>
-                                                <option>Yellow</option>
-                                                <option>Green</option>
-                                                <option>Black</option>
-                                                <option>Indigo</option>
-                                                <option>Green</option>
-                                            </select>
-                                        </div>
-                                        <small class="form-text text-muted">ex. Fushia Pink</small>
+                                    <label class=" form-control-label">Color</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <select id="color" class="form-control">
+                                            <option>Red</option>
+                                            <option>Orange</option>
+                                            <option>Yellow</option>
+                                            <option>Green</option>
+                                            <option>Black</option>
+                                            <option>Indigo</option>
+                                            <option>Green</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted">ex. Fushia Pink</small>
                                 </div>
                                 <div class="form-group">
-                                        <label class=" form-control-label">Registered City</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                            <select class="form-control">
-                                                <option>Lagos</option>
-                                                <option>Abuja</option>
-                                                <option>Kaduna</option>
-                                                <option>Enugu</option>
-                                                <option>Calabar</option>
-                                                <option>Kano</option>
-                                            </select>
-                                        </div>
-                                        <small class="form-text text-muted">ex. Kano</small>
+                                    <label class=" form-control-label">Registered City</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <select id="reg-city" class="form-control">
+                                            <option>Lagos</option>
+                                            <option>Abuja</option>
+                                            <option>Kaduna</option>
+                                            <option>Enugu</option>
+                                            <option>Calabar</option>
+                                            <option>Kano</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted">ex. Kano</small>
                                 </div>
                                 <div class="form-group">
-                                        <label class=" form-control-label">Location</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                            <select class="form-control">
-                                                <option>Lagos</option>
-                                                <option>Abuja</option>
-                                                <option>Kaduna</option>
-                                                <option>Enugu</option>
-                                                <option>Calabar</option>
-                                                <option>Kano</option>
-                                            </select>
-                                        </div>
-                                        <small class="form-text text-muted">ex. Abuja</small>
+                                    <label class=" form-control-label">Location</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <select id="location" class="form-control">
+                                            <option>Lagos</option>
+                                            <option>Abuja</option>
+                                            <option>Kaduna</option>
+                                            <option>Enugu</option>
+                                            <option>Calabar</option>
+                                            <option>Kano</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted">ex. Abuja</small>
                                 </div>
                                 <div class = "form-group">
-                                        <a href="#" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30">Register Vehicle</a>
+                                    <input id="registerVehicle" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value ="Register Vehicle"/>
                                 </div>
                             </div>
                         </div>
@@ -442,14 +453,109 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
 
-    <script>
-        jQuery(document).ready(function() {
-            jQuery(".standardSelect").chosen({
-                disable_search_threshold: 10,
-                no_results_text: "Oops, nothing found!",
-                width: "100%"
-            });
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // jQuery(".standardSelect").chosen({
+            //     disable_search_threshold: 10,
+            //     no_results_text: "Oops, nothing found!",
+            //     width: "100%"
+            // });
+            getOwners();
+            getMakes();
         });
+
+        $("#make").on('change', function () {
+            var selectedID = $(this).find('option:selected').attr('id');
+            getModels(selectedID);
+        });
+
+        $("#registerVehicle").click(function () {
+            registerVehicle();
+        });
+
+        function getOwners(){
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:4000/user/owners/",
+                data: '{}',
+                success: function (response) {
+                    var owner = $("[id*=owner]");
+                    owner.empty().append('<option selected="selected" id="0">-- Select Vehicle Owner --</option>');
+                    $.each(JSON.parse(response), function (key, val) {
+                        $("#owner").append('<option class="deptSp" value = "' + val.fullname + '" spec="' + val.ID + '">' + val.fullname + '</option>');
+                    });
+                }
+            });
+        }
+
+        function getMakes(){
+            $.ajax({
+                'url': 'http://localhost:4000/makes-list',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    var make = $("[id*=make]");
+                    make.empty().append('<option selected="selected" id="0">-- Choose Vehicle Make --</option>');
+                    $.each(JSON.parse(data), function (key, val) {
+                        $("#make").append('<option class="deptSp" value = "' + val.make + '" ID="' + val.make + '" spec="' + val.ID + '">' + val.make + '</option>');
+                    });
+                }
+            });
+        }
+
+        function getModels(make){
+            var id = make;
+            $.ajax({
+                'url': 'http://localhost:4000/models-list/'+id,
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    var model = $("[id*=model]");
+                    model.empty().append('<option selected="selected" id="0">-- Choose Vehicle Make --</option>');
+                    $.each(JSON.parse(data), function (key, val) {
+                        $("#model").append('<option class="deptSp" value = "' + val.model + '" ID="' + val.ID + '" spec="' + val.ID + '">' + val.model + ' ( '+val.year+ ' )</option>');
+                    });
+                }
+            });
+        }
+    
+        function registerVehicle(){
+            var obj = {};
+            obj.Mileage = $('#mileage').val();
+            obj.Number_Plate = $('#number_plate').val();
+            obj.Price = $('#price').val();
+            obj.owner = $('#owner').find('option:selected').text();
+            obj.Make = $('#make').find('option:selected').text();
+            obj.Model = $('#model').find('option:selected').text();
+            obj.Year = $('#year').find('option:selected').text();
+            obj.Bought_Condition = $('#condition').find('option:selected').text();
+            obj.Transmission = $('#transmission').find('option:selected').text();
+            obj.Fuel_Type = $('#fuel_type').find('option:selected').text();
+            obj.Engine_Capacity = $('#capacity').find('option:selected').text();
+            obj.Color = $('#color').find('option:selected').text();
+            obj.Registered_City = $('#reg-city').find('option:selected').text();
+            obj.Location = $('#location').find('option:selected').text();
+
+            var vehiclePayload = JSON.stringify(obj);
+            var test = {};
+            console.log(obj);
+            $.ajax({
+                'url': 'http://localhost:4000/addVehicle',
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    if(test.status == 500){
+                        swal("Please recheck entered values");
+                    }
+                    else
+                        swal("Vehicle Registered!");
+                }
+            });
+        }
+
     </script>
 
 </body>
