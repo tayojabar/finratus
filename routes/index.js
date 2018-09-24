@@ -445,6 +445,21 @@ router.get('/inspection/:number/:date', function(req, res, next) {
   	});
 });
 
+/* GET inspection details for specific vehicle for admin. */
+router.get('/inspections/:number', function(req, res, next) {
+	var query = 'SELECT * from inspections where vehicle = ?';
+	console.log(query);
+	db.query(query, [req.params.number, req.params.date], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify(results));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /* GET specific vehicle by inspector */
 router.get('/inspected-by/:inspector', function(req, res, next) {
     var query = 'SELECT * from vehicles where inspector =?';

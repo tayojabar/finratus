@@ -24,8 +24,9 @@
     <link rel="stylesheet" href="assets/scss/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css"/>
- 
+        
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script> -->
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -318,170 +319,174 @@
                                         </div>
                                         <div class="card-body">
                                             <div class = "row">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Documentation</strong>
+                                                            <strong class="card-title">Documentation <span id="doc-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="documentation" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Body - Frame Checklist</strong>
+                                                            <strong class="card-title">Body - Frame Checklist <span id="bf-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="bodyframe" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Mechanical Check</strong>
+                                                            <strong class="card-title">Mechanical Check <span id="mc-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="mech" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Exterior Lights</strong>
-                                                        </div>
-                                                        <div id="ext_lt" class="card-body"></div>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div class = "row">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Mirrors</strong>
+                                                            <strong class="card-title">Mirrors <span id="mrs-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="mirrors" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Equipment</strong>
+                                                            <strong class="card-title">Equipment <span id="eq-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="equipment" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Fluid / Filters</strong>
+                                                            <strong class="card-title">Fluid / Filters <span id="fftr-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="fl_ft" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Exhaust Check</strong>
-                                                        </div>
-                                                        <div id="exhaust" class="card-body"></div>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div class = "row">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Engine Check</strong>
+                                                            <strong class="card-title">Engine Check <span id="en-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="engine_check" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Transmission</strong>
+                                                            <strong class="card-title">Transmission <span id="tr-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="transmission" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Brakes</strong>
+                                                            <strong class="card-title">Brakes <span id="br-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="brakes" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Suspension Steering Controls</strong>
+                                                            <strong class="card-title">Steering Controls <span id="stcr-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id="st_ct" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">OBD <span id="obid-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id = "obd" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Seats <span id="sts-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id="seats" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Dashboard / Roof Controls <span id="db-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id="dashboard" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">General Upholstery <span id="up-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id="upholstery" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">AC / Heater <span id="ac-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id="ac_heater" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Exterior Lights <span id="exl-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id="ext_lt" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Exhaust Check <span id="ex-score" class="pull-right">100%</span></strong>
+                                                        </div>
+                                                        <div id="exhaust" class="card-body"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong class="card-title">Suspension Steering Controls <span id="sst-score" class="pull-right">100%</span></strong>
                                                         </div>
                                                         <div id="sus_st_ct" class="card-body"></div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class = "row">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Steering Controls</strong>
-                                                        </div>
-                                                        <div id="st_ct" class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">OBD</strong>
-                                                        </div>
-                                                        <div id = "obd" class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Seats</strong>
-                                                        </div>
-                                                        <div id="seats" class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Power / Manual Windows and Central Lock</strong>
+                                                            <strong class="card-title">Power / Manual Windows and Central Lock <span id="pw-score">100%</span></strong>
                                                         </div>
                                                         <div id="power" class="card-body"></div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class = "row">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong class="card-title">Dashboard / Roof Controls</strong>
-                                                        </div>
-                                                        <div id="dashboard" class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">General Upholstery</strong>
-                                                        </div>
-                                                        <div id="upholstery" class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">AC / Heater</strong>
-                                                        </div>
-                                                        <div id="ac_heater" class="card-body"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong class="card-title">Electrical Electronics</strong>
+                                                            <strong class="card-title">Electrical Electronics <span id="el-score">100%</span></strong>
                                                         </div>
                                                         <div id="elect" class="card-body"></div>
                                                     </div>
@@ -529,6 +534,8 @@
           //$('#bootstrap-data-table-export').DataTable();
           $('table.table table-striped table-bordered').dataTable();
           loadOwners();
+          var arr = [0,1,2,3,7,9,0,1,2,2,1,0,1,1,1,1];
+          calculateScore(arr);
         } );
 
         var myTable = $('#makes')
@@ -608,7 +615,8 @@
             $('#inspection-info').show();
             var id = $(this).attr("id");
             var date = $(this).attr("date");
-            $('#v-num').html(name+' Inspection(s)');
+            //$('#info-head').prepend(id+' ');
+            $('#info-head').html(id+ ' Inspection Details for '+date+ ' Inspection');
             $('#inspections').dataTable().fnClearTable();
             loadInspectionDetails(id, date);
         });
@@ -640,7 +648,7 @@
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             $.each(data, function(k, v){
-                var fullname = '<td><span role="button" id = "'+v.fullname+'" class="brand" name = "'+v.fullname+'">'+v.fullname+'</span></td>';
+                var fullname = '<td><span role="button" id = "'+v.ID+'" class="brand" name = "'+v.fullname+'">'+v.fullname+'</span></td>';
                 $('#makes').dataTable().fnAddData( [
                     fullname
                     // "Make",
@@ -750,6 +758,34 @@
                 }
             });
         }
+        
+        function calculateScore(section){
+            var countOk = 0; var countNok = 0; var countNA = 0; var countNull = 0; countAll = 0;
+            for (var i = 0; i < section.length; i++){
+                if (section[i] == 1){
+                    countOk += 1;
+                }
+                else if(section[i] == 2){
+                    countNok += 1;
+                }
+                else if(section[i] == 0){
+                    countNA += 1;
+                }
+                else{
+                    countNull += 1;
+                }
+                countAll ++;
+            }
+            var score = parseFloat((countOk/countAll)*100);
+            // console.log(section);
+            // console.log('Count 1: '+countOk);
+            // console.log('Count 2: '+countNok);
+            // console.log('Count 0: '+countNA);
+            // console.log('Count others: '+countNull);
+            // console.log('Count All: '+countAll);
+            // console.log(score);
+            return score.toFixed(2);
+        }
 
         function populateCards(details){
             $('#equipment').empty();
@@ -760,7 +796,7 @@
             $('#mirrors').empty();
             $('#fl_ft').empty();
             $('#exhaust').empty();
-            $('#engine').empty();
+            $('#engine_check').empty();
             $('#transmission').empty();
             $('#brakes').empty();
             $('#sus_st_ct').empty();
@@ -773,10 +809,26 @@
             $('#elect').empty();
             $('#obd').empty();
 
-            var dets = {};
+            var dets = {}; var acc = {};
+            var br = []; var eq=[];var bf = []; var el=[];var en = []; var ex=[];var tr = []; var sts=[];var pw = []; var obid=[];
+            var db = []; var up=[];var sst = []; var stcr=[];var ac = []; var fftr=[];var mrs = []; var exl=[];var mc = []; var doc=[];
+            var state = '';
             $.each(details, function(k, v){
                 $.each(v, function(key, value){
-                    dets[key] = value;
+                    if (value == 0){
+                        state = "N/A";
+                    }
+                    else if(value == 1){
+                        state = "OK";
+                    }
+                    else if (value == 2){
+                        state = "NOT OK";
+                    }
+                    else
+                        state = '-';
+                    
+                    acc[key] = value;
+                    dets[key] = state;
                 });
             });
 
@@ -787,7 +839,9 @@
                                 '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
                                 '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
                             '</table>';
-                
+            
+            eq.push(acc.Tools, acc.Jack, acc.Jack_Handle, acc.Wheel_Spanner, acc.Wheel_Spanner);
+
             var exhaust = '<table>'+
                                 '<tr><td>Sound: </td><td><strong>'+dets.Exhaust_Sound+'</strong></td></tr>'+
                                 '<tr><td>Joint: </td><td><strong>'+dets.Exhaust_Joint+'</strong></td></tr>'+
@@ -795,7 +849,9 @@
                                 '<tr><td>Leakage: </td><td><strong>'+dets.Exhaust_Leakage+'</strong></td></tr>'+
                                 '<tr><td>Oil Trace: </td><td><strong>'+dets.Exhaust_Pipe_Oil_Trace+'</strong></td></tr>'+
                             '</table>';
-                
+            
+            ex.push(acc.Exhaust_Sound, acc.Exhaust_Joint, acc.Catalytic_Converter, acc.Exhaust_Leakage, acc.Exhaust_Pipe_Oil_Trace);
+
             var elect = '<table>'+
                                 '<tr><td>Battery Terminals: </td><td><strong>'+dets.Battery_Terminals+'</strong></td></tr>'+
                                 '<tr><td>Battery Charging: </td><td><strong>'+dets.Battery_Charging+'</strong></td></tr>'+
@@ -803,7 +859,9 @@
                                 '<tr><td>Battery Present: </td><td><strong>'+dets.Battery_Present+'</strong></td></tr>'+
                                 '<tr><td>Tampered Wiring: </td><td><strong>'+dets.Tampered_Wiring_Harness+'</strong></td></tr>'+
                             '</table>';
-                
+            
+            el.push(acc.Battery_Terminals, acc.Battery_Charging, acc.Battery_Malfunction_Indicator, acc.Battery_Present, acc.Tampered_Wiring_Harness);
+
             var mirrors = '<table>'+
                                 '<tr><td>Right Mirror: </td><td><strong>'+dets.Right_Mirror+'</strong></td></tr>'+
                                 '<tr><td>Left Mirror: </td><td><strong>'+dets.Left_Mirror+'</strong></td></tr>'+
@@ -812,14 +870,18 @@
                                 '<tr><td>Right Mirror Broken: </td><td><strong>'+dets.Right_Mirror_Broken+'</strong></td></tr>'+
                                 '<tr><td>Left Mirror Broken: </td><td><strong>'+dets.Left_Mirror_Broken+'</strong></td></tr>'+
                             '</table>';
-                
+            
+            mrs.push(acc.Right_Mirror, acc.Left_Mirror, acc.Right_Mirror_Control, acc.Left_Mirror_Control, acc.Right_Mirror_Broken, acc.Left_Mirror_Broken)                ;
+                            
             var brakes = '<table>'+
                                 '<tr><td>Brake Pads: </td><td><strong>'+dets.Brake_Pads+'</strong></td></tr>'+
                                 '<tr><td>Discs: </td><td><strong>'+dets.Discs+'</strong></td></tr>'+
                                 '<tr><td>Parking Hand: </td><td><strong>'+dets.Parking_Hand+'</strong></td></tr>'+
                                 '<tr><td>Brakes OK: </td><td><strong>'+dets.Brakes_OK+'</strong></td></tr>'+
                             '</table>';
-                
+            
+            br.push(acc.Brake_Pads, acc.Discs, acc.Parking_Hand, acc.Brakes_OK)                            ;
+
             var ext_lt = '<table>'+
                                 '<tr><td>Right Head Light: </td><td><strong>'+dets.Right_Headlight+'</strong></td></tr>'+
                                 '<tr><td>Left Head Light: </td><td><strong>'+dets.Left_Headlight+'</strong></td></tr>'+
@@ -828,84 +890,309 @@
                                 '<tr><td>Reverse Light: </td><td><strong>'+dets.Reverse_Light+'</strong></td></tr>'+
                                 '<tr><td>Fog Lights: </td><td><strong>'+dets.Fog_Lights+'</strong></td></tr>'+
                             '</table>';
-                
-            var transmission = '<table>'+
-                                '<tr><td>Gear Converted: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Gear Delay: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Gear Surge: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Gear Repair History: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>Gear Jerk: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                                '<tr><td>4WD Active: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var trans = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
-                
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
+            
+            exl.push(acc.Right_Headlight, acc.Left_Headlight, acc.Right_Taillight, acc.Left_Taillight, acc.Reverse_Light, acc.Fog_Lights)                ;
 
-            $('#equipment').append(equipment);
-            $('#exhaust').append(exhaust);
-            $('#mirrors').append(mirrors);
-            $('#brakes').append(brakes);
+            var transmission = '<table>'+
+                                '<tr><td>Gear Converted: </td><td><strong>'+dets.Gear_Not_Converted+'</strong></td></tr>'+
+                                '<tr><td>Gear Delay: </td><td><strong>'+dets.Gear_Delay+'</strong></td></tr>'+
+                                '<tr><td>Gear Surge: </td><td><strong>'+dets.Gear_Surge+'</strong></td></tr>'+
+                                '<tr><td>Gear Repair History: </td><td><strong>'+dets.Gear_Repair_History+'</strong></td></tr>'+
+                                '<tr><td>Gear Jerk: </td><td><strong>'+dets.Gear_Jerk+'</strong></td></tr>'+
+                                '<tr><td>4WD Active: </td><td><strong>'+dets.FWD_Active+'</strong></td></tr>'+
+                            '</table>';
+            
+            tr.push(acc.Gear_Not_Converted, acc.Gear_Delay, acc.Gear_Surge, acc.Gear_Repair_History, acc.Gear_Jerk, acc.FWD_Active);
+                            
+            var ac_heater = '<table>'+
+                                '<tr><td>Cooling: </td><td><strong>'+dets.Cooling+'</strong></td></tr>'+
+                                '<tr><td>Blower: </td><td><strong>'+dets.Blower+'</strong></td></tr>'+
+                                '<tr><td>A.C Fan: </td><td><strong>'+dets.AC_Fan+'</strong></td></tr>'+
+                                '<tr><td>Condensor: </td><td><strong>'+dets.Condensor+'</strong></td></tr>'+
+                                '<tr><td>Compressor: </td><td><strong>'+dets.Compressor+'</strong></td></tr>'+
+                                '<tr><td>A.C Repair History: </td><td><strong>'+dets.AC_No_Repair_History+'</strong></td></tr>'+
+                            '</table>';
+            ac.push(acc.Cooling, acc.Blower, acc.AC_Fan, acc.Condensor, acc.Compressor, acc.AC_No_Repair_History);
+
+            var st_ct = '<table>'+
+                                '<tr><td>Lights Lever: </td><td><strong>'+dets.Lights_Lever+'</strong></td></tr>'+
+                                '<tr><td>Washer Lever: </td><td><strong>'+dets.Washer_Lever+'</strong></td></tr>'+
+                                '<tr><td>Wind Screen Lever: </td><td><strong>'+dets.Wind_Screen_Lever+'</strong></td></tr>'+
+                                '<tr><td>Steering Wheel: </td><td><strong>'+dets.Steering_Wheel+'</strong></td></tr>'+
+                                '<tr><td>Horn: </td><td><strong>'+dets.Horn+'</strong></td></tr>'+
+                                '<tr><td>Volume Control: </td><td><strong>'+dets.Volume_Control+'</strong></td></tr>'+
+                                '<tr><td>Temperature Control: </td><td><strong>'+dets.Temperature_Control+'</strong></td></tr>'+
+                                '<tr><td>Phone Dial Control: </td><td><strong>'+dets.Phone_Dial_Control+'</strong></td></tr>'+
+                            '</table>';
+            stcr.push(acc.Lights_Lever, acc.Washer_Lever, acc.Wind_Screen_Lever, acc.Steering_Wheel, acc.Horn, acc.Volume_Control, acc.Temperature_Control, acc.Phone_Dial_Control)   ;
+
+            var power = '<table>'+
+                                '<tr><td>Front Window Lever (Right): </td><td><strong>'+dets.RightF_Window_Lever+'</strong></td></tr>'+
+                                '<tr><td>Front Window Lever (Left): </td><td><strong>'+dets.LeftF_Window_Lever+'</strong></td></tr>'+
+                                '<tr><td>Rear Window Lever (Right): </td><td><strong>'+dets.RightR_Window_Lever+'</strong></td></tr>'+
+                                '<tr><td>Rear Window Lever (Left): </td><td><strong>'+dets.LeftR_Window_Lever+'</strong></td></tr>'+
+                                '<tr><td>Auto Lock: </td><td><strong>'+dets.Autolock+'</strong></td></tr>'+
+                                '<tr><td>Windows Safety Lock: </td><td><strong>'+dets.Window_Safety_Lock+'</strong></td></tr>'+
+                                '<tr><td>Auto Window Mechanism: </td><td><strong>'+dets.Auto_Window_Mech+'</strong></td></tr>'+
+                                '<tr><td>Manual Window Mechanism: </td><td><strong>'+dets.Manual_Window_Mech+'</strong></td></tr>'+
+                            '</table>';
+            pw.push(acc.RightF_Window_Lever, acc.LeftF_Window_Lever, acc.RightR_Window_Lever, acc.LeftR_Window_Lever, acc. Autolock, acc.Window_Safety_Lock, acc.Auto_Window_Mech, acc.Manual_Window_Mech);
+                            
+            var upholstery = '<table>'+
+                                '<tr><td>Roof Upholstery: </td><td><strong>'+dets.Roof_Upholstery+'</strong></td></tr>'+
+                                '<tr><td>Floor Upholstery: </td><td><strong>'+dets.Floor_Upholstery+'</strong></td></tr>'+
+                                '<tr><td>Door Upholstery: </td><td><strong>'+dets.Door_Upholstery+'</strong></td></tr>'+
+                                '<tr><td>Clean Dashboard: </td><td><strong>'+dets.Clean_Dashboard+'</strong></td></tr>'+
+                                '<tr><td>Sunshades: </td><td><strong>'+dets.Sunshades+'</strong></td></tr>'+
+                                '<tr><td>Boot Carpet: </td><td><strong>'+dets.Boot_Carpet+'</strong></td></tr>'+
+                                '<tr><td>Boot Board: </td><td><strong>'+dets.Boot_Board+'</strong></td></tr>'+
+                                '<tr><td>Driver Seat Upholstery: </td><td><strong>'+dets.Driver_Seat_Upholstery+'</strong></td></tr>'+
+                                '<tr><td>Passenger Seat Upholstery: </td><td><strong>'+dets.Passenger_Seat_Upholstery+'</strong></td></tr>'+
+                                '<tr><td>Rear Seat Upholstery: </td><td><strong>'+dets.Rear_Seat_Upholstery+'</strong></td></tr>'+
+                            '</table>';
+            up.push(acc.Roof_Upholstery, acc.Floor_Upholstery, acc.Door_Upholstery, acc.Clean_Dashboard, acc.Sunshades, acc.Boot_Carpet, acc.Boot_Board, acc.Driver_Seat_Upholstery, acc.Passenger_Seat_Upholstery, acc.Rear_Seat_Upholstery);
+                            
+            var equipment = '<table>'+
+                                '<tr><td>Tools: </td><td><strong>'+dets.Tools+'</strong></td></tr>'+
+                                '<tr><td>Jack: </td><td><strong>'+dets.Jack+'</strong></td></tr>'+
+                                '<tr><td>Jack Handle: </td><td><strong>'+dets.Jack_Handle+'</strong></td></tr>'+
+                                '<tr><td>Wheel Spanner: </td><td><strong>'+dets.Wheel_Spanner+'</strong></td></tr>'+
+                                '<tr><td>C - Caution: </td><td><strong>'+dets.Caution_Sign+'</strong></td></tr>'+
+                            '</table>';
+            eq.push(acc.Tools, acc.Jack, acc.Jack_Handle, acc.Wheel_Spanner, acc.Caution_Sign)    ;
+
+            var sus_st_ct = '<table>'+
+                                '<tr><td>Ball Joints: </td><td><strong>'+dets.Ball_Joints+'</strong></td></tr>'+
+                                '<tr><td>Z - Links: </td><td><strong>'+dets.Zlinks+'</strong></td></tr>'+
+                                '<tr><td>Front Brushes: </td><td><strong>'+dets.Front_Brushes+'</strong></td></tr>'+
+                                '<tr><td>Front Shocks: </td><td><strong>'+dets.Front_Shocks+'</strong></td></tr>'+
+                                '<tr><td>Tie Rod: </td><td><strong>'+dets.Tie_Rod+'</strong></td></tr>'+
+                                '<tr><td>Rack End: </td><td><strong>'+dets.Rack_End+'</strong></td></tr>'+
+                                '<tr><td>Rear Brushes: </td><td><strong>'+dets.Rear_Brushes+'</strong></td></tr>'+
+                                '<tr><td>Rear Shocks: </td><td><strong>'+dets.Rear_Shocks+'</strong></td></tr>'+
+                                '<tr><td>Height Control: </td><td><strong>'+dets.Height_Control+'</strong></td></tr>'+
+                                '<tr><td>Height Control Unit: </td><td><strong>'+dets.Height_Control_Unit+'</strong></td></tr>'+
+                            '</table>';
+            sst.push(acc.Ball_Joints, acc.Zlinks, acc.Front_Brushes, acc.Front_Shocks, acc.Tie_Rod, acc.Rack_End, acc.Rear_Brushes, acc.Rear_Shocks, acc.Height_Control, acc.Height_Control_Unit);
+
+            var dashboard = '<table>'+
+                                '<tr><td>Dashboard Lights: </td><td><strong>'+dets.Dashboard_Lights+'</strong></td></tr>'+
+                                '<tr><td>Interior Lights: </td><td><strong>'+dets.Interior_Lights+'</strong></td></tr>'+
+                                '<tr><td>Dashboard Control AC: </td><td><strong>'+dets.Dashboard_Control_AC+'</strong></td></tr>'+
+                                '<tr><td>Dashboard Control Defog: </td><td><strong>'+dets.Dashboard_Control_Defog+'</strong></td></tr>'+
+                                '<tr><td>Dashboard COntrol Hazard Lights: </td><td><strong>'+dets.Dashboard_Control_Hazard_Lights+'</strong></td></tr>'+
+                                '<tr><td>Dashboard Control Parking Button: </td><td><strong>'+dets.Dashboard_Control_Parking_Button+'</strong></td></tr>'+
+                                '<tr><td>Audio: </td><td><strong>'+dets.Audio+'</strong></td></tr>'+
+                                '<tr><td>Video: </td><td><strong>'+dets.Video+'</strong></td></tr>'+
+                                '<tr><td>Cigarette Lighter: </td><td><strong>'+dets.Cigarette_Lighter+'</strong></td></tr>'+
+                                '<tr><td>Fuelcap Release Lever: </td><td><strong>'+dets.Fuelcap_Release_Lever+'</strong></td></tr>'+
+                                '<tr><td>Bonnet Release Lever: </td><td><strong>'+dets.Bonnet_Release_Lever+'</strong></td></tr>'+
+                            '</table>';
+            db.push(acc.Dashboard_Lights, acc.Interior_Lights, acc.Dashboard_Control_AC, acc.Dashboard_Control_Defog, acc.Dashboard_Control_Hazard_Lights, 
+                    acc.Dashboard_Control_Parking_Button, acc.Audio, acc.Video, acc.Cigarette_Lighter, acc.Fuelcap_Release_Lever, acc.Bonnet_Release_Lever);
+
+            var seats = '<table>'+
+                            '<tr><td>Seat Adjuster Recliner (Right): </td><td><strong>'+dets.Right_Seat_Adjuster_Recliner+'</strong></td></tr>'+
+                            '<tr><td>Seat Adjuster Recliner (Left): </td><td><strong>'+dets.Left_Seat_Adjuster_Recliner+'</strong></td></tr>'+
+                            '<tr><td>Seat Adjuster Lear Track (Right): </td><td><strong>'+dets.Right_Seat_Adjuster_Lear_Track+'</strong></td></tr>'+
+                            '<tr><td>Seat Adjuster Lear Track (Left): </td><td><strong>'+dets.Left_Seat_Adjuster_Lear_Track+'</strong></td></tr>'+
+                            '<tr><td>Seat Adjuster Tracker OK: </td><td><strong>'+dets.Seat_Adjuster_Tracker+'</strong></td></tr>'+
+                            '<tr><td>Right Seat Belt: </td><td><strong>'+dets.Right_Seat_Belt+'</strong></td></tr>'+
+                            '<tr><td>Left Seat Belt: </td><td><strong>'+dets.Left_Seat_Belt+'</strong></td></tr>'+
+                            '<tr><td>Rear Seat Belt: </td><td><strong>'+dets.Rear_Seat_Belt+'</strong></td></tr>'+
+                            '<tr><td>Head Rest: </td><td><strong>'+dets.Head_Rest+'</strong></td></tr>'+
+                            '<tr><td>Arm Rest: </td><td><strong>'+dets.Arm_Rest+'</strong></td></tr>'+
+                            '<tr><td>Glove Box: </td><td><strong>'+dets.Glove_Box+'</strong></td></tr>'+
+                        '</table>';
+            sts.push(acc.Right_Seat_Adjuster_Recliner, acc.Left_Seat_Adjuster_Recliner, acc.Right_Seat_Adjuster_Lear_Track, acc.Left_Seat_Adjuster_Lear_Track, acc.Seat_Adjuster_Tracker, 
+                    acc.Right_Seat_Belt, acc.Left_Seat_Belt, acc.Rear_Seat_Belt, acc.Head_Rest, acc.Arm_Rest, acc.Glove_Box);
+
+            var mech = '<table>'+
+                            '<tr><td>Trunk Lock: </td><td><strong>'+dets.Trunk_Lock+'</strong></td></tr>'+
+                            '<tr><td>Door Fittings (Front Right): </td><td><strong>'+dets.Front_Door_Fitting_RH+'</strong></td></tr>'+
+                            '<tr><td>Door Fittings (Front Left): </td><td><strong>'+dets.Front_Door_Fitting_LH+'</strong></td></tr>'+
+                            '<tr><td>Door Fittings (Rear Right): </td><td><strong>'+dets.Rear_Door_Fitting_RH+'</strong></td></tr>'+
+                            '<tr><td>Door Fittings (Rear Left): </td><td><strong>'+dets.Rear_Door_Fitting_LH+'</strong></td></tr>'+
+                            '<tr><td>Door Levers (Front Right): </td><td><strong>'+dets.Front_Door_Levers_RH+'</strong></td></tr>'+
+                            '<tr><td>Door Levers (Front Left): </td><td><strong>'+dets.Front_Door_Levers_LH+'</strong></td></tr>'+
+                            '<tr><td>Door Levers (Rear Right): </td><td><strong>'+dets.Rear_Door_Levers_RH+'</strong></td></tr>'+
+                            '<tr><td>Door Levers (Rear Left): </td><td><strong>'+dets.Rear_Door_Levers_LH+'</strong></td></tr>'+
+                            '<tr><td>Front Windshield: </td><td><strong>'+dets.Front_Windshield+'</strong></td></tr>'+
+                            '<tr><td>Rear Windshield: </td><td><strong>'+dets.Rear_Windshield+'</strong></td></tr>'+
+                            '<tr><td>Door Window (Front Right): </td><td><strong>'+dets.Front_Door_Window_RH+'</strong></td></tr>'+
+                            '<tr><td>Door Window (Front Left): </td><td><strong>'+dets.Front_Door_Window_LH+'</strong></td></tr>'+
+                            '<tr><td>Door Window (Rear Right): </td><td><strong>'+dets.Rear_Door_Window_RH+'</strong></td></tr>'+
+                            '<tr><td>Door Window (Rear Left): </td><td><strong>'+dets.Rear_Door_Window_LH+'</strong></td></tr>'+
+                            '<tr><td>Underbody Shields: </td><td><strong>'+dets.Underbody_Shields+'</strong></td></tr>'+
+                            '<tr><td>Fender Shields: </td><td><strong>'+dets.Fender_Shields+'</strong></td></tr>'+
+                            '<tr><td>Front Spoiler: </td><td><strong>'+dets.Front_Spoiler+'</strong></td></tr>'+
+                            '<tr><td>Rear Spoiler: </td><td><strong>'+dets.Rear_Spoiler+'</strong></td></tr>'+
+                        '</table>';
+            mc.push(acc.Trunk_Lock, acc.Front_Door_Fitting_RH, acc.Front_Door_Fitting_LH, acc.Rear_Door_Fitting_RH, acc.Rear_Door_Fitting_LH, acc.Front_Door_Levers_RH, acc.Front_Door_Levers_LH,
+                    acc.Rear_Door_Levers_RH, acc.Rear_Door_Levers_LH, acc.Front_Windshield, acc.Rear_Windshield, acc.Front_Door_Window_RH, acc.Front_Door_Window_LH, acc.Rear_Door_Window_RH, acc.Rear_Door_Window_LH,
+                    acc.Underbody_Shields, acc.Fender_Shields, acc.Front_Spoiler, acc.Rear_Spoiler);
+
+            var engine_check = '<table>'+
+                                    '<tr><td>Wires: </td><td><strong>'+dets.Wires+'</strong></td></tr>'+
+                                    '<tr><td>Hoses: </td><td><strong>'+dets.Hoses+'</strong></td></tr>'+
+                                    '<tr><td>Belts: </td><td><strong>'+dets.Belt+'</strong></td></tr>'+
+                                    '<tr><td>Pulley: </td><td><strong>'+dets.Pulley+'</strong></td></tr>'+
+                                    '<tr><td>Head Gasket: </td><td><strong>'+dets.Head_Gasket+'</strong></td></tr>'+
+                                    '<tr><td>Engine Noise: </td><td><strong>'+dets.Engine_Noise+'</strong></td></tr>'+
+                                    '<tr><td>Engine Mount: </td><td><strong>'+dets.Engine_Mount+'</strong></td></tr>'+
+                                    '<tr><td>Gear Mount: </td><td><strong>'+dets.Gear_Mount+'</strong></td></tr>'+
+                                    '<tr><td>Radiator Fan: </td><td><strong>'+dets.Radiator_Fan+'</strong></td></tr>'+
+                                    '<tr><td>Radiator: </td><td><strong>'+dets.Radiator+'</strong></td></tr>'+
+                                    '<tr><td>Suction Fan: </td><td><strong>'+dets.Suction_Fan+'</strong></td></tr>'+
+                                    '<tr><td>Starter Operation: </td><td><strong>'+dets.Starter_Operation+'</strong></td></tr>'+
+                                    '<tr><td>Engine Vibration: </td><td><strong>'+dets.Engine_Vibration+'</strong></td></tr>'+
+                                    '<tr><td>Engine Worked On: </td><td><strong>'+dets.Engine_Worked_On+'</strong></td></tr>'+
+                                    '<tr><td>Engine Misfire: </td><td><strong>'+dets.Engine_Misfire+'</strong></td></tr>'+
+                                    '<tr><td>Tappet Sound: </td><td><strong>'+dets.Tappet_Sound+'</strong></td></tr>'+
+                                    '<tr><td>Knock Sound: </td><td><strong>'+dets.Knock_Sound+'</strong></td></tr>'+
+                                    '<tr><td>Overheating History: </td><td><strong>'+dets.Overheating_History+'</strong></td></tr>'+
+                                    '<tr><td>Coolant Reservoir: </td><td><strong>'+dets.Coolant_Reservoir+'</strong></td></tr>'+
+                                    '<tr><td>Engine Sludge: </td><td><strong>'+dets.Engine_Sludge+'</strong></td></tr>'+
+                                    '<tr><td>Engine Smoke: </td><td><strong>'+dets.Engine_Smoke+'</strong></td></tr>'+
+                                    '<tr><td>Engine Smoke Likelihood: </td><td><strong>'+dets.Engine_Likely_Smoke+'</strong></td></tr>'+
+                                '</table>';
+            en.push(acc.Wires, acc.Hoses, acc.Belt, acc.Pulley, acc.Head_Gasket, acc.Engine_Noise, acc.Engine_Mount, acc.Gear_Mount, acc.Radiator_Fan, acc.Radiator, acc.Suction_Fan, acc.Starter_Operation,
+                    acc.Engine_Vibration, acc.Engine_Worked_On, acc.Engine_Misfire, acc.Tappet_Sound, acc.Knock_Sound, acc.Overheating_History, acc.Coolant_Reservoir, acc.Engine_Sludge, acc.Engine_Smoke, acc.Engine_Likely_Smoke);
+
+            var obd = '<table>'+
+                            '<tr><td>Crank Shaft Sensor: </td><td><strong>'+dets.Crank_Shaft_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Camshaft Sensor: </td><td><strong>'+dets.Camshaft_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Oxygen Sensor: </td><td><strong>'+dets.Oxygen_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Map Sensor: </td><td><strong>'+dets.Map_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Throttle Position Sensor: </td><td><strong>'+dets.Throttle_Position_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Coolant Sensor: </td><td><strong>'+dets.Coolant_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Airflow Sensor: </td><td><strong>'+dets.Airflow_Sensor+'</strong></td></tr>'+
+                            '<tr><td>TPMS: </td><td><strong>'+dets.TPMS+'</strong></td></tr>'+
+                            '<tr><td>EVAP: </td><td><strong>'+dets.EVAP+'</strong></td></tr>'+
+                            '<tr><td>ABS: </td><td><strong>'+dets.ABS+'</strong></td></tr>'+
+                            '<tr><td>SRS: </td><td><strong>'+dets.SRS+'</strong></td></tr>'+
+                            '<tr><td>BCM: </td><td><strong>'+dets.BCM+'</strong></td></tr>'+
+                            '<tr><td>PCM: </td><td><strong>'+dets.PCM+'</strong></td></tr>'+
+                            '<tr><td>Detonation Sensor: </td><td><strong>'+dets.Detonation_Sensor+'</strong></td></tr>'+
+                            '<tr><td>EGR Sensor: </td><td><strong>'+dets.EGR_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Vehicle Speed: </td><td><strong>'+dets.Vehicle_Speed+'</strong></td></tr>'+
+                            '<tr><td>Gear Shaft / Solenoid: </td><td><strong>'+dets.Gear_Solenoid+'</strong></td></tr>'+
+                            '<tr><td>Catalyst Sensor: </td><td><strong>'+dets.Catalyst_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Throttle Sensor: </td><td><strong>'+dets.Throttle_Sensor+'</strong></td></tr>'+
+                            '<tr><td>Malfunction Indicator Lamp (MIL): </td><td><strong>'+dets.MIL+'</strong></td></tr>'+
+                        '</table>';
+            obid.push(acc.Crank_Shaft_Sensor, acc.Camshaft_Sensor, acc.Oxygen_Sensor, acc.Map_Sensor, acc.Throttle_Position_Sensor, acc.Coolant_Sensor, acc.Airflow_Sensor,
+                      acc.TPMS, acc.EVAP, acc.ABS, acc.SRS, acc.BCM, acc.PCM, acc.Detonation_Sensor, acc.EGR_Sensor, acc.Vehicle_Speed, acc.Gear_Solenoid, acc.Catalyst_Sensor, 
+                      acc.Throttle_Sensor, acc.MIL);
+
+            var documentation = '<table>'+
+                                    '<tr><td>Vehicle License: </td><td><strong>'+dets.License+'</strong></td></tr>'+
+                                    '<tr><td>Vehicle License Original: </td><td><strong>'+dets.License_Original+'</strong></td></tr>'+
+                                    '<tr><td>ECMR: </td><td><strong>'+dets.ECMR+'</strong></td></tr>'+
+                                    '<tr><td>ECMR Original: </td><td><strong>'+dets.ECMR_Original+'</strong></td></tr>'+
+                                    '<tr><td>Proof of Ownership: </td><td><strong>'+dets.Proof_Ownership+'</strong></td></tr>'+
+                                    '<tr><td>Proof of Ownership Original: </td><td><strong>'+dets.Proof_Ownership_Original+'</strong></td></tr>'+
+                                    '<tr><td>Road Worthiness: </td><td><strong>'+dets.Road_Worthiness+'</strong></td></tr>'+
+                                    '<tr><td>Road Worthiness Original: </td><td><strong>'+dets.Road_Worthiness_Original+'</strong></td></tr>'+
+                                    '<tr><td>Insurance Clearance: </td><td><strong>'+dets.Insurance_Clearance+'</strong></td></tr>'+
+                                    '<tr><td>Insurance Clearance Original: </td><td><strong>'+dets.Insurance_Clearance_Original+'</strong></td></tr>'+
+                                    '<tr><td>Custom Clearance: </td><td><strong>'+dets.Custom_Clearance+'</strong></td></tr>'+
+                                    '<tr><td>Custom Clearance Original: </td><td><strong>'+dets.Custom_Clearance_Original+'</strong></td></tr>'+
+                                    '<tr><td>Purchase Receipt: </td><td><strong>'+dets.Purchase_Receipt+'</strong></td></tr>'+
+                                    '<tr><td>Purchase Receipt Original: </td><td><strong>'+dets.Purchase_Receipt_Ownership+'</strong></td></tr>'+
+                                    '<tr><td>Tinted Permit: </td><td><strong>'+dets.Tinted_Permit+'</strong></td></tr>'+
+                                    '<tr><td>Tinted Permit Original: </td><td><strong>'+dets.Tinted_Permit_Original+'</strong></td></tr>'+
+                                    '<tr><td>Number Plate: </td><td><strong>'+dets.Number_Plates+'</strong></td></tr>'+
+                                    '<tr><td>Number Plate Original: </td><td><strong>'+dets.Number_Plates_Original+'</strong></td></tr>'+
+                                    '<tr><td>Number Plate Allocation: </td><td><strong>'+dets.Plate_Number_Allocation+'</strong></td></tr>'+
+                                    '<tr><td>Number Plate Allocation Original: </td><td><strong>'+dets.Plate_Number_Allocation_Original+'</strong></td></tr>'+
+                                    '<tr><td>Spare Key: </td><td><strong>'+dets.Spare_Key_Available+'</strong></td></tr>'+
+                                    '<tr><td>Vehicle Tracker: </td><td><strong>'+dets.Vehicle_Tracker+'</strong></td></tr>'+
+                                    '<tr><td>Vehicle Security: </td><td><strong>'+dets.Vehicle_Security+'</strong></td></tr>'+
+                                '</table>';
+            doc.push(acc.License, acc.License_Original, acc.ECMR, acc.ECMR_Original, acc.Proof_Ownership, acc.Proof_Ownership_Original, acc.Road_Worthiness, acc.Road_Worthiness_Original, acc.Insurance_Clearance, acc.Insurance_Clearance_Original,
+                    acc.Custom_Clearance, acc.Custom_Clearance_Original, acc.Purchase_Receipt, acc.Purchase_Receipt_Ownership, acc.Tinted_Permit, acc.Tinted_Permit_Original, acc.Number_Plates, acc.Number_Plates_Original, 
+                    acc.Plate_Number_Allocation, acc.Plate_Number_Allocation_Original, acc.Spare_Key_Available, acc.Vehicle_Tracker, acc.Vehicle_Security);
+
+            var fl_ft = '<table>'+
+                            '<tr><td>Engine Oil: </td><td><strong>'+dets.Engine_Oil+'</strong></td></tr>'+
+                            '<tr><td>Oil Pump Leakage: </td><td><strong>'+dets.Oilpump_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Oil Seal Leakage: </td><td><strong>'+dets.Oilseal_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Engine Oil Valve Cover: </td><td><strong>'+dets.Engine_Oil_Valve_Cover+'</strong></td></tr>'+
+                            '<tr><td>Axle Oil No Leakage: </td><td><strong>'+dets.Axle_Oil_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Gear Oil Leakage: </td><td><strong>'+dets.Gear_Oil_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Gear Oil Seal: </td><td><strong>'+dets.Gear_Oil_Seal+'</strong></td></tr>'+
+                            '<tr><td>Gear Oil: </td><td><strong>'+dets.Gear_Oil+'</strong></td></tr>'+
+                            '<tr><td>Brake Oil: </td><td><strong>'+dets.Brake_Oil+'</strong></td></tr>'+
+                            '<tr><td>Brake Oil Leakage: </td><td><strong>'+dets.Brake_Oil_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Brake Oil Hose Leakage: </td><td><strong>'+dets.Brake_Oil_Hose_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Brake Caliper: </td><td><strong>'+dets.Brake_Caliper+'</strong></td></tr>'+
+                            '<tr><td>Brake Oil Pipe Leakage: </td><td><strong>'+dets.Brake_Oil_Pipe_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Power Steering Oil Gauge: </td><td><strong>'+dets.Power_Steering_Oil_Gauge+'</strong></td></tr>'+
+                            '<tr><td>Power Steering Oil: </td><td><strong>'+dets.Power_Steering_Oil+'</strong></td></tr>'+
+                            '<tr><td>Power Steering: </td><td><strong>'+dets.Power_Steering+'</strong></td></tr>'+
+                            '<tr><td>Power Steering Oil Pump: </td><td><strong>'+dets.Power_Steering_Oil_Pump+'</strong></td></tr>'+
+                            '<tr><td>Power Steering Oil Leakage: </td><td><strong>'+dets.Power_Steering_Oil_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Washer Fluid: </td><td><strong>'+dets.Washer_Fluid+'</strong></td></tr>'+
+                            '<tr><td>Washer Fluid No Leakage: </td><td><strong>'+dets.Washer_Fluid_Leakage+'</strong></td></tr>'+
+                            '<tr><td>Washer Fluid Compartment: </td><td><strong>'+dets.Washer_Fluid_Compartment+'</strong></td></tr>'+
+                        '</table>';
+            fftr.push(acc.Engine_Oil, acc.Oilpump_Leakage, acc.Oilseal_Leakage, acc.Engine_Oil_Valve_Cover, acc.Axle_Oil_Leakage, acc.Gear_Oil_Leakage, acc.Gear_Oil_Seal, acc.Gear_Oil,
+                      acc.Brake_Oil, acc.Brake_Oil_Leakage, acc.Brake_Oil_Hose_Leakage, acc.Brake_Caliper, acc.Brake_Oil_Pipe_Leakage, acc.Power_Steering_Oil_Gauge, acc.Power_Steering_Oil,
+                      acc.Power_Steering, acc.Power_Steering_Oil_Pump, acc.Power_Steering_Oil_Leakage, acc.Washer_Fluid, acc.Washer_Fluid_Leakage, acc.Washer_Fluid_Compartment);
+
+            var bodyframe = '<table>'+
+                                '<tr><td>Radiator Core Support: </td><td><strong>'+dets.Radiator_Core_Support+'</strong></td></tr>'+
+                                '<tr><td>Strut Tower Apron (Right): </td><td><strong>'+dets.Right_Strut_Tower_Apron+'</strong></td></tr>'+
+                                '<tr><td>Strut Tower Apron (Left): </td><td><strong>'+dets.Left_Strut_Tower_Apron+'</strong></td></tr>'+
+                                '<tr><td>Front Rail (Right): </td><td><strong>'+dets.Right_Front_Rail+'</strong></td></tr>'+
+                                '<tr><td>Front Rail (Left): </td><td><strong>'+dets.Left_Front_Rail+'</strong></td></tr>'+
+                                '<tr><td>Cowl Panel Firewall: </td><td><strong>'+dets.Cowl_Panel_Firewall+'</strong></td></tr>'+
+                                '<tr><td>A Pillar (Right): </td><td><strong>'+dets.RightA_Pillar+'</strong></td></tr>'+
+                                '<tr><td>A Pillar (Left): </td><td><strong>'+dets.LeftA_Pillar+'</strong></td></tr>'+
+                                '<tr><td>B Pillar (Right): </td><td><strong>'+dets.RightB_Pillar+'</strong></td></tr>'+
+                                '<tr><td>B Pillar (Left): </td><td><strong>'+dets.LeftB_Pillar+'</strong></td></tr>'+
+                                '<tr><td>C Pillar (Right): </td><td><strong>'+dets.RightC_Pillar+'</strong></td></tr>'+
+                                '<tr><td>C Pillar (Left): </td><td><strong>'+dets.LeftC_Pillar+'</strong></td></tr>'+
+                                '<tr><td>D Pillar (Right): </td><td><strong>'+dets.RightD_Pillar+'</strong></td></tr>'+
+                                '<tr><td>D Pillar (Left): </td><td><strong>'+dets.LeftD_Pillar+'</strong></td></tr>'+
+                                '<tr><td>Rear Lock Pillar (Right): </td><td><strong>'+dets.Right_Rear_Lock_Pillar+'</strong></td></tr>'+
+                                '<tr><td>Rear Lock Pillar (Left): </td><td><strong>'+dets.Left_Rear_Lock_Pillar+'</strong></td></tr>'+
+                                '<tr><td>Boot Floor: </td><td><strong>'+dets.Boot_Floor+'</strong></td></tr>'+
+                                '<tr><td>Boot Lock Pillar: </td><td><strong>'+dets.Boot_Lock_Pillar+'</strong></td></tr>'+
+                                '<tr><td>Engraved: </td><td><strong>'+dets.Engraved+'</strong></td></tr>'+
+                                '<tr><td>Converted (RHD to LHD): </td><td><strong>'+dets.Converted+'</strong></td></tr>'+
+                                '<tr><td>Accident History: </td><td><strong>'+dets.Accident_History+'</strong></td></tr>'+
+                                '<tr><td>Roof: </td><td><strong>'+dets.Roof+'</strong></td></tr>'+
+                                '<tr><td>Bonnet: </td><td><strong>'+dets.Bonnet+'</strong></td></tr>'+
+                                '<tr><td>Rocker Panel (RH): </td><td><strong>'+dets.Rocker_Panel_RH+'</strong></td></tr>'+
+                                '<tr><td>Rocker Panel (LH): </td><td><strong>'+dets.Rocker_Panel_LH+'</strong></td></tr>'+
+                                '<tr><td>Chassis: </td><td><strong>'+dets.Chassis+'</strong></td></tr>'+
+                            '</table>';
+            bf.push(acc.Radiator_Core_Support, acc.Right_Strut_Tower_Apron, acc.Left_Strut_Tower_Apron, acc.Right_Front_Rail, acc.Left_Front_Rail, acc.Cowl_Panel_Firewall, acc.RightA_Pillar, acc.LeftA_Pillar,
+                    acc.RightB_Pillar, acc.LeftB_Pillar, acc.RightC_Pillar, acc.LeftC_Pillar, acc.RightD_Pillar, acc.LeftD_Pillar, acc.Right_Rear_Lock_Pillar, acc.Left_Rear_Lock_Pillar, acc.Boot_Floor,
+                    acc.Boot_Lock_Pillar, acc.Engraved, acc.Converted, acc.Accident_History, acc.Roof, acc.Bonnet, acc.Rocker_Panel_RH, acc.Rocker_Panel_LH, acc.Chassis);
+            
+            $('#equipment').append(equipment); $('#eq-score').html(calculateScore(eq)+ "%");
+            $('#exhaust').append(exhaust); $('#ex-score').html(calculateScore(ex)+ "%");
+            $('#mirrors').append(mirrors); $('#mrs-score').html(calculateScore(mrs)+ "%");
+            $('#bodyframe').append(bodyframe); $('#bf-score').html(calculateScore(bf)+ "%");
+            $('#power').append(power); $('#pw-score').html(calculateScore(pw)+ "%");
+            $('#obd').append(obd); $('#obid-score').html(calculateScore(obid)+ "%");
+            $('#fl_ft').append(fl_ft); $('#fftr-score').html(calculateScore(fftr)+ "%");
+            $('#st_ct').append(st_ct); $('#stcr-score').html(calculateScore(stcr)+ "%");
+            $('#sus_st_ct').append(sus_st_ct); $('#sst-score').html(calculateScore(sst)+ "%");
+            $('#engine_check').append(engine_check); $('#en-score').html(calculateScore(en)+ "%");
+            $('#ext_lt').append(ext_lt); $('#exl-score').html(calculateScore(exl)+ "%");
+            $('#documentation').append(documentation); $('#doc-score').html(calculateScore(doc)+ "%");
+            $('#mech').append(mech); $('#mc-score').html(calculateScore(mc)+ "%");
+            $('#dashboard').append(dashboard); $('#db-score').html(calculateScore(db)+ "%");
+            $('#seats').append(seats); $('#sts-score').html(calculateScore(sts)+ "%");
+            $('#upholstery').append(upholstery); $('#up-score').html(calculateScore(up)+ "%");
+            $('#ac_heater').append(ac_heater); $('#ac-score').html(calculateScore(ac)+ "%");
+            $('#transmission').append(transmission); $('#tr-score').html(calculateScore(tr)+ "%");
+            $('#elect').append(elect); $('#el-score').html(calculateScore(el)+ "%");
+            $('#brakes').append(brakes); $('#br-score').html(calculateScore(br)+ "%");
         }
 
 

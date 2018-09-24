@@ -482,7 +482,7 @@
                     var owner = $("[id*=owner]");
                     owner.empty().append('<option selected="selected" id="0">-- Select Vehicle Owner --</option>');
                     $.each(JSON.parse(response), function (key, val) {
-                        $("#owner").append('<option class="deptSp" value = "' + val.fullname + '" spec="' + val.ID + '">' + val.fullname + '</option>');
+                        $("#owner").append('<option class="deptSp" value = "' + val.fullname + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     });
                 }
             });
@@ -524,7 +524,7 @@
             obj.Mileage = $('#mileage').val();
             obj.Number_Plate = $('#number_plate').val();
             obj.Price = $('#price').val();
-            obj.owner = $('#owner').find('option:selected').text();
+            obj.owner = $('#owner').find('option:selected').attr('id');
             obj.Make = $('#make').find('option:selected').text();
             obj.Model = $('#model').find('option:selected').text();
             obj.Year = $('#year').find('option:selected').text();
