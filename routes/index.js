@@ -296,7 +296,7 @@ router.get('/modelsCount', function(req, res, next) {
  * @Query:
  * number_plate
  */
-router.get('/vehicles/:number_plate/:date', function(req, res, next) {
+router.get('/vehicles/:number_plate/', function(req, res, next) {
 	var query = 'SELECT * from vehicles where number_plate =?';
 	var path = 'files/'+req.params.number_plate+'/';
 	var array = [];
