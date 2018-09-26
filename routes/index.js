@@ -1073,4 +1073,21 @@ router.post('/documentation/:number_plate', function(req, res, next) {
   	});
 });
 
+router.post('/valuation/:number_plate', function(req, res, next) {
+    var postData = req.body;   
+	var np = req.params.number_plate; 
+	postData.Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Vehicle = req.params.number_plate;
+    var query = 'insert into inspections set ?';
+    db.query(query, postData, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": "Vehicle Valuation Details Updated!"}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 module.exports = router;

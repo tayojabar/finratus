@@ -533,12 +533,10 @@
     <script type="text/javascript">
         $(document).ready(function() {
           //$('#bootstrap-data-table-export').DataTable();
-          $('table.table table-striped table-bordered').dataTable();
+        //   $('table.table table-striped table-bordered').dataTable();
           loadOwners();
-          var arr = [0,1,2,3,7,9,0,1,2,2,1,0,1,1,1,1];
-          calculateScore(arr);
         } );
-
+        
         var myTable = $('#makes')
             .DataTable({
                 bAutoWidth: false,
@@ -597,6 +595,7 @@
             //$('#models').dataTable().clear();
             myTable2.row().clear();
             loadVehicles(id);
+            averageRanking(objects);
         });
 
         $(document).on("click", ".vehicle", function (e) {
