@@ -344,6 +344,26 @@ users.post('/apply', function(req, res) {
     });
 });
 
+users.post('/apply2', function(req, res) {
+    let data = {},
+        postData = req.body,
+        query =  'INSERT INTO applications Set ?';
+    data.name = postData.username;
+    data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let mailOptions = {
+        from: 'no-reply Loan35 <applications@loan35.com>',
+        to: req.body.email,
+        subject: 'Loan35 Application Successful',
+        template: 'main',
+        context: data
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        console.log(info);
+        res.send({"status": 200, "message": "New Application Added!"});
+    });
+});
+
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
     let query = 'SELECT * FROM applications INNER JOIN users ON users.ID=applications.userID';
