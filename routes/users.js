@@ -317,8 +317,10 @@ users.post('/new-owner', function(req, res, next) {
  */
 
 users.post('/apply', function(req, res) {
-    let postData = req.body,
+    let data = {},
+		postData = req.body,
         query =  'INSERT INTO applications Set ?';
+    delete postData.email;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     db.query(query, postData, function (error, results, fields) {
         if(error){
@@ -326,9 +328,9 @@ users.post('/apply', function(req, res) {
         } else {
             data.name = postData.username;
             data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-            var mailOptions = {
+            let mailOptions = {
                 from: 'no-reply Loan35 <applications@loan35.com>',
-                to: postData.email,
+                to: req.body.email,
                 subject: 'Loan35 Application Successful',
                 template: 'main',
                 context: data
@@ -336,7 +338,7 @@ users.post('/apply', function(req, res) {
 
             transporter.sendMail(mailOptions, function(error, info){
             	console.log(info);
-                res.send({"status": 200, "message": "New Application Added!", "response": results});
+                res.send({"status": 200, "message": "New Application Added!"});
             });
         }
     });
@@ -344,7 +346,7 @@ users.post('/apply', function(req, res) {
 
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
-    let query = 'SELECT * from applications';
+    let query = 'SELECT * FROM applications INNER JOIN users ON users.ID=applications.userID';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});

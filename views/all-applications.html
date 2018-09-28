@@ -101,8 +101,9 @@
                             <li class="menu-item-has-children dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
                                 <ul class="sub-menu children dropdown-menu">
-                                    <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                                    <li><i class="fa fa-table"></i><a href="/all-applications">All Users</a></li>
                                     <li><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
+                                    <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -247,7 +248,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Users</h1>
+                        <h1>All Applications</h1>
                     </div>
                 </div>
             </div>
@@ -257,7 +258,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active">All Users</li>
+                            <li class="active">All Applications</li>
                         </ol>
                     </div>
                 </div>
@@ -271,21 +272,21 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <strong class="card-title">All Users</strong>
+                            <strong class="card-title">All Applications</strong>
                         </div>
                         <div class="card-body">
                   <table id="bootstrap-data-table" class="table table-striped table-bordered">
                     <thead>
                       <tr>
-                        <th>Username</th>
                         <th>Full Name</th>
-                        <th>
-                            Role
-                        </th>
+                        <th>Phone Number</th>
+                        <th>Collateral</th>
+                        <th>Year</th>
+                        <th>Date Created</th>
                         <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody id = "users">
+                    <tbody id="applications">
                     </tbody>
                   </table>
                         </div>
@@ -331,16 +332,14 @@
         function loadUsers(){
 
             $.ajax({
-                'url': 'http://localhost:4000/user/users-list',
+                'url': 'http://localhost:4000/user/applications',
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
-                    var users = JSON.parse(data);
-                    populateDataTable(users);
+                    var applications = data.response;
+                    populateDataTable(applications);
                 },
                 'error': function (err) {
-                    //alert ('Error');
                     console.log('Error');
                 }
             });
@@ -352,13 +351,15 @@
             // clear the table before populating it with more data
             $("#bootstrap-data-table").DataTable().clear();
             var length = data.length;
-            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
+            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Verify</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             $.each(data, function(k, v){
                 $('#bootstrap-data-table').dataTable().fnAddData( [
-                    v.username,
                     v.fullname,
-                    v.Role,
+                    v.phone,
+                    v.collateral,
+                    v.year,
+                    v.date_modified,
                     action
                 ]);
             });
