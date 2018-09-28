@@ -63,7 +63,15 @@ users.post('/new-user', function(req, res, next) {
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
+			db.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
+				if (!err){
+					res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+				}
+				else{
+					res.send(JSON.stringify({"response": "Error retrieving user details. Please try a new username!"}));
+				}
+			});
+  			//res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
