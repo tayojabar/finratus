@@ -21,6 +21,9 @@
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
     "mysql": "^2.16.0",
+    "nodemailer": "^4.6.8",
+    "nodemailer-express-handlebars": "^3.0.0",
+    "nodemailer-smtp-transport": "^2.7.4",
     "sweetalert": "^2.1.0"
   },
   "devDependencies": {

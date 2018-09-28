@@ -7,6 +7,22 @@ var token;
 const fs = require('fs');
 var path = require('path');
 var moment  = require('moment');
+var nodemailer = require('nodemailer'),
+	smtpTransport = require('nodemailer-smtp-transport'),
+	hbs = require('nodemailer-express-handlebars'),
+	smtpConfig = smtpTransport({
+		service: 'Mailjet',
+		auth: {
+			user: process.env.MAILJET_KEY,
+			pass: process.env.MAILJET_SECRET
+		}
+	}),
+	options = {
+		viewPath: 'views/email',
+		extName: '.hbs'
+	};
+	transporter = nodemailer.createTransport(smtpConfig);
+transporter.use('compile', hbs(options));
 
 process.env.SECRET_KEY = "devesh";
 
@@ -308,7 +324,20 @@ users.post('/apply', function(req, res) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "message": "New Application Added!", "response": results});
+            data.name = postData.username;
+            data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            var mailOptions = {
+                from: 'no-reply Loan35 <applications@loan35.com>',
+                to: postData.email,
+                subject: 'Loan35 Application Successful',
+                template: 'main',
+                context: data
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+            	console.log(info);
+                res.send({"status": 200, "message": "New Application Added!", "response": results});
+            });
         }
     });
 });
