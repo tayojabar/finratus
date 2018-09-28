@@ -939,7 +939,7 @@ router.post('/body-frame/:number_plate', function(req, res, next) {
 	  	} else {
 			db.query('SELECT * from inspections where ID = LAST_INSERT_ID()', function(err, re, fields) {
 				if (!err){
-					res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+					res.send(JSON.stringify(re));
 				}
 				else{
 					res.send(JSON.stringify({"status": 500, "response": "Error retrieving inspection details. Please re-do Body-frame inspection!"}));
