@@ -937,7 +937,15 @@ router.post('/body-frame/:number_plate', function(req, res, next) {
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "Body - Frame Info Updated!"}));
+			db.query('SELECT * from inspections where ID = LAST_INSERT_ID()', function(err, re, fields) {
+				if (!err){
+					res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+				}
+				else{
+					res.send(JSON.stringify({"status": 500, "response": "Error retrieving inspection details. Please re-do Body-frame inspection!"}));
+				}
+			});
+  			//res.send(JSON.stringify({"status": 200, "error": null, "response": "Body - Frame Info Updated!"}));
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
