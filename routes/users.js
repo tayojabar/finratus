@@ -320,7 +320,7 @@ users.post('/apply', function(req, res) {
     let postData = req.body,
         query =  'INSERT INTO applications Set ?';
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query(query,postData, function (error, results, fields) {
+    db.query(query, postData, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
