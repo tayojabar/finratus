@@ -6,6 +6,7 @@ var jwt = require('jsonwebtoken');
 var token;
 const fs = require('fs');
 var path = require('path');
+var moment  = require('moment');
 
 process.env.SECRET_KEY = "devesh";
 
@@ -294,6 +295,36 @@ users.post('/new-owner', function(req, res, next) {
   	});
 });
 
+/**
+ * User Application (3rd Party)
+ * Payload => Firstname, Lastname, Phone, Collateral
+ */
+
+users.post('/apply', function(req, res) {
+    let postData = req.body,
+        query =  'INSERT INTO applications Set ?';
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query,postData, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "New Application Added!", "response": results});
+        }
+    });
+});
+
+/* GET User Applications. */
+users.get('/applications', function(req, res, next) {
+    let query = 'SELECT * from applications';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
+        }
+    });
+});
+
 users.use(function(req, res, next) {
     var token = req.body.token || req.headers['token'];
     var appData = {};
@@ -313,5 +344,7 @@ users.use(function(req, res, next) {
         res.status(403).json(appData);
     }
 });
+
+
 
 module.exports = users;
