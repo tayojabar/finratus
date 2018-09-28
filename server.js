@@ -70,8 +70,12 @@ app.get('/all-users', function(req, res){
     res.sendFile('all-users.html', { root: __dirname+'/views' });
   });
 
-app.get('/all-models', function(req, res){
-  res.sendFile('all-models.html', { root: __dirname+'/views' });
+app.get('/all-users', function(req, res){
+    res.sendFile('all-users.html', { root: __dirname+'/views' });
+});
+
+app.get('/all-applications', function(req, res){
+  res.sendFile('all-applications.html', { root: __dirname+'/views' });
 });
 
 app.get('/all-owners', function(req, res){
