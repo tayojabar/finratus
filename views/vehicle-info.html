@@ -224,7 +224,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Models</h1>
+                        <h1>All Vehicle Owners and Vehicles</h1>
                     </div>
                 </div>
             </div>
@@ -233,8 +233,8 @@
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Models</a></li>
-                            <li class="active">All Models</li>
+                            <li><a href="#">Vehicles</a></li>
+                            <li class="active">All Owners</li>
                         </ol>
                     </div>
                 </div>
@@ -536,7 +536,7 @@
         //   $('table.table table-striped table-bordered').dataTable();
           loadOwners();
         } );
-        
+
         var myTable = $('#makes')
             .DataTable({
                 bAutoWidth: false,
@@ -595,7 +595,7 @@
             //$('#models').dataTable().clear();
             myTable2.row().clear();
             loadVehicles(id);
-            averageRanking(objects);
+            //averageRanking(objects);
         });
 
         $(document).on("click", ".vehicle", function (e) {
