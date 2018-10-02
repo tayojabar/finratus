@@ -1,18 +1,10 @@
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host     : '140.86.3.185',
-    //port :'49436',
-    user     : 'appuser',
-    password : 'Pass@word1',
-    database : 'vehicle_inspection',
-    insecureAuth: true
-});
+// Loads the environment variables from the .env file
+require('dotenv').config();
 
-// connection.connect(function(err) {
-//     if (err) {
-//        return console.error('error connecting: ' + err.stack);
-//     }
-//     console.log('connected as id ' + connection.threadId);
-// });
+let mysql = require('mysql'),
+    config = require('./config'),
+    status = process.env.STATUS || 'development',
+    mysqlConfig = config[status],
+    connection = mysql.createConnection(mysqlConfig);
 
 module.exports = connection;

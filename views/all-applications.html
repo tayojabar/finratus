@@ -29,6 +29,32 @@
 
 </head>
 <body>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <!-- <script type="text/javascript">
+        $(document).ready(function() {
+          $('#bootstrap-data-table-export').DataTable();
+          loadRoles();
+        });
+
+        function loadRoles(){
+            $.ajax({
+                'url': 'http://localhost:4000/user/user-roles',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    $('#role').empty();
+                    $('#role').append('<option value="0">All Roles</option>');
+                    $.each(data, function(k, v) {
+                        $('#role').append('<option value="' + v.ID + '">' + v.role_name + '</option>');
+                    });
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+    </script> -->
         <!-- Left Panel -->
 
         <aside id="left-panel" class="left-panel">
@@ -75,7 +101,7 @@
                             <li class="menu-item-has-children dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
                                 <ul class="sub-menu children dropdown-menu">
-                                    <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                                    <li><i class="fa fa-table"></i><a href="/all-applications">All Users</a></li>
                                     <li><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
                                     <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
                                 </ul>
@@ -107,7 +133,7 @@
                             </form>
                         </div>
 
-                        <div class="dropdown for-notification">
+                        <!-- <div class="dropdown for-notification">
                           <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-bell"></i>
                             <span class="count bg-danger">5</span>
@@ -127,9 +153,9 @@
                                 <p>Server #3 overloaded.</p>
                             </a>
                           </div>
-                        </div>
+                        </div> -->
 
-                        <div class="dropdown for-message">
+                        <!-- <div class="dropdown for-message">
                           <button class="btn btn-secondary dropdown-toggle" type="button"
                                 id="message"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -171,7 +197,7 @@
                                 </span>
                             </a>
                           </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -192,7 +218,7 @@
                         </div>
                     </div>
 
-                    <div class="language-select dropdown" id="language-select">
+                    <!-- <div class="language-select dropdown" id="language-select">
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
                             <i class="flag-icon flag-icon-us"></i>
                         </a>
@@ -210,7 +236,7 @@
                                 <i class="flag-icon flag-icon-it"></i>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
@@ -222,7 +248,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Vehicles</h1>
+                        <h1>All Applications</h1>
                     </div>
                 </div>
             </div>
@@ -231,8 +257,8 @@
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Vehicles</a></li>
-                            <li class="active">All Vehicles</li>
+                            <li><a href="#">Users</a></li>
+                            <li class="active">All Applications</li>
                         </ol>
                     </div>
                 </div>
@@ -246,60 +272,21 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <strong class="card-title">All Vehicles</strong>
+                            <strong class="card-title">All Applications</strong>
                         </div>
                         <div class="card-body">
                   <table id="bootstrap-data-table" class="table table-striped table-bordered">
                     <thead>
                       <tr>
-                        <th>Number Plate</th>
-                        <th>Brand</th>
-                        <th>Model</th>
-                        <th>Owner</th>
-                        <th>Action</th>
+                        <th>Full Name</th>
+                        <th>Phone Number</th>
+                        <th>Collateral</th>
+                        <th>Year</th>
+                        <th>Date Created</th>
+                        <!--<th>Action</th>-->
                       </tr>
                     </thead>
-                    <tbody id = "vehicles">
-                      <!-- <tr>
-                        <td>Veh-001-18</td>
-                        <td>Toyota</td>
-                        <td>Hilux</td>
-                        <td>FST-123-TU</td>
-                        <td class=" text-center option w100">
-                          <a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>
-                          <a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Veh-001-18</td>
-                        <td>Toyota</td>
-                        <td>Hilux</td>
-                        <td>FST-123-TU</td>
-                        <td class=" text-center option w100">
-                          <a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>
-                          <a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Veh-001-18</td>
-                        <td>Toyota</td>
-                        <td>Hilux</td>
-                        <td>FST-123-TU</td>
-                        <td class=" text-center option w100">
-                          <a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>
-                          <a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Veh-001-18</td>
-                        <td>Toyota</td>
-                        <td>Hilux</td>
-                        <td>FST-123-TU</td>
-                        <td class=" text-center option w100">
-                          <a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>
-                          <a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>
-                        </td>
-                      </tr> -->
+                    <tbody id="applications">
                     </tbody>
                   </table>
                         </div>
@@ -317,7 +304,7 @@
     <!-- Right Panel -->
 
 
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
@@ -339,22 +326,20 @@
     <script type="text/javascript">
         $(document).ready(function() {
           $('#bootstrap-data-table-export').DataTable();
-          loadVehicles();
-        } );
+          loadUsers();
+        });
 
-        function loadVehicles(){
+        function loadUsers(){
 
             $.ajax({
-                'url': 'http://localhost:4000/vehicles-list',
+                'url': '/user/applications',
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
-                    var vehicles = JSON.parse(data);
-                    populateDataTable(vehicles);
+                    var applications = data.response;
+                    populateDataTable(applications);
                 },
                 'error': function (err) {
-                    //alert ('Error');
                     console.log('Error');
                 }
             });
@@ -366,17 +351,24 @@
             // clear the table before populating it with more data
             $("#bootstrap-data-table").DataTable().clear();
             var length = data.length;
-            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
+            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Verify</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             $.each(data, function(k, v){
                 $('#bootstrap-data-table').dataTable().fnAddData( [
-                    v.Number_Plate,
-                    v.Make,
-                    v.Model,
-                    v.owner,
-                    action
+                    v.fullname,
+                    v.phone,
+                    v.collateral,
+                    v.year,
+                    formatDate(v.date_created)
+                    // action
                 ]);
             });
+        }
+
+        function formatDate(timestamp) {
+            timestamp = parseInt(timestamp);
+            var date =  new Date(timestamp);
+            return date.toLocaleString();
         }
 
     </script>

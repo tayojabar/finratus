@@ -70,8 +70,12 @@ app.get('/all-users', function(req, res){
     res.sendFile('all-users.html', { root: __dirname+'/views' });
   });
 
-app.get('/all-models', function(req, res){
-  res.sendFile('all-models.html', { root: __dirname+'/views' });
+app.get('/all-users', function(req, res){
+    res.sendFile('all-users.html', { root: __dirname+'/views' });
+});
+
+app.get('/all-applications', function(req, res){
+  res.sendFile('all-applications.html', { root: __dirname+'/views' });
 });
 
 app.get('/all-owners', function(req, res){
@@ -109,5 +113,5 @@ module.exports = app;
 var server = http.createServer(app);
 
 server.listen(process.env.port || process.env.PORT || 4000, function () {
-    console.log('%s listening to %s', server.name, server.url);
+    console.log('server running on %s [%s]', process.env.PORT, process.env.STATUS);
 });
