@@ -417,7 +417,7 @@ router.get('/vehicle-owner/:owner', function(req, res, next) {
 
 /* GET specific inspections for vehicle for admin. */
 router.get('/vehicle-inspections/:number', function(req, res, next) {
-	var query = 'SELECT Vehicle, Date_Inspected from inspections where vehicle = ?';
+	var query = 'SELECT ID, Vehicle, Date_Inspected from inspections where vehicle = ?';
 	console.log(query);
 	db.query(query, [req.params.number], function (error, results, fields) {
 	  	if(error){
@@ -431,10 +431,10 @@ router.get('/vehicle-inspections/:number', function(req, res, next) {
 });
 
 /* GET inspection details for specific vehicle for admin. */
-router.get('/inspection/:number/:date', function(req, res, next) {
-	var query = 'SELECT * from inspections where vehicle = ? and Date_Inspected = ?';
+router.get('/inspection/:id', function(req, res, next) {
+	var query = 'SELECT * from inspections where ID = ?';
 	console.log(query);
-	db.query(query, [req.params.number, req.params.date], function (error, results, fields) {
+	db.query(query, [req.params.id], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -1047,6 +1047,25 @@ router.post('/valuation/:id', function(req, res, next) {
 	var Vehicle = req.params.number_plate;
 	var payload = [postData.FirstSale_Value, postData.Market_Valuation, Date_Modified, id];
     var query = 'update inspections set FirstSale_Value = ?, Market_Valuation = ?, Date_Modified = ? where ID = ?';
+    db.query(query, payload, function (error, results, fields) {
+	  	if(error){
+	  		res.send({"status": 500, "error": error, "response": null}); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send({"status": 200, "error": null, "response": "Vehicle Valuation Details Updated!"});
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+router.post('/admin-valuation/:id', function(req, res, next) {
+    var postData = req.body;   
+	//var np = req.params.number_plate;
+	var id = req.params.id; 
+	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	var Vehicle = req.params.number_plate;
+	var payload = [postData.Admin_FirstSale_Value, postData.Admin_Market_Valuation, Date_Modified, id];
+    var query = 'update inspections set Admin_FirstSale_Value = ?, Admin_Market_Valuation = ?, Date_Modified = ? where ID = ?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send({"status": 500, "error": error, "response": null}); 
