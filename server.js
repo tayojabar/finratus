@@ -113,5 +113,5 @@ module.exports = app;
 var server = http.createServer(app);
 
 server.listen(process.env.port || process.env.PORT || 4000, function () {
-    console.log('%s listening to %s', server.name, server.url);
+    console.log('server running on %s [%s]', process.env.PORT, process.env.STATUS);
 });
