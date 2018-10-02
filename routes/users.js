@@ -318,7 +318,7 @@ users.post('/new-owner', function(req, res, next) {
 
 users.post('/apply', function(req, res) {
     let data = {},
-		postData = req.body,
+		postData = Object.assign({},req.body),
         query =  'INSERT INTO applications Set ?';
     delete postData.email;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
@@ -337,30 +337,11 @@ users.post('/apply', function(req, res) {
             };
 
             transporter.sendMail(mailOptions, function(error, info){
-            	console.log(info);
-                res.send({"status": 200, "message": "New Application Added!"});
+            	if(error)
+            		return res.send({"status": 500, "message": "Error occurred!", "response": error});
+                return res.send({"status": 200, "message": "New Application Added!"});
             });
         }
-    });
-});
-
-users.post('/apply2', function(req, res) {
-    let data = {},
-        postData = req.body,
-        query =  'INSERT INTO applications Set ?';
-    data.name = postData.username;
-    data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    let mailOptions = {
-        from: 'no-reply Loan35 <applications@loan35.com>',
-        to: req.body.email,
-        subject: 'Loan35 Application Successful',
-        template: 'main',
-        context: data
-    };
-
-    transporter.sendMail(mailOptions, function(error, info){
-        console.log(info);
-        res.send({"status": 200, "message": "New Application Added!"});
     });
 });
 
