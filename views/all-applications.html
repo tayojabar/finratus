@@ -359,10 +359,26 @@
                     v.phone,
                     v.collateral,
                     v.year,
-                    v.date_created
+                    formatDate(v.date_created)
                     // action
                 ]);
             });
+        }
+
+        function formatDate(timestamp) {
+            timestamp = parseInt(timestamp);
+            var date =  new Date(timestamp),
+                monthNames = [
+                    "January", "February", "March",
+                    "April", "May", "June", "July",
+                    "August", "September", "October",
+                    "November", "December"
+                ],
+                day = date.getDate(),
+                monthIndex = date.getMonth(),
+                year = date.getFullYear();
+
+            return day + ' ' + monthNames[monthIndex] + ', ' + year;
         }
 
     </script>
