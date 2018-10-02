@@ -321,12 +321,13 @@ users.post('/apply', function(req, res) {
 		postData = Object.assign({},req.body),
         query =  'INSERT INTO applications Set ?';
     delete postData.email;
+    delete postData.username;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     db.query(query, postData, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            data.name = postData.username;
+            data.name = req.body.username;
             data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
             let mailOptions = {
                 from: 'no-reply Loan35 <applications@loan35.com>',
