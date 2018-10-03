@@ -98,6 +98,10 @@ app.get('/add-model', function(req, res){
     res.sendFile('add-model.html', { root: __dirname+'/views' });
 });
 
+app.get('/all-models', function(req, res){
+    res.sendFile('all-models.html', { root: __dirname+'/views' });
+});
+
 app.get('/inspections', function(req, res){
     res.sendFile('inspections.html', { root: __dirname+'/views' });
 });
