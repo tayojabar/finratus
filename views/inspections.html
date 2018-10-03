@@ -87,10 +87,18 @@
                                     <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
                                 </ul>
                             </li>
+
+                            <li class="menu-item-has-children dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li>
+                                    <li><i class="fa fa-table"></i><a href="#">Inspection Report</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div><!-- /.navbar-collapse -->
                 </nav>
-            </aside><!-- /#left-panel -->
+        </aside><!-- /#left-panel -->
 
     <!-- Left Panel -->
 
@@ -143,7 +151,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Vehicle Owners and Vehicles</h1>
+                        <h1>All Vehicle Inspections</h1>
                     </div>
                 </div>
             </div>
@@ -152,8 +160,7 @@
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Vehicles</a></li>
-                            <li class="active">All Owners</li>
+                            <li><a href="#">Inspections</a></li>
                         </ol>
                     </div>
                 </div>
@@ -622,7 +629,6 @@
             var date = $(this).attr("date");
             //$('#info-head').prepend(id+' ');
             $('#info-head').html(name+ ' Inspection Details for '+date+ ' Inspection');
-            $('#inspections').dataTable().fnClearTable();
             loadInspectionDetails(id);
         });
 
@@ -697,7 +703,7 @@
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             $.each(data, function(k, v){
-                var fullname = '<td><span role="button" id = "'+v.ID+'" class="brand" name = "'+v.fullname+'">'+v.fullname+'</span></td>';
+                var fullname = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="brand" name = "'+v.fullname+'" value="'+v.fullname+'"/></td>';
                 $('#makes').dataTable().fnAddData( [
                     fullname
                     // "Make",
@@ -737,7 +743,7 @@
                 $("#models").dataTable().fnClearTable();
             }else{
                 $.each(models, function(k, v){
-                    var number = '<td><span role="button" id = "'+v.Number_Plate+'" class="vehicle" name = "'+v.Number_Plate+'">'+v.Number_Plate+'</span></td>';
+                    var number = '<td><input style="width:100%; border:none" type="button" id = "'+v.Number_Plate+'" class="vehicle" name = "'+v.Number_Plate+'" value="'+v.Number_Plate+'"/></td>';
                     $('#models').dataTable().fnAddData( [
                         number, v.Make, v.Model, v.Date_Created
                         // "Make",
@@ -780,7 +786,7 @@
                     var d1 = Date.parse(v.Date_Inspected);
                     //alert(k);
                     //alert(d1.toString('dd/mm/yyyy'));  
-                    var date = '<td><input type="button" id = "'+v.ID+'" class="date" date = "'+v.Date_Inspected+'" name = "'+v.Vehicle+'" value="'+v.Date_Inspected+'"/></td>';
+                    var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+v.Date_Inspected+'" name = "'+v.Vehicle+'" value="'+v.Date_Inspected+'"/></td>';
                     $('#inspections').dataTable().fnAddData( [
                         date, action
                         // "Make",
