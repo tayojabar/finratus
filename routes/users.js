@@ -346,6 +346,56 @@ users.post('/apply', function(req, res) {
     });
 });
 
+users.post('/apply', function(req, res) {
+    let data = {},
+        postData = Object.assign({},req.body),
+        query =  'INSERT INTO applications Set ?';
+    delete postData.email;
+    delete postData.username;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query, postData, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            data.name = req.body.username;
+            data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            let mailOptions = {
+                from: 'no-reply Loan35 <applications@loan35.com>',
+                to: req.body.email,
+                subject: 'Loan35 Application Successful',
+                template: 'main',
+                context: data
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+                if(error)
+                    return res.send({"status": 500, "message": "Error occurred!", "response": error});
+                return res.send({"status": 200, "message": "New Application Added!"});
+            });
+        }
+    });
+});
+
+users.post('/contact', function(req, res) {
+    let data = req.body;
+    if (!data.fullname || !data.email || !data.subject || !data.message)
+    	return res.send({"status": 500, "message": "Please send all required parameters"});
+    data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let mailOptions = {
+        from: data.fullname+' <applications@loan35.com>',
+        to: 'getloan@loan35.com',
+        subject: 'Feedback: '+data.subject,
+        template: 'contact',
+        context: data
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error)
+            return res.send({"status": 500, "message": "Oops! An error occurred while sending feedback", "response": error});
+        return res.send({"status": 200, "message": "Feedback sent successfully!"});
+    });
+});
+
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
     let query = 'SELECT * FROM applications INNER JOIN users ON users.ID=applications.userID';
