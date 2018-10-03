@@ -874,7 +874,7 @@ router.post('/exterior-lights/:id', function(req, res, next) {
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
-  			res.send({"status": 200, "error": null, "response": "Exterior Lights Info Updated!"});
+  			res.send({"status": 200, "error": null, "message": results, "response": "Exterior Lights Info Updated!", "payload": payload});
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
@@ -1072,6 +1072,44 @@ router.post('/admin-valuation/:id', function(req, res, next) {
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
   			res.send({"status": 200, "error": null, "response": "Vehicle Valuation Details Updated!"});
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+router.post('/inspection-approval/:id/:status', function(req, res, next) {
+    var postData = req.body;   
+	//var np = req.params.number_plate;
+	var id = req.params.id; 
+	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	var Vehicle = req.params.number_plate;
+	var payload = [req.params.status, id];
+    var query = 'update inspections set Inspection_Status = ? where ID = ?';
+    db.query(query, [req.params.status, id], function (error, results, fields) {
+	  	if(error){
+	  		res.send({"status": 500, "error": error, "response": null}); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send({"status": 200, "error": null, "response": "Inspection Approved!"});
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+router.post('/reject-inspection/:id/', function(req, res, next) {
+    var postData = req.body;   
+	//var np = req.params.number_plate;
+	var id = req.params.id; 
+	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	var Vehicle = req.params.number_plate;
+	//var payload = [postData.Admin_FirstSale_Value, postData.Admin_Market_Valuation, Date_Modified, id];
+    var query = 'update inspections set Inspection_Status = 0 where ID = ?';
+    db.query(query, id, function (error, results, fields) {
+	  	if(error){
+	  		res.send({"status": 500, "error": error, "response": null}); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send({"status": 200, "error": null, "response": "Inspection Rejected!"});
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});

@@ -98,8 +98,8 @@ app.get('/add-model', function(req, res){
     res.sendFile('add-model.html', { root: __dirname+'/views' });
 });
 
-app.get('/vehicle-info', function(req, res){
-    res.sendFile('vehicle-info.html', { root: __dirname+'/views' });
+app.get('/inspections', function(req, res){
+    res.sendFile('inspections.html', { root: __dirname+'/views' });
 });
 
 // catch 404 and forward to error handler
