@@ -673,7 +673,7 @@
         function loadOwners(){
 
             $.ajax({
-                'url': 'http://localhost:4000/user/owners',
+                'url': '/user/owners',
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -710,7 +710,7 @@
         function loadVehicles(owner){
             var id = owner;
             $.ajax({
-                'url': 'http://localhost:4000/vehicle-owner/'+id,
+                'url': '/vehicle-owner/'+id,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -750,7 +750,7 @@
 
         function loadVehicleInspections(number){
             $.ajax({
-                'url': 'http://localhost:4000/vehicle-inspections/'+number,
+                'url': '/vehicle-inspections/'+number,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -793,7 +793,7 @@
 
         function loadInspectionDetails(id){
             $.ajax({
-                'url': 'http://localhost:4000/inspection/'+id,
+                'url': '/inspection/'+id,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -1266,7 +1266,7 @@
             obj.Admin_Market_Valuation = $("#mkt_val").val();
             var test = {};
             $.ajax({
-                'url': 'http://localhost:4000/admin-valuation/'+id,
+                'url': '/admin-valuation/'+id,
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
@@ -1293,7 +1293,7 @@
             id = $("#saveValuation").attr("target");
             var test = {};
             $.ajax({
-                'url': 'http://localhost:4000/inspection-approval/'+id+'/'+status,
+                'url': '/inspection-approval/'+id+'/'+status,
                 'type': 'post',
                 'data': {},
                 'success': function (data) {

@@ -373,7 +373,7 @@
         function getOwners(){
             $.ajax({
                 type: "GET",
-                url: "http://localhost:4000/user/owners/",
+                url: "/user/owners/",
                 data: '{}',
                 success: function (response) {
                     var owner = $("[id*=owner]");
@@ -387,7 +387,7 @@
 
         function getMakes(){
             $.ajax({
-                'url': 'http://localhost:4000/makes-list',
+                'url': '/makes-list',
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -403,7 +403,7 @@
         function getModels(make){
             var id = make;
             $.ajax({
-                'url': 'http://localhost:4000/models-list/'+id,
+                'url': '/models-list/'+id,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -437,7 +437,7 @@
             var test = {};
             console.log(obj);
             $.ajax({
-                'url': 'http://localhost:4000/addVehicle',
+                'url': '/addVehicle',
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {

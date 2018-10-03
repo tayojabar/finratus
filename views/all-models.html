@@ -275,7 +275,7 @@
         function loadMakes(){
 
             $.ajax({
-                'url': 'http://localhost:4000/makes-list',
+                'url': '/makes-list',
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -296,7 +296,7 @@
             var id = make;
             console.log(id);
             $.ajax({
-                'url': 'http://localhost:4000/models-list/'+id,
+                'url': '/models-list/'+id,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {

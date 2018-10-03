@@ -79,7 +79,7 @@
                         </ul>
                     </div><!-- /.navbar-collapse -->
                 </nav>
-            </aside><!-- /#left-panel -->
+        </aside><!-- /#left-panel -->
 
     <!-- Left Panel -->
 
@@ -260,7 +260,7 @@
         function getRoles(){
             $.ajax({
                 type: "GET",
-                url: "http://localhost:4000/user/user-roles/",
+                url: "/user/user-roles/",
                 data: '{}',
                 success: function (response) {
                     var role = $("[id*=owner]");
@@ -283,7 +283,7 @@
             obj.user_role = $('#role').find('option:selected').val();
             var test={};
             $.ajax({
-                'url': 'http://localhost:4000/user/new-user/',
+                'url': '/user/new-user/',
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
