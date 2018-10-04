@@ -70,7 +70,7 @@ app.post('/login', function(req, res) {
         if (password === rows[0].password) {
           // sets a cookie with the user's info
           req.session.user = rows[0];
-          res.sendFile('index.html', { root: __dirname+'/views' });
+          res.sendFile('dashboard.html', { root: __dirname+'/views' });
         } else {
         //   res.sendFile('/login', { error: 'Invalid email or password.' });
         res.redirect('/login');
@@ -123,7 +123,7 @@ app.get('/login', function(req, res){
 });
 
 app.get('/dashboard', requireLogin, function(req, res){
-    res.sendFile('index.html', { root: __dirname+'/views' });
+    res.sendFile('dashboard.html', { root: __dirname+'/views' });
 });
 
 app.get('/all-vehicles', requireLogin, function(req, res){
