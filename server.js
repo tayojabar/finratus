@@ -101,7 +101,8 @@ app.use(function(req, res, next) {
 
 function requireLogin (req, res, next) {
     if (!req.session.user) {
-      res.redirect('/login');
+      //res.redirect('/login');
+      res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
       next();
     }
@@ -109,7 +110,8 @@ function requireLogin (req, res, next) {
 
 app.get('/logout', function(req, res) {
     req.session.reset();
-    res.redirect('/dashboard');
+    //res.redirect('/dashboard');
+    res.sendFile('dashboard.html', { root: __dirname+'/views' });
   });
 
 app.use('/', index);
