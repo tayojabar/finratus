@@ -65,7 +65,8 @@ app.post('/login', function(req, res) {
     db.query('SELECT * FROM users WHERE username = ?', username, function(err, rows, fields) {
       if (err) {
         //res.sendFile('/login', { error: 'Invalid email or password.' });
-        res.redirect('/inspections');
+        //res.redirect('/inspections');
+        res.sendFile('index.html', { root: __dirname+'/views' });
       } else {
         if (password === rows[0].password) {
           // sets a cookie with the user's info
@@ -73,7 +74,8 @@ app.post('/login', function(req, res) {
           res.sendFile('dashboard.html', { root: __dirname+'/views' });
         } else {
         //   res.sendFile('/login', { error: 'Invalid email or password.' });
-        res.redirect('/login');
+        //res.redirect('/login');
+        res.sendFile('index.html', { root: __dirname+'/views' });
         }
       }
     });
