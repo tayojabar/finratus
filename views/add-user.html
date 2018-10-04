@@ -321,7 +321,7 @@
             obj.phone = $('#phone').val();
             obj.address = $('#address').val();
             obj.email = $('#email').val();
-            obj.user_role = $('#role').find('option:selected').val();
+            obj.user_role = $('#role').find('option:selected').attr('id');
             var test={};
             $.ajax({
                 'url': '/user/new-user/',
