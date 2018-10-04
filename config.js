@@ -9,10 +9,19 @@ config.development = {
     insecureAuth: true
 };
 
+// config.production = {
+//     host     : 'loan-35-mysqldbserver.mysql.database.azure.com',
+//     port     :'3306',
+//     user     : 'loan35dbadmin@loan-35-mysqldbserver',
+//     password : 'Loan35Pass@word2018',
+//     database : 'loan35',
+//     insecureAuth: true
+// };
+
 config.production = {
-    host     : 'loan-35-mysqldbserver.mysql.database.azure.com',
+    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
     port     :'3306',
-    user     : 'loan35dbadmin@loan-35-mysqldbserver',
+    user     : 'loan35dbadmin@atobz-mysqldbserver',
     password : 'Loan35Pass@word2018',
     database : 'loan35',
     insecureAuth: true
