@@ -276,6 +276,10 @@ router.get('/modelsCount', function(req, res, next) {
   	});
 });
 
+router.get('/check', function(req, res, next) {
+    res.send(req.session.user.user_role);
+});
+
 // function listDirectoryItems(path){
 // 	var obj = {};
 // 	fs.readdir(path, function (err, files){

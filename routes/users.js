@@ -25,6 +25,74 @@ var nodemailer = require('nodemailer'),
 transporter.use('compile', hbs(options));
 
 process.env.SECRET_KEY = "devesh";
+// var app = express();
+
+// // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
+// // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
+// app.use((req, res, next) => {
+//     if (req.cookies.user_sid && !req.session.user) {
+//         res.clearCookie('user_sid');        
+//     }
+//     next();
+// });
+
+// // middleware function to check for logged-in users
+// var sessionChecker = (req, res, next) => {
+//     if (req.session.user && req.cookies.user_sid) {
+//         res.redirect('/dashboard');
+//     } else {
+//         next();
+//     }    
+// };
+
+// // route for Home-Page
+// app.get('/', sessionChecker, (req, res) => {
+//     res.redirect('/login');
+// });
+
+// // route for user Login
+// app.route('/login-admin')
+//     .get(sessionChecker, (req, res) => {
+//         res.sendFile(__dirname + '/views/login.html');
+//     })
+//     .post((req, res) => {
+//         var username = req.body.username,
+//             password = req.body.password;
+
+//             var user = {};
+        
+//         db.query('SELECT * FROM users WHERE username = ?', [username], function(err, rows, fields) {
+//             if (err) {
+//                 res.redirect('/login');
+//             } else if (rows.length == 0) {
+//                 res.redirect('/login');
+//             } else {
+//                 user = rows[0];
+//                 req.session.user = user;
+//                 res.redirect('/dashboard');
+//             }
+//         });
+//     });
+
+// // route for user's dashboard
+// app.get('/dashboard', (req, res) => {
+//     if (req.session.user && req.cookies.user_sid) {
+//         res.sendFile(__dirname + '/views/index.html');
+//     } else {
+//         res.redirect('/login');
+//     }
+// });
+
+
+// // route for user logout
+// app.get('/logout', (req, res) => {
+//     if (req.session.user && req.cookies.user_sid) {
+//         res.clearCookie('user_sid');
+//         res.redirect('/');
+//     } else {
+//         res.redirect('/login');
+//     }
+// });
 
 /* User Authentication */
 users.post('/login', function(req, res) {
@@ -408,25 +476,25 @@ users.get('/applications', function(req, res, next) {
     });
 });
 
-users.use(function(req, res, next) {
-    var token = req.body.token || req.headers['token'];
-    var appData = {};
-    if (token) {
-        jwt.verify(token, process.env.SECRET_KEY, function(err) {
-            if (err) {
-                appData["error"] = 1;
-                appData["data"] = "Token is invalid";
-                res.status(500).json(appData);
-            } else {
-                next();
-            }
-        });
-    } else {
-        appData["error"] = 1;
-        appData["data"] = "Please send a token";
-        res.status(403).json(appData);
-    }
-});
+// users.use(function(req, res, next) {
+//     var token = req.body.token || req.headers['token'];
+//     var appData = {};
+//     if (token) {
+//         jwt.verify(token, process.env.SECRET_KEY, function(err) {
+//             if (err) {
+//                 appData["error"] = 1;
+//                 appData["data"] = "Token is invalid";
+//                 res.status(500).json(appData);
+//             } else {
+//                 next();
+//             }
+//         });
+//     } else {
+//         appData["error"] = 1;
+//         appData["data"] = "Please send a token";
+//         res.status(403).json(appData);
+//     }
+// });
 
 
 
