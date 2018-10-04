@@ -477,27 +477,6 @@ users.get('/applications', function(req, res, next) {
     });
 });
 
-<<<<<<< HEAD
-// users.use(function(req, res, next) {
-//     var token = req.body.token || req.headers['token'];
-//     var appData = {};
-//     if (token) {
-//         jwt.verify(token, process.env.SECRET_KEY, function(err) {
-//             if (err) {
-//                 appData["error"] = 1;
-//                 appData["data"] = "Token is invalid";
-//                 res.status(500).json(appData);
-//             } else {
-//                 next();
-//             }
-//         });
-//     } else {
-//         appData["error"] = 1;
-//         appData["data"] = "Please send a token";
-//         res.status(403).json(appData);
-//     }
-// });
-=======
 users.get('/applications/delete/:id', function(req, res, next) {
     let id = req.params.id,
         date_modified = Date.now(),
@@ -518,7 +497,6 @@ users.get('/applications/delete/:id', function(req, res, next) {
         }
     });
 });
->>>>>>> 1f73b408975343dbc589ce3bf4158a728b4d10a1
 
 // users.use(function(req, res, next) {
 //     var token = req.body.token || req.headers['token'];
