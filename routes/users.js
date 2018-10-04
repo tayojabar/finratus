@@ -466,7 +466,8 @@ users.post('/contact', function(req, res) {
 
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
-    let query = 'SELECT * FROM applications INNER JOIN users ON users.ID=applications.userID';
+    let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
+        'a.loan_amount, a.date_modified FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -475,6 +476,49 @@ users.get('/applications', function(req, res, next) {
         }
     });
 });
+
+<<<<<<< HEAD
+// users.use(function(req, res, next) {
+//     var token = req.body.token || req.headers['token'];
+//     var appData = {};
+//     if (token) {
+//         jwt.verify(token, process.env.SECRET_KEY, function(err) {
+//             if (err) {
+//                 appData["error"] = 1;
+//                 appData["data"] = "Token is invalid";
+//                 res.status(500).json(appData);
+//             } else {
+//                 next();
+//             }
+//         });
+//     } else {
+//         appData["error"] = 1;
+//         appData["data"] = "Please send a token";
+//         res.status(403).json(appData);
+//     }
+// });
+=======
+users.get('/applications/delete/:id', function(req, res, next) {
+    let id = req.params.id,
+        date_modified = Date.now(),
+        query =  'UPDATE applications Set status = 0, date_modified =? where ID=?';
+    db.query(query,[date_modified, id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
+                'a.loan_amount, a.date_modified FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0';
+            db.query(query, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Application archived successfully!", "response": results});
+                }
+            });
+        }
+    });
+});
+>>>>>>> 1f73b408975343dbc589ce3bf4158a728b4d10a1
 
 // users.use(function(req, res, next) {
 //     var token = req.body.token || req.headers['token'];
