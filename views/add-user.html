@@ -174,42 +174,53 @@
                             </div>
                             <div class="card-body card-block">
                                 <div class="form-group">
-                                    <label class=" form-control-label">Full Name</label>
+                                    <label class=" form-control-label">Full Name</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <input id="fullname" class="form-control">
+                                        <input id="fullname" class="form-control" required="required">
                                     </div>
                                     <small class="form-text text-muted">ex. user123</small>
                                 </div>
                                 <div class="form-group">
-                                    <label class=" form-control-label">Username</label>
+                                    <label class=" form-control-label">Username</label><strong style="color:red"> *</strong><span id="username-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <input id="username" class="form-control">
+                                        <input id="username" class="form-control" required="required">
                                     </div>
                                     <small class="form-text text-muted">ex. user123</small>
                                 </div>
                                 <div class="form-group">
-                                    <label class=" form-control-label">Password</label>
+                                    <label class=" form-control-label">Password</label><strong style="color:red"> *</strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                        <input id="password" type="password" class="form-control">
+                                        <input id="password" type="password" class="form-control" required="required">
+                                    </div>
+                                    <small class="form-text text-muted">ex. qwerty_*123</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class=" form-control-label">Confirm Password</label><strong style="color:red"> *</strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                                        <input id="cpassword" type="password" class="form-control" required="required">
                                     </div>
                                     <small class="form-text text-muted">ex. qwerty_*123</small>
                                 </div>
                                 <div class="form-group">
                                     <label class=" form-control-label">User Role</label>
+                                    <strong style="color:red"> *</strong>
+                                    <span id="role_error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-usd"></i></div>
-                                        <select id="role" class="form-control">
+                                        <select id="role" class="form-control" required="required">
+                                            <option selected="selected" id="0">-- Choose User Role --</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class=" form-control-label">Email </label>
+                                    <label class=" form-control-label">Email </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-male"></i></div>
-                                        <input type="email" id="email" class="form-control">
+                                        <input type="email" id="email" class="form-control" required="required">
                                     </div>
                                     <small class="form-text text-muted">ex. <Address>email@email.com</Address></small>
                                 </div>
@@ -217,7 +228,7 @@
                                     <label class=" form-control-label">Phone Number</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-phone"></i></div>
-                                        <input id="phone" class="form-control">
+                                        <input id="phone" class="form-control" required="required">
                                     </div>
                                     <small class="form-text text-muted">ex. +234 - 813 - 455 - 6944</small>
                                 </div>
@@ -225,11 +236,11 @@
                                     <label class=" form-control-label">Address</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                        <input id="address" class="form-control">
+                                        <input id="address" class="form-control" required="required">
                                     </div>
                                 </div>
                                 <div class = "form-group">
-                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New User"/>
+                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New User"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
@@ -291,8 +302,64 @@
 
 
         $("#addUser").click(function () {
-            createUser();
+            validate();
         });
+
+        $("#cpassword").change(function(){
+            confirmPassword();
+        });
+
+        function confirmPassword(){
+            console.log("Here");
+            console.log($('#cpassword').val());
+            console.log($('#password').val());
+            if ($('#cpassword').val() == "" || $('#cpassword').val() != $('#password').val()){
+                $('#cpassword').css('border-color', 'red');
+                $('#cpassword-error').html("Passwords don't match");
+                $('#cpassword-error').css("color", 'red');
+            }
+            else{
+                $('#cpassword').css('border-color', 'green');
+                $('#cpassword-error').html("Passwords are a match!");
+                $('#cpassword-error').css("color", 'green');
+            }
+        }
+
+        function validate(){
+            if ($('#fullname').val() == "" || $('#fullname').val() == null){
+                $('#fullname-error').html("Enter user's full name");
+                $('#fullname-error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else if ($('#username').val() == "" || $('#username').val() == null){
+                $('#username-error').html("Choose a username");
+                $('#username-error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else if ($('#password').val() == "" || $('#password').val() == null){
+                $('#password-error').html("Enter password");
+                $('#password-error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else if ($('#role').find('option:selected').attr('id') == 0){
+                $('#role_error').html("Choose a user role for the new user");
+                $('#role_error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else if ($('#email').val() == "" || $('#username').val() == null){
+                $('#email-error').html("Enter user's full name");
+                $('#email-error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else{
+                createUser();
+            }
+        }
 
         function getRoles(){
             $.ajax({
@@ -300,8 +367,8 @@
                 url: "/user/user-roles/",
                 data: '{}',
                 success: function (response) {
-                    var role = $("[id*=owner]");
-                    role.empty().append('<option selected="selected" id="0">-- Select Vehicle Owner --</option>');
+                    var role = $("[id*=role]");
+                    // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#role").append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.role_name + '</option>');
                     });
@@ -327,7 +394,10 @@
                     $.each(JSON.parse(data), function (key, val) {
                         test[key] = val;
                     });
-                    if(test.status == 500){
+                    if(test.message){
+                        swal("Username already exists!");
+                    }
+                    else if(test.status == 500){
                         swal("Please recheck entered values");
                     }
                     else

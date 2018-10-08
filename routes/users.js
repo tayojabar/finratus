@@ -141,24 +141,32 @@ users.post('/login', function(req, res) {
 users.post('/new-user', function(req, res, next) {
     var postData = req.body; 
     postData.date_created = Date.now(); 
-    var query =  'INSERT INTO users Set ?';
-	db.query(query,postData, function (error, results, fields) {
-	  	if(error){
-	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
-	  		//If there is error, we send the error in the error section with 500 status
-	  	} else {
-			db.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
-				if (!err){
-					res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
-				}
-				else{
-					res.send(JSON.stringify({"response": "Error retrieving user details. Please try a new username!"}));
+	var query =  'INSERT INTO users Set ?';
+	var query2 = 'select * from users where username = ?';
+	db.query(query2,req.body.username, function (error, results, fields) {
+		if (results && results[0]){
+			res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "User already exists!"}));
+		}
+		else {
+			db.query(query,postData, function (error, results, fields) {
+				if(error){
+					res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+					//If there is error, we send the error in the error section with 500 status
+				} else {
+					db.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
+						if (!err){
+							res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+						}
+						else{
+							res.send(JSON.stringify({"response": "Error retrieving user details. Please try a new username!"}));
+						}
+					});
+					//res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
+					//If there is no error, all is good and response is 200OK.
 				}
 			});
-  			//res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
-  			//If there is no error, all is good and response is 200OK.
-	  	}
-  	});
+		}
+	});
 });
 
 //File Upload - User Registration
