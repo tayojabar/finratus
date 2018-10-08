@@ -179,7 +179,7 @@
                         <th>Full Name</th>
                         <th>Phone Number</th>
                         <th>Collateral</th>
-                        <th>Year</th>
+                        <th>Loan Amount</th>
                         <th>Date Created</th>
                         <th>Action</th>
                       </tr>
@@ -304,8 +304,8 @@
                     v.fullname,
                     v.phone,
                     v.collateral,
-                    v.year,
-                    formatDate(v.date_created),
+                    v.loan_amount,
+                    v.date_created,
                     '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'
                 ]);
             });
