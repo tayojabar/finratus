@@ -277,6 +277,20 @@ users.get('/users-list', function(req, res, next) {
   	});
 });
 
+users.get('/user-dets/:id', function(req, res, next) {
+    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where id = ? order by ID desc ';
+	db.query(query, req.params.id, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+			  //res.send({"status": 200, "message": "User details fetched successfully!", "response": results});
+			  res.send(results);
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 users.get('/user-roles', function(req, res, next) {
     var query = 'SELECT * from user_roles';
 	db.query(query, function (error, results, fields) {
@@ -351,6 +365,23 @@ users.post('/editUser/:id', function(req, res, next) {
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
   			res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* Change User Password */
+users.post('/changePassword/:id', function(req, res, next) {
+	var postData = req.body;
+	let date_modified = Date.now();  
+    var payload = [postData.username, postData.name, postData.password, postData.id];
+    var query = 'Update users SET password = ?, date_modified = ?  where id=?';
+    db.query(query, [req.body.password, date_modified, req.params.id], function (error, results, fields) {                   ;
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send({"status": 200, "error": null, "response": results, "message": "User password updated!"});
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});

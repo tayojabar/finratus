@@ -67,6 +67,7 @@ app.post('/login', function(req, res) {
         //res.sendFile('/login', { error: 'Invalid email or password.' });
         //res.redirect('/inspections');
         res.sendFile('index.html', { root: __dirname+'/views' });
+        console.log(rows[0]);
       } else {
         if (password === rows[0].password) {
           // sets a cookie with the user's info

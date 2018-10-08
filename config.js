@@ -1,7 +1,7 @@
 let config = {};
 
 config.development = {
-    host     : '140.86.3.185',
+    host     : '140.86.3.63',
     port :'3306',
     user     : 'appuser',
     password : 'Pass@word1',
