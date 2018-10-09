@@ -25,6 +25,23 @@
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script>
+        // $('body').on('data-dismiss', '.modal', function () {
+        //     $(this).removeData();
+        //     $('#modal-container .modal-content').empty();
+        // });
+        $(function () {
+            // when the modal is closed
+            $('#myModal1').on('hidden.bs.modal', function () {
+                // remove the bs.modal data attribute from it
+                $(this).removeData('bs.modal');
+                // and empty the modal-content element
+                $('#myModal1 .modal-content span').empty();
+                $('#myModal1 input').val("");
+            });
+        });
+    </script>
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -32,7 +49,7 @@
 <body>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <!-- Left Panel -->
-        <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+        
         <script type="text/javascript">
             jQuery(document).ready(function($){ check(); });
         </script>
@@ -249,7 +266,7 @@
                                     </div>
                                 </div>
                                 <div class = "form-group">
-                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Submit"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Submit" onclick="submitDetails()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
@@ -295,21 +312,21 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class=" form-control-label">User</label>
+                        <strong><label class=" form-control-label">User</label></strong>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-user"></i></div>
                             <input id="username" type="text" class="form-control" required="required" readonly="readonly">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class=" form-control-label">New Password</label><span id="password-error" style="padding-left:50px; text-align: center"></span>
+                        <strong><label class=" form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                             <input id="new-password" type="password" class="form-control" required="required">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class=" form-control-label">Confirm Password</label><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                        <strong><label class=" form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                             <input id="cpassword" type="password" class="form-control" required="required">
@@ -317,9 +334,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <span id="submit-error" style="padding-left:0; text-align: left" class="pull-left">Submit Error</span>
+                    <span id="pass-error" style="padding-left:0; text-align: left" class="pull-left"></span>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="changePassword()"><i class="fa fa-save"></i> Save</button>
+                    <button type="button" class="btn btn-primary" onclick="validate()"><i class="fa fa-save"></i> Save</button>
                 </div>
             </div>
         </div>
@@ -376,8 +393,12 @@
             if ($('#new-password').val() == "" || $('#new-password').val() == null){
                 $('#password-error').html("Enter password");
                 $('#password-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
+                $('#new-password').css("border-color", "red");
+                $('#pass-error').css("color", "red");
+                $('#pass-error').html("Unable to submit. Check information entered.");
+            }
+            else {
+                changePassword();
             }
         }
 
@@ -458,19 +479,19 @@
                 tr = "";
             tbody.empty();
             if (data.fullname)
-                tr += "<tr><td>Fullname</td><td>"+data.fullname+"</td></tr>";
+                tr += "<tr><td><strong>Fullname</strong></td><td>"+data.fullname+"</td></tr>";
             if (data.username)
-                tr += "<tr><td>Username</td><td>"+data.username+"</td></tr>";
+                tr += "<tr><td><strong>Username</strong></td><td>"+data.username+"</td></tr>";
             if (data.email)
-                tr += "<tr><td>Email</td><td>"+data.email+"</td></tr>";
+                tr += "<tr><td><strong>Email</strong></td><td>"+data.email+"</td></tr>";
             if (data.phone)
-                tr += "<tr><td>Phone</td><td>"+data.phone+"</td></tr>";
+                tr += "<tr><td><strong>Phone</strong></td><td>"+data.phone+"</td></tr>";
             if (data.address)
-                tr += "<tr><td>Address</td><td>"+data.address+"</td></tr>";
+                tr += "<tr><td><strong>Address</strong></td><td>"+data.address+"</td></tr>";
             if (data.Role)
-                tr += "<tr><td>User Role</td><td>"+data.Role+"</td></tr>";
+                tr += "<tr><td><strong>User Role</strong></td><td>"+data.Role+"</td></tr>";
             if (data.date_created)
-                tr += "<tr><td>Date Created</td><td>"+formatDate(data.date_created)+"</td></tr>";
+                tr += "<tr><td><strong>Date Created</strong></td><td>"+formatDate(data.date_created)+"</td></tr>";
             tbody.html(tr);
         }
         
@@ -522,7 +543,7 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
+                    //console.log(data);
                     $('#user-form').slideDown();
                     $('#user-table').slideToggle();
                     //console.log(data[0]);
@@ -539,6 +560,37 @@
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred while retrieving details.');
+                }
+            });
+        }
+        
+        function submitDetails(){
+            let obj = {};
+            obj.username = $('#user-name').val();
+            obj.fullname = $('#fullname').val();
+            obj.phone = $('#phone').val();
+            obj.address = $('#address').val();
+            obj.email = $('#email').val();
+            obj.user_role = $('#role').find('option:selected').attr('id');
+            var test={};
+            console.log(+localStorage.getItem("user_id"));
+            $.ajax({
+                'url': '/user/edit-user/'+localStorage.getItem("user_id"),
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    console.log(test);
+                    if(test.response == null){
+                        swal("Communication Error! Please try again");
+                    }
+                    else
+                        swal("User Details Updated!");
+                },
+                'error': function (err) {
+                    swal('Connection Error. Please try again.');
                 }
             });
         }

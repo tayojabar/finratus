@@ -355,10 +355,11 @@ users.get('/user/:id', function(req, res, next) {
 });
 
 /* Edit User Info */
-users.post('/editUser/:id', function(req, res, next) {
-    var postData = req.body;    
-    var payload = [postData.username, postData.name, postData.password, postData.id];
-    var query = 'Update users SET username = ?, name=?, password=? where id=?';
+users.post('/edit-user/:id', function(req, res, next) {
+	var postData = req.body;    
+	let date = Date.now();
+    var payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.user_role, postData.email, postData.date_modified, req.params.id];
+    var query = 'Update users SET username = ?, fullname=?, phone=?, address = ?, user_role=?, email=?, date_modified = ? where id=?';
     db.query(query, payload, function (error, results, fields) {                   ;
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
