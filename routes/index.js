@@ -732,10 +732,10 @@ router.post('/dashboard/:id', function(req, res, next) {
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
     var payload =  [postData.dashboard_lights, postData.interior_lights, postData.dashboard_control_ac, postData.dashboard_control_defog, postData.dashboard_control_hazard_lights, postData.dashboard_control_parking_button, postData.audio, 
-                    postData.video, postData.cigarette_lighter, postData.fuel_cap_release_lever, postData.bonnet_release_lever, Date_Modified, id];
+                    postData.video, postData.cigarette_lighter, postData.fuelcap_release_lever, postData.bonnet_release_lever, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'dashboard_lights=?, interior_lights=?, dashboard_control_ac=?, dashboard_control_defog=?, dashboard_control_hazard_lights = ?, dashboard_control_parking_button=?, '+
-                    'audio=?, video=?, cigarette_lighter=?, fuel_cap_release_lever=?, bonnet_release_lever = ?, date_modified=? '+
+                    'audio=?, video=?, cigarette_lighter=?, fuelcap_release_lever=?, bonnet_release_lever = ?, date_modified=? '+
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
@@ -758,8 +758,8 @@ router.post('/mechanical-check/:id', function(req, res, next) {
                     postData.front_spoiler, postData.rear_spoiler, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'trunk_lock=?, front_door_fitting_rh=?, front_door_fitting_lh=?, rear_door_fitting_rh=?, rear_door_fitting_lh = ?, front_door_levers_rh=?, '+
-                    'front_door_levers_lh=?, rear_door_levers_rh=?, rear_door_levers_lh=?, front_windshield=?, rear_windshield = ?, front_door_window_rh = ? '+
-                    ', front_door_window_lh = ?, rear_door_window_rh = ?, rear_door_window_lh = ?, underbody_shields = ?, fender_shields = ?, front_spoiler = ? '+
+                    'front_door_levers_lh=?, rear_door_levers_rh=?, rear_door_levers_lh=?, front_windshield=?, rear_windshield = ?, front_door_window_rh = ?, '+
+                    'front_door_window_lh = ?, rear_door_window_rh = ?, rear_door_window_lh = ?, underbody_shields = ?, fender_shields = ?, front_spoiler = ?, '+
                     'rear_spoiler = ?, date_modified=? '+
                 'where id=?';
     
@@ -817,13 +817,12 @@ router.post('/transmission/:id', function(req, res, next) {
 	var np = req.params.number_plate; 
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
-    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData['4wd_active'], Date_Modified, id];
+    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData.fwd_active, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, fwd_active=?, date_modified=? '+
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
-            console.log(error)
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
@@ -916,14 +915,14 @@ router.post('/windows-central-lock/:id', function(req, res, next) {
 	var np = req.params.number_plate; 
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    var payload =  [postData.right_headlight, postData.left_headlight, postData.right_taillight, postData.left_taillight, postData.reverse_light, postData.fog_lights, Date_Modified, id];
+    var payload =  [postData.rightF_window_lever, postData.leftF_window_lever, postData.rightR_window_lever, postData.leftR_window_lever, postData.autolock,
+		postData.window_safety_lock, postData.auto_window_mech, postData.manual_window_mech, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'rightF_window_lever=?, leftF_window_lever=?, rightR_window_lever=?, leftR_window_lever=?, autolock = ?, window_safety_lock=?, '+
-                    'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
-                'where id=?';
+                    'auto_window_mech=?, manual_window_mech=?, date_modified=? where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
-	  		res.send({"status": 500, "error": error, "response": null}); 
+	  		res.send({"status": 500, "error": error, "response": null});
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
   			res.send({"status": 200, "error": null, "response": "Exterior Lights Info Updated!"});
@@ -959,12 +958,12 @@ router.post('/obd/:id', function(req, res, next) {
 	var np = req.params.number_plate;  
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    var payload =  [postData.crank_shaft_censor, postData.camshaft_sensor, postData.oxygen_sensor, postData.map_sensor, postData.throttle_position_sensor, postData.coolant_sensor, 
+    var payload =  [postData.crank_shaft_sensor, postData.camshaft_sensor, postData.oxygen_sensor, postData.map_sensor, postData.throttle_position_sensor, postData.coolant_sensor,
                     postData.airflow_sensor, postData.tpms, postData.evap, postData.abs, postData.srs, postData.bcm, 
                     postData.pcm, postData.detonation_sensor, postData.egr_sensor, postData.vehicle_speed, postData.gear_solenoid, postData.catalyst_sensor,
                     postData.throttle_sensor, postData.mil, Date_Modified, id];
     var query = 'Update inspections SET '+
-                    'crank_shaft_censor=?, camshaft_sensor=?, oxygen_sensor=?, map_sensor=?, throttle_position_sensor = ?, coolant_sensor=?, '+
+                    'crank_shaft_sensor=?, camshaft_sensor=?, oxygen_sensor=?, map_sensor=?, throttle_position_sensor = ?, coolant_sensor=?, '+
                     'airflow_sensor=?, tpms=?, evap=?, abs=?, srs = ?, bcm=?, '+
                     'pcm=?, detonation_sensor=?, egr_sensor=?, vehicle_speed=?, gear_solenoid = ?, catalyst_sensor=?, '+
                     'throttle_sensor=?, mil=?, date_modified=? '+
@@ -986,12 +985,12 @@ router.post('/fluids-filters/:id', function(req, res, next) {
 	var np = req.params.number_plate; 
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
-    var payload =  [postData.engine_oil, postData.oilpump_leakage, postData.engine_oil_valve_cover, postData.axe_oil_leakage, postData.gear_oil_leakage, postData.gear_oil_seal, 
+    var payload =  [postData.engine_oil, postData.oilpump_leakage, postData.engine_oil_valve_cover, postData.axle_oil_leakage, postData.gear_oil_leakage, postData.gear_oil_seal, 
                     postData.gear_oil, postData.brake_oil, postData.brake_oil_leakage, postData.brake_oil_hose_leakage, postData.brake_caliper, postData.brake_oil_pipe_leakage, 
                     postData.power_steering_oil_gauge, postData.power_steering_oil, postData.power_steering, postData.power_steering_oil_pump, postData.power_steering_oil_leakage, postData.washer_fluid,
                     postData.washer_fluid_leakage, postData.washer_fluid_compartment, Date_Modified, id];
     var query = 'Update inspections SET '+
-                    'engine_oil=?, oilpump_leakage=?, engine_oil_valve_cover=?, axe_oil_leakage=?, gear_oil_leakage = ?, gear_oil_seal=?, '+
+                    'engine_oil=?, oilpump_leakage=?, engine_oil_valve_cover=?, axle_oil_leakage=?, gear_oil_leakage = ?, gear_oil_seal=?, '+
                     'gear_oil=?, brake_oil=?, brake_oil_leakage=?, brake_oil_hose_leakage=?, brake_caliper = ?, brake_oil_pipe_leakage=?, '+
                     'power_steering_oil_gauge=?, power_steering_oil=?, power_steering=?, power_steering_oil_pump=?, power_steering_oil_leakage = ?, washer_fluid=?, '+
                     'washer_fluid_leakage=?, washer_fluid_compartment=?, date_modified=? '+
