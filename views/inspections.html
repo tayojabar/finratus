@@ -29,7 +29,39 @@
         
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script> -->
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
-
+    <style>
+        .carousel {
+            margin-bottom: 20px;
+            padding: 0 40px 30px 40px;
+        }
+        /* The controlsy */
+        .carousel-control {
+            left: -12px;
+            height: 40px;
+            width: 40px;
+            background: none repeat scroll 0 0 #222222;
+            border: 4px solid #FFFFFF;
+            border-radius: 23px 23px 23px 23px;
+            margin-top: 90px;
+        }
+        .carousel-control.right {
+            right: -12px;
+        }
+        /* The indicators */
+        .carousel-indicators {
+            right: 50%;
+            top: auto;
+            bottom: -10px;
+            margin-right: -19px;
+        }
+        /* The colour of the indicators */
+        .carousel-indicators li {
+            background: #cecece;
+        }
+        .carousel-indicators .active {
+        background: #428bca;
+        }
+    </style>
 </head>
 <body>
         <!-- Left Panel -->
@@ -186,7 +218,7 @@
                         </div>
                     </div> 
 
-                    <div id="info-div" class="col-sm-9" style="display: none">
+                    <div id="info-div" class="col-sm-9" >
                         <div class="card">
                             <div class="card-header">
                                 <strong class="card-title">Vehicles owned by
@@ -234,7 +266,7 @@
                                     </div>
                                 </div>
                                 <!-- Inspection Details for Selected Inspection Date -->
-                                <div id="inspection-info" style="display: none">
+                                <div id="inspection-info">
                                     <div class="card">
                                         <div class="card-header">
                                             <strong id="info-head" class="card-title">Inspection Information
@@ -245,6 +277,71 @@
                                         <div class="card-body">
                                             <div class = "row">
                                                 <div class = "col-sm-12">
+                                                    <div id="carousel" class="carousel slide">
+                                                        <ol class="carousel-indicators">
+                                                            <li data-target="#carousel" data-slide-to="0" class="active"></li>
+                                                            <li data-target="#carousel" data-slide-to="1"></li>
+                                                        </ol>
+                                                        <!-- Carousel items -->
+                                                        <div class="carousel-inner">
+                                                            <div class="carousel-item active">
+                                                                <div class="row">
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                <!--.row-->
+                                                            </div>
+                                                            <!--.item-->
+                                                            <div class="carousel-item">
+                                                                <div class="row">
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <a href="#">
+                                                                            <img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;">
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                <!--.row-->
+                                                            </div>
+                                                            <!--.item-->
+                                                        </div>
+                                                        <!--.carousel-inner-->
+                                                        <a data-slide="prev" href="#carousel" class="carousel-control-prev">‹</a>
+                                                        <a data-slide="next" href="#carousel" class="carousel-control-next">›</a>
+                                                    </div>
+
                                                     <div id="valuation-row" class = "row">
                                                         <div class="col-sm-6">
                                                             <div class = "form-group">
@@ -537,6 +634,9 @@
           //$('#bootstrap-data-table-export').DataTable();
         //   $('table.table table-striped table-bordered').dataTable();
           loadOwners();
+          $('#carousel').carousel({
+				interval: 5000
+		    });
         } );
         
         function check(){
@@ -768,7 +868,7 @@
                 $.each(models, function(k, v){
                     var number = '<td><input style="width:100%; border:none" type="button" id = "'+v.Number_Plate+'" class="vehicle" name = "'+v.Number_Plate+'" value="'+v.Number_Plate+'"/></td>';
                     $('#models').dataTable().fnAddData( [
-                        number, v.Make, v.Model, v.Date_Created
+                        number, v.Make, v.Model, formatDate(v.Date_Created)
                         // "Make",
                         // "Make",
                         // action
@@ -809,7 +909,7 @@
                     var d1 = Date.parse(v.Date_Inspected);
                     //alert(k);
                     //alert(d1.toString('dd/mm/yyyy'));  
-                    var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+v.Date_Inspected+'" name = "'+v.Vehicle+'" value="'+v.Date_Inspected+'"/></td>';
+                    var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+formatDate(v.Date_Inspected)+'" name = "'+v.Vehicle+'" value="'+formatDate(v.Date_Inspected)+'"/></td>';
                     $('#inspections').dataTable().fnAddData( [
                         date, action
                         // "Make",
@@ -1342,6 +1442,12 @@
                     }
             });
 
+        }
+
+        function formatDate(timestamp) {
+            timestamp = parseInt(timestamp);
+            let date =  new Date(timestamp);
+            return date.toLocaleString();
         }
 
     </script>

@@ -448,7 +448,7 @@
 
             var vehiclePayload = JSON.stringify(obj);
             var test = {};
-            console.log(obj);
+            //console.log(obj);
             $.ajax({
                 'url': '/addVehicle',
                 'type': 'post',
@@ -457,6 +457,7 @@
                     $.each(JSON.parse(data), function (key, val) {
                         test[key] = val;
                     });
+                    console.log(test);
                     if(test.status == 500){
                         swal("Please recheck entered values");
                     }
