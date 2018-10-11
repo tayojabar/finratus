@@ -192,7 +192,7 @@
                     <div id="vehicle-form" class="col-xs-12 col-sm-12" style="display:none">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Add Vehicle Data</strong> <small> Vehicle Information</small>
+                                <strong>Edit Vehicle Data</strong> <small> Vehicle Information</small>
                             </div>
                             <div class="card-body card-block">
                                 <div class="form-group">
@@ -356,7 +356,7 @@
                                     <small class="form-text text-muted">ex. Abuja</small>
                                 </div>
                                 <div class = "form-group">
-                                    <input id="registerVehicle" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value ="Register Vehicle"/>
+                                    <input id="registerVehicle" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value ="Submit" onclick="submitDetails()"/>
                                 </div>
                             </div>
                         </div>
@@ -428,6 +428,8 @@
             var selectedID = $(this).find('option:selected').attr('id');
             getModels(selectedID);
         });
+        
+        let results;
 
         function loadVehicles(){
 
@@ -438,6 +440,7 @@
                 'success': function (data) {
                     console.log(data);
                     var vehicles = JSON.parse(data);
+                    results = vehicles;
                     populateDataTable(vehicles);
                 },
                 'error': function (err) {
@@ -473,9 +476,9 @@
                 data: '{}',
                 success: function (response) {
                     var owner = $("[id*=owner]");
-                    owner.empty().append('<option selected="selected" id="0">-- Select Vehicle Owner --</option>');
+                    owner.empty().append('<option selected="selected" value="0" id="0">-- Select Vehicle Owner --</option>');
                     $.each(JSON.parse(response), function (key, val) {
-                        $("#owner").append('<option class="deptSp" value = "' + val.fullname + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                        $("#owner").append('<option class="deptSp" value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     });
                 }
             });
@@ -512,31 +515,62 @@
             });
         }
     
-        function edit(){
+        function edit(id){
             getOwners();
             getMakes();
+            $('#vehicle-form').slideDown();
+            $('#vehicle-table').slideToggle();
+            let data = ($.grep(results, function(e){ return e.ID === id; }))[0];
+            $('#mileage').val(data.Mileage);
+            $('#number_plate').val(data.Number_Plate);
+            $('#price').val(data.Price);
+            $('#owner').val(data.owner);
+            $('#make > option').each(function(){ if($(this).text() == data.Make) $(this).parent('select').val($(this).val())});
+            $('#model > option').each(function(){ if($(this).text() == data.Model) $(this).parent('select').val($(this).val())});
+            $('#year > option').each(function(){ if($(this).text() == data.Year) $(this).parent('select').val($(this).val())});
+            $('#condition > option').each(function(){ if($(this).text() == data.Bought_Condition) $(this).parent('select').val($(this).val())});
+            $('#transmission > option').each(function(){ if($(this).text() == data.Transmission) $(this).parent('select').val($(this).val())});
+            $('#fuel_type > option').each(function(){ if($(this).text() == data.Fuel_Type) $(this).parent('select').val($(this).val())});
+            $('#capacity > option').each(function(){ if($(this).text() == data.Engine_Capacity) $(this).parent('select').val($(this).val())});
+            $('#color > option').each(function(){ if($(this).text() == data.Color) $(this).parent('select').val($(this).val())});
+            $('#reg-city > option').each(function(){ if($(this).text() == data.Registered_City) $(this).parent('select').val($(this).val())});
+            $('#location > option').each(function(){ if($(this).text() == data.Location) $(this).parent('select').val($(this).val())});
+        }
+        
+        function submitDetails(){
+            var obj = {};
+            obj.Mileage = $('#mileage').val();
+            obj.Number_Plate = $('#number_plate').val();
+            obj.Price = $('#price').val();
+            obj.owner = $('#owner').find('option:selected').attr('id');
+            obj.Make = $('#make').find('option:selected').text();
+            obj.Model = $('#model').find('option:selected').text();
+            obj.Year = $('#year').find('option:selected').text();
+            obj.Bought_Condition = $('#condition').find('option:selected').text();
+            obj.Transmission = $('#transmission').find('option:selected').text();
+            obj.Fuel_Type = $('#fuel_type').find('option:selected').text();
+            obj.Engine_Capacity = $('#capacity').find('option:selected').text();
+            obj.Color = $('#color').find('option:selected').text();
+            obj.Registered_City = $('#reg-city').find('option:selected').text();
+            obj.Location = $('#location').find('option:selected').text();
+
+            var vehiclePayload = JSON.stringify(obj);
+            var test = {};
+            //console.log(obj);
             $.ajax({
-                'url': '/user/user-dets/'+localStorage.getItem("vehicle_id"),
-                'type': 'get',
-                'data': {},
+                'url': '/edit-Vehicle',
+                'type': 'post',
+                'data': obj,
                 'success': function (data) {
-                    //console.log(data);
-                    $('#vehicle-form').slideDown();
-                    $('#vehicle-table').slideToggle();
-                    //console.log(data[0]);
-                    $('#fullname').val(data[0].fullname);
-                    $('#user-name').val(data[0].username);
-                    $('#phone').val(data[0].phone);
-                    $('#address').val(data[0].address);
-                    $('#email').val(data[0].email);
-                    $('#role').val(data[0].user_role);
-                    // var applications = data.message;
-                    // results = applications;
-                    // populateDataTable(applications);
-                    // swal('Application archived successfully');
-                },
-                'error': function (err) {
-                    swal('Oops! An error occurred while retrieving details.');
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    console.log(test);
+                    if(test.status == 500){
+                        swal("Please recheck entered values");
+                    }
+                    else
+                        swal("Vehicle Registered!");
                 }
             });
         }
