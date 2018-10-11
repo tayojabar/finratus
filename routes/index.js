@@ -738,7 +738,6 @@ router.post('/dashboard/:id', function(req, res, next) {
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
-	  		console.log(error)
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
@@ -971,6 +970,7 @@ router.post('/obd/:id', function(req, res, next) {
     
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
+            console.log(error)
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
@@ -997,7 +997,6 @@ router.post('/fluids-filters/:id', function(req, res, next) {
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
-	  		console.log(error)
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
