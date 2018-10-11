@@ -507,7 +507,7 @@ users.post('/contact', function(req, res) {
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.loan_amount, a.date_modified FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0';
+        'a.loan_amount, a.date_modified, a.comment FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -520,18 +520,40 @@ users.get('/applications', function(req, res, next) {
 users.get('/applications/delete/:id', function(req, res, next) {
     let id = req.params.id,
         date_modified = Date.now(),
-        query =  'UPDATE applications Set status = 0, date_modified =? where ID=?';
+        query =  'UPDATE applications SET status=0, date_modified=? where ID=?';
     db.query(query,[date_modified, id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                'a.loan_amount, a.date_modified FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0';
+                'a.loan_amount, a.date_modified, a.comment FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
             db.query(query, function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
                 } else {
                     res.send({"status": 200, "message": "Application archived successfully!", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.post('/applications/comment/:id', function(req, res, next) {
+    let id = req.params.id,
+		comment = req.body.comment,
+        date_modified = Date.now(),
+        query =  'UPDATE applications SET comment=?, date_modified=? where ID=?';
+    db.query(query,[comment, date_modified, id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
+                'a.loan_amount, a.date_modified, a.comment FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
+            db.query(query, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Application commented successfully!", "response": results});
                 }
             });
         }
