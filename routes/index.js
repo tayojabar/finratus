@@ -917,7 +917,7 @@ router.post('/windows-central-lock/:id', function(req, res, next) {
     var payload =  [postData.right_headlight, postData.left_headlight, postData.right_taillight, postData.left_taillight, postData.reverse_light, postData.fog_lights, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'rightF_window_lever=?, leftF_window_lever=?, rightR_window_lever=?, leftR_window_lever=?, autolock = ?, window_safety_lock=?, '+
-                    'right_headlight=?, left_headlight=?, right_taillight=?, left_taillight=?, reverse_light = ?, fog_lights=?, date_modified=? '+
+                    'auto_window_mech=?, manual_window_mech=?, date_modified=? '+
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
