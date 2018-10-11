@@ -562,20 +562,20 @@ router.get('/models/:make', function(req, res, next) {
 });
 
 /*Update Vehicle Details*/
-router.post('/editVehicle/:number_plate', function(req, res, next) {
+router.post('/editVehicle/:id', function(req, res, next) {
     var postData = req.body; 
 	var np = req.params.number_plate;   
-    var payload =  [postData.license, postData.license_original, postData.ecmr, postData.ecmr_original, postData.proof_ownership, postData.proof_ownership_original, 
-                    postData.road_worthiness, postData.road_worthiness_original, postData.insurance_clearance, postData.insurance_clearance_original, postData.custom_clearance, postData.custom_clearance_original, 
-                    postData.purchase_receipt, postData.purchase_receipt_ownership, postData.tinted_permit, postData.tinted_permit_original, postData.number_plates, postData.number_plates_original,
-                    postData.plate_number_allocation, postData.plate_number_allocation_original, postData.spare_key_available, postData.vehicle_tracker, postData.vehicle_security, Date.now(), np];
-    var query = 'Update vehicles SET '+
-                    'number_plate=?, make=?, model=?, color=?, year = ?, bought_condition=?, '+
-                    'engine_capacity=?, transmission=?, mileage=?, fuel_type=?, location = ?, registered_city=?, '+
-                    'valuation=?, status=?, vehicle_type=?, date_registered=?, registered_by = ?, date_modified=?'+
-                'where number_plate=?';
-    
-    db.query(query, payload, function (error, results, fields) {
+    // var payload =  [postData.license, postData.license_original, postData.ecmr, postData.ecmr_original, postData.proof_ownership, postData.proof_ownership_original, 
+    //                 postData.road_worthiness, postData.road_worthiness_original, postData.insurance_clearance, postData.insurance_clearance_original, postData.custom_clearance, postData.custom_clearance_original, 
+    //                 postData.purchase_receipt, postData.purchase_receipt_ownership, postData.tinted_permit, postData.tinted_permit_original, postData.number_plates, postData.number_plates_original,
+    //                 postData.plate_number_allocation, postData.plate_number_allocation_original, postData.spare_key_available, postData.vehicle_tracker, postData.vehicle_security, Date.now(), np];
+    // var query = 'Update vehicles SET '+
+    //                 'number_plate=?, make=?, model=?, color=?, year = ?, bought_condition=?, '+
+    //                 'engine_capacity=?, transmission=?, mileage=?, fuel_type=?, location = ?, registered_city=?, '+
+    //                 'valuation=?, status=?, vehicle_type=?, date_registered=?, registered_by = ?, date_modified=?'+
+    //             'where number_plate=?';
+    var query = 'update vehicles set ? where id = ?';
+    db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -642,7 +642,9 @@ router.post('/steeringControls/:id', function(req, res, next) {
 });
 
 router.post('/engineCheck/:id', function(req, res, next) {
-    var postData = req.body;    
+    var postData = req.body;   
+	var id = req.params.id; 
+	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
 	var np = req.params.number_plate;
     var payload =  [postData.wires, postData.hoses, postData.belt, postData.pulley, postData.head_gasket, postData.engine_noise, postData.engine_mount, 
                     postData.gear_mount, postData.radiator_fan, postData.radiator, postData.suction_fan, postData.starter_operation, 
@@ -708,7 +710,7 @@ router.post('/upholstery/:id', function(req, res, next) {
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
     var payload =  [postData.roof_upholstery, postData.floor_upholstery, postData.door_upholstery, postData.clean_dashboard, postData.sunshades, postData.boot_carpet, postData.boot_board, 
-                    postData.driver_seat_upholstery, postData.passenger_seat_upholstery, postData.rear_seat_upholstery, Date.now(), np];
+                    postData.driver_seat_upholstery, postData.passenger_seat_upholstery, postData.rear_seat_upholstery, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'roof_upholstery=?, floor_upholstery=?, door_upholstery=?, clean_dashboard=?, sunshades = ?, boot_carpet=?, '+
                     'boot_board=?, driver_seat_upholstery=?, passenger_seat_upholstery=?, rear_seat_upholstery=?, date_modified=? '+
@@ -1076,8 +1078,8 @@ router.post('/inspection-approval/:id/:status', function(req, res, next) {
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	var Vehicle = req.params.number_plate;
 	var payload = [req.params.status, id];
-    var query = 'update inspections set Inspection_Status = ? where ID = ?';
-    db.query(query, [req.params.status, id], function (error, results, fields) {
+    var query = 'update inspections set Inspection_Status = ?, Date_Modified = ? where ID = ?';
+    db.query(query, [req.params.status, Date_Modified, id], function (error, results, fields) {
 	  	if(error){
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -1095,8 +1097,8 @@ router.post('/reject-inspection/:id/', function(req, res, next) {
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	var Vehicle = req.params.number_plate;
 	//var payload = [postData.Admin_FirstSale_Value, postData.Admin_Market_Valuation, Date_Modified, id];
-    var query = 'update inspections set Inspection_Status = 0 where ID = ?';
-    db.query(query, id, function (error, results, fields) {
+    var query = 'update inspections set Inspection_Status = 0, Date_Modified = ? where ID = ?';
+    db.query(query, [Date_Modified, id], function (error, results, fields) {
 	  	if(error){
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
