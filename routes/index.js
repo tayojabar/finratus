@@ -731,10 +731,10 @@ router.post('/dashboard/:id', function(req, res, next) {
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
     var payload =  [postData.dashboard_lights, postData.interior_lights, postData.dashboard_control_ac, postData.dashboard_control_defog, postData.dashboard_control_hazard_lights, postData.dashboard_control_parking_button, postData.audio, 
-                    postData.video, postData.cigarette_lighter, postData.fuel_cap_release_lever, postData.bonnet_release_lever, Date_Modified, id];
+                    postData.video, postData.cigarette_lighter, postData.fuelcap_release_lever, postData.bonnet_release_lever, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'dashboard_lights=?, interior_lights=?, dashboard_control_ac=?, dashboard_control_defog=?, dashboard_control_hazard_lights = ?, dashboard_control_parking_button=?, '+
-                    'audio=?, video=?, cigarette_lighter=?, fuel_cap_release_lever=?, bonnet_release_lever = ?, date_modified=? '+
+                    'audio=?, video=?, cigarette_lighter=?, fuelcap_release_lever=?, bonnet_release_lever = ?, date_modified=? '+
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
