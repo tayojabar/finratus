@@ -126,7 +126,7 @@ router.post('/addVehicle', function(req, res, next) {
 	postData.Date_Created = Date.now();
 	payload = [];
     var query =  'INSERT INTO vehicles set ?';
-	db.query(query,postData, function (error, results, fields) {
+	db.query(query, postData, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -279,21 +279,6 @@ router.get('/modelsCount', function(req, res, next) {
 router.get('/check', function(req, res, next) {
     res.send(req.session.user.user_role);
 });
-
-// function listDirectoryItems(path){
-// 	var obj = {};
-// 	fs.readdir(path, function (err, files){
-// 		files.forEach(function (file){
-// 			//items.push(file);
-// 			//console.log(file.name);
-// 			let part = file.split('.')[0].split('_')[1];
-// 			obj[part] = file;
-// 			//console.log(obj);
-// 		});
-// 		console.log(obj);
-// 		//res.send(JSON.stringify({"status": 200, "error": null, "response": results, "image": items}));
-// 	})	;
-// }
 
 /* GET specific vehicle by parameter */
 /**
