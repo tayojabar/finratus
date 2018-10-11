@@ -364,6 +364,7 @@
                     table[table.length-1] = table[table.length-1].concat(add_comment_button);
                 }
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
+                $('#bootstrap-data-table').dataTable().fnSort([[4,'desc']]);
             });
         }
 
