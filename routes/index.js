@@ -15,15 +15,14 @@ router.post('/upload/:number_plate/:part', function(req, res) {
 	let extArray = sampleFile.name.split(".");
     let extension = extArray[extArray.length - 1];
 	let fileName = name+'.'+extension;
-	//console.log(name);
 
 	fs.stat('files/'+req.params.number_plate+'/', function(err) {
 		if (!err) {
 			console.log('file or directory exists');
 		}
 		else if (err.code === 'ENOENT') {
-			console.log('file or directory does not exist');
-			console.log('Creating directory ...')
+			// console.log('file or directory does not exist');
+			// console.log('Creating directory ...')
 			fs.mkdirSync('files/'+req.params.number_plate+'/');
 		}
 	});
@@ -36,7 +35,7 @@ router.post('/upload/:number_plate/:part', function(req, res) {
 			// Use the mv() method to place the file somewhere on your server
 			sampleFile.mv('files/'+req.params.number_plate+'/'+req.params.number_plate+'_'+req.params.part+'.'+extension, function(err) {
 				if (err) return res.status(500).send(err);
-				console.log(req.params.number_plate+'_'+req.params.part+'.'+extension);
+				// console.log(req.params.number_plate+'_'+req.params.part+'.'+extension);
 				res.send('File uploaded!');
 			});
 		}
@@ -573,9 +572,11 @@ router.post('/editVehicle/:id', function(req, res, next) {
     //                 'number_plate=?, make=?, model=?, color=?, year = ?, bought_condition=?, '+
     //                 'engine_capacity=?, transmission=?, mileage=?, fuel_type=?, location = ?, registered_city=?, '+
     //                 'valuation=?, status=?, vehicle_type=?, date_registered=?, registered_by = ?, date_modified=?'+
-    //             'where number_plate=?';
-    var query = 'update vehicles set ? where id = ?';
-    db.query(query, postData, function (error, results, fields) {
+	//             'where number_plate=?';
+	payload = [postData.Mileage, postData.Number_Plate, postData.Price, postData.owner, postData.Make, postData.Model, postData.Color, postData.Year, postData.Bought_Condition, postData.Transmission, postData.Fuel_Type, postData.Engine_Capacity, postData.Registered_City, postData.Location, req.params.id];
+	var query = 'update vehicles set Mileage = ?, Number_Plate =?, Price = ?, owner = ?, Make = ?, Model = ?, Color = ?, Year = ?, Bought_Condition = ?, Transmission = ?, Fuel_Type = ?, Engine_Capacity = ?, Registered_City = ?, Location = ? ' + 
+				'where id = ?';
+    db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
