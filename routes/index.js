@@ -764,6 +764,7 @@ router.post('/mechanical-check/:id', function(req, res, next) {
     
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
+	  		console.log(error)
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
