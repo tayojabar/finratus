@@ -193,7 +193,7 @@ router.get('/vehicles', function(req, res, next) {
 
 /* GET vehicles listing for admin. */
 router.get('/vehicles-list', function(req, res, next) {
-    var query = 'SELECT * from vehicles order by ID desc';
+    var query = 'SELECT *, (select fullname from users u where u.ID = owner) as Owner from vehicles order by ID desc';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 

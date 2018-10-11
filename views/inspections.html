@@ -868,7 +868,7 @@
                 $.each(models, function(k, v){
                     var number = '<td><input style="width:100%; border:none" type="button" id = "'+v.Number_Plate+'" class="vehicle" name = "'+v.Number_Plate+'" value="'+v.Number_Plate+'"/></td>';
                     $('#models').dataTable().fnAddData( [
-                        number, v.Make, v.Model, v.Date_Created
+                        number, v.Make, v.Model, formatDate(v.Date_Created)
                         // "Make",
                         // "Make",
                         // action
@@ -909,7 +909,7 @@
                     var d1 = Date.parse(v.Date_Inspected);
                     //alert(k);
                     //alert(d1.toString('dd/mm/yyyy'));  
-                    var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+v.Date_Inspected+'" name = "'+v.Vehicle+'" value="'+v.Date_Inspected+'"/></td>';
+                    var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+formatDate(v.Date_Inspected)+'" name = "'+v.Vehicle+'" value="'+formatDate(v.Date_Inspected)+'"/></td>';
                     $('#inspections').dataTable().fnAddData( [
                         date, action
                         // "Make",
@@ -1442,6 +1442,12 @@
                     }
             });
 
+        }
+
+        function formatDate(timestamp) {
+            timestamp = parseInt(timestamp);
+            let date =  new Date(timestamp);
+            return date.toLocaleString();
         }
 
     </script>
