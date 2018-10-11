@@ -984,12 +984,12 @@ router.post('/fluids-filters/:id', function(req, res, next) {
 	var np = req.params.number_plate; 
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
-    var payload =  [postData.engine_oil, postData.oilpump_leakage, postData.engine_oil_valve_cover, postData.axe_oil_leakage, postData.gear_oil_leakage, postData.gear_oil_seal, 
+    var payload =  [postData.engine_oil, postData.oilpump_leakage, postData.engine_oil_valve_cover, postData.axle_oil_leakage, postData.gear_oil_leakage, postData.gear_oil_seal, 
                     postData.gear_oil, postData.brake_oil, postData.brake_oil_leakage, postData.brake_oil_hose_leakage, postData.brake_caliper, postData.brake_oil_pipe_leakage, 
                     postData.power_steering_oil_gauge, postData.power_steering_oil, postData.power_steering, postData.power_steering_oil_pump, postData.power_steering_oil_leakage, postData.washer_fluid,
                     postData.washer_fluid_leakage, postData.washer_fluid_compartment, Date_Modified, id];
     var query = 'Update inspections SET '+
-                    'engine_oil=?, oilpump_leakage=?, engine_oil_valve_cover=?, axe_oil_leakage=?, gear_oil_leakage = ?, gear_oil_seal=?, '+
+                    'engine_oil=?, oilpump_leakage=?, engine_oil_valve_cover=?, axle_oil_leakage=?, gear_oil_leakage = ?, gear_oil_seal=?, '+
                     'gear_oil=?, brake_oil=?, brake_oil_leakage=?, brake_oil_hose_leakage=?, brake_caliper = ?, brake_oil_pipe_leakage=?, '+
                     'power_steering_oil_gauge=?, power_steering_oil=?, power_steering=?, power_steering_oil_pump=?, power_steering_oil_leakage = ?, washer_fluid=?, '+
                     'washer_fluid_leakage=?, washer_fluid_compartment=?, date_modified=? '+
