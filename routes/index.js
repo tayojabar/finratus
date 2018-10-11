@@ -757,8 +757,8 @@ router.post('/mechanical-check/:id', function(req, res, next) {
                     postData.front_spoiler, postData.rear_spoiler, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'trunk_lock=?, front_door_fitting_rh=?, front_door_fitting_lh=?, rear_door_fitting_rh=?, rear_door_fitting_lh = ?, front_door_levers_rh=?, '+
-                    'front_door_levers_lh=?, rear_door_levers_rh=?, rear_door_levers_lh=?, front_windshield=?, rear_windshield = ?, front_door_window_rh = ? '+
-                    ', front_door_window_lh = ?, rear_door_window_rh = ?, rear_door_window_lh = ?, underbody_shields = ?, fender_shields = ?, front_spoiler = ? '+
+                    'front_door_levers_lh=?, rear_door_levers_rh=?, rear_door_levers_lh=?, front_windshield=?, rear_windshield = ?, front_door_window_rh = ?, '+
+                    'front_door_window_lh = ?, rear_door_window_rh = ?, rear_door_window_lh = ?, underbody_shields = ?, fender_shields = ?, front_spoiler = ?, '+
                     'rear_spoiler = ?, date_modified=? '+
                 'where id=?';
     
