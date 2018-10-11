@@ -814,9 +814,9 @@ router.post('/transmission/:id', function(req, res, next) {
 	var np = req.params.number_plate; 
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
-    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData.fwd_active, Date_Modified, id];
+    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData['4wd_active'], Date_Modified, id];
     var query = 'Update inspections SET '+
-                    'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, 4wd_active=?, date_modified=? '+
+                    'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, fwd_active=?, date_modified=? '+
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
