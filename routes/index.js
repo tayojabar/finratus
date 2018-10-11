@@ -816,12 +816,13 @@ router.post('/transmission/:id', function(req, res, next) {
 	var np = req.params.number_plate; 
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
-    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData.fwd_active, Date_Modified, id];
+    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData['4wd_active'], Date_Modified, id];
     var query = 'Update inspections SET '+
-                    'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, 4wd_active=?, date_modified=? '+
+                    'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, fwd_active=?, date_modified=? '+
                 'where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
+            console.log(error)
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
@@ -832,8 +833,10 @@ router.post('/transmission/:id', function(req, res, next) {
 });
 
 router.post('/suspension-steering/:id', function(req, res, next) {
-    var postData = req.body;  
-	var np = req.params.number_plate;  
+    var postData = req.body;
+    var np = req.params.number_plate;
+    var id = req.params.id;
+    var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     var payload =  [postData.ball_joints, postData.zlinks, postData.front_brushes, postData.front_shocks, postData.tie_rod, postData.rack_end, postData.rear_brushes, 
                     postData.rear_shocks, postData.height_control, postData.height_control_unit, Date_Modified, id];
     var query = 'Update inspections SET '+
