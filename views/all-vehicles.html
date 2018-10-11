@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="assets/scss/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
@@ -356,7 +356,7 @@
                                     <small class="form-text text-muted">ex. Abuja</small>
                                 </div>
                                 <div class = "form-group">
-                                    <input id="registerVehicle" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value ="Submit" onclick="submitDetails()"/>
+                                    <input id="registerVehicle" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value ="Submit" onclick="validate()"/>
                                 </div>
                             </div>
                         </div>
@@ -515,7 +515,21 @@
             });
         }
     
+        function validate(){
+            if ($('#owner').val() == "" || $('#owner').val() == null || 
+                $('#make').val() == "" || $('#make').val() == null ||
+                $('#model').val() == "" || $('#model').val() == null )
+            {
+                swal('Please make sure all compulsory fields are filled!')
+            }
+            else
+            {
+                submitDetails();
+            }
+        }
+
         function edit(id){
+            localStorage.setItem("vehicle_id",id);
             getOwners();
             getMakes();
             $('#vehicle-form').slideDown();
@@ -558,7 +572,7 @@
             var test = {};
             //console.log(obj);
             $.ajax({
-                'url': '/edit-Vehicle',
+                'url': '/editVehicle/'+localStorage.getItem("vehicle_id"),
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
@@ -570,7 +584,7 @@
                         swal("Please recheck entered values");
                     }
                     else
-                        swal("Vehicle Registered!");
+                        swal("Vehicle Details Updated!");
                 }
             });
         }
