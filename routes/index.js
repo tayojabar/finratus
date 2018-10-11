@@ -832,7 +832,8 @@ router.post('/transmission/:id', function(req, res, next) {
 
 router.post('/suspension-steering/:id', function(req, res, next) {
     var postData = req.body;  
-	var np = req.params.number_plate;  
+	var np = req.params.number_plate;
+    var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     var payload =  [postData.ball_joints, postData.zlinks, postData.front_brushes, postData.front_shocks, postData.tie_rod, postData.rack_end, postData.rear_brushes, 
                     postData.rear_shocks, postData.height_control, postData.height_control_unit, Date_Modified, id];
     var query = 'Update inspections SET '+
