@@ -816,7 +816,7 @@ router.post('/transmission/:id', function(req, res, next) {
 	var np = req.params.number_plate; 
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'); 
-    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData['4wd_active'], Date_Modified, id];
+    var payload =  [postData.gear_not_converted, postData.gear_delay, postData.gear_surge, postData.gear_repair_history, postData.gear_jerk, postData.fwd_active, Date_Modified, id];
     var query = 'Update inspections SET '+
                     'gear_not_converted=?, gear_delay=?, gear_surge=?, gear_repair_history=?, gear_jerk = ?, fwd_active=?, date_modified=? '+
                 'where id=?';
@@ -957,12 +957,12 @@ router.post('/obd/:id', function(req, res, next) {
 	var np = req.params.number_plate;  
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    var payload =  [postData.crank_shaft_censor, postData.camshaft_sensor, postData.oxygen_sensor, postData.map_sensor, postData.throttle_position_sensor, postData.coolant_sensor, 
+    var payload =  [postData.crank_shaft_sensor, postData.camshaft_sensor, postData.oxygen_sensor, postData.map_sensor, postData.throttle_position_sensor, postData.coolant_sensor,
                     postData.airflow_sensor, postData.tpms, postData.evap, postData.abs, postData.srs, postData.bcm, 
                     postData.pcm, postData.detonation_sensor, postData.egr_sensor, postData.vehicle_speed, postData.gear_solenoid, postData.catalyst_sensor,
                     postData.throttle_sensor, postData.mil, Date_Modified, id];
     var query = 'Update inspections SET '+
-                    'crank_shaft_censor=?, camshaft_sensor=?, oxygen_sensor=?, map_sensor=?, throttle_position_sensor = ?, coolant_sensor=?, '+
+                    'crank_shaft_sensor=?, camshaft_sensor=?, oxygen_sensor=?, map_sensor=?, throttle_position_sensor = ?, coolant_sensor=?, '+
                     'airflow_sensor=?, tpms=?, evap=?, abs=?, srs = ?, bcm=?, '+
                     'pcm=?, detonation_sensor=?, egr_sensor=?, vehicle_speed=?, gear_solenoid = ?, catalyst_sensor=?, '+
                     'throttle_sensor=?, mil=?, date_modified=? '+
