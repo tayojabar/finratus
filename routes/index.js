@@ -1030,9 +1030,9 @@ router.post('/valuation/:id', function(req, res, next) {
     var postData = req.body;   
 	//var np = req.params.number_plate;
 	var id = req.params.id; 
-	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	var Date_Modified = Date.now(); //moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	var Vehicle = req.params.number_plate;
-	var payload = [postData.FirstSale_Value, postData.Market_Valuation, Date_Modified, id];
+	var payload = [postData.firstsale_value, postData.market_valuation, Date_Modified, id];
     var query = 'update inspections set FirstSale_Value = ?, Market_Valuation = ?, Date_Modified = ? where ID = ?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
