@@ -883,13 +883,6 @@ router.post('/body-frame/:number_plate', function(req, res, next) {
                     postData.rightA_pillar, postData.leftA_pillar, postData.rightB_pillar, postData.leftB_pillar, postData.rightC_pillar, postData.leftC_pillar, 
                     postData.rightD_pillar, postData.leftD_pillar, postData.right_rear_lock_pillar, postData.left_rear_lock_pillar, postData.boot_floor, postData.boot_lock_pillar,
                     postData.engraved, postData.converted, postData.accident_history, postData.roof, postData.bonnet, postData.rocker_panel_lh, postData.rocker_panel_rh, postData.chassis, Date.now(), np];
-    // var query = 'Update vehicles SET '+
-    //                 'radiator_core_support=?, right_strut_tower_apron=?, left_strut_tower_apron=?, right_front_rail=?, left_front_rail = ?, cowl_panel_firewall=?, '+
-    //                 'rightA_pillar=?, leftA_pillar=?, rightB_pillar=?, leftB_pillar=?, rightC_pillar = ?, leftC_pillar=?, '+
-    //                 'rightD_pillar=?, leftD_pillar=?, right_rear_lock_pillar=?, left_rear_lock_pillar=?, boot_floor = ?, boot_lock_pillar=?, '+
-    //                 'engraved=?, converted=?, accident_history=?, roof=?, bonnet=?, rocker_panel_lh=?, rocker_panel_rh=?, chassis=?, date_modified=? '+
-    //             'where number_plate=?';
-	//console.log(query);
 	var query = 'insert into inspections set ?';
     db.query(query, postData,  function (error, results, fields) {
 	  	if(error){

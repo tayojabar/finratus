@@ -517,6 +517,23 @@ users.get('/applications', function(req, res, next) {
     });
 });
 
+/* GET User Applications. */
+users.get('/applications/filter/:start/:end', function(req, res, next) {
+    let start = req.params.start,
+		end = req.params.end;
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+	let query = "SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, " +
+        "a.loan_amount, a.date_modified, a.comment FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 " +
+			"AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ORDER BY a.ID desc";
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
+        }
+    });
+});
+
 users.get('/applications/delete/:id', function(req, res, next) {
     let id = req.params.id,
         date_modified = Date.now(),
