@@ -1026,14 +1026,14 @@ router.post('/documentation/:id', function(req, res, next) {
   	});
 });
 
-router.post('/valuation/:id', function(req, res, next) {
+router.post('/valuation/:number_plate', function(req, res, next) {
     var postData = req.body;   
 	//var np = req.params.number_plate;
 	var id = req.params.id; 
 	var Date_Modified = Date.now(); //moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	var Vehicle = req.params.number_plate;
-	var payload = [postData.firstsale_value, postData.market_valuation, Date_Modified, id];
-    var query = 'update inspections set FirstSale_Value = ?, Market_Valuation = ?, Date_Modified = ? where ID = ?';
+	var payload = [postData.firstsale_value, postData.market_valuation, Date_Modified, req.params.number_plate];
+    var query = 'update inspections set FirstSale_Value = ?, Market_Valuation = ?, Date_Modified = ? where ID = (select max(ID) from inspections where vehicle = ?)';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send({"status": 500, "error": error, "response": null}); 
@@ -1044,6 +1044,25 @@ router.post('/valuation/:id', function(req, res, next) {
 	  	}
   	});
 });
+
+// router.post('/valuation/:id', function(req, res, next) {
+//     var postData = req.body;   
+// 	//var np = req.params.number_plate;
+// 	var id = req.params.id; 
+// 	var Date_Modified = Date.now(); //moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+// 	var Vehicle = req.params.number_plate;
+// 	var payload = [postData.firstsale_value, postData.market_valuation, Date_Modified, id];
+//     var query = 'update inspections set FirstSale_Value = ?, Market_Valuation = ?, Date_Modified = ? where ID = ?';
+//     db.query(query, payload, function (error, results, fields) {
+// 	  	if(error){
+// 	  		res.send({"status": 500, "error": error, "response": null}); 
+// 	  		//If there is error, we send the error in the error section with 500 status
+// 	  	} else {
+//   			res.send({"status": 200, "error": null, "response": "Vehicle Valuation Details Updated!"});
+//   			//If there is no error, all is good and response is 200OK.
+// 	  	}
+//   	});
+// });
 
 router.post('/admin-valuation/:id', function(req, res, next) {
     var postData = req.body;   
