@@ -876,7 +876,7 @@ router.post('/exterior-lights/:id', function(req, res, next) {
 
 router.post('/body-frame/:number_plate', function(req, res, next) {
 	var postData = req.body; 
-	postData.Date_Inspected = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+	postData.Date_Inspected = Date.now(); //moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	postData.Vehicle = req.params.number_plate;
 	var np = req.params.number_plate;  
     var payload =  [postData.radiator_core_support, postData.right_strut_tower_apron, postData.left_strut_tower_apron, postData.right_front_rail, postData.left_front_rail, postData.cowl_panel_firewall, 
