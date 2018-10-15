@@ -885,7 +885,6 @@ router.post('/body-frame/:number_plate', function(req, res, next) {
                     postData.engraved, postData.converted, postData.accident_history, postData.roof, postData.bonnet, postData.rocker_panel_lh, postData.rocker_panel_rh, postData.chassis, Date.now(), np];
 	var query = 'insert into inspections set ?';
     db.query(query, postData,  function (error, results, fields) {
-        console.log(error)
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
