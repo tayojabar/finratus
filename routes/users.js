@@ -506,12 +506,15 @@ users.post('/contact', function(req, res) {
 
 users.post('/sendmail', function(req, res) {
     let data = req.body;
+    if (data['solution[]'])
+        data.solution = data['solution[]'];
     if (!data.name || !data.email || !data.company || !data.phone || !data.solution || !data.description)
         return res.send("Error");
-    data.solution = data.solution.join(',');
+    if (data.solution.constructor === [].constructor)
+        data.solution = data.solution.join(',');
     data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     let mailOptions = {
-        from: 'ATB Cisco',
+        from: 'ATB Cisco <applications@loan35.com>',
         to: 'itaukemeabasi@gmail.com',
         subject: 'ATB Cisco Application: '+data.name,
         template: 'mail',
