@@ -504,6 +504,30 @@ users.post('/contact', function(req, res) {
     });
 });
 
+users.post('/sendmail', function(req, res) {
+    let data = req.body;
+    if (data['solution[]'])
+        data.solution = data['solution[]'];
+    if (!data.name || !data.email || !data.company || !data.phone || !data.solution || !data.description)
+        return res.send("Error");
+    if (data.solution.constructor === [].constructor)
+        data.solution = data.solution.join(',');
+    data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let mailOptions = {
+        from: 'ATB Cisco <applications@loan35.com>',
+        to: 'abiodun@atbtechsoft.com',
+        subject: 'ATB Cisco Application: '+data.name,
+        template: 'mail',
+        context: data
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error)
+            return res.send("Error");
+        return res.send("OK");
+    });
+});
+
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
