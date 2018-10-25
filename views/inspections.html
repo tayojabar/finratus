@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loan35 Admin</title>
+    <title>Loan35 Inspection Report</title>
     <meta name="description" content="Sufee Admin - HTML5 Admin Template">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -61,6 +61,12 @@
         .carousel-indicators .active {
         background: #428bca;
         }
+        @media screen {
+	.page-break	{ height:10px; background:url(page-break.gif) 0 center repeat-x; border-top:13px dotted #999; margin-bottom:30px; }
+}
+@media print {
+	.page-break { height:0; page-break-before:always; margin:20px; border:30px; }
+}
     </style>
 </head>
 <body>
@@ -272,7 +278,10 @@
                                             <strong id="info-head" class="card-title">Inspection Information
                                                 <span id="brand_name"></span>
                                             </strong>
-                                            <strong id="back-date"  class="pull-right"> Back </strong>
+                                            <span class="pull-right">
+                                                <input type="button" value="Print Report" onclick="printReport()"/>
+                                                <strong id="back-date"> Back </strong>
+                                            </span>
                                         </div>
                                         <div class="card-body">
                                             <div class = "row">
@@ -368,7 +377,7 @@
                                                         <div class="col-sm-6">
                                                             <div class="card">
                                                                 <div class="card-body">
-                                                                    Market Valuation: <strong id="mkt-sum" class="pull-right"> 350, 000</strong><br/><br/>
+                                                                    <div id="mkt">Market Valuation: <strong id="mkt-sum" class="pull-right"> 350, 000</strong><br/><br/></div>
                                                                     Documentation <strong id="doc-sum" class="pull-right"> 45%</strong><br/><br/>
                                                                     Mechanical Check <strong id="mec-sum" class="pull-right"> 45%</strong><br/><br/>
                                                                     Mirrors <strong id="mir-sum" class="pull-right"> 45%</strong><br/><br/>
@@ -385,7 +394,7 @@
                                                         <div class="col-sm-6">
                                                             <div class="card">
                                                                 <div class="card-body">
-                                                                    Forced - sale Value: <strong id="frc-sum" class="pull-right"> 200, 000</strong><br/><br/>
+                                                                    <div id="frc">Forced - sale Value: <strong id="frc-sum" class="pull-right"> 200, 000</strong><br/><br/></div>
                                                                     Body Frame Checklist <strong id="bod-sum" class="pull-right"> 45%</strong><br/><br/>
                                                                     Exterior Lights <strong id="ext-sum" class="pull-right"> 45%</strong><br/><br/>
                                                                     Equipment <strong id="equ-sum" class="pull-right"> 45%</strong><br/><br/>
@@ -604,6 +613,9 @@
             </div><!-- .animated -->
         </div><!-- .content -->
 
+        <div id="print-panel" class = "container" style="display:none">
+            
+        </div>
 
     </div><!-- /#right-panel -->
 
@@ -736,7 +748,7 @@
             $('#inspection-info').hide();
             var id = $(this).attr("id");
             var name = $(this).attr("name");
-            localStorage.setItem("vehicle", name)
+            localStorage.setItem("vehicle", name);
             $('#v-num').html(name+' Inspection(s)');
             $('#inspections').dataTable().fnClearTable();
             loadVehicleInspections(id);
@@ -1489,6 +1501,20 @@
                 }
             });
 
+        }
+
+        function printReport(){
+            var originalContent = document.body.innerHTML;
+            var info = '<div class = "table-header" style="padding:20px" ><strong>Vehicle ID: </strong>'+localStorage.getItem("vehicle")+' <span class="pull-right"><strong>Inspection Status: </strong>Passed</span></div>';
+            $("#print-panel").append('<h1 style="text-align:center">Vehicle Inspection Report</h1><br/>');
+            $("#print-panel").append(info);
+            // $('#summary-row').css("padding-top", "0px");
+            $('#mkt').hide(); $('#frc').hide(); 
+            $("#print-panel").append($("#summary-row"));
+            $("#print-panel").append($("#carousel"));
+            document.body.innerHTML = $("#print-panel").html();
+            window.print();
+            document.body.innerHTML = originalContent;
         }
 
     </script>
