@@ -727,6 +727,7 @@
         $(document).on("click", ".brand", function (e) {
             var id = $(this).attr("id");
             var name = $(this).attr("name");
+            localStorage.setItem("owner", name);
             $("#owners-div").slideUp();
             $("#info-div").attr('class', 'col-sm-12')
             $('#info-div').show();
