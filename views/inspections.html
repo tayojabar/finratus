@@ -1504,7 +1504,10 @@
 
         function printReport(){
             var originalContent = document.body.innerHTML;
-            var info = '<div class = "table-header" style="padding:20px" ><strong>Vehicle ID: </strong>'+localStorage.getItem("vehicle")+' <span class="pull-right"><strong>Inspection Status: </strong>Passed</span></div>';
+            var info = '<div class = "table-header" style="padding:20px" ><strong>Vehicle ID: </strong>'+localStorage.getItem("vehicle") +
+                        '<span><strong>Inspection Date: </strong>Passed</span>'+
+                        '<span><strong>Inspection Status: </strong>Passed</span>'+
+                        '</div>';
             $("#print-panel").append('<h1 style="text-align:center">Vehicle Inspection Report</h1><br/>');
             $("#print-panel").append(info);
             // $('#summary-row').css("padding-top", "0px");
