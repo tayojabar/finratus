@@ -1504,10 +1504,16 @@
 
         function printReport(){
             var originalContent = document.body.innerHTML;
-            var info = '<div class = "table-header" style="padding:20px" ><strong>Vehicle ID: </strong>'+localStorage.getItem("vehicle") +'<br/>'+
-                        '<span><strong>Inspection Date: </strong>Passed</span><br/>'+
-                        '<span><strong>Inspection Status: </strong>Passed</span><br/>'+
-                        '</div>';
+            // var info = '<div class = "table-header" style="padding:20px" ><strong>Vehicle ID: </strong>'+localStorage.getItem("vehicle") +'<br/>'+
+            //             '<span><strong>Inspection Date: </strong>Passed</span><br/>'+
+            //             '<span><strong>Inspection Status: </strong>Passed</span><br/>'+
+            //             '</div>';
+            var info = '<table class="table table-striped table-bordered">'+
+                            '<tr><td>Vehicle ID: </td><td><strong class="pull-right">'+localStorage.getItem("vehicle")+'</strong></td></tr>'+
+                            '<tr><td>Vehicle Owner: </td><td><strong class="pull-right">'+localStorage.getItem("owner")+'</strong></td></tr>'+
+                            '<tr><td>Inspection Date: </td><td><strong class="pull-right">'+dets.Battery_Malfunction_Indicator+'</strong></td></tr>'+
+                            '<tr><td>Inspection Status: </td><td><strong class="pull-right">'+dets.Battery_Malfunction_Indicator+'</strong></td></tr>'+
+                        '</table>';
             $("#print-panel").append('<h1 style="text-align:center">Vehicle Inspection Report</h1><br/>');
             $("#print-panel").append(info);
             // $('#summary-row').css("padding-top", "0px");
