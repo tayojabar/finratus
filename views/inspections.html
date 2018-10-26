@@ -1526,7 +1526,7 @@
                             '<tr><td><strong>Vehicle ID</strong> </td><td>'+localStorage.getItem("vehicle")+'</td></tr>'+
                             '<tr><td><strong>Vehicle Owner</strong> </td><td>'+localStorage.getItem("owner")+'</td></tr>'+
                             '<tr><td><strong>Inspection Date</strong> </td><td>'+localStorage.getItem("inspection_date")+'</td></tr>'+
-                            '<tr><td><strong>Inspection Status</strong> </td><td>Passed</td></tr>'+
+                            '<tr><td><strong>Inspection Status</strong> </td><td>'+localStorage.getItem("status")+'</td></tr>'+
                         '</table>';
             $("#print-panel").append('<h1 style="text-align:center">Vehicle Inspection Report</h1><br/>');
             $("#print-panel").append(info);
