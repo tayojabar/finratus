@@ -1019,6 +1019,18 @@
                 });
             });
             
+            let status;
+            if (acc.Inspection_Status == 1){
+                status = "Passed";
+            }
+            else if (acc.Inspection_Status == 0){
+                status = "Failed";
+            }
+            else {
+                status = "N / A";
+            }
+            localStorage.setItem("status", status);
+
             if (!(acc.Admin_FirstSale_Value == null || acc.Admin_Market_Valuation == null || acc.Admin_FirstSale_Value == "" || acc.Admin_Market_Valuation == "")){
                 $("#frc_val").hide();
                 $("#mkt_val").hide();
