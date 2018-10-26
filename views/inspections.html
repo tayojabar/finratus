@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
     <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
     <link rel="stylesheet" href="assets/scss/style.css">
-
+    
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css"/>
@@ -262,7 +262,7 @@
                                             <thead>
                                             <tr>
                                                 <th>Inspection Date</th>
-                                                <th>Action</th>
+                                                <th>Status</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -279,7 +279,7 @@
                                                 <span id="brand_name"></span>
                                             </strong>
                                             <span class="pull-right">
-                                                <input type="button" value="Print Report" onclick="printReport()"/>
+                                                <input id="printButton" style="display: none" type="button" value="Print Report" onclick="printReport()"/>
                                                 <strong id="back-date"> Back </strong>
                                             </span>
                                         </div>
@@ -759,6 +759,7 @@
             $('#inspection-dates').hide();
             $('#inspection-info').slideDown();
             var id = $(this).attr("id");
+            localStorage.setItem("date_id", id);
             var name = $(this).attr("name");
             $("#saveValuation").attr("target", id);
             //alert($("#saveValuation").attr("target"));
@@ -805,12 +806,36 @@
 
         $(document).on("click", "#approve", function (e) {
             var status = 1;
-            approveInspection(status);
+            // approveInspection(status, "Passed");
+            swal({
+                title: "Accept Vehicle Inspection?", 
+                text: "Click OK to continue", 
+                //icon: "input",
+                //content: "input",
+                buttons: true,
+                closeModal: false
+                }).then(
+                function(isConfirm) {
+                    if (isConfirm){
+                        approveInspection(status, "Passed");
+                    }
+                });
         });
 
         $(document).on("click", "#reject", function (e) {
             var status = 0;
-            approveInspection(status);
+            //approveInspection(status);
+            swal({
+                title: "You Are About To Reject an Inspection!", 
+                text: "If you are sure, type in your reason:", 
+                //icon: "input",
+                content: "input",
+                buttons: true,
+                closeModal: false
+                }).then(
+                function(reason) {
+                    approveInspection(status, reason);
+                });
         });
 
         function loadOwners(){
@@ -914,18 +939,29 @@
             // clear the table before populating it with more data
             //$("#models").dataTable().clear();
             console.log("cleared data table...");
-            var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
-                          '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
+            // var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
+            //               '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             if (inspections.length == 0){
                 $("#inspections").dataTable().fnClearTable();
             }else{
                 $.each(inspections, function(k, v){
                     var d1 = Date.parse(v.Date_Inspected);
                     //alert(k);
-                    //alert(d1.toString('dd/mm/yyyy'));  
+                    //alert(d1.toString('dd/mm/yyyy')); 
+                    let stat;
+                    if (v.Inspection_Status == 1) {
+                        stat = '<span class="label label-success" style="background-color:green; color:white; padding: 5px; border-radius: 5px">Passed</span>';
+                    }
+                    else if (v.Inspection_Status == 0){
+                        stat = '<span class="label label-danger" style="background-color:red; color:white; padding: 5px; border-radius: 5px">Failed</span>';
+                    }
+                    else{
+                        stat = '<span class="label label-warning" style="background-color:orange; color:white; padding: 5px; border-radius: 5px">Pending</span>';
+                    }
+                    console.log(v.Inspection_Status);
                     var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+formatDate(v.Date_Inspected)+'" name = "'+v.Vehicle+'" value="'+formatDate(v.Date_Inspected)+'"/></td>';
                     $('#inspections').dataTable().fnAddData( [
-                        date, action
+                        date, stat
                         // "Make",
                         // "Make",
                         // action
@@ -1022,12 +1058,15 @@
             let status;
             if (acc.Inspection_Status == 1){
                 status = "Passed";
+                $('#printButton').show();
             }
             else if (acc.Inspection_Status == 0){
                 status = "Failed";
+                $('#printButton').show();
             }
             else {
                 status = "N / A";
+                $('#printButton').hide();
             }
             localStorage.setItem("status", status);
 
@@ -1445,11 +1484,11 @@
             });
         }
 
-        function approveInspection(status){
+        function approveInspection(status, reason){
             id = $("#saveValuation").attr("target");
             var test = {};
             $.ajax({
-                'url': '/inspection-approval/'+id+'/'+status,
+                'url': '/inspection-approval/'+localStorage.getItem("date_id")+'/'+status+'/'+reason,
                 'type': 'post',
                 'data': {},
                 'success': function (data) {
@@ -1460,7 +1499,7 @@
                         swal("Please Retry Action!");
                     }
                     else
-                        swal("Vehicle Inspection Approval Saved!");
+                        swal("Vehicle Inspection Approval Info Updated!");
                         $("#frc_val").hide();
                         $("#mkt_val").hide();
                         $("#saveValuation").hide();
@@ -1528,7 +1567,7 @@
                             '<tr><td><strong>Inspection Date</strong> </td><td>'+localStorage.getItem("inspection_date")+'</td></tr>'+
                             '<tr><td><strong>Inspection Status</strong> </td><td>'+localStorage.getItem("status")+'</td></tr>'+
                         '</table>';
-            $("#print-panel").append('<h1 style="text-align:center">Vehicle Inspection Report</h1><br/>');
+            $("#print-panel").append('<h1 style="text-align:center">Loan35 Vehicle Inspection Report</h1><br/>');
             $("#print-panel").append(info);
             // $('#summary-row').css("padding-top", "0px");
             $('#mkt').hide(); $('#frc').hide(); 

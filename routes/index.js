@@ -429,7 +429,7 @@ router.get('/vehicle-owner/:owner', function(req, res, next) {
 
 /* GET specific inspections for vehicle for admin. */
 router.get('/vehicle-inspections/:number', function(req, res, next) {
-	var query = 'SELECT ID, Vehicle, Date_Inspected from inspections where vehicle = ?';
+	var query = 'SELECT ID, Vehicle, Date_Inspected, Inspection_Status from inspections where vehicle = ?';
 	console.log(query);
 	db.query(query, [req.params.number], function (error, results, fields) {
 	  	if(error){
@@ -1115,15 +1115,15 @@ router.post('/admin-valuation/:id', function(req, res, next) {
   	});
 });
 
-router.post('/inspection-approval/:id/:status', function(req, res, next) {
+router.post('/inspection-approval/:id/:status/:reason', function(req, res, next) {
     var postData = req.body;   
 	//var np = req.params.number_plate;
 	var id = req.params.id; 
 	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 	var Vehicle = req.params.number_plate;
 	var payload = [req.params.status, id];
-    var query = 'update inspections set Inspection_Status = ?, Date_Modified = ? where ID = ?';
-    db.query(query, [req.params.status, Date_Modified, id], function (error, results, fields) {
+    var query = 'update inspections set Inspection_Status = ?, Reason_For_Reject = ?, Date_Modified = ? where ID = ?';
+    db.query(query, [req.params.status, req.params.reason, Date_Modified, id], function (error, results, fields) {
 	  	if(error){
 	  		res.send({"status": 500, "error": error, "response": null}); 
 	  		//If there is error, we send the error in the error section with 500 status
