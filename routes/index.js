@@ -584,6 +584,37 @@ router.get('/models/:make', function(req, res, next) {
   	});
 });
 
+/* GET Cumulative Valuation Report */
+router.get('/cum-report/', function(req, res, next) {
+    var query = 'select sum(Admin_FirstSale_Value) as admin_first, sum(Admin_Market_Valuation) as admin_market, sum(FirstSale_Value) as first, sum(Market_Valuation) as market from vehicle_inspection.inspections';
+	db.query(query, [req.params.make], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(results);
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+/* GET Cumulative Valuation Report */
+router.get('/mf-report/', function(req, res, next) {
+	var query = 'select ID, FirstSale_Value, Market_Valuation, Admin_FirstSale_Value, Admin_Market_Valuation, Date_Inspected '+
+	'from inspections '+
+	'where FirstSale_Value <> 0 and Market_Valuation <> 0 and Admin_FirstSale_Value <> 0 and Admin_Market_Valuation <> 0 and Date_Inspected <> 0 and '+
+	'FirstSale_Value is not null and Market_Valuation is not null and Admin_FirstSale_Value is not null and Admin_Market_Valuation is not null and Date_Inspected is not null';
+	db.query(query, [req.params.make], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(results);
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
 /*Update Vehicle Details*/
 router.post('/editVehicle/:id', function(req, res, next) {
     var postData = req.body; 
@@ -1076,25 +1107,6 @@ router.post('/valuation/:number_plate', function(req, res, next) {
 		}
 	});
 });
-
-// router.post('/valuation/:id', function(req, res, next) {
-//     var postData = req.body;   
-// 	//var np = req.params.number_plate;
-// 	var id = req.params.id; 
-// 	var Date_Modified = Date.now(); //moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-// 	var Vehicle = req.params.number_plate;
-// 	var payload = [postData.firstsale_value, postData.market_valuation, Date_Modified, id];
-//     var query = 'update inspections set FirstSale_Value = ?, Market_Valuation = ?, Date_Modified = ? where ID = ?';
-//     db.query(query, payload, function (error, results, fields) {
-// 	  	if(error){
-// 	  		res.send({"status": 500, "error": error, "response": null}); 
-// 	  		//If there is error, we send the error in the error section with 500 status
-// 	  	} else {
-//   			res.send({"status": 200, "error": null, "response": "Vehicle Valuation Details Updated!"});
-//   			//If there is no error, all is good and response is 200OK.
-// 	  	}
-//   	});
-// });
 
 router.post('/admin-valuation/:id', function(req, res, next) {
     var postData = req.body;   
