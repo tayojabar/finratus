@@ -1165,4 +1165,81 @@ router.post('/reject-inspection/:id/', function(req, res, next) {
   	});
 });
 
+router.post('/maintenance/:vehicle/:engine:/radiator:/:warm', function(req, res, next) {
+	var vehicle = req.params.vehicle; 
+	var engine = req.params.engine;
+	var radiator = req.params.radiator;
+	var warm = req.params.warm;
+	var Date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');  
+	var payload = [vehicle, engine, radiator, warm, Date];
+	
+    var query = 'insert into maintenance set ?';
+    db.query(query, payload, function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": "Maintenance Information Updated!"}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+//File Upload - Vehicle Maintenance
+router.post('/maintenance-upload/:number_plate/', function(req, res) {
+	if (!req.files) return res.status(400).send('No files were uploaded.');
+	if (!req.params) return res.status(400).send('No Number Plate specified!');
+	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+	let sampleFile = req.files.file;
+	let name = sampleFile.name;
+	let extArray = sampleFile.name.split(".");
+    let extension = extArray[extArray.length - 1];
+	let fileName = name+'.'+extension;
+	//console.log(name);
+
+	fs.stat('files/'+req.params.number_plate+'/', function(err) {
+		if (!err) {
+			console.log('file or directory exists');
+		}
+		else if (err.code === 'ENOENT') {
+			console.log('file or directory does not exist');
+			console.log('Creating directory ...')
+			fs.mkdirSync('files/'+req.params.number_plate+'/');
+		}
+	});
+   
+	fs.stat('files/'+req.params.number_plate+'/maintenance.'+extension, function (err) {
+		//console.log(stats);//here we got all information of file in stats variable
+	 
+		if (err) {// If file doesn't exist
+			//return console.error(err);
+			// Use the mv() method to place the file somewhere on your server
+			sampleFile.mv('files/'+req.params.number_plate+'/maintenance.'+extension, function(err) {
+				if (err) return res.status(500).send(err);
+				res.send('File uploaded!');
+			});
+		}
+		else{
+			fs.unlink('files/'+req.params.number_plate+'/maintenance.'+extension,function(err){
+				if(err){
+				   console.log(err);
+				   res.send('Unable to delete file!');
+				} 
+				else{
+				   sampleFile.mv('files/'+req.params.number_plate+'/maintenance.'+extension, function(err) {
+					   if (err)
+					   return res.status(500).send(err);
+				   
+					   res.send('File uploaded!');
+				   });
+				}
+				//console.log('file deleted successfully');
+		   }); 
+		}
+		 
+	});
+
+	
+  });
+
 module.exports = router;
