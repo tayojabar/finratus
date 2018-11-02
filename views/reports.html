@@ -246,6 +246,7 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
+                    console.log(data);
                     var response = data;
                     localStorage.setItem("A_M", response[0]['admin_market']);
                     localStorage.setItem("A_F", response[0]['admin_first']);

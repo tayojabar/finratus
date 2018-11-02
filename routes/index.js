@@ -586,7 +586,7 @@ router.get('/models/:make', function(req, res, next) {
 
 /* GET Cumulative Valuation Report */
 router.get('/cum-report/', function(req, res, next) {
-    var query = 'select sum(Admin_FirstSale_Value) as admin_first, sum(Admin_Market_Valuation) as admin_market, sum(FirstSale_Value) as first, sum(Market_Valuation) as market from vehicle_inspection.inspections';
+    var query = 'select sum(Admin_FirstSale_Value) as admin_first, sum(Admin_Market_Valuation) as admin_market, sum(FirstSale_Value) as first, sum(Market_Valuation) as market from inspections';
 	db.query(query, [req.params.make], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
