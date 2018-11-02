@@ -1165,16 +1165,13 @@ router.post('/reject-inspection/:id/', function(req, res, next) {
   	});
 });
 
-router.post('/maintenance/:vehicle/:engine:/radiator:/:warm', function(req, res, next) {
-	var vehicle = req.params.vehicle; 
-	var engine = req.params.engine;
-	var radiator = req.params.radiator;
-	var warm = req.params.warm;
-	var Date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');  
-	var payload = [vehicle, engine, radiator, warm, Date];
+router.post('/maintenance/', function(req, res, next) {
+	var data = req.body;
+	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');  
+	data.Date = Date_Modified;
 	
     var query = 'insert into maintenance set ?';
-    db.query(query, payload, function (error, results, fields) {
+    db.query(query, [data], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -1187,6 +1184,7 @@ router.post('/maintenance/:vehicle/:engine:/radiator:/:warm', function(req, res,
 
 //File Upload - Vehicle Maintenance
 router.post('/maintenance-upload/:number_plate/', function(req, res) {
+	console.log(req)
 	if (!req.files) return res.status(400).send('No files were uploaded.');
 	if (!req.params) return res.status(400).send('No Number Plate specified!');
 	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
