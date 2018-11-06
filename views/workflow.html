@@ -1,0 +1,521 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loan35 Admin</title>
+    <meta name="description" content="Sufee Admin - HTML5 Admin Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+    <style type="text/css">
+        .todolist{
+            background-color:#FFF;
+            padding:20px 20px 10px 20px;
+            margin-top:30px;
+        }
+        .todolist h1{
+            margin:0;
+            padding-bottom:20px;
+            text-align:center;
+        }
+        li.ui-state-default{
+            background:#fff;
+            border:none;
+            border-bottom:1px solid #ddd;
+            cursor: move;
+            padding: 15px 0;
+        }
+        li.ui-state-default:hover{
+            background: #efefef;
+        }
+        li.ui-state-default:last-child{
+            border-bottom:none;
+        }
+        .todo-footer{
+            background-color:#F4FCE8;
+            padding: 10px 20px;
+        }
+    </style>
+
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+</head>
+<body>
+    <!-- Left Panel -->
+        <script type="text/javascript">
+            jQuery(document).ready(function($){
+                check();
+                $("#sortable").sortable();
+                $("#sortable").disableSelection();
+
+                countTodos();
+
+                // all done btn
+                $("#checkAll").click(function(){
+                    AllDone();
+                });
+
+                //mark all tasks as done
+                function AllDone(){
+                    $('#sortable li').remove();
+                    countTodos();
+                }
+
+                //create todo
+                $('#add-stage').click(function (e) {
+                    e.preventDefault
+                    if($('.add-todo').val() != ''){
+                        var todo = $('.add-todo').val();
+                        createTodo(todo);
+                        countTodos();
+                    }else{
+                        swal('Kindly fill all required fields!');
+                    }
+                });
+
+                //delete done task from "already done"
+                $('.todolist').on('click','.remove-item',function(){
+                    removeItem(this);
+                });
+
+                // count tasks
+                function countTodos(){
+                    var count = $("#sortable li").length;
+                    $('.count-todos').html(count);
+                }
+
+                //create task
+                function createTodo(text){
+                    var markup = '<li class="ui-state-default">'+ text +'<button class="remove-item btn btn-outline-danger btn-xs pull-right"><span class="fa fa-trash"></span></button></li>';
+                    $('#sortable').append(markup);
+                    $('.add-todo').val('');
+                }
+
+                //remove done task from list
+                function removeItem(element){
+                    $(element).parent().remove();
+                    countTodos();
+                }
+            });
+        </script>
+
+    <aside id="left-panel" class="left-panel">
+            <nav class="navbar navbar-expand-sm navbar-default">
+    
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                    <a class="navbar-brand hidden" href="/dashboard">35</a>
+                </div>
+    
+                <div id="main-menu" class="main-menu collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li id="" class="active">
+                            <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                        </li>
+                        
+                        <li class="active">
+                            <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
+                            </ul>
+                        </li>
+    
+                        <li id="car-models" class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                                <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
+                                <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
+                                <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </nav>
+    </aside><!-- /#left-panel -->
+    
+        <!-- Left Panel -->
+    
+        <!-- Right Panel -->
+    
+        <div id="right-panel" class="right-panel">
+    
+            <!-- Header-->
+            <header id="header" class="header">
+    
+                <div class="header-menu">
+    
+                    <div class="col-sm-7">
+                        <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                        <div class="header-left">
+                            <button class="search-trigger"><i class="fa fa-search"></i></button>
+                            <div class="form-inline">
+                                <form class="search-form">
+                                    <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                                    <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="col-sm-5">
+                        <div class="user-area dropdown float-right">
+                            <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                            </a>
+    
+                            <div class="user-menu dropdown-menu">
+                                    <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+    
+                                    <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+    
+                                    <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+    
+                                    <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+    
+            </header><!-- /header -->
+            <!-- Header-->
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>All Loan Processes</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Users</a></li>
+                            <li class="active">All Loan Processes</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div id="user-form" class="col-xs-12 col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>Add Loan Process</strong> <small> Workflow Information</small>
+                            </div>
+                            <div class="card-body card-block">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Process Name <strong style="color:red"> *</strong></label>
+                                    <div class="col-sm-9 input-group">
+                                        <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
+                                        <input id="process-name" class="form-control" required="required">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Workflow Stages <strong style="color:red"> *</strong></label>
+                                    <div class="col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addStage"><i class="fa fa-plus"></i>Add Stage</button>
+                                                <button id="checkAll" class="btn btn-danger"><i class="fa fa-remove"></i>Clear Stages</button>
+                                            </div>
+                                            <div class="col-sm-8 todolist" style="margin: 15px;">
+                                                <ul id="sortable" class="list-unstyled">
+                                                    <!--<li class="ui-state-default">-->
+                                                        <!--<div class="checkbox">-->
+                                                        <!--<label>-->
+                                                        <!--<input type="checkbox" value="" />Take out the trash</label>-->
+                                                        <!--</div>-->
+                                                        <!--Take out the trash-->
+                                                        <!--<button class="remove-item btn btn-default btn-xs pull-right"><span class="fa fa-trash"></span></button>-->
+                                                    <!--</li>-->
+                                                </ul>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <div class="todo-footer">
+                                                    Number of Stage(s): <strong><span class="count-todos"></span></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "form-group">
+                                    <input id="addProcess" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New Process"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .animated -->
+        </div><!-- .content -->
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title" style="float: left;">All Loan Processes</strong>
+                        </div>
+                        <div class="card-body">
+                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Full Name</th>
+                                    <th>Phone Number</th>
+                                    <th>Collateral</th>
+                                    <th>Loan Amount</th>
+                                    <th>Date Created</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="applications">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div><!-- .animated -->
+        </div><!-- .content -->
+
+
+    </div><!-- /#right-panel -->
+
+    <!-- Right Panel -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="addStage" tabindex="-1" role="dialog" aria-labelledby="addStageLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addStageLabel">New Stage</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class=" form-control-label">Stage Name</label><strong style="color:red"> *</strong><span id="stage-name-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-list"></i></div>
+                                <input id="stage-name" type="text" class="form-control add-todo" placeholder="Stage Name" maxlength="50" required="required">
+                            </div>
+                            <small class="form-text text-muted">Maximum of 50 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Stage Description</label><span id="stage-description-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <textarea id="stage-description" class="form-control" placeholder="Stage Description" maxlength="250"></textarea>
+                            </div>
+                            <small class="form-text text-muted">Maximum of 250 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <p>Actions to be performed in this stage</p>
+                            <div class="input-group" style="margin-left: 30px;">
+                                <input type="checkbox" class="form-check-input" id="stage-action">
+                                <label class=" form-control-label">Requires Document Upload</label
+                            </div>
+                        </div>
+                        <script>
+                            $("#stage-action").click(function(){
+                                $("#stage-action-div").toggle();
+                            });
+                        </script>
+                        <div id="stage-action-div" class="form-group" style="display: none;">
+                            <label class=" form-control-label">Upload Description</label><span id="upload-description-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <input id="upload-description" type="text" class="form-control" placeholder="Upload Description" maxlength="50">
+                            </div>
+                            <small class="form-text text-muted">Maximum of 50 characters</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="add-stage" type="button" class="btn btn-primary" data-dismiss="modal">Add Stage</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewProcess" tabindex="-1" role="dialog" aria-labelledby="viewProcessLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="viewProcessLabel">Workflow Process</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped table-bordered">
+                        <tbody id="process"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+
+
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+          $('#bootstrap-data-table-export').DataTable();
+          loadProcesses();
+        });
+        
+        function check(){
+            jQuery.ajax({
+                'url': '/check',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    let num = 5;
+                    var count = JSON.parse(data);
+                    console.log(data);
+                    // jQuery.each(count, function(k, v){
+                    //     num = v.rand;
+                    // });
+                    if (data != 1){
+                        jQuery('#car-models').hide();
+                        jQuery('#new-user').hide();
+                        jQuery('#models-card').hide();
+                        jQuery('#user').html('ATB Admin');
+                    }
+                    else{ jQuery('#user').html('Super Admin'); }
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+
+
+        let results;
+
+        function loadProcesses(){
+
+            $.ajax({
+                'url': '/processes',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    var applications = data.response;
+                    results = applications;
+                    populateDataTable(applications);
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
+
+        }
+
+        function populateDataTable(data) {
+            console.log("populating data table...");
+            $("#bootstrap-data-table").dataTable().fnClearTable();
+            $.each(data, function(k, v){
+                let table = [
+                    v.fullname,
+                    v.phone,
+                    v.collateral,
+                    v.loan_amount,
+                    v.date_created,
+                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#viewProcess" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i>View Process</button>'
+                ];
+                $('#bootstrap-data-table').dataTable().fnAddData(table);
+            });
+        }
+
+        function openModal(id) {
+            localStorage.setItem("process_id",id);
+            let data = ($.grep(results, function(e){ return e.ID === id; }))[0],
+                tbody = $("#process"),
+                tr = "";
+            tbody.empty();
+            if (data.fullname)
+                tr += "<tr><td>Fullname</td><td>"+data.fullname+"</td></tr>";
+            if (data.phone)
+                tr += "<tr><td>Phone Number</td><td>"+data.phone+"</td></tr>";
+            if (data.email)
+                tr += "<tr><td>Email</td><td>"+data.email+"</td></tr>";
+            if (data.date_created)
+                tr += "<tr><td>Date Created</td><td>"+formatDate(data.date_created)+"</td></tr>";
+            tbody.html(tr);
+        }
+    </script>
+
+
+</body>
+</html>
