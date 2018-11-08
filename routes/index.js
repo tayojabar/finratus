@@ -615,6 +615,36 @@ router.get('/mf-report/', function(req, res, next) {
   	});
 });
 
+/* GET modules.html listing for admin. */
+router.get('/modules', function(req, res, next) {
+    var query = 'SELECT * from modules';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+/* GET permissions for each role*/
+router.get('/permissions/:id', function(req, res, next) {
+    var query = '\n' +
+        'select *, (select module_name from modules where permissions.module_id = modules.id) as module, (select menu_name from modules where module_name = module) as menu_name from permissions\n' +
+        'where role_id = ? and date in (select max(date) from vehicle_inspection.permissions where role_id = 1)';
+    db.query(query, req.params.id, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
 /*Update Vehicle Details*/
 router.post('/editVehicle/:id', function(req, res, next) {
     var postData = req.body; 

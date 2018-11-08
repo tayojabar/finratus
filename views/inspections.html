@@ -68,6 +68,15 @@
 	.page-break { height:0; page-break-before:always; margin:20px; border:30px; }
 }
     </style>
+    <style type="text/css" media="print">
+        @page {
+            size: auto;   /* auto is the initial value */
+            margin: 20px;  /* this affects the margin in the printer settings */
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-bottom: 0px;
+        }
+    </style>
 </head>
 <body>
         <!-- Left Panel -->
@@ -686,7 +695,6 @@
                     //null, null, null, { "bSortable": false },
                 ],
                 "aaSorting": [],
-                "bSearchable": true,
                 select: {
                     style: 'multi'
                 }
@@ -865,9 +873,9 @@
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             $.each(data, function(k, v){
-                var fullname = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="brand" name = "'+v.fullname+'" value="'+v.fullname+'"/></td>';
+                var fullname = '<input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="brand" name = "'+v.fullname+'" value="'+v.fullname+'"/>';
                 $('#makes').dataTable().fnAddData( [
-                    fullname
+                    fullname + '<span style="display: none">'+v.fullname+'</span>'
                     // "Make",
                     // "Make",
                     // action
@@ -1567,11 +1575,13 @@
                             '<tr><td><strong>Inspection Date</strong> </td><td>'+localStorage.getItem("inspection_date")+'</td></tr>'+
                             '<tr><td><strong>Inspection Status</strong> </td><td>'+localStorage.getItem("status")+'</td></tr>'+
                         '</table>';
-            $("#print-panel").append('<h1 style="text-align:center">Loan35 Vehicle Inspection Report</h1><br/>');
+            $("#print-panel").append('<h1 style="text-align:center; padding-top: 50px">Loan35 Vehicle Inspection Report</h1><br/>');
             $("#print-panel").append(info);
             // $('#summary-row').css("padding-top", "0px");
             $('#mkt').hide(); $('#frc').hide(); 
             $("#print-panel").append($("#summary-row"));
+            $("#details").show();
+            $("#print-panel").append($("#details"));
             //$("#print-panel").append($("#carousel"));
             document.body.innerHTML = $("#print-panel").html();
             window.print();

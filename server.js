@@ -179,6 +179,14 @@ app.get('/reports', requireLogin, function(req, res){
     res.sendFile('reports.html', { root: __dirname+'/views' });
 });
 
+app.get('/manage-permissions', requireLogin, function(req, res){
+    res.sendFile('manage-permissions.html', { root: __dirname+'/views' });
+});
+
+app.get('/module', requireLogin, function(req, res){
+    res.sendFile('modules.html', { root: __dirname+'/views' });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
