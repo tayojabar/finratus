@@ -40,7 +40,7 @@ app.use(express.static(__dirname + '/views'));
 app.use(fileUpload());
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true }))
 
 // parse application/json
 app.use(bodyParser.json())
@@ -181,6 +181,10 @@ app.get('/reports', requireLogin, function(req, res){
 
 app.get('/workflow', requireLogin, function(req, res){
     res.sendFile('workflow.html', { root: __dirname+'/views' });
+});
+
+app.get('/application/:id?', requireLogin, function(req, res){
+    res.sendFile('application.html', { root: __dirname+'/views' });
 });
 
 // catch 404 and forward to error handler

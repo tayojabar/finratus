@@ -1,0 +1,418 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loan35 Admin</title>
+    <meta name="description" content="Sufee Admin - HTML5 Admin Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+    <style type="text/css">
+        ul.nav li.active p{color: #ffffff;}
+    </style>
+</head>
+<body>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <!-- Left Panel -->
+        <script type="text/javascript">
+            jQuery(document).ready(function($){ check(); });
+        </script>
+
+    <aside id="left-panel" class="left-panel">
+            <nav class="navbar navbar-expand-sm navbar-default">
+    
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                    <a class="navbar-brand hidden" href="/dashboard">35</a>
+                </div>
+    
+                <div id="main-menu" class="main-menu collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li id="" class="active">
+                            <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                        </li>
+                        
+                        <li class="active">
+                            <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
+                        </li>
+
+                        <li>
+                            <a href="/workflow"> <i class="menu-icon fa fa-chain"></i>Workflow </a>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
+                            </ul>
+                        </li>
+    
+                        <li id="car-models" class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                                <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
+                                <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
+                                <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </nav>
+    </aside><!-- /#left-panel -->
+    
+        <!-- Left Panel -->
+    
+        <!-- Right Panel -->
+    
+        <div id="right-panel" class="right-panel">
+    
+            <!-- Header-->
+            <header id="header" class="header">
+    
+                <div class="header-menu">
+    
+                    <div class="col-sm-7">
+                        <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                        <div class="header-left">
+                            <button class="search-trigger"><i class="fa fa-search"></i></button>
+                            <div class="form-inline">
+                                <form class="search-form">
+                                    <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                                    <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="col-sm-5">
+                        <div class="user-area dropdown float-right">
+                            <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                            </a>
+    
+                            <div class="user-menu dropdown-menu">
+                                    <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+    
+                                    <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+    
+                                    <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+    
+                                    <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+    
+            </header><!-- /header -->
+            <!-- Header-->
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Application</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Users</a></li>
+                            <li class="active">All Applications</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-striped table-bordered">
+                                    <tbody id="application"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong id="workflow-div-title" class="card-title" style="float: left;">Workflow</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="row form-group">
+                                    <div class="col-xs-12">
+                                        <ul id="workflow-ul-list" class="nav nav-pills nav-justified thumbnail setup-panel"></ul>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="1">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well text-center">
+                                            <h1 class="text-center">Loan Booking</h1>
+                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="2">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well text-center">
+                                            <h1 class="text-center">Generate Schedule</h1>
+                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="3">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well text-center">
+                                            <h1 class="text-center">Underwriting</h1>
+                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="4">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well text-center">
+                                            <h1 class="text-center">Final Approval</h1>
+                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="5">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well text-center">
+                                            <h1 class="text-center">Disbursement</h1>
+                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .animated -->
+        </div><!-- .content -->
+
+
+    </div><!-- /#right-panel -->
+
+    <!-- Right Panel -->
+
+
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+
+
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+          loadUsers();
+            var navListItems = $('ul.setup-panel li a'),
+                allWells = $('.setup-content');
+
+            allWells.hide();
+
+            navListItems.click(function(e)
+            {
+                e.preventDefault();
+                var $target = $($(this).attr('href')),
+                    $item = $(this).closest('li');
+
+                if (!$item.hasClass('disabled')) {
+                    navListItems.closest('li').removeClass('active');
+                    $item.addClass('active');
+                    allWells.hide();
+                    $target.show();
+                }
+            });
+
+            $('ul.setup-panel li.active a').trigger('click');
+
+            // DEMO ONLY //
+            $('#activate-step-2').on('click', function(e) {
+                $('ul.setup-panel li:eq(1)').removeClass('disabled');
+                $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+                $(this).remove();
+            })
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const application_id = urlParams.get('id');
+        
+        function check(){
+            jQuery.ajax({
+                'url': '/check',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    let num = 5;
+                    var count = JSON.parse(data);
+                    console.log(data);
+                    // jQuery.each(count, function(k, v){
+                    //     num = v.rand;
+                    // });
+                    if (data != 1){
+                        jQuery('#car-models').hide();
+                        jQuery('#new-user').hide();
+                        jQuery('#models-card').hide();
+                        jQuery('#user').html('ATB Admin');
+                    }
+                    else{ jQuery('#user').html('Super Admin'); }
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+
+        let workflow,
+            application;
+
+        function loadUsers(){
+            $.ajax({
+                'url': '/user/application-id/'+application_id,
+                'type': 'get',
+                'data': {},
+                'success': function (result) {
+                    let data = result.response[0],
+                        tbody = $("#application"),
+                        tr = "";
+                    application = data;
+                    workflow = (localStorage.getItem("workflows"))? ($.grep(JSON.parse(localStorage.getItem("workflows")), function(e){ return e.ID === application.workflowID; }))[0] : {name:'Workflow'};
+                    $("#workflow-div-title").text(workflow.name);
+                    loadWorkflowStages(application.workflowID);
+                    tbody.empty();
+                    if (data.fullname)
+                        tr += "<tr><td>Fullname</td><td>"+data.fullname+"</td></tr>";
+                    if (data.phone)
+                        tr += "<tr><td>Phone Number</td><td>"+data.phone+"</td></tr>";
+                    if (data.email)
+                        tr += "<tr><td>Email</td><td>"+data.email+"</td></tr>";
+                    if (data.loan_amount)
+                        tr += "<tr><td>Loan Amount</td><td>"+data.loan_amount+"</td></tr>";
+                    if (data.collateral)
+                        tr += "<tr><td>Collateral</td><td>"+data.collateral+"</td></tr>";
+                    if (data.jewelry)
+                        tr += "<tr><td>Jewelry</td><td>"+data.jewelry+"</td></tr>";
+                    if (data.brand)
+                        tr += "<tr><td>Brand</td><td>"+data.brand+"</td></tr>";
+                    if (data.model)
+                        tr += "<tr><td>Model</td><td>"+data.model+"</td></tr>";
+                    if (data.year)
+                        tr += "<tr><td>Year</td><td>"+data.year+"</td></tr>";
+                    if (data.date_created)
+                        tr += "<tr><td>Date Created</td><td>"+formatDate(data.date_created)+"</td></tr>";
+                    tbody.html(tr);
+
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
+        }
+
+        function loadWorkflowStages(id) {
+            $.ajax({
+                'url': '/workflow-stages/'+id,
+                'type': 'get',
+                'success': function (data) {
+                    let count = 0,
+                        workflow_stages = data.response,
+                        ul = document.getElementById('workflow-ul-list');
+
+                    workflow_stages.forEach(function (stage) {
+                        let li = document.createElement('li');
+                        li.className = "active";
+                        ul.appendChild(li);
+                        count++;
+                        li.innerHTML += '<a href="#'+stage.stageID+'">\n' +
+                            '<h4 class="list-group-item-heading">Step '+count+'</h4>\n' +
+                            '<p class="list-group-item-text">'+stage.name+' ('+stage.stage_name+')</p>\n' +
+                            '</a>';
+                    });
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection');
+                }
+            });
+        }
+
+        function formatDate(date) {
+            let separator;
+            if (date.indexOf('-') > -1){
+                separator = '-';
+            } else if (date.indexOf('/') > -1){
+                separator = '/';
+            } else {
+                return date;
+            }
+            let date_array = date.split(separator);
+            return date_array[0]+'-'+date_array[1]+'-'+date_array[2];
+        }
+    </script>
+
+
+</body>
+</html>
