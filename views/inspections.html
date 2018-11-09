@@ -67,6 +67,9 @@
 @media print {
 	.page-break { height:0; page-break-before:always; margin:20px; border:30px; }
 }
+        #imageLoader{
+            background-image: url('loan-35-w.png') !important;
+        }
     </style>
     <style type="text/css" media="print">
         @page {
@@ -74,7 +77,7 @@
             margin: 20px;  /* this affects the margin in the printer settings */
             margin-left: 20px;
             margin-right: 20px;
-            margin-bottom: 0px;
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -1106,7 +1109,7 @@
             
             eq.push(acc.Tools, acc.Jack, acc.Jack_Handle, acc.Wheel_Spanner, acc.Wheel_Spanner);
 
-            var exhaust = '<table>'+
+            var exhaust = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Sound: </td><td><strong class="pull-right">'+dets.Exhaust_Sound+'</strong></td></tr>'+
                                 '<tr><td>Joint: </td><td><strong class="pull-right">'+dets.Exhaust_Joint+'</strong></td></tr>'+
                                 '<tr><td>Catalytic Converter: </td><td><strong class="pull-right">'+dets.Catalytic_Converter+'</strong></td></tr>'+
@@ -1116,7 +1119,7 @@
             
             ex.push(acc.Exhaust_Sound, acc.Exhaust_Joint, acc.Catalytic_Converter, acc.Exhaust_Leakage, acc.Exhaust_Pipe_Oil_Trace);
 
-            var elect = '<table>'+
+            var elect = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Battery Terminals: </td><td><strong class="pull-right">'+dets.Battery_Terminals+'</strong></td></tr>'+
                                 '<tr><td>Battery Charging: </td><td><strong class="pull-right">'+dets.Battery_Charging+'</strong></td></tr>'+
                                 '<tr><td>Battery Malfunction Indicator: </td><td><strong class="pull-right">'+dets.Battery_Malfunction_Indicator+'</strong></td></tr>'+
@@ -1126,7 +1129,7 @@
             
             el.push(acc.Battery_Terminals, acc.Battery_Charging, acc.Battery_Malfunction_Indicator, acc.Battery_Present, acc.Tampered_Wiring_Harness);
 
-            var mirrors = '<table>'+
+            var mirrors = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Right Mirror: </td><td><strong class="pull-right">'+dets.Right_Mirror+'</strong></td></tr>'+
                                 '<tr><td>Left Mirror: </td><td><strong class="pull-right">'+dets.Left_Mirror+'</strong></td></tr>'+
                                 '<tr><td>Right Mirror Control: </td><td><strong class="pull-right">'+dets.Right_Mirror_Control+'</strong></td></tr>'+
@@ -1137,7 +1140,7 @@
             
             mrs.push(acc.Right_Mirror, acc.Left_Mirror, acc.Right_Mirror_Control, acc.Left_Mirror_Control, acc.Right_Mirror_Broken, acc.Left_Mirror_Broken)                ;
                             
-            var brakes = '<table>'+
+            var brakes = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Brake Pads: </td><td><strong class="pull-right">'+dets.Brake_Pads+'</strong></td></tr>'+
                                 '<tr><td>Discs: </td><td><strong class="pull-right">'+dets.Discs+'</strong></td></tr>'+
                                 '<tr><td>Parking Hand: </td><td><strong class="pull-right">'+dets.Parking_Hand+'</strong></td></tr>'+
@@ -1146,7 +1149,7 @@
             
             br.push(acc.Brake_Pads, acc.Discs, acc.Parking_Hand, acc.Brakes_OK)                            ;
 
-            var ext_lt = '<table>'+
+            var ext_lt = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Right Head Light: </td><td><strong class="pull-right">'+dets.Right_Headlight+'</strong></td></tr>'+
                                 '<tr><td>Left Head Light: </td><td><strong class="pull-right">'+dets.Left_Headlight+'</strong></td></tr>'+
                                 '<tr><td>Right Tail Light: </td><td><strong class="pull-right">'+dets.Right_Taillight+'</strong></td></tr>'+
@@ -1157,7 +1160,7 @@
             
             exl.push(acc.Right_Headlight, acc.Left_Headlight, acc.Right_Taillight, acc.Left_Taillight, acc.Reverse_Light, acc.Fog_Lights)                ;
 
-            var transmission = '<table>'+
+            var transmission = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Gear Converted: </td><td><strong class="pull-right">'+dets.Gear_Not_Converted+'</strong></td></tr>'+
                                 '<tr><td>Gear Delay: </td><td><strong class="pull-right">'+dets.Gear_Delay+'</strong></td></tr>'+
                                 '<tr><td>Gear Surge: </td><td><strong class="pull-right">'+dets.Gear_Surge+'</strong></td></tr>'+
@@ -1168,7 +1171,7 @@
             
             tr.push(acc.Gear_Not_Converted, acc.Gear_Delay, acc.Gear_Surge, acc.Gear_Repair_History, acc.Gear_Jerk, acc.FWD_Active);
                             
-            var ac_heater = '<table>'+
+            var ac_heater = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Cooling: </td><td><strong class="pull-right">'+dets.Cooling+'</strong></td></tr>'+
                                 '<tr><td>Blower: </td><td><strong class="pull-right">'+dets.Blower+'</strong></td></tr>'+
                                 '<tr><td>A.C Fan: </td><td><strong class="pull-right">'+dets.AC_Fan+'</strong></td></tr>'+
@@ -1178,7 +1181,7 @@
                             '</table>';
             ac.push(acc.Cooling, acc.Blower, acc.AC_Fan, acc.Condensor, acc.Compressor, acc.AC_No_Repair_History);
 
-            var st_ct = '<table>'+
+            var st_ct = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Lights Lever: </td><td><strong class="pull-right">'+dets.Lights_Lever+'</strong></td></tr>'+
                                 '<tr><td>Washer Lever: </td><td><strong class="pull-right">'+dets.Washer_Lever+'</strong></td></tr>'+
                                 '<tr><td>Wind Screen Lever: </td><td><strong class="pull-right">'+dets.Wind_Screen_Lever+'</strong></td></tr>'+
@@ -1190,7 +1193,7 @@
                             '</table>';
             stcr.push(acc.Lights_Lever, acc.Washer_Lever, acc.Wind_Screen_Lever, acc.Steering_Wheel, acc.Horn, acc.Volume_Control, acc.Temperature_Control, acc.Phone_Dial_Control)   ;
 
-            var power = '<table>'+
+            var power = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Front Window Lever (Right): </td><td><strong class="pull-right">'+dets.RightF_Window_Lever+'</strong></td></tr>'+
                                 '<tr><td>Front Window Lever (Left): </td><td><strong class="pull-right">'+dets.LeftF_Window_Lever+'</strong></td></tr>'+
                                 '<tr><td>Rear Window Lever (Right): </td><td><strong class="pull-right">'+dets.RightR_Window_Lever+'</strong></td></tr>'+
@@ -1202,7 +1205,7 @@
                             '</table>';
             pw.push(acc.RightF_Window_Lever, acc.LeftF_Window_Lever, acc.RightR_Window_Lever, acc.LeftR_Window_Lever, acc. Autolock, acc.Window_Safety_Lock, acc.Auto_Window_Mech, acc.Manual_Window_Mech);
                             
-            var upholstery = '<table>'+
+            var upholstery = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Roof Upholstery: </td><td><strong class="pull-right">'+dets.Roof_Upholstery+'</strong></td></tr>'+
                                 '<tr><td>Floor Upholstery: </td><td><strong class="pull-right">'+dets.Floor_Upholstery+'</strong></td></tr>'+
                                 '<tr><td>Door Upholstery: </td><td><strong class="pull-right">'+dets.Door_Upholstery+'</strong></td></tr>'+
@@ -1216,16 +1219,16 @@
                             '</table>';
             up.push(acc.Roof_Upholstery, acc.Floor_Upholstery, acc.Door_Upholstery, acc.Clean_Dashboard, acc.Sunshades, acc.Boot_Carpet, acc.Boot_Board, acc.Driver_Seat_Upholstery, acc.Passenger_Seat_Upholstery, acc.Rear_Seat_Upholstery);
                             
-            var equipment = '<table>'+
-                                '<tr><td>Tools: </td><td><strong class="pull-right">'+dets.Tools+'</strong></td></tr>'+
-                                '<tr><td>Jack: </td><td><strong class="pull-right">'+dets.Jack+'</strong></td></tr>'+
-                                '<tr><td>Jack Handle: </td><td><strong class="pull-right">'+dets.Jack_Handle+'</strong></td></tr>'+
-                                '<tr><td>Wheel Spanner: </td><td><strong class="pull-right">'+dets.Wheel_Spanner+'</strong></td></tr>'+
-                                '<tr><td>C - Caution: </td><td><strong class="pull-right">'+dets.Caution_Sign+'</strong></td></tr>'+
-                            '</table>';
+//            var equipment = '<table>'+
+//                                '<tr><td>Tools: </td><td><strong class="pull-right">'+dets.Tools+'</strong></td></tr>'+
+//                                '<tr><td>Jack: </td><td><strong class="pull-right">'+dets.Jack+'</strong></td></tr>'+
+//                                '<tr><td>Jack Handle: </td><td><strong class="pull-right">'+dets.Jack_Handle+'</strong></td></tr>'+
+//                                '<tr><td>Wheel Spanner: </td><td><strong class="pull-right">'+dets.Wheel_Spanner+'</strong></td></tr>'+
+//                                '<tr><td>C - Caution: </td><td><strong class="pull-right">'+dets.Caution_Sign+'</strong></td></tr>'+
+//                            '</table>';
             eq.push(acc.Tools, acc.Jack, acc.Jack_Handle, acc.Wheel_Spanner, acc.Caution_Sign)    ;
 
-            var sus_st_ct = '<table>'+
+            var sus_st_ct = '<table  class="table table-striped table-bordered">'+
                                 '<tr><td>Ball Joints: </td><td><strong class="pull-right">'+dets.Ball_Joints+'</strong></td></tr>'+
                                 '<tr><td>Z - Links: </td><td><strong class="pull-right">'+dets.Zlinks+'</strong></td></tr>'+
                                 '<tr><td>Front Brushes: </td><td><strong class="pull-right">'+dets.Front_Brushes+'</strong></td></tr>'+
@@ -1239,7 +1242,7 @@
                             '</table>';
             sst.push(acc.Ball_Joints, acc.Zlinks, acc.Front_Brushes, acc.Front_Shocks, acc.Tie_Rod, acc.Rack_End, acc.Rear_Brushes, acc.Rear_Shocks, acc.Height_Control, acc.Height_Control_Unit);
 
-            var dashboard = '<table>'+
+            var dashboard = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Dashboard Lights: </td><td><strong class="pull-right">'+dets.Dashboard_Lights+'</strong></td></tr>'+
                                 '<tr><td>Interior Lights: </td><td><strong class="pull-right">'+dets.Interior_Lights+'</strong></td></tr>'+
                                 '<tr><td>Dashboard Control AC: </td><td><strong class="pull-right">'+dets.Dashboard_Control_AC+'</strong></td></tr>'+
@@ -1255,7 +1258,7 @@
             db.push(acc.Dashboard_Lights, acc.Interior_Lights, acc.Dashboard_Control_AC, acc.Dashboard_Control_Defog, acc.Dashboard_Control_Hazard_Lights, 
                     acc.Dashboard_Control_Parking_Button, acc.Audio, acc.Video, acc.Cigarette_Lighter, acc.Fuelcap_Release_Lever, acc.Bonnet_Release_Lever);
 
-            var seats = '<table>'+
+            var seats = '<table class="table table-striped table-bordered">'+
                             '<tr><td>Seat Adjuster Recliner (Right): </td><td><strong class="pull-right">'+dets.Right_Seat_Adjuster_Recliner+'</strong></td></tr>'+
                             '<tr><td>Seat Adjuster Recliner (Left): </td><td><strong class="pull-right">'+dets.Left_Seat_Adjuster_Recliner+'</strong></td></tr>'+
                             '<tr><td>Seat Adjuster Lear Track (Right): </td><td><strong class="pull-right">'+dets.Right_Seat_Adjuster_Lear_Track+'</strong></td></tr>'+
@@ -1271,7 +1274,7 @@
             sts.push(acc.Right_Seat_Adjuster_Recliner, acc.Left_Seat_Adjuster_Recliner, acc.Right_Seat_Adjuster_Lear_Track, acc.Left_Seat_Adjuster_Lear_Track, acc.Seat_Adjuster_Tracker, 
                     acc.Right_Seat_Belt, acc.Left_Seat_Belt, acc.Rear_Seat_Belt, acc.Head_Rest, acc.Arm_Rest, acc.Glove_Box);
 
-            var mech = '<table>'+
+            var mech = '<table class="table table-striped table-bordered">'+
                             '<tr><td>Trunk Lock: </td><td><strong class="pull-right">'+dets.Trunk_Lock+'</strong></td></tr>'+
                             '<tr><td>Door Fittings (Front Right): </td><td><strong class="pull-right">'+dets.Front_Door_Fitting_RH+'</strong></td></tr>'+
                             '<tr><td>Door Fittings (Front Left): </td><td><strong class="pull-right">'+dets.Front_Door_Fitting_LH+'</strong></td></tr>'+
@@ -1296,7 +1299,7 @@
                     acc.Rear_Door_Levers_RH, acc.Rear_Door_Levers_LH, acc.Front_Windshield, acc.Rear_Windshield, acc.Front_Door_Window_RH, acc.Front_Door_Window_LH, acc.Rear_Door_Window_RH, acc.Rear_Door_Window_LH,
                     acc.Underbody_Shields, acc.Fender_Shields, acc.Front_Spoiler, acc.Rear_Spoiler);
 
-            var engine_check = '<table>'+
+            var engine_check = '<table class="table table-striped table-bordered">'+
                                     '<tr><td>Wires: </td><td><strong class="pull-right">'+dets.Wires+'</strong></td></tr>'+
                                     '<tr><td>Hoses: </td><td><strong class="pull-right">'+dets.Hoses+'</strong></td></tr>'+
                                     '<tr><td>Belts: </td><td><strong class="pull-right">'+dets.Belt+'</strong></td></tr>'+
@@ -1323,7 +1326,7 @@
             en.push(acc.Wires, acc.Hoses, acc.Belt, acc.Pulley, acc.Head_Gasket, acc.Engine_Noise, acc.Engine_Mount, acc.Gear_Mount, acc.Radiator_Fan, acc.Radiator, acc.Suction_Fan, acc.Starter_Operation,
                     acc.Engine_Vibration, acc.Engine_Worked_On, acc.Engine_Misfire, acc.Tappet_Sound, acc.Knock_Sound, acc.Overheating_History, acc.Coolant_Reservoir, acc.Engine_Sludge, acc.Engine_Smoke, acc.Engine_Likely_Smoke);
 
-            var obd = '<table>'+
+            var obd = '<table class="table table-striped table-bordered">'+
                             '<tr><td>Crank Shaft Sensor: </td><td><strong class="pull-right">'+dets.Crank_Shaft_Sensor+'</strong></td></tr>'+
                             '<tr><td>Camshaft Sensor: </td><td><strong class="pull-right">'+dets.Camshaft_Sensor+'</strong></td></tr>'+
                             '<tr><td>Oxygen Sensor: </td><td><strong class="pull-right">'+dets.Oxygen_Sensor+'</strong></td></tr>'+
@@ -1349,7 +1352,7 @@
                       acc.TPMS, acc.EVAP, acc.ABS, acc.SRS, acc.BCM, acc.PCM, acc.Detonation_Sensor, acc.EGR_Sensor, acc.Vehicle_Speed, acc.Gear_Solenoid, acc.Catalyst_Sensor, 
                       acc.Throttle_Sensor, acc.MIL);
 
-            var documentation = '<table>'+
+            var documentation = '<table class="table table-striped table-bordered">'+
                                     '<tr><td>Vehicle License: </td><td><strong class="pull-right">'+dets.License+'</strong></td></tr>'+
                                     '<tr><td>Vehicle License Original: </td><td><strong class="pull-right">'+dets.License_Original+'</strong></td></tr>'+
                                     '<tr><td>ECMR: </td><td><strong class="pull-right">'+dets.ECMR+'</strong></td></tr>'+
@@ -1378,7 +1381,7 @@
                     acc.Custom_Clearance, acc.Custom_Clearance_Original, acc.Purchase_Receipt, acc.Purchase_Receipt_Ownership, acc.Tinted_Permit, acc.Tinted_Permit_Original, acc.Number_Plates, acc.Number_Plates_Original, 
                     acc.Plate_Number_Allocation, acc.Plate_Number_Allocation_Original, acc.Spare_Key_Available, acc.Vehicle_Tracker, acc.Vehicle_Security);
 
-            var fl_ft = '<table>'+
+            var fl_ft = '<table class="table table-striped table-bordered">'+
                             '<tr><td>Engine Oil: </td><td><strong class="pull-right">'+dets.Engine_Oil+'</strong></td></tr>'+
                             '<tr><td>Oil Pump Leakage: </td><td><strong class="pull-right">'+dets.Oilpump_Leakage+'</strong></td></tr>'+
                             '<tr><td>Oil Seal Leakage: </td><td><strong class="pull-right">'+dets.Oilseal_Leakage+'</strong></td></tr>'+
@@ -1405,7 +1408,7 @@
                       acc.Brake_Oil, acc.Brake_Oil_Leakage, acc.Brake_Oil_Hose_Leakage, acc.Brake_Caliper, acc.Brake_Oil_Pipe_Leakage, acc.Power_Steering_Oil_Gauge, acc.Power_Steering_Oil,
                       acc.Power_Steering, acc.Power_Steering_Oil_Pump, acc.Power_Steering_Oil_Leakage, acc.Washer_Fluid, acc.Washer_Fluid_Leakage, acc.Washer_Fluid_Compartment);
 
-            var bodyframe = '<table>'+
+            var bodyframe = '<table class="table table-striped table-bordered">'+
                                 '<tr><td>Radiator Core Support: </td><td><strong class="pull-right">'+dets.Radiator_Core_Support+'</strong></td></tr>'+
                                 '<tr><td>Strut Tower Apron (Right): </td><td><strong class="pull-right">'+dets.Right_Strut_Tower_Apron+'</strong></td></tr>'+
                                 '<tr><td>Strut Tower Apron (Left): </td><td><strong class="pull-right">'+dets.Left_Strut_Tower_Apron+'</strong></td></tr>'+
@@ -1575,17 +1578,26 @@
                             '<tr><td><strong>Inspection Date</strong> </td><td>'+localStorage.getItem("inspection_date")+'</td></tr>'+
                             '<tr><td><strong>Inspection Status</strong> </td><td>'+localStorage.getItem("status")+'</td></tr>'+
                         '</table>';
-            $("#print-panel").append('<h1 style="text-align:center; padding-top: 50px">Loan35 Vehicle Inspection Report</h1><br/>');
+            $("#print-panel").append('<div style="background: url("loan-35-w.png") no-repeat center center;"></div>');
+            $("#print-panel").append('<h1 style="text-align:center; padding-top: 30px">Loan35 Vehicle Inspection Report</h1><br/>');
             $("#print-panel").append(info);
             // $('#summary-row').css("padding-top", "0px");
-            $('#mkt').hide(); $('#frc').hide(); 
+            $('#mkt').hide(); $('#frc').hide();
+            $("#print-panel").append('<h4 style="text-align:left; padding-top: 10px">Report Summary</h4><br/>');
             $("#print-panel").append($("#summary-row"));
             $("#details").show();
+            $("#print-panel").append('<h4 style="text-align:left; padding-top: 10px">Report Details</h4><br/>');
             $("#print-panel").append($("#details"));
             //$("#print-panel").append($("#carousel"));
-            document.body.innerHTML = $("#print-panel").html();
-            window.print();
-            document.body.innerHTML = originalContent;
+
+            //window.print();
+            //document.body.innerHTML = originalContent;
+            setTimeout(function() {
+                document.body.innerHTML = $("#print-panel").html();
+                window.print();
+                document.body.innerHTML = originalContent;
+            }, 300);
+
         }
 
     </script>
