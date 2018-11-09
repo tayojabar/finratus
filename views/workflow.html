@@ -54,6 +54,9 @@
             background-color:#F4FCE8;
             padding: 10px 20px;
         }
+        #stages-table th:first-child, #stages-table td:first-child{
+            display: none;
+        }
     </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -409,6 +412,7 @@
                     <table id="stages-table" class="table table-striped table-bordered">
                         <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Description</th>
                             <th>Action</th>
@@ -564,11 +568,13 @@
                 $("#stages-table").dataTable().fnClearTable();
                 $.each(data, function(k, v){
                     let table = [
+                        v.ID,
                         v.name,
                         v.description,
                         v.stage_name
                     ];
                     $('#stages-table').dataTable().fnAddData(table);
+                    $('#stages-table').dataTable().fnSort([[0,'asc']]);
                 });
             }
         }
@@ -594,10 +600,17 @@
                 url: '/workflows',
                 data: data,
                 success: function (data) {
+                    localStorage.setItem('workflow_stages',JSON.stringify(data.response));
                     let processes = data.response;
                     results = processes;
                     populateDataTable(processes);
-                    swal(data.message)
+                    swal(data.message);
+                    $('#process-name').val("");
+                    $('#process-rights').val("");
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection');
                 }
             });
         }

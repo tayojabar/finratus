@@ -1280,7 +1280,7 @@ router.get('/workflows', function(req, res, next) {
 })
 
 router.get('/workflow-stages', function(req, res, next) {
-    let query = 'SELECT w.ID, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.stageID=s.ID ORDER BY w.ID desc';
+    let query = 'SELECT w.ID, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.stageID=s.ID ORDER BY w.ID asc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});

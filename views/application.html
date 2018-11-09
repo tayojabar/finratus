@@ -353,7 +353,7 @@
                                                 <small class="form-text text-muted">ex. user123</small>
                                             </div>
                                             <div class="form-group">
-                                                <label class=" form-control-label">Account Number</label><strong style="color:red"> *</strong><span id="username-error" style="padding-left:50px; text-align: center"></span>
+                                                <label class=" form-control-label">Account Number</label><strong style="color:red"> *</strong><span id="name-error" style="padding-left:50px; text-align: center"></span>
                                                 <div class="input-group">
                                                     <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                                     <input type="number" id="num" class="form-control" required="required">
@@ -407,7 +407,7 @@
                                                 <div class="input-group">
                                                     <div class="input-group-addon"><i class="fa fa-usd"></i></div>
                                                     <select id="state" class="form-control" required="required">
-                                                        <option selected="selected" id="0">-- Choose State --</option>
+                                                        <option selected="selected">-- Choose State --</option>
                                                         <option>Outside Nigeria</option>
                                                         <option>ABUJA FCT</option>
                                                         <option>ABIA</option>
@@ -472,7 +472,7 @@
                                                 </div>
                                             </div>
                                             <div class = "form-group">
-                                                <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                                <button id="btn-1" class="next btn btn-primary btn-lg">Save & Proceed</button>
                                             </div>
                                         </div>
                                     </div>
@@ -509,7 +509,7 @@
                                                     <div id="Result"></div>
                                                 </fieldset>
                                             </form>
-                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                            <button id="btn-2" class="next btn btn-primary btn-lg">Save & Proceed</button>
                                         </div>
                                     </div>
                                 </div>
@@ -573,7 +573,7 @@
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-lg btn-success" id="js-upload-submit">Upload files</button>
-                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                            <button id="btn-3" class="next btn btn-primary btn-lg">Save & Proceed</button>
                                         </div>
                                     </div>
                                 </div>
@@ -591,7 +591,7 @@
                                                     <small class="form-text text-muted">Maximum of 250 characters</small>
                                                 </div>
                                             </form>
-                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                            <button id="btn-4" class="next btn btn-primary btn-lg">Save & Proceed</button>
                                         </div>
                                     </div>
                                 </div>
@@ -605,7 +605,7 @@
                                                 <hr>
                                                 <p class="mb-0">Please contact the admin for any disbursement related issues.</p>
                                             </div>
-                                            <button class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                            <button id="btn-5" class="next btn btn-primary btn-lg">Save & Proceed</button>
                                         </div>
                                     </div>
                                 </div>
@@ -729,7 +729,11 @@
                 'success': function (data) {
                     let count = 0,
                         workflow_stages = data.response,
-                        ul = document.getElementById('workflow-ul-list');
+                        ul = document.getElementById('workflow-ul-list'),
+                        $last_btn = $("#btn-"+workflow_stages[workflow_stages.length-1]['stageID']);
+
+                    $last_btn.text('Workflow Complete');
+                    $last_btn.prop("disabled",true);
 
                     workflow_stages.forEach(function (stage) {
                         let index =  workflow_stages.map(function(e) { return e.stageID; }).indexOf(state.current_stage),
@@ -743,7 +747,7 @@
                         count++;
                         li.innerHTML += '<a href="#step-'+stage.stageID+'">\n' +
                             '<h4 class="list-group-item-heading">Step '+count+'</h4>\n' +
-                            '<p class="list-group-item-text">'+stage.name+' ('+stage.stage_name+')</p>\n' +
+                            '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p>\n' +
                             '</a>';
                     });
                 },
@@ -875,7 +879,7 @@
 
             //add header row for table to return string
             result += "<table border='1'><tr><th>Month #</th><th>Balance</th>" +
-                "<th>Interest</th><th>Principal</th>";
+                "<th>Interest</th><th>Expected Payment</th>";
 
             /**
              * Loop that calculates the monthly Loan amortization amounts then adds
@@ -893,25 +897,37 @@
                 result += "<tr align=center>";
 
                 //display the month number in col 1 using the loop count variable
-                result += "<td><input type='number' value='" + (count + 1) + "' /></td>";
+                result += "<td>" + (count + 1) + "</td>";
 
 
                 //code for displaying in loop balance
-                result += "<td>₦ <input type='number' value='" + balance.toFixed(2) + "' /></td>";
+                result += "<td id='balance-"+count+"'>₦ " + balance.toFixed(2) + "</td>";
 
                 //calc the in-loop interest amount and display
                 interest = balance * monthlyRate;
-                result += "<td>₦ <input type='number' value='" + interest.toFixed(2) + "' /></td>";
+                result += "<td id='interest-"+count+"'>₦ " + interest.toFixed(2) + "</td>";
 
                 //calc the in-loop monthly principal and display
-                monthlyPrincipal = payment - interest;
-                result += "<td>₦ <input type='number' value='" + monthlyPrincipal.toFixed(2) + "' /></td>";
+                monthlyPrincipal = payment;
+                result += "<td>₦ <input id='payment-"+count+"' type='number' value='" + monthlyPrincipal.toFixed(2) + "' /></td>";
 
                 //end the table row on each iteration of the loop
                 result += "</tr>";
 
                 //update the balance for each loop iteration
-                balance = balance - monthlyPrincipal;
+                balance = balance - monthlyPrincipal + interest;
+
+                $(document.body).delegate('#payment-'+count,'change', function(e) {
+                    for (let i=0; i<terms; i++){
+//                        let id = (e.target.id.split('-'))[1],
+                        let id = i,
+                            payment = $('#payment-'+id).val(),
+                            previous_balance = parseFloat(($('#balance-'+id).html().split(" "))[1]),
+                            previous_interest = parseFloat(($('#interest-'+id).html().split(" "))[1]),
+                            new_balance = previous_balance-payment+previous_interest;
+                        $('#balance-'+(id+1)).text("₦ " + new_balance.toFixed(2));
+                    }
+                });
             }
 
             //Final piece added to return string before returning it - closes the table
