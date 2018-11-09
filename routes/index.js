@@ -615,6 +615,49 @@ router.get('/mf-report/', function(req, res, next) {
   	});
 });
 
+/* GET modules.html listing for admin. */
+router.get('/modules', function(req, res, next) {
+    var query = 'SELECT * from modules';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+router.get('/mains/', function(req, res, next) {
+    var query = "SELECT * from modules where menu_name = 'Main Menu'";
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+/* GET permissions for each role*/
+router.get('/permissions/:id', function(req, res, next) {
+    var query = '\n' +
+        'select *, (select module_name from modules where permissions.module_id = modules.id) as module, (select menu_name from modules where module_name = module) as menu_name from permissions\n' +
+        'where role_id = ? and date in (select max(date) from vehicle_inspection.permissions where role_id = 1) group by module_id';
+    db.query(query, req.params.id, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
 /*Update Vehicle Details*/
 router.post('/editVehicle/:id', function(req, res, next) {
     var postData = req.body; 
@@ -1165,16 +1208,13 @@ router.post('/reject-inspection/:id/', function(req, res, next) {
   	});
 });
 
-router.post('/maintenance/:vehicle/:engine:/radiator:/:warm', function(req, res, next) {
-	var vehicle = req.params.vehicle; 
-	var engine = req.params.engine;
-	var radiator = req.params.radiator;
-	var warm = req.params.warm;
-	var Date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');  
-	var payload = [vehicle, engine, radiator, warm, Date];
+router.post('/maintenance/', function(req, res, next) {
+	var data = req.body;
+	var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');  
+	data.Date = Date_Modified;
 	
     var query = 'insert into maintenance set ?';
-    db.query(query, payload, function (error, results, fields) {
+    db.query(query, [data], function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -1187,6 +1227,7 @@ router.post('/maintenance/:vehicle/:engine:/radiator:/:warm', function(req, res,
 
 //File Upload - Vehicle Maintenance
 router.post('/maintenance-upload/:number_plate/', function(req, res) {
+	console.log(req)
 	if (!req.files) return res.status(400).send('No files were uploaded.');
 	if (!req.params) return res.status(400).send('No Number Plate specified!');
 	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
@@ -1277,7 +1318,7 @@ router.get('/workflows', function(req, res, next) {
             res.send({"status": 200, "message": "Workflows fetched successfully!", "response": results});
         }
     });
-})
+});
 
 router.get('/workflow-stages', function(req, res, next) {
     let query = 'SELECT w.ID, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.stageID=s.ID ORDER BY w.ID asc';
@@ -1308,6 +1349,69 @@ router.get('/stages', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send(results);
+        }
+    });
+});
+
+router.post('/submitPermission/:role', function(req, res, next) {
+	var ids = req.body;
+	console.log(ids)
+	console.log(ids.role);
+	console.log(ids.modules);
+	var role_id = ids.role;
+	var count = 0;
+	async.forEach(ids.modules, function (id, callback) {
+		var module_id = id[0]
+		var read_only = id[1];
+		var query = 'INSERT INTO permissions SET ?';
+		db.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:"", date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
+			if(error){
+				res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+				//If there is error, we send the error in the error section with 500 status
+			} else {
+				//res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissioins for module "+module_id+ "added!"}));
+				//If there is no error, all is good and response is 200OK.
+				console.log("Permissions for module "+module_id+ " added!")
+				count++;
+			}
+			callback();
+		});
+	}, function (data) {
+		// db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+		//     res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) created successfully!", "response": results});
+		// });
+	})
+
+});
+
+router.post('/new-module/', function(req, res, next) {
+    var data = req.body;
+
+    var query = 'insert into modules set ?';
+    db.query(query, [data], function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "New Module Added!"}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+router.post('/update-module/:id', function(req, res, next) {
+    var data = req.body;
+    var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    data.Date = Date_Modified;
+    var payload = [data.module_name, data.menu_name, data.status, data.main_menu]
+    var query = 'update modules set module_name = ?, menu_name = ?, status = ?, main_menu = ? where id = ?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "New Module Added!"}));
+            //If there is no error, all is good and response is 200OK.
         }
     });
 });

@@ -183,8 +183,16 @@ app.get('/workflow', requireLogin, function(req, res){
     res.sendFile('workflow.html', { root: __dirname+'/views' });
 });
 
-app.get('/application/:id?', requireLogin, function(req, res){
-    res.sendFile('application.html', { root: __dirname+'/views' });
+app.get('/application/:id?', requireLogin, function(req, res) {
+    res.sendFile('application.html', {root: __dirname + '/views'});
+});
+
+app.get('/manage-permissions', requireLogin, function(req, res){
+    res.sendFile('manage-permissions.html', { root: __dirname+'/views' });
+});
+
+app.get('/module', requireLogin, function(req, res){
+    res.sendFile('modules.html', { root: __dirname+'/views' });
 });
 
 // catch 404 and forward to error handler
