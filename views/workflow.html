@@ -89,11 +89,15 @@
                 $('#add-stage').click(function (e) {
                     e.preventDefault
                     if($('.add-todo').val() != ''){
-                        let stage = {};
+                        let stage = {},
+                            $document = $('#document-upload-text').val();
                         stage.name = $('#stage-name').val();
                         stage.description = $('#stage-description').val();
                         stage.stageID = $('#stage-template').val();
-                        if (!stage.name || stage.stageID === "-- Choose Action --")
+                        stage.approverID = $('#process-rights').val();
+                        if ($document)
+                            stage.document = $document;
+                        if (!stage.name || stage.stageID === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
                             return swal('Kindly fill all required fields!');
                         createTodo(stage);
                         countTodos();
@@ -120,6 +124,8 @@
                     $('#stage-name').val('');
                     $('#stage-description').val('');
                     $('#stage-template').val('');
+                    $('#process-rights').val('');
+                    $('#document-upload-text').val('');
                 }
 
                 //remove done task from list
@@ -273,7 +279,7 @@
                             <div class="card-body card-block">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Process Name <strong style="color:red"> *</strong></label>
-                                    <div class="col-sm-7 input-group">
+                                    <div class="col-sm-8 input-group">
                                         <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
                                         <input id="process-name" class="form-control" required="required">
                                     </div>
@@ -286,7 +292,10 @@
                                                 <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addStage"><i class="fa fa-plus"></i>Add Stage</button>
                                                 <button id="checkAll" class="btn btn-danger"><i class="fa fa-remove"></i>Clear Stages</button>
                                             </div>
-                                            <div class="col-sm-8 todolist" style="margin: 15px;">
+                                            <div class="col-sm-10" style="margin: 15px;">
+                                                <div class="alert alert-info" role="alert" data-original-title="" title="">A transition defines a change in your workflow from one stage to another. View transitions below. You can also <strong>drag and drop</strong> to re-order.</div>
+                                            </div>
+                                            <div class="col-sm-8 todolist">
                                                 <ul id="sortable" class="list-unstyled">
                                                     <!--<li class="ui-state-default">-->
                                                         <!--<div class="checkbox">-->
@@ -304,15 +313,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Approval Rights <strong style="color:red"> *</strong></label>
-                                    <div class="col-sm-7 input-group">
-                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
-                                        <select id="process-rights" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Choose User Role --</option>
-                                        </select>
                                     </div>
                                 </div>
                                 <div class = "form-group">
@@ -391,6 +391,34 @@
                                 </select>
                             </div>
                             <small class="form-text text-muted">Select the relevant template from the list of actions</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Approval Rights <strong style="color:red"> *</strong></label>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                <select id="process-rights" class="form-control" required="required">
+                                    <option selected="selected" id="0">-- Choose User Role --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Rules</label>
+                            <div class="input-group">
+                                <label><input id="document-upload" type="checkbox"> &nbsp; Document Upload Required</label>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            $('#document-upload').change(function () {
+                                $('#document-upload-div').toggle();
+                            });
+                        </script>
+                        <div class="form-group" id="document-upload-div" style="display: none;">
+                            <label class=" form-control-label">Document Upload</label>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-upload"></i></div>
+                                <input id="document-upload-text" type="text" class="form-control" placeholder="Document Upload Caption" max="50">
+                            </div>
+                            <small class="form-text text-muted">Maximum of 50 characters</small>
                         </div>
                     </form>
                 </div>
@@ -585,14 +613,12 @@
                 data = {},
                 workflow = {};
             workflow.name = $('#process-name').val();
-            workflow.approverID = $('#process-rights').val();
             stages = $('.stage-items').map(function() {
                 return JSON.parse(decodeURIComponent(this.value));
             }).get();
 
-            if (!workflow.name || workflow.approverID === "-- Choose User Role --" || !stages[0])
+            if (!workflow.name || !stages[0])
                 return swal('Kindly fill all required fields!');
-            workflow.approverID = parseInt(workflow.approverID);
             data.workflow = workflow;
             data.stages = stages;
 
@@ -607,7 +633,6 @@
                     populateDataTable(processes);
                     swal(data.message);
                     $('#process-name').val("");
-                    $('#process-rights').val("");
                 },
                 'error': function (err) {
                     console.log('Error');
