@@ -244,7 +244,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>Add New User</h1>
+                        <h1>Add New Application</h1>
                     </div>
                 </div>
             </div>
@@ -254,7 +254,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active">New User</li>
+                            <li class="active">New Application</li>
                         </ol>
                     </div>
                 </div>
@@ -269,77 +269,69 @@
                     <div id="user-form" class="col-xs-12 col-sm-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Add User Data</strong> <small> User Information</small>
+                                <strong>Add Application Data</strong> <small> Loan Information</small>
                             </div>
                             <div class="card-body card-block">
-                                <div class="form-group">
-                                    <label class=" form-control-label">Full Name</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <input id="fullname" class="form-control" required="required">
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label class="col-form-label">Select Loanee <strong style="color:red"> *</strong></label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                            <select id="user-list" class="form-control" required="required">
+                                                <option selected="selected">-- Choose User --</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <small class="form-text text-muted">ex. user123</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Username</label><strong style="color:red"> *</strong><span id="username-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <input id="username" class="form-control" required="required">
+                                    <div class="col-sm-6 form-group">
+                                        <label class="col-form-label">Select Loan Process <strong style="color:red"> *</strong></label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-line-chart"></i></div>
+                                            <select id="workflows" class="form-control" required="required">
+                                                <option selected="selected">-- Choose Workflow --</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <small class="form-text text-muted">ex. user123</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Password</label><strong style="color:red"> *</strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                        <input id="password" type="password" class="form-control" required="required">
+                                    <div class="col-sm-6 form-group">
+                                        <label class=" form-control-label">Amount</label><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                            <input type="number" id="amount" class="form-control" required="required" value="50000" min="25000" max="250000">
+                                        </div>
+                                        <small class="form-text text-muted">Min: 25,000.00   Max: 250,000.00 (NGN)</small>
                                     </div>
-                                    <small class="form-text text-muted">ex. qwerty_*123</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Confirm Password</label><strong style="color:red"> *</strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                        <input id="cpassword" type="password" class="form-control" required="required">
+                                    <div class="col-sm-6 form-group">
+                                        <label class=" form-control-label">Interest Rate</label><strong style="color:red"> *</strong><span id="interest-rate-error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-plus"></i></div>
+                                            <input type="number" id="interest-rate" class="form-control" required="required" value="4" min="3" max="10">
+                                        </div>
+                                        <small class="form-text text-muted">Min: 3.0000%  Max: 10.0000% </small>
                                     </div>
-                                    <small class="form-text text-muted">ex. qwerty_*123</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">User Role</label>
-                                    <strong style="color:red"> *</strong>
-                                    <span id="role_error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-usd"></i></div>
-                                        <select id="role" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Choose User Role --</option>
-                                        </select>
+                                    <div class="col-sm-6 form-group">
+                                        <label class=" form-control-label">Term (monthly)</label><strong style="color:red"> *</strong><span id="term-error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                            <input type="number" id="term" class="form-control" required="required" value="6" min="3" max="24">
+                                        </div>
+                                        <small class="form-text text-muted">Min: 3  Max: 24</small>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Email </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-male"></i></div>
-                                        <input type="email" id="email" class="form-control" required="required">
+                                    <div class="col-sm-6 form-group">
+                                        <label class=" form-control-label">Disbursement Date</label><span id="disbursement-date-error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                            <input type="date" id="disbursement-date" class="form-control" required="required">
+                                        </div>
                                     </div>
-                                    <small class="form-text text-muted">ex. <Address>email@email.com</Address></small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Phone Number</label>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-phone"></i></div>
-                                        <input id="phone" class="form-control" required="required">
-                                    </div>
-                                    <small class="form-text text-muted">ex. +234 - 813 - 455 - 6944</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Address</label>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                        <input id="address" class="form-control" required="required">
+                                    <div class="col-sm-6 form-group">
+                                        <label class=" form-control-label">First Repayment Date</label><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                            <input type="date" id="repayment-date" class="form-control" required="required">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class = "form-group">
-                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New User"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                    <input id="addApplication" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New Application"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
@@ -369,14 +361,14 @@
 
     <script>
         jQuery(document).ready(function() {
-            getRoles();
+            getWorkflows();
+            getUsers();
         });
         
         function check(){
             jQuery.ajax({
                 'url': '/check',
                 'type': 'get',
-                'data': {},
                 'success': function (data) {
                     let num = 5;
                     var count = JSON.parse(data);
@@ -399,112 +391,66 @@
             });
         }
 
-
-        $("#addUser").click(function () {
-            validate();
-        });
-
-        $("#cpassword").change(function(){
-            confirmPassword();
-        });
-
-        function confirmPassword(){
-            console.log("Here");
-            console.log($('#cpassword').val());
-            console.log($('#password').val());
-            if ($('#cpassword').val() == "" || $('#cpassword').val() != $('#password').val()){
-                $('#cpassword').css('border-color', 'red');
-                $('#cpassword-error').html("Passwords don't match");
-                $('#cpassword-error').css("color", 'red');
-            }
-            else{
-                $('#cpassword').css('border-color', 'green');
-                $('#cpassword-error').html("Passwords are a match!");
-                $('#cpassword-error').css("color", 'green');
-            }
-        }
-
-        function validate(){
-            if ($('#fullname').val() == "" || $('#fullname').val() == null){
-                $('#fullname-error').html("Enter user's full name");
-                $('#fullname-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#username').val() == "" || $('#username').val() == null){
-                $('#username-error').html("Choose a username");
-                $('#username-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#password').val() == "" || $('#password').val() == null){
-                $('#password-error').html("Enter password");
-                $('#password-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#role').find('option:selected').attr('id') == 0){
-                $('#role_error').html("Choose a user role for the new user");
-                $('#role_error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#email').val() == "" || $('#username').val() == null){
-                $('#email-error').html("Enter user's full name");
-                $('#email-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else{
-                createUser();
-            }
-        }
-
-        function getRoles(){
+        function getUsers(){
             $.ajax({
                 type: "GET",
-                url: "/user/user-roles/",
-                data: '{}',
+                url: "/user/users-list-v2",
                 success: function (response) {
-                    var role = $("[id*=role]");
-                    // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
                     $.each(JSON.parse(response), function (key, val) {
-                        $("#role").append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.role_name + '</option>');
+                        $("#user-list").append('<option value = "' + encodeURIComponent(JSON.stringify(val)) + '">' + val.fullname + ' &nbsp; (' + val.username + ')</option>');
                     });
                 }
             });
         }
-        
-        function createUser(){
-            var obj = {};
-            obj.username = $('#username').val();
-            obj.password = $('#password').val();
-            obj.fullname = $('#fullname').val();
-            obj.phone = $('#phone').val();
-            obj.address = $('#address').val();
-            obj.email = $('#email').val();
-            obj.user_role = $('#role').find('option:selected').attr('id');
-            var test={};
+
+        function getWorkflows(){
             $.ajax({
-                'url': '/user/new-user/',
+                type: "GET",
+                url: "/workflows",
+                success: function (response) {
+                    $.each(response.response, function (key, val) {
+                        $("#workflows").append('<option value = "'+val.ID+'"">'+val.name+'</option>');
+                    });
+                }
+            });
+        }
+
+
+        $("#addApplication").click(function () {
+            let obj = {},
+                $user_list = $('#user-list'),
+                user = ($user_list.val() !== '-- Choose User --')? JSON.parse(decodeURIComponent($user_list.val())) : false;
+            obj.userID = user.ID;
+            obj.email = user.email;
+            obj.username = user.username;
+            obj.workflowID = $('#workflows').val();
+            obj.loan_amount = $('#amount').val();
+            obj.interest_rate = $('#interest-rate').val();
+            obj.duration = $('#term').val();
+            obj.disbursement_date = $('#disbursement-date').val();
+            obj.repayment_date = $('#repayment-date').val();
+            if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
+                return swal('Kindly fill all required fields!');
+            $.ajax({
+                'url': '/user/apply',
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
-                    $.each(JSON.parse(data), function (key, val) {
-                        test[key] = val;
-                    });
-                    if(test.message){
-                        swal("Username already exists!");
-                    }
-                    else if(test.status == 500){
-                        swal("Please recheck entered values");
-                    }
-                    else
-                        swal("User Registered!");
+                    $('#user-list').val("");
+                    $('#workflows').val("");
+                    $('#amount').val("");
+                    $('#interest-rate').val("");
+                    $('#term').val("");
+                    $('#disbursement-date').val("");
+                    $('#repayment-date').val("");
+                    swal('Loan Application created successfully!');
+                },
+                'error': function (err) {
+                    console.log(err);
+                    swal('No internet connection');
                 }
             });
-
-        }
+        });
 
     </script>
 

@@ -82,6 +82,7 @@
                                 <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
                                 <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
                                 <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
+                                <li><i class="fa fa-plus"></i><a href="/add-application">New Application</a></li>
                             </ul>
                         </li>
     
@@ -480,7 +481,7 @@
                     v.collateral,
                     v.loan_amount,
                     v.date_created,
-                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'
+                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View Client</button>'
                 ];
                 if (v.comment){
                     let view_comment_button = ' <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#viewCommentModal" onclick="openViewCommentModal('+v.ID+')"><i class="fa fa-eye"></i> View Comment</button>';
@@ -490,10 +491,10 @@
                     table[table.length-1] = table[table.length-1].concat(add_comment_button);
                 }
                 if (v.workflowID){
-                    let view_workflow_button = ' <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#viewWorkflowModal" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Workflow</button>';
+                    let view_workflow_button = ' <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#viewWorkflowModal" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Application</button>';
                     table[table.length-1] = table[table.length-1].concat(view_workflow_button);
                 } else {
-                    let add_workflow_button = ' <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addWorkflowModal" onclick="openAddWorkflowModal('+v.ID+')"><i class="fa fa-plus"></i> Add Workflow</button>';
+                    let add_workflow_button = ' <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addWorkflowModal" onclick="openAddWorkflowModal('+v.ID+')"><i class="fa fa-plus"></i> Assign Loan Process</button>';
                     table[table.length-1] = table[table.length-1].concat(add_workflow_button);
                 }
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
