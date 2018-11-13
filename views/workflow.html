@@ -71,6 +71,7 @@
                 check();
                 $("#sortable").sortable();
                 $("#sortable").disableSelection();
+                localStorage.removeItem('local_stages');
 
                 countTodos();
 
@@ -90,15 +91,21 @@
                     e.preventDefault
                     if($('.add-todo').val() != ''){
                         let stage = {},
-                            $document = $('#document-upload-text').val();
+                            $document = $('#document-upload-text').val(),
+                            stage_template = $('#stage-template').val(),
+                            local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
                         stage.name = $('#stage-name').val();
                         stage.description = $('#stage-description').val();
-                        stage.stageID = $('#stage-template').val();
                         stage.approverID = $('#process-rights').val();
                         if ($document)
                             stage.document = $document;
-                        if (!stage.name || stage.stageID === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
+                        if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
                             return swal('Kindly fill all required fields!');
+                        let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
+                        stage.stageID = stage_template_json.ID;
+                        stage.stage_name = stage_template_json.name;
+                        local_stages.push(stage);
+                        localStorage.setItem('local_stages', JSON.stringify(local_stages));
                         createTodo(stage);
                         countTodos();
                     }else{
@@ -108,6 +115,10 @@
 
                 //delete done task from "already done"
                 $('.todolist').on('click','.remove-item',function(){
+                    let name = $(this).attr("id"),
+                        local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [],
+                        updated_local_stages = $.grep(local_stages, function(e){ return e.name !== name; });
+                    localStorage.setItem('local_stages', JSON.stringify(updated_local_stages));
                     removeItem(this);
                 });
 
@@ -119,13 +130,14 @@
 
                 //create task
                 function createTodo(stage){
-                    var markup = '<li class="ui-state-default">'+ stage.name +'<input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right"><span class="fa fa-trash"></span></button></li>';
+                    var markup = '<li class="ui-state-default">'+ stage.name +'<input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
                     $('#sortable').append(markup);
                     $('#stage-name').val('');
                     $('#stage-description').val('');
                     $('#stage-template').val('');
                     $('#process-rights').val('');
                     $('#document-upload-text').val('');
+                    getLocalStages();
                 }
 
                 //remove done task from list
@@ -393,6 +405,13 @@
                             <small class="form-text text-muted">Select the relevant template from the list of actions</small>
                         </div>
                         <div class="form-group">
+                            <label class=" form-control-label">More Actions</label>
+                            <div class="input-group">
+                                <select id="local-stages" class="form-control"></select>
+                            </div>
+                            <small class="form-text text-muted">Select other actions that can be performed at this stage</small>
+                        </div>
+                        <div class="form-group">
                             <label class="col-form-label">Approval Rights <strong style="color:red"> *</strong></label>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
@@ -479,11 +498,12 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-          $('#bootstrap-data-table-export').DataTable();
-          loadWorkflowStages();
-          loadProcesses();
-          getStages();
-          getRoles();
+            $('#bootstrap-data-table-export').DataTable();
+            loadWorkflowStages();
+            getLocalStages();
+            loadProcesses();
+            getStages();
+            getRoles();
         });
         
         function check(){
@@ -545,11 +565,18 @@
             });
         }
 
+        function getLocalStages(){
+            let local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
+            $("#local-stages").html('<option selected="selected">-- Choose Action --</option>');
+            $.each(local_stages, function (key, val) {
+                $("#local-stages").append('<option value = "'+val.name+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
+            });
+        }
+
         function getRoles(){
             $.ajax({
                 type: "GET",
                 url: "/user/user-roles/",
-                data: '{}',
                 success: function (response) {
                     $.each(JSON.parse(response), function (key, val) {
                         $("#process-rights").append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.role_name + '</option>');
@@ -564,7 +591,7 @@
                 url: "/stages",
                 success: function (response) {
                     $.each(response, function (key, val) {
-                        $("#stage-template").append('<option class="deptSp" value = "'+val.ID+'">'+val.name+'</option>');
+                        $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                     });
                 }
             });
@@ -628,6 +655,7 @@
                 data: data,
                 success: function (data) {
                     localStorage.setItem('workflow_stages',JSON.stringify(data.response));
+                    localStorage.removeItem('local_stages');
                     let processes = data.response;
                     results = processes;
                     populateDataTable(processes);
