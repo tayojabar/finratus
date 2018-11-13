@@ -1295,6 +1295,7 @@ router.post('/workflows', function(req, res, next) {
             async.forEach(stages, function (stage, callback) {
                 stage.workflowID = results[0]['ID'];
                 stage.date_created = date_created;
+                delete stage.stage_name;
                 db.query('INSERT INTO workflow_stages SET ?', stage, function (error, results, fields) {
                     if(!error)
                         count++;

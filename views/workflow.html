@@ -57,6 +57,11 @@
         #stages-table th:first-child, #stages-table td:first-child{
             display: none;
         }
+        a:hover {
+            color: #0056b3 !important;
+            text-decoration: underline !important;
+            cursor: pointer !important;
+        }
     </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -93,17 +98,26 @@
                         let stage = {},
                             $document = $('#document-upload-text').val(),
                             stage_template = $('#stage-template').val(),
+                            code = Math.random().toString(36).substring(7),
+                            actions = $('.local-stages').map(function() {
+                                if (this.value && (this.value !== '-- Choose Action --'))
+                                    return this.value;
+                            }).get(),
                             local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
                         stage.name = $('#stage-name').val();
                         stage.description = $('#stage-description').val();
                         stage.approverID = $('#process-rights').val();
-                        if ($document)
-                            stage.document = $document;
+                        console.log(actions)
                         if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
                             return swal('Kindly fill all required fields!');
+                        if ($document)
+                            stage.document = $document;
+                        if (actions[0])
+                            stage.actions = actions.join(',');
                         let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
                         stage.stageID = stage_template_json.ID;
                         stage.stage_name = stage_template_json.name;
+                        stage.code = code;
                         local_stages.push(stage);
                         localStorage.setItem('local_stages', JSON.stringify(local_stages));
                         createTodo(stage);
@@ -169,10 +183,6 @@
                             <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
                         </li>
 
-                        <li class="active">
-                            <a href="/workflow"> <i class="menu-icon fa fa-chain"></i>Workflow </a>
-                        </li>
-    
                         <li class="menu-item-has-children dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
                             <ul class="sub-menu children dropdown-menu">
@@ -204,6 +214,15 @@
                             <ul class="sub-menu children dropdown-menu">
                                 <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
                                 <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="menu-item-has-children dropdown active">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
+                                <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
+                                <li class="active"><i class="fa fa-chain"></i><a href="/workflow">Workflow</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -405,18 +424,31 @@
                             <small class="form-text text-muted">Select the relevant template from the list of actions</small>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">More Actions</label>
-                            <div class="input-group">
-                                <select id="local-stages" class="form-control"></select>
+                            <a id="more-actions-link">
+                                <label class=" form-control-label" style="display: block">
+                                    <i class="fa fa-plus"></i> More Actions</label></a>
+                            <div id="stage-action-div">
+                                <div class="input-group" style="margin-bottom: 15px;">
+                                    <select class="form-control local-stages">
+                                        <option selected="selected">-- Choose Action --</option>
+                                    </select>
+                                </div>
                             </div>
                             <small class="form-text text-muted">Select other actions that can be performed at this stage</small>
                         </div>
+                        <script type="text/javascript">
+                            $("#more-actions-link").click(function() {
+                                $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                                    '<select class="form-control local-stages"><option selected="selected">-- Choose Action --</option>' +
+                                    '</select></div>');
+                            });
+                        </script>
                         <div class="form-group">
                             <label class="col-form-label">Approval Rights <strong style="color:red"> *</strong></label>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                 <select id="process-rights" class="form-control" required="required">
-                                    <option selected="selected" id="0">-- Choose User Role --</option>
+                                    <option selected="selected">-- Choose User Role --</option>
                                 </select>
                             </div>
                         </div>
@@ -567,9 +599,9 @@
 
         function getLocalStages(){
             let local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
-            $("#local-stages").html('<option selected="selected">-- Choose Action --</option>');
+            $(".local-stages").html('<option selected="selected">-- Choose Action --</option>');
             $.each(local_stages, function (key, val) {
-                $("#local-stages").append('<option value = "'+val.name+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
+                $(".local-stages").append('<option value = "'+val.code+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
             });
         }
 
@@ -661,6 +693,7 @@
                     populateDataTable(processes);
                     swal(data.message);
                     $('#process-name').val("");
+                    $('#sortable').html("");
                 },
                 'error': function (err) {
                     console.log('Error');
