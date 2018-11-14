@@ -29,8 +29,7 @@
     <style type="text/css">
         .todolist{
             background-color:#FFF;
-            padding:20px 20px 10px 20px;
-            margin-top:30px;
+            padding:0 30px;
         }
         .todolist h1{
             margin:0;
@@ -39,10 +38,12 @@
         }
         li.ui-state-default{
             background:#fff;
-            border:none;
-            border-bottom:1px solid #ddd;
+            border:1px solid #ddd;
             cursor: move;
-            padding: 15px 0;
+            padding: 15px;
+            -webkit-box-shadow: 0 10px 6px -6px #777;
+            -moz-box-shadow: 0 10px 6px -6px #777;
+            box-shadow: 0 10px 6px -6px #777;
         }
         li.ui-state-default:hover{
             background: #efefef;
@@ -62,6 +63,10 @@
             text-decoration: underline !important;
             cursor: pointer !important;
         }
+        li.disabled, option.disabled {
+            pointer-events:none;
+            background: #efefef;
+        }
     </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -74,8 +79,9 @@
         <script type="text/javascript">
             jQuery(document).ready(function($){
                 check();
-                $("#sortable").sortable();
-                $("#sortable").disableSelection();
+                let $sortable = $("#sortable");
+                $sortable.sortable();
+                $sortable.disableSelection();
                 localStorage.removeItem('local_stages');
 
                 countTodos();
@@ -87,14 +93,14 @@
 
                 //mark all tasks as done
                 function AllDone(){
-                    $('#sortable li').remove();
+                    $sortable.find('li').remove();
                     countTodos();
                 }
 
                 //create todo
                 $('#add-stage').click(function (e) {
-                    e.preventDefault
-                    if($('.add-todo').val() != ''){
+                    e.preventDefault;
+                    if($('.add-todo').val() !== ''){
                         let stage = {},
                             $document = $('#document-upload-text').val(),
                             stage_template = $('#stage-template').val(),
@@ -107,7 +113,6 @@
                         stage.name = $('#stage-name').val();
                         stage.description = $('#stage-description').val();
                         stage.approverID = $('#process-rights').val();
-                        console.log(actions)
                         if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
                             return swal('Kindly fill all required fields!');
                         if ($document)
@@ -138,14 +143,14 @@
 
                 // count tasks
                 function countTodos(){
-                    var count = $("#sortable li").length;
+                    let count = $("#sortable li").length;
                     $('.count-todos').html(count);
                 }
 
                 //create task
                 function createTodo(stage){
-                    var markup = '<li class="ui-state-default">'+ stage.name +'<input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
-                    $('#sortable').append(markup);
+                    let markup = '<li class="ui-state-default">'+ stage.name +'<input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    $sortable.append(markup);
                     $('#stage-name').val('');
                     $('#stage-description').val('');
                     $('#stage-template').val('');
@@ -326,17 +331,8 @@
                                             <div class="col-sm-10" style="margin: 15px;">
                                                 <div class="alert alert-info" role="alert" data-original-title="" title="">A transition defines a change in your workflow from one stage to another. View transitions below. You can also <strong>drag and drop</strong> to re-order.</div>
                                             </div>
-                                            <div class="col-sm-8 todolist">
-                                                <ul id="sortable" class="list-unstyled">
-                                                    <!--<li class="ui-state-default">-->
-                                                        <!--<div class="checkbox">-->
-                                                        <!--<label>-->
-                                                        <!--<input type="checkbox" value="" />Take out the trash</label>-->
-                                                        <!--</div>-->
-                                                        <!--Take out the trash-->
-                                                        <!--<button class="remove-item btn btn-default btn-xs pull-right"><span class="fa fa-trash"></span></button>-->
-                                                    <!--</li>-->
-                                                </ul>
+                                            <div class="col-sm-10 todolist">
+                                                <ul id="sortable" class="list-unstyled"></ul>
                                             </div>
                                             <div class="col-sm-9">
                                                 <div class="todo-footer">
@@ -427,13 +423,7 @@
                             <a id="more-actions-link">
                                 <label class=" form-control-label" style="display: block">
                                     <i class="fa fa-plus"></i> More Actions</label></a>
-                            <div id="stage-action-div">
-                                <div class="input-group" style="margin-bottom: 15px;">
-                                    <select class="form-control local-stages">
-                                        <option selected="selected">-- Choose Action --</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <div id="stage-action-div"></div>
                             <small class="form-text text-muted">Select other actions that can be performed at this stage</small>
                         </div>
                         <script type="text/javascript">
@@ -441,6 +431,7 @@
                                 $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
                                     '<select class="form-control local-stages"><option selected="selected">-- Choose Action --</option>' +
                                     '</select></div>');
+                                getLocalStages();
                             });
                         </script>
                         <div class="form-group">
@@ -532,7 +523,6 @@
         $(document).ready(function() {
             $('#bootstrap-data-table-export').DataTable();
             loadWorkflowStages();
-            getLocalStages();
             loadProcesses();
             getStages();
             getRoles();
@@ -546,11 +536,7 @@
                 'success': function (data) {
                     let num = 5;
                     var count = JSON.parse(data);
-                    console.log(data);
-                    // jQuery.each(count, function(k, v){
-                    //     num = v.rand;
-                    // });
-                    if (data != 1){
+                    if (data !== 1){
                         jQuery('#car-models').hide();
                         jQuery('#new-user').hide();
                         jQuery('#models-card').hide();
@@ -559,7 +545,6 @@
                     else{ jQuery('#user').html('Super Admin'); }
                 },
                 'error': function (err) {
-                    //alert ('Error');
                     console.log('Error');
                 }
             });
@@ -598,10 +583,11 @@
         }
 
         function getLocalStages(){
-            let local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
-            $(".local-stages").html('<option selected="selected">-- Choose Action --</option>');
+            let $local_stages = $(".local-stages"),
+                local_stages = JSON.parse(localStorage.getItem('local_stages'));
+            $local_stages.html('<option selected="selected">-- Choose Action --</option>');
             $.each(local_stages, function (key, val) {
-                $(".local-stages").append('<option value = "'+val.code+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
+                $local_stages.append('<option value = "'+val.code+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
             });
         }
 
@@ -622,8 +608,25 @@
                 type: "GET",
                 url: "/stages",
                 success: function (response) {
+                    let local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
                     $.each(response, function (key, val) {
-                        $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                        if (val.type === 1){
+                            val.approverID = 1;
+                            val.stageID = val.ID;
+                            delete  val.ID;
+                            val.stage_name = val.name;
+                            val.code = Math.random().toString(36).substring(7);
+                            $("#stage-template").append('<option class="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'" disabled="disabled">'+val.name+'</option>');
+                            let markup = '<li class="ui-state-default disabled">'+ val.name +'<input class="stage-items" value="'+encodeURIComponent(JSON.stringify(val))+'" style="display: none;"/></li>';
+                            $('#sortable').append(markup);
+                            local_stages.push(val);
+                        } else {
+                            $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                        }
+                        if (key === response.length-1){
+                            localStorage.setItem('local_stages', JSON.stringify(local_stages));
+                            return getLocalStages();
+                        }
                     });
                 }
             });

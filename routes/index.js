@@ -1344,7 +1344,7 @@ router.get('/workflow-stages/:workflow_id', function(req, res, next) {
 });
 
 router.get('/stages', function(req, res, next) {
-    let query = 'SELECT * from stages';
+    let query = 'SELECT * from stages ORDER BY name asc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
