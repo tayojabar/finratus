@@ -40,7 +40,7 @@
             background:#fff;
             border:1px solid #ddd;
             cursor: move;
-            padding: 15px;
+            padding: 0 15px;
             -webkit-box-shadow: 0 10px 6px -6px #777;
             -moz-box-shadow: 0 10px 6px -6px #777;
             box-shadow: 0 10px 6px -6px #777;
@@ -66,6 +66,16 @@
         li.disabled, option.disabled {
             pointer-events:none;
             background: #efefef;
+        }
+        li.ui-state-default > span > small{
+            margin-left: 15px;
+        }
+        li.ui-state-default > span{
+            display: inline-block;
+            padding: 15px 0;
+        }
+        li.ui-state-default > button{
+            margin-top: 8px;
         }
     </style>
 
@@ -102,6 +112,8 @@
                     e.preventDefault;
                     if($('.add-todo').val() !== ''){
                         let stage = {},
+                            action_codes = [],
+                            action_names = [],
                             $document = $('#document-upload-text').val(),
                             stage_template = $('#stage-template').val(),
                             code = Math.random().toString(36).substring(7),
@@ -117,16 +129,36 @@
                             return swal('Kindly fill all required fields!');
                         if ($document)
                             stage.document = $document;
-                        if (actions[0])
-                            stage.actions = actions.join(',');
-                        let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                        stage.stageID = stage_template_json.ID;
-                        stage.stage_name = stage_template_json.name;
-                        stage.code = code;
-                        local_stages.push(stage);
-                        localStorage.setItem('local_stages', JSON.stringify(local_stages));
-                        createTodo(stage);
-                        countTodos();
+                        if (actions[0]){
+                            $.each(actions, function (key, val) {
+                                let action = JSON.parse(decodeURIComponent(val));
+                                action_codes.push(action.code);
+                                action_names.push(action.name);
+                                if (key === actions.length-1){
+                                    if (action_codes[0])
+                                        stage.actions = action_codes.join(',');
+                                    if (action_names[0])
+                                        stage.action_names = action_names;
+                                    let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
+                                    stage.stageID = stage_template_json.ID;
+                                    stage.stage_name = stage_template_json.name;
+                                    stage.code = code;
+                                    local_stages.push(stage);
+                                    localStorage.setItem('local_stages', JSON.stringify(local_stages));
+                                    createTodo(stage);
+                                    countTodos();
+                                }
+                            });
+                        } else {
+                            let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
+                            stage.stageID = stage_template_json.ID;
+                            stage.stage_name = stage_template_json.name;
+                            stage.code = code;
+                            local_stages.push(stage);
+                            localStorage.setItem('local_stages', JSON.stringify(local_stages));
+                            createTodo(stage);
+                            countTodos();
+                        }
                     }else{
                         swal('Kindly fill all required fields!');
                     }
@@ -143,19 +175,26 @@
 
                 // count tasks
                 function countTodos(){
-                    let count = $("#sortable li").length;
+                    let count = $("#sortable").find("li").length;
                     $('.count-todos').html(count);
                 }
 
                 //create task
                 function createTodo(stage){
-                    let markup = '<li class="ui-state-default">'+ stage.name +'<input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    let markup = '';
+                    if (stage.action_names){
+                        markup = '<li class="ui-state-default"><span>'+stage.name+' <small> → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    } else {
+                        markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    }
                     $sortable.append(markup);
                     $('#stage-name').val('');
                     $('#stage-description').val('');
                     $('#stage-template').val('');
                     $('#process-rights').val('');
                     $('#document-upload-text').val('');
+                    $('#document-upload').prop('checked',false);
+                    $('#document-upload-div').hide();
                     getLocalStages();
                 }
 
@@ -587,8 +626,10 @@
                 local_stages = JSON.parse(localStorage.getItem('local_stages'));
             $local_stages.html('<option selected="selected">-- Choose Action --</option>');
             $.each(local_stages, function (key, val) {
-                $local_stages.append('<option value = "'+val.code+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
+                $local_stages.append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
             });
+            let count = $("#sortable").find("li").length;
+            $('.count-todos').html(count);
         }
 
         function getRoles(){
@@ -597,7 +638,7 @@
                 url: "/user/user-roles/",
                 success: function (response) {
                     $.each(JSON.parse(response), function (key, val) {
-                        $("#process-rights").append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.role_name + '</option>');
+                        $("#process-rights").append('<option value = "'+val.id+'">'+val.role_name+'</option>');
                     });
                 }
             });
@@ -616,16 +657,20 @@
                             delete  val.ID;
                             val.stage_name = val.name;
                             val.code = Math.random().toString(36).substring(7);
-                            $("#stage-template").append('<option class="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'" disabled="disabled">'+val.name+'</option>');
-                            let markup = '<li class="ui-state-default disabled">'+ val.name +'<input class="stage-items" value="'+encodeURIComponent(JSON.stringify(val))+'" style="display: none;"/></li>';
-                            $('#sortable').append(markup);
                             local_stages.push(val);
+                            $("#stage-template").append('<option class="disabled" value = "' + encodeURIComponent(JSON.stringify(val)) + '" disabled="disabled">' + val.name + '</option>');
                         } else {
                             $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                         }
                         if (key === response.length-1){
-                            localStorage.setItem('local_stages', JSON.stringify(local_stages));
-                            return getLocalStages();
+                            let local_stages_sorted = local_stages.sort(function(a, b) { return a.stageID - b.stageID; });
+                            localStorage.setItem('local_stages', JSON.stringify(local_stages_sorted));
+                            $.each(local_stages_sorted, function (key, val) {
+                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+'</span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/></li>';
+                                $('#sortable').append(markup);
+                                if (key === local_stages_sorted.length-1)
+                                    return getLocalStages();
+                            });
                         }
                     });
                 }
@@ -691,12 +736,15 @@
                 success: function (data) {
                     localStorage.setItem('workflow_stages',JSON.stringify(data.response));
                     localStorage.removeItem('local_stages');
-                    let processes = data.response;
+                    let $sortable = $("#sortable"),
+                        processes = data.response,
+                        count = $sortable.find("li").length;
                     results = processes;
                     populateDataTable(processes);
-                    swal(data.message);
+                    $('.count-todos').html(0);
                     $('#process-name').val("");
-                    $('#sortable').html("");
+                    $sortable.html("");
+                    swal(data.message);
                 },
                 'error': function (err) {
                     console.log('Error');

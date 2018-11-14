@@ -439,36 +439,7 @@ users.post('/new-owner', function(req, res, next) {
 
 users.post('/apply', function(req, res) {
     let data = {},
-		postData = Object.assign({},req.body),
-        query =  'INSERT INTO applications Set ?';
-    delete postData.email;
-    delete postData.username;
-    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query(query, postData, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            data.name = req.body.username;
-            data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-            let mailOptions = {
-                from: 'no-reply Loan35 <applications@loan35.com>',
-                to: req.body.email,
-                subject: 'Loan35 Application Successful',
-                template: 'main',
-                context: data
-            };
-
-            transporter.sendMail(mailOptions, function(error, info){
-            	if(error)
-            		return res.send({"status": 500, "message": "Error occurred!", "response": error});
-                return res.send({"status": 200, "message": "New Application Added!"});
-            });
-        }
-    });
-});
-
-users.post('/apply', function(req, res) {
-    let data = {},
+        workflow_id = req.body.workflowID,
         postData = Object.assign({},req.body),
         query =  'INSERT INTO applications Set ?';
     delete postData.email;
@@ -487,11 +458,25 @@ users.post('/apply', function(req, res) {
                 template: 'main',
                 context: data
             };
-
             transporter.sendMail(mailOptions, function(error, info){
                 if(error)
                     return res.send({"status": 500, "message": "Error occurred!", "response": error});
-                return res.send({"status": 200, "message": "New Application Added!"});
+                if (!workflow_id)
+                    return res.send({"status": 200, "message": "New Application Added!"});
+                getNextWorkflowProcess(false,workflow_id, function (process) {
+                    db.query('SELECT * from applications where ID = LAST_INSERT_ID()', function(err, application, fields) {
+                        process.workflowID = workflow_id;
+                        process.applicationID = application[0]['ID'];
+                        process.date_created = postData.date_created;
+                        db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
+                            if(error){
+                                return res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                return res.send({"status": 200, "message": "New Application Added!"});
+                            }
+                        });
+                    });
+                });
             });
         }
     });
@@ -685,19 +670,14 @@ users.post('/workflow_process/:application_id/:workflow_id', function(req, res, 
             if(error){
                 res.send({"status": 500, "error": error, "response": null});
             } else {
-                db.query('SELECT * FROM workflows WHERE ID=?',[workflow_id], function (error, workflow, fields) {
+                if (parseInt(process.approver_id) !== parseInt(user_role))
+                    return res.send({"status": 500, "message": "You do not have authorization rights"});
+                delete process.approver_id;
+                db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
                     if(error){
                         res.send({"status": 500, "error": error, "response": null});
                     } else {
-                        if (parseInt(workflow[0]['approverID']) !== parseInt(user_role))
-                            return res.send({"status": 500, "message": "You do not have authorization rights"});
-                        db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
-                            if(error){
-                                res.send({"status": 500, "error": error, "response": null});
-                            } else {
-                                res.send({"status": 200, "message": "Workflow Process created successfully!"});
-                            }
-                        });
+                        res.send({"status": 200, "message": "Workflow Process created successfully!"});
                     }
                 });
             }
@@ -723,11 +703,12 @@ function getNextWorkflowProcess(application_id,workflow_id, callback){
             if(application_id){
                 db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=?)',[application_id], function (error, application_last_process, fields) {
                     if (application_last_process){
-                        let next_stage = stages.map(function(e) { return e.stageID; }).indexOf(application_last_process[0]['next_stage']);
+                        let next_stage = stages.map(function(e) { return e.stageID; }).indexOf(application_last_process[0]['next_stage']),
+                            current_stage = stages.map(function(e) { return e.stageID; }).indexOf(application_last_process[0]['current_stage']);
                         if (stages[next_stage+1]){
-                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage+1]['stageID']});
+                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage+1]['stageID'], approver_id:stages[current_stage]['approverID']});
                         } else {
-                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage']});
+                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'], approver_id:stages[current_stage]['approverID']});
                         }
                     } else {
                         callback({});
@@ -741,6 +722,37 @@ function getNextWorkflowProcess(application_id,workflow_id, callback){
         }
     });
 }
+
+users.post('/application/comments/:id', function(req, res, next) {
+    db.query('SELECT * FROM applications WHERE ID = ?', [req.params.id], function (error, application, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('INSERT INTO application_comments SET ?', [{applicationID:req.params.id,userID:application[0]['userID'],text:req.body.text,date_created:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}],
+                function (error, response, fields) {
+                    if(error || !response)
+                        res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    db.query('SELECT c.text, c.date_created, u.fullname FROM application_comments AS c, users AS u WHERE c.ID = ? AND c.userID=u.ID ORDER BY c.ID desc', [req.params.id], function (error, comments, fields) {
+                        if(error){
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            res.send({"status": 200, "message": "Application commented successfully!", "response": comments});
+                        }
+                    })
+                });
+        }
+    });
+});
+
+users.get('/application/comments/:id', function(req, res, next) {
+    db.query('SELECT c.text, c.date_created, u.fullname FROM application_comments AS c, users AS u WHERE c.ID = ? AND c.userID=u.ID ORDER BY c.ID desc', [req.params.id], function (error, comments, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Application comments fetched successfully!", "response": comments});
+        }
+    })
+});
 
 // users.use(function(req, res, next) {
 //     var token = req.body.token || req.headers['token'];
