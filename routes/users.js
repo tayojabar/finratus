@@ -732,7 +732,7 @@ users.post('/application/comments/:id', function(req, res, next) {
                 function (error, response, fields) {
                     if(error || !response)
                         res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-                    db.query('SELECT c.text, c.date_created, u.fullname FROM application_comments AS c, users AS u WHERE c.ID = ? AND c.userID=u.ID ORDER BY c.ID desc', [req.params.id], function (error, comments, fields) {
+                    db.query('SELECT c.text, c.date_created, u.fullname FROM application_comments AS c, users AS u WHERE c.applicationID = ? AND c.userID=u.ID ORDER BY c.ID desc', [req.params.id], function (error, comments, fields) {
                         if(error){
                             res.send({"status": 500, "error": error, "response": null});
                         } else {
@@ -745,7 +745,7 @@ users.post('/application/comments/:id', function(req, res, next) {
 });
 
 users.get('/application/comments/:id', function(req, res, next) {
-    db.query('SELECT c.text, c.date_created, u.fullname FROM application_comments AS c, users AS u WHERE c.ID = ? AND c.userID=u.ID ORDER BY c.ID desc', [req.params.id], function (error, comments, fields) {
+    db.query('SELECT c.text, c.date_created, u.fullname FROM application_comments AS c, users AS u WHERE c.applicationID = ? AND c.userID=u.ID ORDER BY c.ID desc', [req.params.id], function (error, comments, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {

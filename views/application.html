@@ -181,6 +181,37 @@
         .modal-dialog{
             left: 0;
         }
+        .thumbnail {
+            padding:0px;
+        }
+        .panel {
+            position:relative;
+        }
+        .panel>.panel-heading:after,.panel>.panel-heading:before{
+            position:absolute;
+            top:11px;left:-16px;
+            right:100%;
+            width:0;
+            height:0;
+            display:block;
+            content:" ";
+            border-color:transparent;
+            border-style:solid solid outset;
+            pointer-events:none;
+        }
+        .panel>.panel-heading:after{
+            border-width:7px;
+            border-right-color:#f7f7f7;
+            margin-top:1px;
+            margin-left:2px;
+        }
+        .panel>.panel-heading:before{
+            border-right-color:#ddd;
+            border-width:8px;
+        }
+        select.form-control{
+            height: 36px !important;
+        }
     </style>
 </head>
 <body>
@@ -353,195 +384,13 @@
                                         <ul id="workflow-ul-list" class="nav nav-pills nav-justified thumbnail setup-panel"></ul>
                                     </div>
                                 </div>
-                                <div class="row setup-content" id="step-1">
+                                <div class="row setup-content" id="document-upload" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
-                                            <h1 class="text-center">Loan Booking</h1>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">Account Name</label><strong style="color:red"> *</strong><span id="username-error" style="padding-left:50px; text-align: center"></span>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                                    <input type="text" id="username" class="form-control" required="required">
-                                                </div>
-                                                <small class="form-text text-muted">ex. user123</small>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">Account Number</label><strong style="color:red"> *</strong><span id="name-error" style="padding-left:50px; text-align: center"></span>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                                    <input type="number" id="num" class="form-control" required="required">
-                                                </div>
-                                                <small class="form-text text-muted">ex. user123</small>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">BVN</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                                    <input type="number" id="fullname" class="form-control" required="required">
-                                                </div>
-                                                <small class="form-text text-muted">ex. user123</small>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">Bank</label>
-                                                <strong style="color:red"> *</strong>
-                                                <span id="role_error" style="padding-left:50px; text-align: center"></span>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-usd"></i></div>
-                                                    <select id="role" class="form-control" required="required">
-                                                        <option selected="selected" id="0">-- Choose Bank --</option>
-                                                        <option value="access">Access Bank</option>
-                                                        <option value="citibank">Citibank</option>
-                                                        <option value="diamond">Diamond Bank</option>
-                                                        <option value="ecobank">Ecobank</option>
-                                                        <option value="fidelity">Fidelity Bank</option>
-                                                        <option value="fcmb">First City Monument Bank (FCMB)</option>
-                                                        <option value="fsdh">FSDH Merchant Bank</option>
-                                                        <option value="gtb">Guarantee Trust Bank (GTB)</option>
-                                                        <option value="heritage">Heritage Bank</option>
-                                                        <option value="Keystone">Keystone Bank</option>
-                                                        <option value="rand">Rand Merchant Bank</option>
-                                                        <option value="skye">Skye Bank</option>
-                                                        <option value="stanbic">Stanbic IBTC Bank</option>
-                                                        <option value="standard">Standard Chartered Bank</option>
-                                                        <option value="sterling">Sterling Bank</option>
-                                                        <option value="suntrust">Suntrust Bank</option>
-                                                        <option value="union">Union Bank</option>
-                                                        <option value="uba">United Bank for Africa (UBA)</option>
-                                                        <option value="unity">Unity Bank</option>
-                                                        <option value="wema">Wema Bank</option>
-                                                        <option value="zenith">Zenith Bank</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">State of Origin</label>
-                                                <strong style="color:red"> *</strong>
-                                                <span id="state_error" style="padding-left:50px; text-align: center"></span>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-usd"></i></div>
-                                                    <select id="state" class="form-control" required="required">
-                                                        <option selected="selected">-- Choose State --</option>
-                                                        <option>Outside Nigeria</option>
-                                                        <option>ABUJA FCT</option>
-                                                        <option>ABIA</option>
-                                                        <option>ADAMAWA</option>
-                                                        <option>AKWA IBOM</option>
-                                                        <option>ANAMBRA</option>
-                                                        <option>BAUCHI</option>
-                                                        <option>BAYELSA</option>
-                                                        <option>BENUE</option>
-                                                        <option>BORNO</option>
-                                                        <option>CROSS RIVER</option>
-                                                        <option>DELTA</option>
-                                                        <option>EBONYI</option>
-                                                        <option>EDO</option>
-                                                        <option>EKITI</option>
-                                                        <option>ENUGU</option>
-                                                        <option>GOMBE</option>
-                                                        <option>IMO</option>
-                                                        <option>JIGAWA</option>
-                                                        <option>KADUNA</option>
-                                                        <option>KANO</option>
-                                                        <option>KATSINA</option>
-                                                        <option>KEBBI</option>
-                                                        <option>KOGI</option>
-                                                        <option>KWARA</option>
-                                                        <option>LAGOS</option>
-                                                        <option>NASSARAWA</option>
-                                                        <option>NIGER</option>
-                                                        <option>OGUN</option>
-                                                        <option>ONDO</option>
-                                                        <option>OSUN</option>
-                                                        <option>OYO</option>
-                                                        <option>PLATEAU</option>
-                                                        <option>RIVERS</option>
-                                                        <option>SOKOTO</option>
-                                                        <option>TARABA</option>
-                                                        <option>YOBE</option>
-                                                        <option>ZAMFARA</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">Name of Next of Kin </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-male"></i></div>
-                                                    <input type="text" id="email" class="form-control" required="required">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">Phone Number of Next of Kin</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-phone"></i></div>
-                                                    <input id="phone" class="form-control" required="required">
-                                                </div>
-                                                <small class="form-text text-muted">ex. +234 - 813 - 455 - 6944</small>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class=" form-control-label">Address of Next of Kin</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-                                                    <textarea id="address" class="form-control" required="required"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class = "form-group">
-                                                <button id="btn-1" class="next btn btn-primary btn-lg">Save & Proceed</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row setup-content" id="step-2">
-                                    <div class="col-xs-12">
-                                        <div class="col-md-12 well">
-                                            <h1 class="text-center">Generate Schedule</h1>
-                                            <form>
-                                                <fieldset>
-                                                    <legend>Inputs</legend>
-                                                    <label for="principal"><b>Principal:</b></label>
-                                                    <input type="text" id="principal" />
-                                                    <br />
-                                                    <label for="interest"><b>Interest:</b></label>
-                                                    <input type="text" id="interest" />
-                                                    <br />
-                                                    <label for="terms"><b>Terms:</b></label>
-                                                    <select id="terms">
-                                                        <option value="12">12 Months</option>
-                                                        <option value="24">24 Months</option>
-                                                        <option value="36">36 Months</option>
-                                                        <option value="48">48 Months</option>
-                                                        <option value="60">60 Months</option>
-                                                        <option value="60">72 Months</option>
-                                                    </select>
-                                                    <br />
-                                                    <input type="button" value="Calculate" onclick="getValues()" />
-                                                </fieldset>
-                                            </form>
-                                            <form style="margin-bottom: 15px;">
-                                                <fieldset>
-                                                    <legend>Loan Repayment Schedule</legend>
-                                                    <div id="Result"></div>
-                                                </fieldset>
-                                            </form>
-                                            <button id="btn-2" class="next btn btn-primary btn-lg">Save & Proceed</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row setup-content" id="step-3">
-                                    <div class="col-xs-12">
-                                        <div class="col-md-12 well">
-                                            <h1 class="text-center">Underwriting</h1>
                                             <!-- Standar Form -->
-                                            <h3>Select files from your computer</h3>
+                                            <h3 id="document-upload-text"></h3>
                                             <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
                                                 <div class="form-inline">
-                                                    <div class="form-group" style="width: 40%; margin-right: 5%;">
-                                                        <select class="form-control">
-                                                            <option>-- Choose Upload Type --</option>
-                                                            <option>National ID Card</option>
-                                                            <option>Drivers License</option>
-                                                            <option>Voters Card</option>
-                                                        </select>
-                                                    </div>
                                                     <div class="form-group" style="width: 40%; margin-right: 5%;">
                                                         <input type="file" name="files[]" id="js-upload-files" multiple>
                                                     </div>
@@ -586,7 +435,42 @@
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-lg btn-success" id="js-upload-submit">Upload files</button>
-                                            <button id="btn-3" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="step-2">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h1 class="text-center">Generate Schedule</h1>
+                                            <form>
+                                                <fieldset>
+                                                    <legend>Inputs</legend>
+                                                    <label for="principal"><b>Principal:</b></label>
+                                                    <input type="text" id="principal" />
+                                                    <br />
+                                                    <label for="interest"><b>Interest:</b></label>
+                                                    <input type="text" id="interest" />
+                                                    <br />
+                                                    <label for="terms"><b>Terms:</b></label>
+                                                    <select id="terms">
+                                                        <option value="12">12 Months</option>
+                                                        <option value="24">24 Months</option>
+                                                        <option value="36">36 Months</option>
+                                                        <option value="48">48 Months</option>
+                                                        <option value="60">60 Months</option>
+                                                        <option value="60">72 Months</option>
+                                                    </select>
+                                                    <br />
+                                                    <input type="button" value="Calculate" onclick="getValues()" />
+                                                </fieldset>
+                                            </form>
+                                            <form style="margin-bottom: 15px;">
+                                                <fieldset>
+                                                    <legend>Loan Repayment Schedule</legend>
+                                                    <div id="Result"></div>
+                                                </fieldset>
+                                            </form>
+                                            <button id="btn-2" class="next btn btn-primary btn-lg">Save & Proceed</button>
                                         </div>
                                     </div>
                                 </div>
@@ -628,14 +512,12 @@
 
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
-                                <strong id="workflow-div-title" class="card-title" style="float: left;">Workflow</strong>
-                                <button class ="next btn btn-success" style="float: right;">Save & Proceed <i class="fa fa-forward"></i></button>
-                                <div id="stage-actions" style="float: right;" class="btn-group" role="group" aria-label="stage-actions"></div>
-                                <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>
-                            </div>
+                            <div class="card-header">Comments</div>
                             <div class="card-body">
-                                <div class="row">
+                                <div id="comments"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div><!-- .animated -->
         </div><!-- .content -->
@@ -698,9 +580,6 @@
             loadUsers();
             loadComments();
             loadWorkflowState();
-            $('.next').on('click', function(e) {
-                nextStage(state);
-            });
         });
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -775,19 +654,53 @@
             });
         }
 
-        function loadComments() {
-            $.ajax({
-                'url': '/user/application/comments/'+application_id,
-                'type': 'get',
-                'success': function (data) {
-                    let comments = data.response;
-                    console.log(comments)
-                },
-                'error': function (err) {
-                    console.log('Error');
-                    swal('No internet connection');
-                }
-            });
+        function loadComments(comments) {
+            if (comments && comments[0]){
+                let $comments = $('#comments');
+                $comments.html('');
+                comments.forEach(function (comment) {
+                    $comments.append('<div class="row">\n' +
+                        '    <div class="col-sm-1">\n' +
+                        '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+                        '    </div>\n' +
+                        '    <div class="col-sm-11">\n' +
+                        '        <div class="panel panel-default">\n' +
+                        '            <div class="panel-heading"><strong>'+comment.fullname+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
+                        '            <div class="panel-body">'+comment.text+'</div>\n' +
+                        '        </div>\n' +
+                        '    </div>\n' +
+                        '</div>');
+                });
+            } else {
+                $.ajax({
+                    'url': '/user/application/comments/'+application_id,
+                    'type': 'get',
+                    'success': function (data) {
+                        let comments = data.response,
+                            $comments = $('#comments');
+                        $comments.html('');
+                        if (!comments[0])
+                            return $comments.append('<h2 style="margin: auto;">No comments available yet!</h2>');
+                        comments.forEach(function (comment) {
+                            $comments.append('<div class="row">\n' +
+                                '    <div class="col-sm-1">\n' +
+                                '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+                                '    </div>\n' +
+                                '    <div class="col-sm-11">\n' +
+                                '        <div class="panel panel-default">\n' +
+                                '            <div class="panel-heading"><strong>'+comment.fullname+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
+                                '            <div class="panel-body">'+comment.text+'</div>\n' +
+                                '        </div>\n' +
+                                '    </div>\n' +
+                                '</div>');
+                        });
+                    },
+                    'error': function (err) {
+                        console.log('Error');
+                        swal('No internet connection');
+                    }
+                });
+            }
         }
 
         function loadWorkflowStages(state) {
@@ -802,6 +715,10 @@
                         stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0];
 
                     $last_btn.hide();
+                    if (stage.document){
+                        $('#document-upload').show();
+                        $('#document-upload-text').text('Kindly upload a '+stage.document);
+                    }
 
                     if (stage.actions){
                         let actions = stage.actions.split(',');
@@ -847,6 +764,11 @@
 
                     loadWorkflowStages(state);
                     allWells.hide();
+
+                    $('.next').on('click', function(e) {
+                        nextStage(state);
+                    });
+
                     $('#step-'+state.current_stage).show();
                 },
                 'error': function (err) {
@@ -862,6 +784,8 @@
                 'type': 'post',
                 'success': function (data) {
                     if (data.status === 200){
+                        $('#document-upload').hide();
+                        $('#document-upload-text').text('');
                         swal('Workflow updated successfully!');
                         window.location.reload();
                     } else {
@@ -893,7 +817,7 @@
                 'success': function (data) {
                     let comments = data.response;
                     results = comments;
-                    populateDataTable(comments);
+                    loadComments(comments);
                     $comment.val("");
                     swal('Comment saved successfully');
                 },
