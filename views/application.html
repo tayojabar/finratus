@@ -375,6 +375,7 @@
                             <div class="card-header">
                                 <strong id="workflow-div-title" class="card-title" style="float: left;">Workflow</strong>
                                 <button class ="next btn btn-success" style="float: right;">Save & Proceed <i class="fa fa-forward"></i></button>
+                                <button class ="previous btn btn-danger" style="float: right;"><i class="fa fa-backward"></i> Go To Previous</button>
                                 <div id="stage-actions" style="float: right;" class="btn-group" role="group" aria-label="stage-actions"></div>
                                 <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>
                             </div>
@@ -703,11 +704,16 @@
             }
         }
 
+        $('.next').hide();
+        $('.previous').hide();
         function loadWorkflowStages(state) {
             $.ajax({
                 'url': '/workflow-stages/'+state.workflowID,
                 'type': 'get',
                 'success': function (data) {
+                    $('.next').show();
+                    $('.previous').show();
+
                     let count = 0,
                         workflow_stages = data.response,
                         ul = document.getElementById('workflow-ul-list'),
@@ -724,10 +730,15 @@
                         let actions = stage.actions.split(',');
                         actions.forEach(function (code) {
                             let stage_template = ($.grep(workflow_stages, function(e){ return e.code === code; }))[0];
-                            $('#stage-actions').append('<button type="button" class="btn btn-primary stage-action-'+stage_template.stageID+
+                            $('#stage-actions').append('<button type="button" class="btn btn-primary" id="stage-action-'+stage_template.stageID+
                                 '" style="float: right">'+stage_template.name+' ('+stage_template.stage_name+')</button>');
                         });
                     }
+
+                    $("#stage-actions").on('click', function (e) {
+                        let id = (e.target.id.split('-'))[2];
+                        nextStage(state, workflow_stages, id);
+                    });
 
                     workflow_stages.forEach(function (stage) {
                         if (stage.stage_name !== 'Denied'){
@@ -735,15 +746,17 @@
                                 li = document.createElement('li');
                             if (count === index){
                                 li.className = "active";
+                                if (count === 0)
+                                    $(".previous").hide();
+                                if (count === workflow_stages.length-1)
+                                    $(".next").hide();
                             } else if (count > index) {
                                 li.className = "disabled";
                             }
                             ul.appendChild(li);
                             count++;
-                            li.innerHTML += '<a href="#step-'+stage.stageID+'">\n' +
-                                '<h4 class="list-group-item-heading">Step '+count+'</h4>\n' +
-                                '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p>\n' +
-                                '</a>';
+                            li.innerHTML += '<a><h4 class="list-group-item-heading">Step '+count+'</h4>\n' +
+                                '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p></a>';
                         }
                     });
                 },
@@ -759,7 +772,8 @@
                 'url': '/user/workflow_process/'+application_id,
                 'type': 'get',
                 'success': function (data) {
-                    let state = data.response,
+                    let states = data.response,
+                        state = states[states.length-1],
                         allWells = $('.setup-content');
 
                     loadWorkflowStages(state);
@@ -767,6 +781,10 @@
 
                     $('.next').on('click', function(e) {
                         nextStage(state);
+                    });
+
+                    $('.previous').on('click', function(e) {
+                        previousStage(state,states);
                     });
 
                     $('#step-'+state.current_stage).show();
@@ -778,10 +796,41 @@
             });
         }
 
-        function nextStage(state) {
+        function nextStage(state, workflow_stages, action_stage) {
+            let stage = {};
+            if (workflow_stages && action_stage){
+                stage.previous_stage = workflow_stages.map(function(e) { return e.stageID; }).indexOf(state.current_stage);
+                stage.current_stage = action_stage;
+            }
             $.ajax({
                 'url': '/user/workflow_process/'+application_id+'/'+state.workflowID,
                 'type': 'post',
+                'data': {stage: stage},
+                'success': function (data) {
+                    if (data.status === 200){
+                        $('#document-upload').hide();
+                        $('#document-upload-text').text('');
+                        swal('Workflow updated successfully!');
+                        window.location.reload();
+                    } else {
+                        if (data.message){
+                            swal(data.message);
+                        } else {
+                            swal('No internet connection');
+                        }
+                    }
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection');
+                }
+            });
+        }
+
+        function previousStage(state,states) {
+            $.ajax({
+                'url': '/user/revert_workflow_process/'+application_id,
+                'type': 'get',
                 'success': function (data) {
                     if (data.status === 200){
                         $('#document-upload').hide();
@@ -930,7 +979,6 @@
 
                 $(document.body).delegate('#payment-'+count,'change', function(e) {
                     for (let i=0; i<terms; i++){
-//                        let id = (e.target.id.split('-'))[1],
                         let id = i,
                             payment = $('#payment-'+id).val(),
                             previous_balance = parseFloat(($('#balance-'+id).html().split(" "))[1]),

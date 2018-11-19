@@ -463,7 +463,7 @@ users.post('/apply', function(req, res) {
                     return res.send({"status": 500, "message": "Error occurred!", "response": error});
                 if (!workflow_id)
                     return res.send({"status": 200, "message": "New Application Added!"});
-                getNextWorkflowProcess(false,workflow_id, function (process) {
+                getNextWorkflowProcess(false,workflow_id,false, function (process) {
                     db.query('SELECT * from applications where ID = LAST_INSERT_ID()', function(err, application, fields) {
                         process.workflowID = workflow_id;
                         process.applicationID = application[0]['ID'];
@@ -632,7 +632,7 @@ users.get('/application/assign_workflow/:id/:workflow_id', function(req, res, ne
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            getNextWorkflowProcess(false,workflow_id, function (process) {
+            getNextWorkflowProcess(false,workflow_id,false, function (process) {
                 process.workflowID = workflow_id;
                 process.applicationID = id;
                 process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
@@ -657,27 +657,36 @@ users.get('/application/assign_workflow/:id/:workflow_id', function(req, res, ne
 });
 
 users.post('/workflow_process/:application_id/:workflow_id', function(req, res, next) {
-    let user_role = req.session.user.user_role,
+    let stage = req.body.stage,
+        user_role = req.session.user.user_role,
         workflow_id = req.params.workflow_id,
         application_id = req.params.application_id;
     if (!application_id || !workflow_id || !user_role)
         return res.send({"status": 500, "error": "Required Parameter(s) not sent!"});
-    getNextWorkflowProcess(application_id,workflow_id, function (process) {
+    if (!stage || (Object.keys(stage).length === 0 && stage.constructor === Object))
+        stage = false;
+    getNextWorkflowProcess(application_id,workflow_id,stage, function (process) {
         process.workflowID = workflow_id;
         process.applicationID = application_id;
         process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-        db.query('UPDATE workflow_processes SET approval_status=? WHERE ID=?',[1,process.previous_stage], function (error, status, fields) {
+        db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)', [application_id], function (error, last_process, fields) {
             if(error){
                 res.send({"status": 500, "error": error, "response": null});
             } else {
-                if (parseInt(process.approver_id) !== parseInt(user_role))
-                    return res.send({"status": 500, "message": "You do not have authorization rights"});
-                delete process.approver_id;
-                db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
+                db.query('UPDATE workflow_processes SET approval_status=? WHERE ID=? AND status=1',[1,last_process[0]['ID']], function (error, status, fields) {
                     if(error){
                         res.send({"status": 500, "error": error, "response": null});
                     } else {
-                        res.send({"status": 200, "message": "Workflow Process created successfully!"});
+                        if (parseInt(process.approver_id) !== parseInt(user_role))
+                            return res.send({"status": 500, "message": "You do not have authorization rights"});
+                        delete process.approver_id;
+                        db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
+                            if(error){
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                res.send({"status": 200, "message": "Workflow Process created successfully!"});
+                            }
+                        });
                     }
                 });
             }
@@ -685,35 +694,61 @@ users.post('/workflow_process/:application_id/:workflow_id', function(req, res, 
     });
 });
 
+users.get('/revert_workflow_process/:application_id', function(req, res, next) {
+    let query = 'SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)';
+    db.query(query, [req.params.application_id], function (error, last_process, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('UPDATE workflow_processes SET status=? WHERE ID=?',[0,last_process[0]['ID']], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Workflow Process reverted successfully!", "response": null});
+                }
+            });
+        }
+    });
+});
+
 users.get('/workflow_process/:application_id', function(req, res, next) {
-    let query = 'SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=?)';
+    let query = 'SELECT * FROM workflow_processes WHERE applicationID = ? AND status=1';
     db.query(query, [req.params.application_id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            results = (results[0])? results[0] : [];
             res.send({"status": 200, "message": "Workflow Process fetched successfully!", "response": results});
         }
     });
 });
 
-function getNextWorkflowProcess(application_id,workflow_id, callback){
+function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
     db.query('SELECT * FROM workflow_stages WHERE workflowID=? ORDER BY ID asc',[workflow_id], function (error, stages, fields) {
         if(stages){
-            if(application_id){
-                db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=?)',[application_id], function (error, application_last_process, fields) {
+            if(application_id && !stage){
+                db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)',[application_id], function (error, application_last_process, fields) {
                     if (application_last_process){
-                        let next_stage = stages.map(function(e) { return e.stageID; }).indexOf(application_last_process[0]['next_stage']),
-                            current_stage = stages.map(function(e) { return e.stageID; }).indexOf(application_last_process[0]['current_stage']);
-                        if (stages[next_stage+1]){
-                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage+1]['stageID'], approver_id:stages[current_stage]['approverID']});
+                        let next_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(application_last_process[0]['next_stage'])),
+                            current_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(application_last_process[0]['current_stage']));
+                        if (stages[next_stage_index+1]){
+                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[current_stage_index]['approverID']});
                         } else {
-                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'], approver_id:stages[current_stage]['approverID']});
+                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'], approver_id:stages[current_stage_index]['approverID']});
                         }
                     } else {
                         callback({});
                     }
                 });
+            } else if(application_id && stage){
+                let current_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(stage['current_stage'])),
+                    next_stage_index = current_stage_index+1;
+                if (stage['next_stage']){
+                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stage['next_stage'], approver_id:stages[current_stage_index]['approverID']});
+                }else if (stages[next_stage_index]){
+                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                } else {
+                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[current_stage_index]['approverID']});
+                }
             } else {
                 callback({current_stage:stages[0]['stageID'],next_stage:stages[1]['stageID']});
             }
