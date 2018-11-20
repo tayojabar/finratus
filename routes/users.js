@@ -722,6 +722,17 @@ users.get('/workflow_process/:application_id', function(req, res, next) {
     });
 });
 
+users.get('/workflow_process_all/:application_id', function(req, res, next) {
+    let query = 'SELECT * FROM workflow_processes WHERE applicationID = ?';
+    db.query(query, [req.params.application_id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "All Workflow Process fetched successfully!", "response": results});
+        }
+    });
+});
+
 function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
     db.query('SELECT * FROM workflow_stages WHERE workflowID=? ORDER BY ID asc',[workflow_id], function (error, stages, fields) {
         if(stages){
