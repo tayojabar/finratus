@@ -303,7 +303,7 @@
                                         <th>Module Name</th>
                                         <th>Menu Name</th>
                                         <th>Status</th>
-                                        <!--<th>Write</th>-->
+                                        <th>Write</th>
                                     </tr>
                                     </thead>
 
@@ -385,7 +385,7 @@
             bAutoWidth: false,
             "aoColumns": [
                 { "bSortable": true },
-                null, { "bSortable": false }
+                null, { "bSortable": false },{ "bSortable": false }
                 // , null, { "bSortable": false },
             ],
             "aaSorting": [],
@@ -412,7 +412,7 @@
     function saveRolePermissions(r){
         var obj = {};
         var arr = [];
-        var i = 0;
+        var i = 0; var j = 0;
 
         $('.RosaCheck').each(function () {
             if ($(this). prop("checked") == true){
@@ -422,6 +422,18 @@
                 arr[i++] = [$(this).attr('id'), 0];
             }
         });
+        $('.WriteCheck').each(function(){
+            if ($(this).prop("checked") == true){
+                arr[j][2] = 1;
+                j++;
+            }
+            else{
+                arr[j][2] = 0;
+                j++;
+            }
+        });
+        console.log(arr);
+
         obj.role = r;
         obj.modules = arr;
         var test = [];
@@ -430,15 +442,16 @@
             'type': 'post',
             'data': obj,
             'success': function (data) {
-                $.each(JSON.parse(data), function (key, val) {
+                console.log(data);
+                $.each(data, function (key, val) {
                     test[key] = val;
                 });
-                console.log(test);
+//                console.log(test);
                 if(test.status == 500){
                     swal("Error encountered. Please try again.");
                 }
                 else
-                    swal("Views granted for User "+r+"!");
+                    swal("Views and Read / Write Permissions granted for User "+r+"!");
             }
         });
     }
@@ -513,14 +526,14 @@
                     else {
                         readCheck = '<input type="checkbox" id="'+val.module_id+'" class="RosaCheck">';
                     }
-//                    if (val.editable == 1){
-//                        writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="RosaCheck" checked>';
-//                    }
-//                    else {
-//                        writeCheck = '<input type="checkbox id="'+val.module_id+'" class="RosaCheck">';
-//                    }
+                    if (val.editable == 1){
+                        writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck" checked>';
+                    }
+                    else {
+                        writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck">';
+                    }
                     $('#module-table').dataTable().fnAddData( [
-                    val.module, val.menu_name,readCheck
+                        val.module, val.menu_name,readCheck, writeCheck
                     ]);
                 });
             }
@@ -541,8 +554,9 @@
                 // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     var action = '<input type="checkbox" id="leadhead-menuitem" class="ace RosaCheck">';
+                    var write = '<input type="checkbox" id="leadhead-menuitem" class="WriteCheck">';
                     $('#module-table').dataTable().fnAddData( [
-                        val.module_name, val.menu_name, action
+                        val.module_name, val.menu_name, action, write
                         // "Make",
                         // "Make",
                         // action

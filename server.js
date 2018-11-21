@@ -60,6 +60,7 @@ app.use(session({
 }));
 
 app.post('/login', function(req, res) {
+    var appData = {}; var user = [];
     var username = req.body.username;
     var password = req.body.password;
     db.query('SELECT * FROM users WHERE username = ?', username, function(err, rows, fields) {
@@ -67,17 +68,29 @@ app.post('/login', function(req, res) {
         //res.sendFile('/login', { error: 'Invalid email or password.' });
         //res.redirect('/inspections');
         res.sendFile('index.html', { root: __dirname+'/views' });
-        console.log(rows[0]);
-      } else {
-        if (password === rows[0].password) {
+        req.session.user = (rows[0]);
+      } else if (password === rows[0].password) {
           // sets a cookie with the user's info
-          req.session.user = rows[0];
-          res.sendFile('dashboard.html', { root: __dirname+'/views' });
-        } else {
-        //   res.sendFile('/login', { error: 'Invalid email or password.' });
-        //res.redirect('/login');
-        res.sendFile('index.html', { root: __dirname+'/views' });
-        }
+          user = rows[0];
+          db.query('SELECT module_id, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
+              if (!error) {
+                  user.permissions = perm
+                  var query = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
+                                'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id)'
+                  db.query(query, [user.user_role, user.user_role], function (er, mods, fields) {
+                    user.modules = mods;
+                    res.send(user);
+                  });
+              }
+              else {
+                  res.send({"status": 500, "response": "No permissions set for this user"})
+              }
+          });
+          //res.sendFile('dashboard.html', { root: __dirname+'/views' });
+      } else {
+          //   res.sendFile('/login', { error: 'Invalid email or password.' });
+          //res.redirect('/login');
+          res.sendFile('index.html', {root: __dirname + '/views'});
       }
     });
   });

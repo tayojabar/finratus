@@ -645,8 +645,7 @@ router.get('/mains/', function(req, res, next) {
 /* GET permissions for each role*/
 router.get('/permissions/:id', function(req, res, next) {
     var query = '\n' +
-        'select *, (select module_name from modules where permissions.module_id = modules.id) as module, (select menu_name from modules where module_name = module) as menu_name from permissions\n' +
-        'where role_id = ? and date in (select max(date) from vehicle_inspection.permissions where role_id = 1) group by module_id';
+        'select * from permissions where role_id = ? and date = (select max(date) from permissions where role_id = ?);'
     db.query(query, req.params.id, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -1220,7 +1219,6 @@ router.post('/maintenance/', function(req, res, next) {
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
   			res.send(JSON.stringify({"status": 200, "error": null, "response": "Maintenance Information Updated!"}));
-  			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
 });
@@ -1236,25 +1234,16 @@ router.post('/maintenance-upload/:number_plate/', function(req, res) {
 	let extArray = sampleFile.name.split(".");
     let extension = extArray[extArray.length - 1];
 	let fileName = name+'.'+extension;
-	//console.log(name);
 
 	fs.stat('files/'+req.params.number_plate+'/', function(err) {
-		if (!err) {
-			console.log('file or directory exists');
-		}
-		else if (err.code === 'ENOENT') {
-			console.log('file or directory does not exist');
-			console.log('Creating directory ...')
+		if (err.code === 'ENOENT') {
 			fs.mkdirSync('files/'+req.params.number_plate+'/');
 		}
 	});
    
 	fs.stat('files/'+req.params.number_plate+'/maintenance.'+extension, function (err) {
-		//console.log(stats);//here we got all information of file in stats variable
 	 
-		if (err) {// If file doesn't exist
-			//return console.error(err);
-			// Use the mv() method to place the file somewhere on your server
+		if (err) {
 			sampleFile.mv('files/'+req.params.number_plate+'/maintenance.'+extension, function(err) {
 				if (err) return res.status(500).send(err);
 				res.send('File uploaded!');
@@ -1263,7 +1252,6 @@ router.post('/maintenance-upload/:number_plate/', function(req, res) {
 		else{
 			fs.unlink('files/'+req.params.number_plate+'/maintenance.'+extension,function(err){
 				if(err){
-				   console.log(err);
 				   res.send('Unable to delete file!');
 				} 
 				else{
@@ -1274,7 +1262,6 @@ router.post('/maintenance-upload/:number_plate/', function(req, res) {
 					   res.send('File uploaded!');
 				   });
 				}
-				//console.log('file deleted successfully');
 		   }); 
 		}
 		 
@@ -1290,25 +1277,30 @@ router.post('/submitPermission/:role', function(req, res, next) {
     console.log(ids.modules);
     var role_id = ids.role;
     var count = 0;
+    var status = true;
     async.forEach(ids.modules, function (id, callback) {
 		var module_id = id[0]
 		var read_only = id[1];
+		var write = id[2];
 		var query = 'INSERT INTO permissions SET ?';
-        db.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:"", date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
+        db.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:write, date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
             if(error){
-                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                status = false;
+                return callback({"status": 500, "error": error, "response": null});
                 //If there is error, we send the error in the error section with 500 status
             } else {
-                	//res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissioins for module "+module_id+ "added!"}));
+                	//res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissions for module "+module_id+ "added!"}));
                 //If there is no error, all is good and response is 200OK.
-					console.log("Permissions for module "+module_id+ " added!")
+				console.log("Permissions for module "+module_id+ " added!")
                 count++;
             }
             callback();
         });
     }, function (data) {
-        // db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
-        //     res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) created successfully!", "response": results});
+    	// db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+		if(status === false)
+			return res.send(data);
+		res.send({"status": 200, "error": null, "message": "Permissions Set for Selected Role!"});
         // });
     })
 
