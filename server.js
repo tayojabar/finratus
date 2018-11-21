@@ -68,9 +68,9 @@ app.post('/login', function(req, res) {
         //res.sendFile('/login', { error: 'Invalid email or password.' });
         //res.redirect('/inspections');
         res.sendFile('index.html', { root: __dirname+'/views' });
-        req.session.user = (rows[0]);
       } else if (password === rows[0].password) {
           // sets a cookie with the user's info
+          req.session.user = rows[0];
           user = rows[0];
           db.query('SELECT module_id, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
               if (!error) {
