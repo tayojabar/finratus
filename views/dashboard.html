@@ -32,7 +32,7 @@
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
-        jQuery(document).ready(function($){ check(); loadMenus(); countVehicles(); countOwners(); countCarModels(); countUsers(); });
+        jQuery(document).ready(function($){ check(); loadMenus(); read_write(); countVehicles(); countOwners(); countCarModels(); countUsers(); });
     </script>
         <!-- Left Panel -->
 
@@ -458,12 +458,24 @@
             modules.forEach(function(k, v){
                 if (k.menu_name === 'Sub Menu'){
                     let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
-                    if (k.module_tag)
-                        $('#'+$(main[0]['module_tag']).attr('id')).append('<ul class="sub-menu children dropdown-menu">'+k.module_tag+'</ul>');
+                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
                 }else{
-                    console.log(k.module_tag);
                     $('#sidebar').append(k.module_tag);
+                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
                 }
+            });
+        }
+
+        function read_write(){
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+//            console.log(window.location);
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k,v){
+               if (k.module_name === page){
+                   if (k.editable !== 1){
+                       $('.write').hide();
+                   }
+               }
             });
         }
 

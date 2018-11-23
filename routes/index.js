@@ -644,9 +644,8 @@ router.get('/mains/', function(req, res, next) {
 
 /* GET permissions for each role*/
 router.get('/permissions/:id', function(req, res, next) {
-    var query = '\n' +
-        'select * from permissions where role_id = ? and date = (select max(date) from permissions where role_id = ?);'
-    db.query(query, req.params.id, function (error, results, fields) {
+    var query = 'select *, (select module_name from modules m where m.id = permissions.module_id) as module, (select menu_name from modules ms where ms.module_name = module) as menu_name from permissions where role_id = ? and date = (select max(date) from permissions where role_id = ?);'
+    db.query(query, [req.params.id, req.params.id], function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status

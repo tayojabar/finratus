@@ -12,6 +12,7 @@ const fs = require('fs');
 var session = require('client-sessions');
 var morgan = require('morgan');
 var db = require('./db');
+var cookie = require('cookie');
 //check and create uploads directory
 if (!fs.existsSync('./files')){
     fs.mkdirSync('./files');
@@ -70,15 +71,18 @@ app.post('/login', function(req, res) {
         res.sendFile('index.html', { root: __dirname+'/views' });
       } else if (password === rows[0].password) {
           // sets a cookie with the user's info
-          req.session.user = rows[0];
           user = rows[0];
-          db.query('SELECT module_id, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
+          db.query('SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
               if (!error) {
                   user.permissions = perm
                   var query = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
                                 'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id)'
                   db.query(query, [user.user_role, user.user_role], function (er, mods, fields) {
                     user.modules = mods;
+                    // res.setHeader('Set-Cookie', cookie.serialize('user', rows[0], {
+                    //       httpOnly: true,
+                    //       maxAge: 60 * 60 * 24 * 7 // 1 week
+                    //   }));
                     res.send(user);
                   });
               }
@@ -114,8 +118,7 @@ app.use(function(req, res, next) {
 });
 
 function requireLogin (req, res, next) {
-    if (!req.session.user) {
-      //res.redirect('/login');
+    if (!req.headers.cookie) {
       res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
       next();
@@ -124,7 +127,7 @@ function requireLogin (req, res, next) {
 
 app.get('/logout', function(req, res) {
     req.session.reset();
-    res.redirect('/dashboard');
+    res.redirect('/logon');
     //res.sendFile('dashboard.html', { root: __dirname+'/views' });
   });
 
@@ -136,8 +139,8 @@ app.use('/files', express.static(__dirname + '/files'));
 //     res.sendFile('login.html', { root: __dirname+'/views' });
 // });
 
-app.get('/login', function(req, res){
-  res.sendFile('login.html', { root: __dirname+'/views' });
+app.get('/logon', function(req, res){
+  res.sendFile('index.html', { root: __dirname+'/views' });
 });
 
 app.get('/dashboard', requireLogin, function(req, res){
@@ -192,7 +195,7 @@ app.get('/reports', requireLogin, function(req, res){
     res.sendFile('reports.html', { root: __dirname+'/views' });
 });
 
-app.get('/manage-permissions', requireLogin, function(req, res){
+app.get('/manage-permissions', function(req, res){
     res.sendFile('manage-permissions.html', { root: __dirname+'/views' });
 });
 

@@ -32,7 +32,7 @@
 <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
 <!-- Left Panel -->
 <script type="text/javascript">
-    jQuery(document).ready(function($){ check(); });
+    jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
 </script>
 
 <aside id="left-panel" class="left-panel">
@@ -47,55 +47,7 @@
         </div>
 
         <div id="main-menu" class="main-menu collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li id="" class="active">
-                    <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                </li>
-
-                <li class="active">
-                    <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
-                </li>
-
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
-                        <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
-                    </ul>
-                </li>
-
-                <li id="car-models" class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
-                        <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
-                    </ul>
-                </li>
-
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
-                        <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
-                        <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
-                    </ul>
-                </li>
-
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
-                        <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
-                    </ul>
-                </li>
-
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
-                        <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
-                    </ul>
-                </li>
+            <ul id="sidebar" class="nav navbar-nav">
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
@@ -239,7 +191,7 @@
         <div class="col-sm-4">
             <div class="page-header float-left">
                 <div class="page-title">
-                    <h1>Manage Permissions</h1>
+                    <!--<h1>Manage Permissions</h1>-->
                 </div>
             </div>
         </div>
@@ -261,10 +213,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-sm-6">
-
+                        <div class="row">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="widget-title lighter smaller">All Roles</h4>
+                                    <h4 class="widget-title lighter smaller">Manage Roles</h4>
                                 </div>
 
                                 <div class="card-body">
@@ -286,13 +238,40 @@
                                     </div>
                                 </div>
                             </div>
-            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="widget-title lighter smaller">Manage Roles</h4>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="widget-main padding-8">
+                                        <div>
+                                            <table id="role-table" class="table table-striped table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th>Role</th>
+                                                    <th>Action</th>
+
+                                                </tr>
+                                                </thead>
+
+                                                <tbody id="rolebody">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="col-sm-6">
 
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="widget-title lighter smaller">All Modules <span id="selectedName"></span></h4>
+                                <h4 class="widget-title lighter smaller">Manage Permissions <span id="selectedName"></span></h4>
                             </div>
 
                             <div class="card-body">
@@ -302,7 +281,7 @@
                                     <tr>
                                         <th>Module Name</th>
                                         <th>Menu Name</th>
-                                        <th>Status</th>
+                                        <th>View</th>
                                         <th>Write</th>
                                     </tr>
                                     </thead>
@@ -340,8 +319,8 @@
 <!-- Right Panel -->
 
 
-<script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/popper.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/plugins.js"></script>
 <script src="assets/js/main.js"></script>
 
@@ -393,9 +372,13 @@
             // "bInfo" : false,
             select: {
                 style: 'multi'
-            }
+            },
+            "paging": false
         });
 
+//    $('#module-table').dataTable( {
+//        "paging": false
+//    } );
 //    $(document).on("click", ".role", function (e) {
 //        var id = $(this).attr("id");
 //        var name = $(this).attr("name");
@@ -457,30 +440,43 @@
     }
 
     function check(){
-        jQuery.ajax({
-            'url': '/check',
-            'type': 'get',
-            'data': {},
-            'success': function (data) {
-                let num = 5;
-                var count = JSON.parse(data);
-                console.log(data);
-                // jQuery.each(count, function(k, v){
-                //     num = v.rand;
-                // });
-                if (data != 1){
-                    jQuery('#car-models').hide();
-                    jQuery('#new-user').hide();
-                    jQuery('#models-card').hide();
-                    jQuery('#user').html('ATB Admin');
-                }
-                else{ jQuery('#user').html('Super Admin'); }
-            },
-            'error': function (err) {
-                //alert ('Error');
-                console.log('Error');
+        if (localStorage.getItem('role') != 1){
+            jQuery('#car-models').hide();
+            jQuery('#new-user').hide();
+            jQuery('#models-card').hide();
+            jQuery('#user').html('ATB Admin');
+        }
+        else{ jQuery('#user').html('Super Admin'); }
+    }
+
+    function loadMenus(){
+        var modules = {};
+        modules = JSON.parse(localStorage.getItem("modules"));
+        modules.forEach(function(k, v){
+            if (k.menu_name === 'Sub Menu'){
+                let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
+                $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+            }else{
+                $('#sidebar').append(k.module_tag);
+                $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
             }
         });
+    }
+
+    function read_write(){
+        let w;
+        var perms = JSON.parse(localStorage.getItem("permissions"));
+        var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
+        perms.forEach(function (k,v){
+            if (k.module_name === page){
+                w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+            }
+        });
+        console.log(w);
+        if (parseInt(w[0]['editable']) === 1){
+            console.log('Here Now');
+            $(".write").hide();
+        }
     }
 
     function edit(role, name){
@@ -516,10 +512,18 @@
             url: "/permissions/"+id+"/",
             data: '{}',
             success: function (response) {
-                // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
-                $("#module-table").DataTable().clear();
-                $.each(JSON.parse(response), function (key, val) {
+                $("#module-table").dataTable().fnClearTable();
+                if (response.length === 0){
+                    //$("#module-table").dataTable().fnClearTable();
+                    console.log('Heer');
+                    loadModules();
+                }else{
+                    $.each(JSON.parse(response), function (key, val) {
                     let readCheck; let writeCheck;
+//                    let check_read = (val.read_only === 1)? 'checked':'';
+//                    let check_write = (val.read_only === 1)? 'checked':'';
+//                    readCheck = '<input type="checkbox" id="'+val.module_id+'" class="RosaCheck" '+check_read+'>';
+//                    writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck" '+check_write+'>';
                     if (val.read_only == 1){
                         readCheck = '<input type="checkbox" id="'+val.module_id+'" class="RosaCheck" checked>';
                     }
@@ -533,9 +537,10 @@
                         writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck">';
                     }
                     $('#module-table').dataTable().fnAddData( [
-                        val.module, val.menu_name,readCheck, writeCheck
+                        val.module, val.menu_name, readCheck, writeCheck
                     ]);
                 });
+                }
             }
         });
     }
@@ -549,12 +554,9 @@
             data: '{}',
             success: function (response) {
                 mods = JSON.parse(response);
-                console.log(mods);
-                var role = $("[id*=role]");
-                // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
-                $.each(JSON.parse(response), function (key, val) {
-                    var action = '<input type="checkbox" id="leadhead-menuitem" class="ace RosaCheck">';
-                    var write = '<input type="checkbox" id="leadhead-menuitem" class="WriteCheck">';
+                    $.each(JSON.parse(response), function (key, val) {
+                    var action = '<input type="checkbox" id="'+val.module_id+'" class="ace RosaCheck">';
+                    var write = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck">';
                     $('#module-table').dataTable().fnAddData( [
                         val.module_name, val.menu_name, action, write
                         // "Make",

@@ -86,6 +86,7 @@
 
 </body>
 <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+<script src="assets/js/cookie.js"></script>
 <script type="text/javascript">
     $(document).on("click", "#submit", function (e) {
         var obj = {}; test = {};
@@ -101,6 +102,7 @@
                 $.each(data, function (key, val) {
                     test[key] = val;
                 });
+                Cookies.set('session', test["id"]);
                 localStorage.setItem("permissions", JSON.stringify(test["permissions"]));
                 localStorage.setItem("role", test["user_role"]);
                 localStorage.setItem("status", test["status"]);
