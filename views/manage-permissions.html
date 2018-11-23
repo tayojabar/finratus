@@ -384,7 +384,7 @@
 //    });
 
     let role = localStorage.getItem("selectedRole");
-    console.log(role);
+    //console.log(role);
     $(document).on("click", "#submit", function (e) {
         saveRolePermissions(role);
 
@@ -412,11 +412,12 @@
                 j++;
             }
         });
-        console.log(arr);
+        //console.log(arr);
 
         obj.role = r;
         obj.modules = arr;
         var test = [];
+        console.log(obj);
         $.ajax({
             'url': '/submitPermission/'+r+'/',
             'type': 'post',
