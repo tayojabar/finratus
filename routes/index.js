@@ -1360,6 +1360,19 @@ router.get('/stages', function(req, res, next) {
     });
 });
 
+router.post('/stages', function(req, res, next) {
+    let stage = req.body,
+		query = 'INSERT INTO stages SET ?';
+    stage.type = 2;
+    db.query(query, stage, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Stage added successfully!", "response": results});
+        }
+    });
+});
+
 router.post('/submitPermission/:role', function(req, res, next) {
 	var ids = req.body;
 	console.log(ids)

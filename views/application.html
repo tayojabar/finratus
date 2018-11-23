@@ -136,6 +136,13 @@
         .carousel-indicators .active {
             background: #428bca;
         }
+        .badge-success {
+            background-color: #28a745;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -431,48 +438,69 @@
                                         </script>
                                         </div>
                                     </div>
-                                <div class="row setup-content" id="generate-schedule" style="display: none;">
+                                <div class="row setup-content" id="schedule">
                                     <div class="col-xs-12">
+                                        <div id="disburse-alert" class="alert alert-success" role="alert" style="display: none;">
+                                            <h3 class="alert-heading">Loan has been disbursed!</h3>
+                                            <p>Notifications would be sent to the user accounts related to this loan application to provide updates on this loan application.</p>
+                                            <!--<hr>-->
+                                            <!--<p class="mb-0">Please contact the admin for any issues with disbursement.</p>-->
+                                        </div>
                                         <div class="col-md-12 well">
-                                            <h2 class="text-center">Upload Loan Schedule</h2>
-                                            <form>
-                                                <fieldset>
-                                                    <legend>Inputs</legend>
-                                                    <label for="principal"><b>Principal:</b></label>
-                                                    <input type="text" id="principal" />
-                                                    <br />
-                                                    <label for="interest"><b>Interest:</b></label>
-                                                    <input type="text" id="interest" />
-                                                    <br />
-                                                    <label for="terms"><b>Terms:</b></label>
-                                                    <select id="terms">
-                                                        <option value="12">12 Months</option>
-                                                        <option value="24">24 Months</option>
-                                                        <option value="36">36 Months</option>
-                                                        <option value="48">48 Months</option>
-                                                        <option value="60">60 Months</option>
-                                                        <option value="60">72 Months</option>
-                                                    </select>
-                                                    <br />
-                                                    <input type="button" value="Calculate" onclick="getValues()" />
-                                                </fieldset>
-                                            </form>
-                                            <form style="margin-bottom: 15px;">
-                                                <fieldset>
-                                                    <legend>Loan Repayment Schedule</legend>
-                                                    <div id="Result"></div>
-                                                </fieldset>
-                                            </form>
-                                            <button id="btn-2" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                            <h2 class="text-center">Loan Overview <button id="collectPaymentButton" class ="btn btn-info" style="float: right; display: none;" data-toggle="modal" data-target="#collectPaymentModal">Collect Payment <i class="fa fa-money"></i></button></h2>
+                                            <div id="loanSchedule" style="margin-top: 30px;"></div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row setup-content" id="schedule">
+                                <div class="row setup-content" id="generate-schedule" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
-                                            <h2 class="text-center">Loan Overview</h2>
-                                            <div id="Result">Loan amount: ₦200000.00<br>Interest rate: 8.00%<br>Number of months: 12<br>Monthly payment: ₦17397.69<br>Total paid: ₦208772.23<br><br><table border="1"><tbody><tr><th>Month #</th><th>Balance</th><th>Interest</th><th>Expected Payment</th></tr><tr align="center"><td>1</td><td id="balance-0">₦ 200000.00</td><td id="interest-0">₦ 1333.33</td><td>₦ <input id="payment-0" type="number" value="17397.69"></td></tr><tr align="center"><td>2</td><td id="balance-1">₦ 183935.65</td><td id="interest-1">₦ 1226.24</td><td>₦ <input id="payment-1" type="number" value="17397.69"></td></tr><tr align="center"><td>3</td><td id="balance-2">₦ 167764.20</td><td id="interest-2">₦ 1118.43</td><td>₦ <input id="payment-2" type="number" value="17397.69"></td></tr><tr align="center"><td>4</td><td id="balance-3">₦ 151484.94</td><td id="interest-3">₦ 1009.90</td><td>₦ <input id="payment-3" type="number" value="17397.69"></td></tr><tr align="center"><td>5</td><td id="balance-4">₦ 135097.16</td><td id="interest-4">₦ 900.65</td><td>₦ <input id="payment-4" type="number" value="17397.69"></td></tr><tr align="center"><td>6</td><td id="balance-5">₦ 118600.12</td><td id="interest-5">₦ 790.67</td><td>₦ <input id="payment-5" type="number" value="17397.69"></td></tr><tr align="center"><td>7</td><td id="balance-6">₦ 101993.10</td><td id="interest-6">₦ 679.95</td><td>₦ <input id="payment-6" type="number" value="17397.69"></td></tr><tr align="center"><td>8</td><td id="balance-7">₦ 85275.37</td><td id="interest-7">₦ 568.50</td><td>₦ <input id="payment-7" type="number" value="17397.69"></td></tr><tr align="center"><td>9</td><td id="balance-8">₦ 68446.18</td><td id="interest-8">₦ 456.31</td><td>₦ <input id="payment-8" type="number" value="17397.69"></td></tr><tr align="center"><td>10</td><td id="balance-9">₦ 51504.81</td><td id="interest-9">₦ 343.37</td><td>₦ <input id="payment-9" type="number" value="17397.69"></td></tr><tr align="center"><td>11</td><td id="balance-10">₦ 34450.49</td><td id="interest-10">₦ 229.67</td><td>₦ <input id="payment-10" type="number" value="17397.69"></td></tr><tr align="center"><td>12</td><td id="balance-11">₦ 17282.47</td><td id="interest-11">₦ 115.22</td><td>₦ <input id="payment-11" type="number" value="17397.69"></td></tr></tbody></table></div>
-                                            <button class="btn btn-primary btn-lg">Update</button>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <h2 class="text-center">Upload Loan Schedule</h2>
+                                                    <hr />
+                                                    <div class="row">
+                                                        <div class="col-sm-8">
+                                                            <input type="file" id="csvUpload" style="display: inline-block"/>
+                                                            <button id="uploadCSV" class="btn btn-info">Upload</button>
+                                                            <button id="saveCSV" class="btn btn-success">Save</button>
+                                                            <i id="csvLoader" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <a href="/Loan Schedule.csv" target="_blank" style="text-decoration: underline;">
+                                                                Download Loan Schedule Template <i class="fa fa-cloud-download"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div id="dvCSV" style="margin-top: 30px;"></div>
+                                                    <hr />
+                                                    <button id="btn-2" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="generate-schedule-v2" style="display: none;">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <input type="file" id="csvUpload2" style="display: inline-block"/>
+                                                    <button id="uploadCSV2" class="btn btn-info">Add Schedule</button>
+                                                    <button id="saveCSV2" class="btn btn-success">Save Schedule</button>
+                                                    <i id="csvLoader2" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <a href="/Loan Schedule.csv" target="_blank" style="text-decoration: underline;">
+                                                        Download Loan Schedule Template <i class="fa fa-cloud-download"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div id="dvCSV2" style="margin-top: 30px;"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -508,7 +536,6 @@
                                                 <hr>
                                                 <p class="mb-0">Please contact the admin for any related issues.</p>
                                             </div>
-                                            <button id="btn-5" class="next btn btn-primary btn-lg">Save & Proceed</button>
                                         </div>
                                     </div>
                                 </div>
@@ -561,6 +588,24 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="comment()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="collectPaymentModal" tabindex="-1" role="dialog" aria-labelledby="collectPaymentModalLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width: 100%; max-width: 100%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="collectPaymentModalLabel">Payment Collection</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loanCollectionSchedule" style="margin-top: 30px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -661,6 +706,13 @@
                     workflow = (localStorage.getItem("workflows"))? ($.grep(JSON.parse(localStorage.getItem("workflows")), function(e){ return e.ID === data.workflowID; }))[0] : {name:'Workflow'};
                     $("#workflow-div-title").text(fullname.toUpperCase()+" ("+workflow.name+")");
 
+                    if (application.schedule && application.schedule[0]){
+                        $("#generate-schedule").hide();
+                        $("#schedule").show();
+                    } else {
+                        $("#generate-schedule").show();
+                    }
+
                     if (files_count < 1){
                         $carousel_inner.append('<h3>No Documents Uploaded Yet!</h3>');
                     } else {
@@ -681,6 +733,9 @@
                             }
                         }
                     }
+
+                    initCSVUpload(application);
+                    initCSVUpload2(application);
                 },
                 'error': function (err) {
                     console.log('Error');
@@ -760,13 +815,14 @@
 
                     $last_btn.hide();
                     $('#current_stage').text(stage.name);
-                    if (stage.stage_name === 'Application Started'){
+                    if (stage.stage_name === 'Application Started' && (!application.schedule || !application.schedule[0])){
                         $('#schedule').hide();
                         $('#generate-schedule').show();
                     }
+
                     if (stage.document){
                         $('#document-upload').show();
-                        $('#document-upload-text').text('Kindly upload a '+stage.document);
+                        $('#document-upload-text').append('<i class="fa fa-warning"></i> Kindly upload a '+stage.document);
                         stage_document = stage.document;
                         fileUpload(stage);
                     }
@@ -819,6 +875,16 @@
                         ul.appendChild(li);
                         li.innerHTML += '<a><h4 class="list-group-item-heading">Step '+(count+1)+'</h4>\n' +
                             '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p></a>';
+                    }
+
+                    if (stage.stage_name === 'Disbursed'){
+                        $('#collectPaymentButton').show();
+                        $('#generate-schedule-v2').show();
+                        $('#disburse-alert').show();
+                        $("#current_stage").hide();
+                        $("#next-actions").hide();
+                        $(".previous").hide();
+                        $(".next").hide();
                     }
 
                     loadAllWorkflowState(workflow_stages);
@@ -896,6 +962,8 @@
             }
             if (stage_document && !(stage_document.replace(/ /g, '_') in application.files))
                 return swal('Kindly upload required document ('+stage_document+')');
+            if (application.schedule && !application.schedule[0])
+                return swal('Kindly upload loan schedule to proceed!');
             $.ajax({
                 'url': '/user/workflow_process/'+application_id+'/'+state.workflowID,
                 'type': 'post',
@@ -995,124 +1063,265 @@
             });
         }
 
-        /**
-         * @author Joel Nutt
-         * ITEC136-V1WW(FA11) - Franklin U.
-         * David Crossmier - Instructor
-         * Assigment 8-3 (HW07)
-         * 11/06/2011
-         *
-         */
+        function initCSVUpload(application) {
+            let schedule = [],
+                $dvCSV = $("#dvCSV"),
+                $saveCSV = $("#saveCSV"),
+                $csvUpload = $("#csvUpload"),
+                $uploadCSV = $("#uploadCSV"),
+                $csvLoader = $("#csvLoader");
 
-        function getValues()
-        {
-            //button click gets values from inputs
-            var balance = parseFloat(document.getElementById("principal").value);
-            var interestRate =
-                parseFloat(document.getElementById("interest").value/100.0);
-            var terms = parseInt(document.getElementById("terms").value);
+            $uploadCSV.bind("click", function () {
+                let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+                if (regex.test($csvUpload.val().toLowerCase())) {
+                    if (typeof (FileReader) !== "undefined") {
+                        let reader = new FileReader();
+                        reader.onload = function (e) {
+                            let table = $("<table border='1' style='text-align: center;'/>"),
+                                rows = e.target.result.split("\n");
+                            for (let i = 0; i < rows.length; i++) {
+                                let invoice = {},
+                                    row = $("<tr />"),
+                                    cells = rows[i].split(",");
+                                for (let j = 0; j < cells.length; j++) {
+                                    let cell = $("<td />");
+                                    cell.html(cells[j]);
+                                    row.append(cell);
+                                    switch (j){
+                                        case 0:{ invoice.payment_create_date = cells[j]; break; }
+                                        case 1:{ invoice.payment_collect_date = cells[j]; break; }
+                                        case 2:{ invoice.payment_amount = cells[j]; break; }
+                                        case 3:{ invoice.interest_create_date = cells[j]; break; }
+                                        case 4:{ invoice.interest_collect_date = cells[j]; break; }
+                                        case 5:{ invoice.interest_amount = cells[j]; break; }
+                                        case 6:{ invoice.balance = cells[j]; break; }
+                                    }
+                                }
+                                if (i>1 && cells.length === 7)
+                                    schedule.push(invoice);
+                                table.append(row);
+                            }
+                            $dvCSV.html('');
+                            $dvCSV.append(table);
+                        };
+                        reader.readAsText($csvUpload[0].files[0]);
+                    } else {
+                        return swal('This browser does not support HTML5.');
+                    }
+                } else {
+                    return swal('Please select a valid CSV file.');
+                }
+            });
 
-            //set the div string
-            var div = document.getElementById("Result");
+            $saveCSV.bind("click", function () {
+                if (!schedule[0])
+                    return swal('Please upload a valid CSV file.');
 
-            //in case of a re-calc, clear out the div!
-            div.innerHTML = "";
-
-            //validate inputs - display error if invalid, otherwise, display table
-            var balVal = validateInputs(balance);
-            var intrVal = validateInputs(interestRate);
-
-            if (balVal && intrVal)
-            {
-                //Returns div string if inputs are valid
-                div.innerHTML += amort(balance, interestRate, terms);
-            }
-            else
-            {
-                //returns error if inputs are invalid
-                div.innerHTML += "Please Check your inputs and retry - invalid values.";
-            }
-        }
-
-        /**
-         * Amort function:
-         * Calculates the necessary elements of the loan using the supplied user input
-         * and then displays each months updated amortization schedule on the page
-         */
-        function amort(balance, interestRate, terms)
-        {
-            //Calculate the per month interest rate
-            var monthlyRate = interestRate/12;
-            //Calculate the payment
-            var payment = balance * (monthlyRate/(1-Math.pow(
-                1+monthlyRate, -terms)));
-            //begin building the return string for the display of the amort table
-            var result = "Loan amount: ₦" + balance.toFixed(2) +  "<br />" +
-                "Interest rate: " + (interestRate*100).toFixed(2) +  "%<br />" +
-                "Number of months: " + terms + "<br />" +
-                "Monthly payment: ₦" + payment.toFixed(2) + "<br />" +
-                "Total paid: ₦" + (payment * terms).toFixed(2) + "<br /><br />";
-
-            //add header row for table to return string
-            result += "<table border='1'><tr><th>Month #</th><th>Balance</th>" +
-                "<th>Interest</th><th>Expected Payment</th>";
-
-            /**
-             * Loop that calculates the monthly Loan amortization amounts then adds
-             * them to the return string
-             */
-            for (var count = 0; count < terms; ++count)
-            {
-                //in-loop interest amount holder
-                var interest = 0;
-                //in-loop monthly principal amount holder
-                var monthlyPrincipal = 0;
-                //start a new table row on each loop iteration
-                result += "<tr align=center>";
-                //display the month number in col 1 using the loop count variable
-                result += "<td>" + (count + 1) + "</td>";
-                //code for displaying in loop balance
-                result += "<td id='balance-"+count+"'>₦ " + balance.toFixed(2) + "</td>";
-                //calc the in-loop interest amount and display
-                interest = balance * monthlyRate;
-                result += "<td id='interest-"+count+"'>₦ " + interest.toFixed(2) + "</td>";
-                //calc the in-loop monthly principal and display
-                monthlyPrincipal = payment;
-                result += "<td>₦ <input id='payment-"+count+"' type='number' value='" + monthlyPrincipal.toFixed(2) + "' /></td>";
-                //end the table row on each iteration of the loop
-                result += "</tr>";
-                //update the balance for each loop iteration
-                balance = balance - monthlyPrincipal + interest;
-
-                $(document.body).delegate('#payment-'+count,'change', function(e) {
-                    for (let i=0; i<terms; i++){
-                        let id = i,
-                            payment = $('#payment-'+id).val(),
-                            previous_balance = parseFloat(($('#balance-'+id).html().split(" "))[1]),
-                            previous_interest = parseFloat(($('#interest-'+id).html().split(" "))[1]),
-                            new_balance = previous_balance-payment+previous_interest;
-                        $('#balance-'+(id+1)).text("₦ " + new_balance.toFixed(2));
+                $csvLoader.show();
+                $.ajax({
+                    'url': '/user/application/schedule/'+application_id,
+                    'type': 'post',
+                    'data': {schedule:schedule},
+                    'success': function (data) {
+                        $csvLoader.hide();
+                        $csvUpload.val('');
+                        swal('Schedule saved successfully');
+                        window.location.reload();
+                    },
+                    'error': function (err) {
+                        $csvLoader.hide();
+                        $csvUpload.val('');
+                        swal('Oops! An error occurred while saving schedule');
                     }
                 });
+            });
+
+            let $loanSchedule = $("#loanSchedule");
+            if (application.schedule && application.schedule[0]){
+                let table = $("<table border='1' style='text-align: center;'/>");
+                for (let i = 0; i < application.schedule.length+2; i++) {
+                    let row,
+                        cells = [];
+                    if (i <= 1){
+                        row = $('<tr style="font-weight: bold;" />');
+                    } else {
+                        row = $("<tr />");
+                        if (parseInt(application.schedule[i - 2]['status']) === 0)
+                            row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
+                    }
+                    if (i === 0) {
+                        cells = ["PAYMENT","","","INTEREST","","","BALANCE","COLLECTION"];
+                    } else if (i === 1) {
+                        cells = ["CREATE","COLLECT","AMOUNT","CREATE","COLLECT","AMOUNT","AMOUNT","STATUS"];
+                    } else {
+                        cells[0] = application.schedule[i - 2]['payment_create_date'];
+                        cells[1] = application.schedule[i - 2]['payment_collect_date'];
+                        cells[2] = application.schedule[i - 2]['payment_amount'];
+                        cells[3] = application.schedule[i - 2]['interest_create_date'];
+                        cells[4] = application.schedule[i - 2]['interest_collect_date'];
+                        cells[5] = application.schedule[i - 2]['interest_amount'];
+                        cells[6] = application.schedule[i - 2]['balance'];
+                        cells[7] = application.schedule[i - 2]['payment_status'];
+                    }
+                    for (let j = 0; j < cells.length; j++) {
+                        let cell = $("<td />");
+                        if (j === cells.length-1 && i>1){
+                            if (parseInt(cells[j]) === 0){
+                                cell.html('<span class="badge badge-danger">Not Paid</span>');
+                            } else {
+                                cell.html('<span class="badge badge-success">Paid</span>');
+                            }
+                        } else {
+                            cell.html(cells[j]);
+                        }
+                        row.append(cell);
+                    }
+                    table.append(row);
+                }
+                $loanSchedule.html('');
+                $loanSchedule.append(table);
             }
 
-            //Final piece added to return string before returning it - closes the table
-            result += "</table>";
-            //returns the concatenated string to the page
-            return result;
+            let $loanCollectionSchedule = $("#loanCollectionSchedule");
+            if (application.schedule && application.schedule[0]){
+                let table = $("<table border='1' style='text-align: center;'/>");
+                for (let i = 0; i < application.schedule.length+2; i++) {
+                    let row,
+                        cells = [];
+                    if (i <= 1){
+                        row = $('<tr style="font-weight: bold;" />');
+                    } else {
+                        row = $("<tr />");
+                        if (parseInt(application.schedule[i - 2]['status']) === 0)
+                            row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
+                    }
+                    if (i === 0) {
+                        cells = ["PAYMENT","","","INTEREST","","","BALANCE","COLLECTION",""];
+                    } else if (i === 1) {
+                        cells = ["CREATE","COLLECT","AMOUNT","CREATE","COLLECT","AMOUNT","AMOUNT","STATUS","ACTION"];
+                    } else {
+                        cells[0] = application.schedule[i - 2]['payment_create_date'];
+                        cells[1] = application.schedule[i - 2]['payment_collect_date'];
+                        cells[2] = application.schedule[i - 2]['payment_amount'];
+                        cells[3] = application.schedule[i - 2]['interest_create_date'];
+                        cells[4] = application.schedule[i - 2]['interest_collect_date'];
+                        cells[5] = application.schedule[i - 2]['interest_amount'];
+                        cells[6] = application.schedule[i - 2]['balance'];
+                        cells[7] = cells[8] = application.schedule[i - 2]['payment_status'];
+                    }
+                    for (let j = 0; j < cells.length; j++) {
+                        let cell = $("<td style='padding: 10px;' />");
+                        if (j === cells.length-2 && i>1){
+                            if (parseInt(cells[j]) === 0){
+                                cell.html('<span class="badge badge-danger">Not Paid</span>');
+                            } else {
+                                cell.html('<span class="badge badge-success">Paid</span>');
+                            }
+                        } else if (j === cells.length-1 && i>1) {
+                            if ((parseInt(cells[j]) === 0) && (parseInt(application.schedule[i - 2]['status']))){
+                                cell.html('<button class="btn btn-success" onclick="confirmPayment('+application.schedule[i - 2]['ID'] +
+                                    ')">Confirm Payment <i class="fa fa-check"></i></button>');
+                            }
+                        } else {
+                            cell.html(cells[j]);
+                        }
+                        row.append(cell);
+                    }
+                    table.append(row);
+                }
+                $loanCollectionSchedule.html('');
+                $loanCollectionSchedule.append(table);
+            }
         }
 
-        function validateInputs(value)
-        {
-            //some code here to validate inputs
-            if ((value == null) || (value == ""))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+        function confirmPayment(invoice_id) {
+            $.ajax({
+                'url': '/user/application/confirm-payment/'+invoice_id,
+                'type': 'get',
+                'success': function (data) {
+                    swal('Payment confirmed successfully');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    $csvLoader.hide();
+                    $csvUpload.val('');
+                    swal('Oops! An error occurred while confirming payment');
+                }
+            });
+        }
+
+        function initCSVUpload2(application) {
+            let schedule = [],
+                $dvCSV = $("#dvCSV2"),
+                $saveCSV = $("#saveCSV2"),
+                $csvUpload = $("#csvUpload2"),
+                $uploadCSV = $("#uploadCSV2"),
+                $csvLoader = $("#csvLoader2");
+
+            $uploadCSV.bind("click", function () {
+                let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+                if (regex.test($csvUpload.val().toLowerCase())) {
+                    if (typeof (FileReader) !== "undefined") {
+                        let reader = new FileReader();
+                        reader.onload = function (e) {
+                            let table = $("<table border='1' style='text-align: center;'/>"),
+                                rows = e.target.result.split("\n");
+                            for (let i = 0; i < rows.length; i++) {
+                                let invoice = {},
+                                    row = $("<tr />"),
+                                    cells = rows[i].split(",");
+                                for (let j = 0; j < cells.length; j++) {
+                                    let cell = $("<td />");
+                                    cell.html(cells[j]);
+                                    row.append(cell);
+                                    switch (j){
+                                        case 0:{ invoice.payment_create_date = cells[j]; break; }
+                                        case 1:{ invoice.payment_collect_date = cells[j]; break; }
+                                        case 2:{ invoice.payment_amount = cells[j]; break; }
+                                        case 3:{ invoice.interest_create_date = cells[j]; break; }
+                                        case 4:{ invoice.interest_collect_date = cells[j]; break; }
+                                        case 5:{ invoice.interest_amount = cells[j]; break; }
+                                        case 6:{ invoice.balance = cells[j]; break; }
+                                    }
+                                }
+                                if (i>1 && cells.length === 7)
+                                    schedule.push(invoice);
+                                table.append(row);
+                            }
+                            $dvCSV.html('');
+                            $dvCSV.append(table);
+                        };
+                        reader.readAsText($csvUpload[0].files[0]);
+                    } else {
+                        return swal('This browser does not support HTML5.');
+                    }
+                } else {
+                    return swal('Please select a valid CSV file.');
+                }
+            });
+
+            $saveCSV.bind("click", function () {
+                if (!schedule[0])
+                    return swal('Please upload a valid CSV file.');
+
+                $csvLoader.show();
+                $.ajax({
+                    'url': '/user/application/schedule/'+application_id,
+                    'type': 'post',
+                    'data': {schedule:schedule},
+                    'success': function (data) {
+                        $csvLoader.hide();
+                        $csvUpload.val('');
+                        swal('Schedule saved successfully');
+                        window.location.reload();
+                    },
+                    'error': function (err) {
+                        $csvLoader.hide();
+                        $csvUpload.val('');
+                        swal('Oops! An error occurred while saving schedule');
+                    }
+                });
+            });
         }
     </script>
 </body>

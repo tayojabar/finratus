@@ -574,7 +574,14 @@ users.get('/application-id/:id', function(req, res, next) {
                     callback();
                 }, function(data){
                     result.files = obj;
-                    return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+                    db.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
+                        if (error) {
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            result.schedule = schedule;
+                            return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+                        }
+                    });
                 });
             });
         }
@@ -816,6 +823,52 @@ users.get('/application/comments/:id', function(req, res, next) {
             res.send({"status": 200, "message": "Application comments fetched successfully!", "response": comments});
         }
     })
+});
+
+users.post('/application/schedule/:id', function(req, res, next) {
+    db.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1', [req.params.id], function (error, invoices, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            async.forEach(invoices, function (invoice, callback) {
+                db.query('UPDATE application_schedules SET status=0 WHERE ID = ?', [invoice.ID], function (error, response, fields) {
+                   callback();
+                });
+            }, function (data) {
+                let count = 0;
+                async.forEach(req.body.schedule, function (obj, callback2) {
+                    obj.applicationID = req.params.id;
+                    db.query('INSERT INTO application_schedules SET ?', obj, function (error, response, fields) {
+                            if(!error)
+                                count++;
+                            callback2();
+                        });
+                }, function (data) {
+                    res.send({"status": 200, "message": "Application scheduled with "+count+" invoices successfully!", "response": null});
+                })
+            });
+        }
+    });
+});
+
+users.get('/application/schedule/:id', function(req, res, next) {
+    db.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1', [req.params.id], function (error, schedule, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Application schedule fetched successfully!", "response": schedule});
+        }
+    });
+});
+
+users.get('/application/confirm-payment/:id', function(req, res, next) {
+    db.query('UPDATE application_schedules SET payment_status=1 WHERE ID = ?', [req.params.id], function (error, invoice, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Invoice Payment confirmed successfully!"});
+        }
+    });
 });
 
 // users.use(function(req, res, next) {
