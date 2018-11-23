@@ -103,13 +103,15 @@
                     test[key] = val;
                 });
                 Cookies.set('session', test["id"]);
+                localStorage.setItem("name", test["fullname"]);
+                localStorage.setItem("user", test["role"]);
                 localStorage.setItem("permissions", JSON.stringify(test["permissions"]));
                 localStorage.setItem("role", test["user_role"]);
                 localStorage.setItem("status", test["status"]);
                 localStorage.setItem("modules", JSON.stringify(test["modules"]));
 
                 if (test["permissions"] != ""){
-                    console.log('Null');
+//                    console.log(test);
                     window.location.href = "dashboard.html";
                 }
                 else{

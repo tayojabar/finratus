@@ -169,6 +169,30 @@ users.post('/new-user', function(req, res, next) {
 	});
 });
 
+/* Add New User Role*/
+users.post('/new-role', function(req, res, next) {
+    var postData = req.body;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')
+    var query =  'INSERT INTO user_roles Set ?';
+    var query2 = 'select * from user_roles where role_name = ?';
+    db.query(query2,req.body.role, function (error, results, fields) {
+        if (results && results[0]){
+            res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Role name already exists!"}));
+        }
+        else {
+            db.query(query,{"role_name":postData.role, "date_created": postData.date_created}, function (error, results, fields) {
+                if(error){
+                    res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    //If there is error, we send the error in the error section with 500 status
+                } else {
+                    res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Role Added!"}));
+                    //If there is no error, all is good and response is 200OK.
+                }
+            });
+        }
+    });
+});
+
 //File Upload - User Registration
 users.post('/upload/:id', function(req, res) {
 	if (!req.files) return res.status(400).send('No files were uploaded.');
@@ -302,6 +326,19 @@ users.get('/user-roles', function(req, res, next) {
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
+});
+
+users.get('/roles/:role', function(req, res, next) {
+    var query = 'SELECT * from user_roles where not id = ?';
+    db.query(query, req.params.role, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
 });
 
 /* GET users count. */

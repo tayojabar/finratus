@@ -27,10 +27,6 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script>
-        // $('body').on('data-dismiss', '.modal', function () {
-        //     $(this).removeData();
-        //     $('#modal-container .modal-content').empty();
-        // });
         $(function () {
             // when the modal is closed
             $('#myModal1').on('hidden.bs.modal', function () {
@@ -458,18 +454,24 @@
             else{ jQuery('#user').html('Super Admin'); }
         }
 
-        function loadMenus(){
-            var modules = {};
-            modules = JSON.parse(localStorage.getItem("modules"));
-            modules.forEach(function(k, v){
-                if (k.menu_name === 'Sub Menu'){
-                    let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
-                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
-                }else{
-                    $('#sidebar').append(k.module_tag);
-                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+        function loadUsers(){
+
+            $.ajax({
+                'url': '/user/users-list',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    console.log(data);
+                    var users = JSON.parse(data);
+                    results = users;
+                    populateDataTable(users);
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
                 }
             });
+
         }
 
         function read_write(){

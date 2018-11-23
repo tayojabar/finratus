@@ -1271,9 +1271,6 @@ router.post('/maintenance-upload/:number_plate/', function(req, res) {
 
 router.post('/submitPermission/:role', function(req, res, next) {
     var ids = req.body;
-    console.log(ids)
-	console.log(ids.role);
-    console.log(ids.modules);
     var role_id = ids.role;
     var count = 0;
     var status = true;

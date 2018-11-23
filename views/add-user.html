@@ -25,8 +25,21 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
-
+    <script>
+        $(function () {
+            // when the modal is closed
+            $('#myModal').on('hidden.bs.modal', function () {
+                // remove the bs.modal data attribute from it
+                $(this).removeData('bs.modal');
+                // and empty the modal-content element
+                $('#myModal .modal-content span').empty();
+                $('#myModal .modal-footer span').empty();
+                $('#myModal input').val("");
+            });
+        });
+    </script>
 </head>
 <body>
         <!-- Left Panel -->
@@ -256,10 +269,10 @@
                                     <strong style="color:red"> *</strong>
                                     <span id="role_error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-usd"></i></div>
+                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                         <select id="role" class="form-control" required="required">
                                             <option selected="selected" id="0">-- Choose User Role --</option>
-                                        </select>
+                                        </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New Role"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -286,7 +299,7 @@
                                     </div>
                                 </div>
                                 <div class = "form-group">
-                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Add New User"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New User"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
@@ -307,6 +320,30 @@
 
     <!-- Right Panel -->
 
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Add New Role</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <strong><label class=" form-control-label">Role Name</label></strong><strong style="color:red"> *</strong><span id="role-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                <input id="new-role" type="text" class="form-control" required="required">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span id="submit-role-error" style="padding-left:50px; text-align: center"></span><button type="button" class="btn btn-primary pull-right" onclick="validateRole()"><i class="fa fa-save"></i> Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <!--<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button>-->
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script src="assets/js/popper.min.js"></script>
@@ -424,8 +461,8 @@
                 url: "/user/user-roles/",
                 data: '{}',
                 success: function (response) {
-                    var role = $("[id*=role]");
-                    // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
+                    var role = $("[id=role]");
+                     role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#role").append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.role_name + '</option>');
                     });
@@ -462,6 +499,43 @@
                 }
             });
 
+        }
+
+        function validateRole(){
+            if ($('#new-role').val() == "" || $('#new-role').val() == null){
+                $('#role-error').html("Enter a valid role name");
+                $('#role-error').css("color", "red");
+                $('#submit-role-error').css("color", "red");
+                $('#submit-role-error').html("Unable to submit. Check information entered.");
+            }else{
+                saveNewRole();
+            }
+        }
+
+        function saveNewRole(){
+            var obj = {};
+            obj.role = $('#new-role').val();
+            var test={};
+            $.ajax({
+                'url': '/user/new-role/',
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    if(test.message){
+                        $('#role').val("");
+                        swal("Role already exists!");
+                    }
+                    else if(test.status == 500){
+                        $('#role').val("");
+                        swal("Please recheck entered values!");
+                    }
+                    else
+                    {$('#role').val(""); swal("New Role Registered!"); getRoles();}
+                }
+            });
         }
 
     </script>
