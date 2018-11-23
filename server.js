@@ -12,6 +12,7 @@ const fs = require('fs');
 var session = require('client-sessions');
 var morgan = require('morgan');
 var db = require('./db');
+var cookie = require('cookie');
 //check and create uploads directory
 if (!fs.existsSync('./files')){
     fs.mkdirSync('./files');
@@ -60,24 +61,40 @@ app.use(session({
 }));
 
 app.post('/login', function(req, res) {
+    var appData = {}; var user = [];
     var username = req.body.username;
     var password = req.body.password;
-    db.query('SELECT * FROM users WHERE username = ?', username, function(err, rows, fields) {
+    db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ?', username, function(err, rows, fields) {
       if (err) {
         //res.sendFile('/login', { error: 'Invalid email or password.' });
         //res.redirect('/inspections');
         res.sendFile('index.html', { root: __dirname+'/views' });
-        console.log(rows    [0]);
-      } else {
-        if (password === rows[0].password) {
+      } else if (password === rows[0].password) {
           // sets a cookie with the user's info
-          req.session.user = rows[0];
-          res.sendFile('dashboard.html', { root: __dirname+'/views' });
-        } else {
-        //   res.sendFile('/login', { error: 'Invalid email or password.' });
-        //res.redirect('/login');
-        res.sendFile('index.html', { root: __dirname+'/views' });
-        }
+          user = rows[0];
+          db.query('SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
+              if (!error) {
+                  user.permissions = perm
+                  var query = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
+                                'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id)'
+                  db.query(query, [user.user_role, user.user_role], function (er, mods, fields) {
+                    user.modules = mods;
+                    // res.setHeader('Set-Cookie', cookie.serialize('user', rows[0], {
+                    //       httpOnly: true,
+                    //       maxAge: 60 * 60 * 24 * 7 // 1 week
+                    //   }));
+                    res.send(user);
+                  });
+              }
+              else {
+                  res.send({"status": 500, "response": "No permissions set for this user"})
+              }
+          });
+          //res.sendFile('dashboard.html', { root: __dirname+'/views' });
+      } else {
+          //   res.sendFile('/login', { error: 'Invalid email or password.' });
+          //res.redirect('/login');
+          res.sendFile('index.html', {root: __dirname + '/views'});
       }
     });
   });
@@ -101,8 +118,7 @@ app.use(function(req, res, next) {
 });
 
 function requireLogin (req, res, next) {
-    if (!req.session.user) {
-      //res.redirect('/login');
+    if (!req.headers.cookie) {
       res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
       next();
@@ -111,7 +127,7 @@ function requireLogin (req, res, next) {
 
 app.get('/logout', function(req, res) {
     req.session.reset();
-    res.redirect('/dashboard');
+    res.redirect('/logon');
     //res.sendFile('dashboard.html', { root: __dirname+'/views' });
   });
 
@@ -123,8 +139,8 @@ app.use('/files', express.static(__dirname + '/files'));
 //     res.sendFile('login.html', { root: __dirname+'/views' });
 // });
 
-app.get('/login', function(req, res){
-  res.sendFile('login.html', { root: __dirname+'/views' });
+app.get('/logon', function(req, res){
+  res.sendFile('index.html', { root: __dirname+'/views' });
 });
 
 app.get('/dashboard', requireLogin, function(req, res){

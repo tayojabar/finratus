@@ -30,8 +30,9 @@
 </head>
 <body>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
-        jQuery(document).ready(function($){ check(); countVehicles(); countOwners(); countCarModels(); countUsers(); });
+        jQuery(document).ready(function($){ check(); loadMenus(); read_write(); countVehicles(); countOwners(); countCarModels(); countUsers(); });
     </script>
         <!-- Left Panel -->
 
@@ -47,57 +48,21 @@
             </div>
 
             <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li id="" class="active">
-                        <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                    </li>
-                    
-                    <li class="active">
-                        <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
-                    </li>
+                <ul id="sidebar" class="nav navbar-nav">
+                    <!--<li id="" class="active"><a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a></li>-->
+                    <!---->
+                    <!--<li class="active"><a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a></li>-->
 
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
-                            <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
-                        </ul>
-                    </li>
+                    <!--<li class="menu-item-has-children dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a><ul class="sub-menu children dropdown-menu"><li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li><li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li></ul></li>-->
 
-                    <li id="car-models" class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
-                            <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
-                        </ul>
-                    </li>
+                    <!--<li id="car-models" class="menu-item-has-children dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a><ul class="sub-menu children dropdown-menu"><li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li><li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li></ul></li>-->
 
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
-                            <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
-                            <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
-                            <li><i class="fa fa-plus"></i><a href="/add-application">New Application</a></li>
-                        </ul>
-                    </li>
+                    <!--<li class="menu-item-has-children dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a><ul class="sub-menu children dropdown-menu"><li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li><li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li><li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li></ul></li>-->
 
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
-                            <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
-                        </ul>
-                    </li>
+                    <!--<li class="menu-item-has-children dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a><ul class="sub-menu children dropdown-menu"><li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li></ul></li>-->
 
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
-                            <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
-                            <li><i class="fa fa-chain"></i><a href="/workflow">Workflow</a></li>
-                        </ul>
-                    </li>
+                    <!--<li class="menu-item-has-children dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a><ul class="sub-menu children dropdown-menu"><li><i class="fa fa-table"></i><a href="/module">Modules</a></li><li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li></ul></li>-->
+
                 </ul>
             </div><!-- /.navbar-collapse -->
         </nav>
@@ -194,42 +159,27 @@
                 </div>
 
                 <div class="col-sm-5">
-                    <div class="user-area dropdown float-right">
-                        <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
-                        </a>
+                    <div class="row pull-right">
+                        <div class="user-area dropdown float-right">
+                            <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                            </a>
 
-                        <div class="user-menu dropdown-menu">
-                                <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+                            <div class="user-menu dropdown-menu">
+                                    <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
 
-                                <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+                                    <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
 
-                                <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+                                    <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
 
-                                <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                                    <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- <div class="language-select dropdown" id="language-select">
-                        <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
-                            <i class="flag-icon flag-icon-us"></i>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="language" >
-                            <div class="dropdown-item">
-                                <span class="flag-icon flag-icon-fr"></span>
-                            </div>
-                            <div class="dropdown-item">
-                                <i class="flag-icon flag-icon-es"></i>
-                            </div>
-                            <div class="dropdown-item">
-                                <i class="flag-icon flag-icon-us"></i>
-                            </div>
-                            <div class="dropdown-item">
-                                <i class="flag-icon flag-icon-it"></i>
-                            </div>
-                        </div>
-                    </div> -->
+                    <div class="row pull-right">
+                        <span id="h-role"></span>
+                    </div>
 
                 </div>
             </div>
@@ -278,9 +228,6 @@
                         </h4>
                         <p class="text-light">Vehicles</p>
 
-                        <!-- <div class="chart-wrapper px-0" style="height:70px;" height="70">
-                            <canvas id="widgetChart1"></canvas>
-                        </div> -->
 
                     </div>
 
@@ -306,10 +253,6 @@
                             <span id="countOwners" class="count"></span>
                         </h4>
                         <p class="text-light">Vehicle Owners</p>
-
-                        <!-- <div class="chart-wrapper px-0" style="height:70px;" height="70">
-                            <canvas id="widgetChart2"></canvas>
-                        </div> -->
 
                     </div>
                 </div>
@@ -337,10 +280,6 @@
                         <p class="text-light">Car Models</p>
 
                     </div>
-
-                        <!-- <div class="chart-wrapper px-0" style="height:70px;" height="70">
-                            <canvas id="widgetChart3"></canvas>
-                        </div> -->
                 </div>
             </div>
             <!--/.col-->
@@ -365,117 +304,10 @@
                         </h4>
                         <p class="text-light">Users</p>
 
-                        <!-- <div class="chart-wrapper px-3" style="height:70px;" height="70">
-                            <canvas id="widgetChart4"></canvas>
-                        </div> -->
-
                     </div>
                 </div>
             </div>
             <!--/.col-->
-
-           <!-- <div class="col-xl-3 col-lg-6">
-                <section class="card">
-                    <div class="twt-feed blue-bg">
-                        <div class="corner-ribon black-ribon">
-                            <i class="fa fa-twitter"></i>
-                        </div>
-                        <div class="fa fa-twitter wtt-mark"></div>
-
-                        <div class="media">
-                            <a href="#">
-                                <img class="align-self-center rounded-circle mr-3" style="width:85px; height:85px;" alt="" src="images/admin.jpg">
-                            </a>
-                            <div class="media-body">
-                                <h2 class="text-white display-6">Jim Doe</h2>
-                                <p class="text-light">Project Manager</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="weather-category twt-category">
-                        <ul>
-                            <li class="active">
-                                <h5>750</h5>
-                                Tweets
-                            </li>
-                            <li>
-                                <h5>865</h5>
-                                Following
-                            </li>
-                            <li>
-                                <h5>3645</h5>
-                                Followers
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="twt-write col-sm-12">
-                        <textarea placeholder="Write your Tweet and Enter" rows="1" class="form-control t-text-area"></textarea>
-                    </div>
-                    <footer class="twt-footer">
-                        <a href="#"><i class="fa fa-camera"></i></a>
-                        <a href="#"><i class="fa fa-map-marker"></i></a>
-                        New Castle, UK
-                        <span class="pull-right">
-                            32
-                        </span>
-                    </footer>
-                </section>
-            </div> -->
-
-
-            <!-- <div class="col-xl-3 col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="stat-widget-one">
-                            <div class="stat-icon dib"><i class="ti-money text-success border-success"></i></div>
-                            <div class="stat-content dib">
-                                <div class="stat-text">Total Profit</div>
-                                <div class="stat-digit">1,012</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
-
-            <!-- <div class="col-xl-3 col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="stat-widget-one">
-                            <div class="stat-icon dib"><i class="ti-user text-primary border-primary"></i></div>
-                            <div class="stat-content dib">
-                                <div class="stat-text">New Customer</div>
-                                <div class="stat-digit">961</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
-            <!-- <div class="col-xl-3 col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="stat-widget-one">
-                            <div class="stat-icon dib"><i class="ti-layout-grid2 text-warning border-warning"></i></div>
-                            <div class="stat-content dib">
-                                <div class="stat-text">Active Projects</div>
-                                <div class="stat-digit">770</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
-            <!-- <div class="col-xl-6">
-                <div class="card" >
-                    <div class="card-header">
-                        <h4>World</h4>
-                    </div>
-                    <div class="Vector-map-js">
-                        <div id="vmap" class="vmap" style="height: 265px;"></div>
-                    </div>
-                </div>
-                <!-- /# card -->
             </div> 
 
 
@@ -488,8 +320,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
-    <!-- <script src="assets/js/lib/chart-js/Chart.bundle.js"></script> -->
-    <script src="assets/js/dashboard.js"></script>
+    <!--<script src="assets/js/dashboard.js"></script>-->
     <!-- <script src="assets/js/widgets.js"></script> -->
     <script src="assets/js/lib/vector-map/jquery.vmap.js"></script>
     <script src="assets/js/lib/vector-map/jquery.vmap.min.js"></script>
@@ -497,7 +328,9 @@
     <script src="assets/js/lib/vector-map/country/jquery.vmap.world.js"></script>
     
     <script type="text/javascript">
-        //jQuery(document).ready(function($){ countVehicles(); });
+//        jQuery(document).ready(function($){ loadMenus(); });
+
+        let mains;
         
         function countVehicles(){
             jQuery.ajax({
@@ -505,12 +338,12 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
+//                    console.log(data);
                     let total = 0;
                     var count = JSON.parse(data);
-                    console.log(count);
+//                    console.log(count);
                     jQuery.each(count, function(k, v){
-                        console.log(v.total);
+//                        console.log(v.total);
                         total = v.total;
                     });
                     jQuery('#countVehicles').html(total);
@@ -528,12 +361,12 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
+//                    console.log(data);
                     let total = 0;
                     var count = JSON.parse(data);
-                    console.log(count);
+//                    console.log(count);
                     jQuery.each(count, function(k, v){
-                        console.log(v.total);
+//                        console.log(v.total);
                         total = v.total;
                     });
                     jQuery('#countOwners').html(total);
@@ -551,12 +384,12 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
+//                    console.log(data);
                     let total = 0;
                     var count = JSON.parse(data);
-                    console.log(count);
+//                    console.log(count);
                     jQuery.each(count, function(k, v){
-                        console.log(v.total);
+//                        console.log(v.total);
                         total = v.total;
                     });
                     jQuery('#countModels').html(total);
@@ -574,12 +407,12 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
+//                    console.log(data);
                     let total = 0;
                     var count = JSON.parse(data);
-                    console.log(count);
+//                    console.log(count);
                     jQuery.each(count, function(k, v){
-                        console.log(v.total);
+//                        console.log(v.total);
                         total = v.total;
                     });
                     jQuery('#countUsers').html(total);
@@ -592,29 +425,67 @@
         }
         
         function check(){
-            jQuery.ajax({
-                'url': '/check',
-                'type': 'get',
-                'data': {},
-                'success': function (data) {
-                    let num = 5;
-                    var count = JSON.parse(data);
-                    console.log(data);
-                    // jQuery.each(count, function(k, v){
-                    //     num = v.rand;
-                    // });
-                    if (data != 1){
-                        jQuery('#car-models').hide();
-                        jQuery('#new-user').hide();
-                        jQuery('#models-card').hide();
-                        jQuery('#user').html('ATB Admin');
-                    }
-                    else{ jQuery('#user').html('Super Admin'); }
-                },
-                'error': function (err) {
-                    //alert ('Error');
-                    console.log('Error');
+            if (localStorage.getItem('role') != 1){
+                jQuery('#car-models').hide();
+                jQuery('#new-user').hide();
+                jQuery('#models-card').hide();
+                jQuery('#user').html('ATB Admin');
+            }
+            else{
+                jQuery('#user').html(localStorage.getItem("name"));
+                jQuery('#h-role').html(localStorage.getItem("user"));
+            }
+//            jQuery.ajax({
+//                'url': '/check',
+//                'type': 'get',
+//                'data': {},
+//                'success': function (data) {
+//                    let num = 5;
+//                    var count = JSON.parse(data);
+////                    console.log(data);
+//                    // jQuery.each(count, function(k, v){
+//                    //     num = v.rand;
+//                    // });
+//                    if (data != 1){
+//                        jQuery('#car-models').hide();
+//                        jQuery('#new-user').hide();
+//                        jQuery('#models-card').hide();
+//                        jQuery('#user').html('ATB Admin');
+//                    }
+//                    else{ jQuery('#user').html('Super Admin'); }
+//                },
+//                'error': function (err) {
+//                    //alert ('Error');
+//                    console.log('Error');
+//                }
+//            });
+        }
+
+        function loadMenus(){
+            var modules = {};
+            modules = JSON.parse(localStorage.getItem("modules"));
+            console.log(modules);
+            modules.forEach(function(k, v){
+                if (k.menu_name === 'Sub Menu'){
+                    let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
+                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+                }else{
+                    $('#sidebar').append(k.module_tag);
+                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
                 }
+            });
+        }
+
+        function read_write(){
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+//            console.log(window.location);
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k,v){
+               if (k.module_name === page){
+                   if (k.editable !== 1){
+                       $('.write').hide();
+                   }
+               }
             });
         }
 

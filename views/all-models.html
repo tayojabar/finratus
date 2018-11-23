@@ -34,75 +34,25 @@
         <!-- Left Panel -->
         <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
         <script type="text/javascript">
-            jQuery(document).ready(function($){ check(); });
+            jQuery(document).ready(function($){ check(); loadMenus();});
         </script>
 
         <aside id="left-panel" class="left-panel">
-                <nav class="navbar navbar-expand-sm navbar-default">
-        
-                    <div class="navbar-header">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <a class="navbar-brand" href="/dashboard">Loan 35</a>
-                        <a class="navbar-brand hidden" href="/dashboard">35</a>
-                    </div>
-        
-                    <div id="main-menu" class="main-menu collapse navbar-collapse">
-                        <ul class="nav navbar-nav">
-                            <li id="" class="active">
-                                <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                            </li>
-                            
-                            <li class="active">
-                                <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
-                            </li>
-        
-                            <li class="menu-item-has-children dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
-                                <ul class="sub-menu children dropdown-menu">
-                                    <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
-                                    <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
-                                </ul>
-                            </li>
-        
-                            <li id="car-models" class="menu-item-has-children dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
-                                <ul class="sub-menu children dropdown-menu">
-                                    <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
-                                    <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
-                                </ul>
-                            </li>
-        
-                            <li class="menu-item-has-children dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
-                                <ul class="sub-menu children dropdown-menu">
-                                    <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
-                                    <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
-                                    <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
-                                    <li><i class="fa fa-plus"></i><a href="/add-application">New Application</a></li>
-                                </ul>
-                            </li>
-        
-                            <li class="menu-item-has-children dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
-                                <ul class="sub-menu children dropdown-menu">
-                                    <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li>
-                                    <li><i class="fa fa-table"></i><a href="#">Inspection Report</a></li>
-                                </ul>
-                            </li>
+            <nav class="navbar navbar-expand-sm navbar-default">
 
-                            <li class="menu-item-has-children dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
-                                <ul class="sub-menu children dropdown-menu">
-                                    <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
-                                    <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
-                                    <li><i class="fa fa-chain"></i><a href="/workflow">Workflow</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div><!-- /.navbar-collapse -->
-                </nav>
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                    <a class="navbar-brand hidden" href="/dashboard">35</a>
+                </div>
+
+                <div id="main-menu" class="main-menu collapse navbar-collapse">
+                    <ul id="sidebar" class="nav navbar-nav">
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </nav>
         </aside><!-- /#left-panel -->
 
         <!-- Left Panel -->
@@ -296,7 +246,7 @@
                                     <tr>
                                         <th>Model</th>
                                         <th>Year</th>
-                                        <th>Action</th>
+                                        <!--<th>Action</th>-->
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -343,34 +293,30 @@
           $('table.table table-striped table-bordered').dataTable();
           loadMakes();
         } );
-        
+
         function check(){
-            jQuery.ajax({
-                'url': '/check',
-                'type': 'get',
-                'data': {},
-                'success': function (data) {
-                    let num = 5;
-                    var count = JSON.parse(data);
-                    console.log(data);
-                    // jQuery.each(count, function(k, v){
-                    //     num = v.rand;
-                    // });
-                    if (data != 1){
-                        jQuery('#car-models').hide();
-                        jQuery('#new-user').hide();
-                        jQuery('#models-card').hide();
-                        jQuery('#user').html('ATB Admin');
-                    }
-                    else{ jQuery('#user').html('Super Admin'); }
-                },
-                'error': function (err) {
-                    //alert ('Error');
-                    console.log('Error');
+            if (localStorage.getItem('role') != 1){
+                jQuery('#car-models').hide();
+                jQuery('#new-user').hide();
+                jQuery('#models-card').hide();
+                jQuery('#user').html('ATB Admin');
+            }
+            else{ jQuery('#user').html('Super Admin'); }
+        }
+
+        function loadMenus(){
+            var modules = {};
+            modules = JSON.parse(localStorage.getItem("modules"));
+            modules.forEach(function(k, v){
+                if (k.menu_name === 'Sub Menu'){
+                    let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
+                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+                }else{
+                    $('#sidebar').append(k.module_tag);
+                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
                 }
             });
         }
-
 
         var myTable = $('#makes')
             .DataTable({
@@ -392,7 +338,7 @@
             bAutoWidth: false,
             "aoColumns": [
                 { "bSortable": true },
-                null, { "bSortable": false }
+                null
                 // , null, { "bSortable": false },
             ],
             "aaSorting": [],
@@ -416,7 +362,6 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    //console.log(data);
                     var brands = JSON.parse(data);
                     populateBrandsTable(brands);
                 },
@@ -437,7 +382,6 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
                     var models = JSON.parse(data);
                     populateModelsTable(models);
                 },
@@ -449,7 +393,6 @@
         }
 
         function populateModelsTable(models){
-            console.log("populating data table...");
             // clear the table before populating it with more data
             $("#models").DataTable().clear();
             console.log("cleared data table...");
@@ -458,7 +401,7 @@
             $.each(models, function(k, v){
                 //console.log("Here");
                 $('#models').dataTable().fnAddData( [
-                    v.model, v.year, action
+                    v.model, v.year
                     // "Make",
                     // "Make",
                     // action
@@ -467,7 +410,6 @@
         }
 
         function populateBrandsTable(data) {
-            console.log("populating data table...");
             // clear the table before populating it with more data
             $("#bootstrap-data-table").DataTable().clear();
             var length = data.length;
