@@ -1,0 +1,1134 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loan35 Admin</title>
+    <meta name="description" content="Sufee Admin - HTML5 Admin Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+    <style type="text/css">
+        ul.nav li.active p{color: #ffffff;}
+        a, a p, a:hover{color: rgb(66, 139, 202);}
+        #step-1 .form-control, #step-3 .form-control {
+            display: block !important;
+            width: 100% !important;
+            height: 34px !important;
+            padding: 6px 12px !important;
+            font-size: 14px !important;
+            line-height: 1.428571429 !important;
+            color: #555 !important;
+            vertical-align: middle !important;
+            background-color: #fff !important;
+            border: 1px solid #ccc !important;
+            border-radius: 4px !important;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important;
+            -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s !important;
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s !important;
+        }
+        table{width: 100%;}
+        table th{text-align: center;}
+        .uploader {
+            display: block;
+            margin: 15px auto;
+            width: 100%;
+        }
+        .uploader label {
+            width: 100%;
+            padding: 5rem 1.5rem;
+            text-align: center;
+            background: #fff;
+            border-radius: 7px;
+            border: 3px solid #eee;
+            transition: all .2s ease;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .uploader label:hover {
+            border-color: #454cad;
+        }
+        .uploader label.hover {
+            border: 3px solid #454cad;
+            box-shadow: inset 0 0 0 6px #eee;
+        }
+        .uploader label.hover #start i.fa {
+            -webkit-transform: scale(0.8);
+            transform: scale(0.8);
+            opacity: 0.3;
+        }
+        .uploader #start {
+            float: left;
+            clear: both;
+            width: 100%;
+        }
+        .uploader #start.hidden {
+            display: none;
+        }
+        .uploader #start i.fa {
+            font-size: 50px;
+            margin-bottom: 1rem;
+            transition: all .2s ease-in-out;
+        }
+        .uploader #response {
+            float: left;
+            clear: both;
+            width: 100%;
+        }
+        .uploader #response.hidden {
+            display: none;
+        }
+        .uploader #response #messages {
+            margin-bottom: .5rem;
+        }
+        .uploader #file-image {
+            display: inline;
+            margin: 0 auto .5rem auto;
+            width: auto;
+            height: auto;
+            max-width: 180px;
+        }
+        .uploader #file-image.hidden {
+            display: none;
+        }
+        .uploader #notimage {
+            display: block;
+            float: left;
+            clear: both;
+            width: 100%;
+        }
+        .uploader #notimage.hidden {
+            display: none;
+        }
+        .uploader progress,
+        .uploader .progress {
+            display: inline;
+            clear: both;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 180px;
+            height: 8px;
+            border: 0;
+            border-radius: 4px;
+            background-color: #eee;
+            overflow: hidden;
+        }
+        .uploader .progress[value]::-webkit-progress-bar {
+            border-radius: 4px;
+            background-color: #eee;
+        }
+        .uploader .progress[value]::-webkit-progress-value {
+            background: linear-gradient(to right, #393f90 0%, #454cad 50%);
+            border-radius: 4px;
+        }
+        .uploader .progress[value]::-moz-progress-bar {
+            background: linear-gradient(to right, #393f90 0%, #454cad 50%);
+            border-radius: 4px;
+        }
+        .uploader input[type="file"] {
+            display: none;
+        }
+        .uploader div {
+            margin: 0 0 .5rem 0;
+            color: #5f6982;
+        }
+        .uploader .btn {
+            display: inline-block;
+            margin: .5rem .5rem 1rem .5rem;
+            clear: both;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            text-transform: initial;
+            border: none;
+            border-radius: .2rem;
+            outline: none;
+            padding: 0 1rem;
+            height: 36px;
+            line-height: 36px;
+            color: #fff;
+            transition: all 0.2s ease-in-out;
+            box-sizing: border-box;
+            background: #454cad;
+            border-color: #454cad;
+            cursor: pointer;
+        }
+        .alert-success, .alert-success p {color: #155724;}
+    </style>
+</head>
+<body>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <!-- Left Panel -->
+        <script type="text/javascript">
+            jQuery(document).ready(function($){ check(); });
+        </script>
+
+    <aside id="left-panel" class="left-panel">
+            <nav class="navbar navbar-expand-sm navbar-default">
+    
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                    <a class="navbar-brand hidden" href="/dashboard">35</a>
+                </div>
+    
+                <div id="main-menu" class="main-menu collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li id="" class="active">
+                            <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                        </li>
+                        
+                        <li class="active">
+                            <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
+                        </li>
+
+                        <li>
+                            <a href="/workflow"> <i class="menu-icon fa fa-chain"></i>Workflow </a>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
+                            </ul>
+                        </li>
+    
+                        <li id="car-models" class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                                <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
+                                <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
+                                <li><i class="fa fa-plus"></i><a href="/add-application">New Application</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
+                                <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </nav>
+    </aside><!-- /#left-panel -->
+    
+        <!-- Left Panel -->
+    
+        <!-- Right Panel -->
+    
+        <div id="right-panel" class="right-panel">
+    
+            <!-- Header-->
+            <header id="header" class="header">
+    
+                <div class="header-menu">
+    
+                    <div class="col-sm-7">
+                        <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                        <div class="header-left">
+                            <button class="search-trigger"><i class="fa fa-search"></i></button>
+                            <div class="form-inline">
+                                <form class="search-form">
+                                    <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                                    <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="col-sm-5">
+                        <div class="user-area dropdown float-right">
+                            <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                            </a>
+    
+                            <div class="user-menu dropdown-menu">
+                                    <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+    
+                                    <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+    
+                                    <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+    
+                                    <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+    
+            </header><!-- /header -->
+            <!-- Header-->
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Application</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Users</a></li>
+                            <li class="active">All Applications</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-striped table-bordered">
+                                    <tbody id="application"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong id="workflow-div-title" class="card-title" style="float: left;">Workflow</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="row form-group">
+                                    <div class="col-xs-12">
+                                        <ul id="workflow-ul-list" class="nav nav-pills nav-justified thumbnail setup-panel"></ul>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="step-1">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h1 class="text-center">Loan Booking</h1>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">Account Name</label><strong style="color:red"> *</strong><span id="username-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                    <input type="text" id="username" class="form-control" required="required">
+                                                </div>
+                                                <small class="form-text text-muted">ex. user123</small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">Account Number</label><strong style="color:red"> *</strong><span id="name-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                    <input type="number" id="num" class="form-control" required="required">
+                                                </div>
+                                                <small class="form-text text-muted">ex. user123</small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">BVN</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                    <input type="number" id="fullname" class="form-control" required="required">
+                                                </div>
+                                                <small class="form-text text-muted">ex. user123</small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">Bank</label>
+                                                <strong style="color:red"> *</strong>
+                                                <span id="role_error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-usd"></i></div>
+                                                    <select id="role" class="form-control" required="required">
+                                                        <option selected="selected" id="0">-- Choose Bank --</option>
+                                                        <option value="access">Access Bank</option>
+                                                        <option value="citibank">Citibank</option>
+                                                        <option value="diamond">Diamond Bank</option>
+                                                        <option value="ecobank">Ecobank</option>
+                                                        <option value="fidelity">Fidelity Bank</option>
+                                                        <option value="fcmb">First City Monument Bank (FCMB)</option>
+                                                        <option value="fsdh">FSDH Merchant Bank</option>
+                                                        <option value="gtb">Guarantee Trust Bank (GTB)</option>
+                                                        <option value="heritage">Heritage Bank</option>
+                                                        <option value="Keystone">Keystone Bank</option>
+                                                        <option value="rand">Rand Merchant Bank</option>
+                                                        <option value="skye">Skye Bank</option>
+                                                        <option value="stanbic">Stanbic IBTC Bank</option>
+                                                        <option value="standard">Standard Chartered Bank</option>
+                                                        <option value="sterling">Sterling Bank</option>
+                                                        <option value="suntrust">Suntrust Bank</option>
+                                                        <option value="union">Union Bank</option>
+                                                        <option value="uba">United Bank for Africa (UBA)</option>
+                                                        <option value="unity">Unity Bank</option>
+                                                        <option value="wema">Wema Bank</option>
+                                                        <option value="zenith">Zenith Bank</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">State of Origin</label>
+                                                <strong style="color:red"> *</strong>
+                                                <span id="state_error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-usd"></i></div>
+                                                    <select id="state" class="form-control" required="required">
+                                                        <option selected="selected">-- Choose State --</option>
+                                                        <option>Outside Nigeria</option>
+                                                        <option>ABUJA FCT</option>
+                                                        <option>ABIA</option>
+                                                        <option>ADAMAWA</option>
+                                                        <option>AKWA IBOM</option>
+                                                        <option>ANAMBRA</option>
+                                                        <option>BAUCHI</option>
+                                                        <option>BAYELSA</option>
+                                                        <option>BENUE</option>
+                                                        <option>BORNO</option>
+                                                        <option>CROSS RIVER</option>
+                                                        <option>DELTA</option>
+                                                        <option>EBONYI</option>
+                                                        <option>EDO</option>
+                                                        <option>EKITI</option>
+                                                        <option>ENUGU</option>
+                                                        <option>GOMBE</option>
+                                                        <option>IMO</option>
+                                                        <option>JIGAWA</option>
+                                                        <option>KADUNA</option>
+                                                        <option>KANO</option>
+                                                        <option>KATSINA</option>
+                                                        <option>KEBBI</option>
+                                                        <option>KOGI</option>
+                                                        <option>KWARA</option>
+                                                        <option>LAGOS</option>
+                                                        <option>NASSARAWA</option>
+                                                        <option>NIGER</option>
+                                                        <option>OGUN</option>
+                                                        <option>ONDO</option>
+                                                        <option>OSUN</option>
+                                                        <option>OYO</option>
+                                                        <option>PLATEAU</option>
+                                                        <option>RIVERS</option>
+                                                        <option>SOKOTO</option>
+                                                        <option>TARABA</option>
+                                                        <option>YOBE</option>
+                                                        <option>ZAMFARA</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">Name of Next of Kin </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-male"></i></div>
+                                                    <input type="text" id="email" class="form-control" required="required">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">Phone Number of Next of Kin</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-phone"></i></div>
+                                                    <input id="phone" class="form-control" required="required">
+                                                </div>
+                                                <small class="form-text text-muted">ex. +234 - 813 - 455 - 6944</small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class=" form-control-label">Address of Next of Kin</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                                    <textarea id="address" class="form-control" required="required"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class = "form-group">
+                                                <button id="btn-1" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="step-2">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h1 class="text-center">Generate Schedule</h1>
+                                            <form>
+                                                <fieldset>
+                                                    <legend>Inputs</legend>
+                                                    <label for="principal"><b>Principal:</b></label>
+                                                    <input type="text" id="principal" />
+                                                    <br />
+                                                    <label for="interest"><b>Interest:</b></label>
+                                                    <input type="text" id="interest" />
+                                                    <br />
+                                                    <label for="terms"><b>Terms:</b></label>
+                                                    <select id="terms">
+                                                        <option value="12">12 Months</option>
+                                                        <option value="24">24 Months</option>
+                                                        <option value="36">36 Months</option>
+                                                        <option value="48">48 Months</option>
+                                                        <option value="60">60 Months</option>
+                                                        <option value="60">72 Months</option>
+                                                    </select>
+                                                    <br />
+                                                    <input type="button" value="Calculate" onclick="getValues()" />
+                                                </fieldset>
+                                            </form>
+                                            <form style="margin-bottom: 15px;">
+                                                <fieldset>
+                                                    <legend>Loan Repayment Schedule</legend>
+                                                    <div id="Result"></div>
+                                                </fieldset>
+                                            </form>
+                                            <button id="btn-2" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="step-3">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h1 class="text-center">Underwriting</h1>
+                                            <!-- Standar Form -->
+                                            <h3>Select files from your computer</h3>
+                                            <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
+                                                <div class="form-inline">
+                                                    <div class="form-group" style="width: 40%; margin-right: 5%;">
+                                                        <select class="form-control">
+                                                            <option>-- Choose Upload Type --</option>
+                                                            <option>National ID Card</option>
+                                                            <option>Drivers License</option>
+                                                            <option>Voters Card</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group" style="width: 40%; margin-right: 5%;">
+                                                        <input type="file" name="files[]" id="js-upload-files" multiple>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            <!-- Drop Zone -->
+                                            <!-- Upload  -->
+                                            <form id="file-upload-form" class="uploader">
+                                                <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+
+                                                <label for="file-upload" id="file-drag">
+                                                    <img id="file-image" src="#" alt="Preview" class="hidden">
+                                                    <div id="start">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                        <div>Select a file or drag here</div>
+                                                        <div id="notimage" class="hidden">Please select an image</div>
+                                                        <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
+                                                    </div>
+                                                    <div id="response" class="hidden">
+                                                        <div id="messages"></div>
+                                                        <progress class="progress" id="file-progress" value="0">
+                                                            <span>0</span>%
+                                                        </progress>
+                                                    </div>
+                                                </label>
+                                            </form>
+
+                                            <!-- Progress Bar -->
+                                            <div class="progress">
+                                                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                                                    <span class="sr-only">60% Complete</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Upload Finished -->
+                                            <div class="js-upload-finished">
+                                                <h3>Processed files</h3>
+                                                <div class="list-group">
+                                                    <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-01.jpg</a>
+                                                    <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-02.jpg</a>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-lg btn-success" id="js-upload-submit">Upload files</button>
+                                            <button id="btn-3" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="step-4">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h1 class="text-center">Final Approval</h1>
+                                            <form>
+                                                <div class="form-group">
+                                                    <label class=" form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-comment"></i></div>
+                                                        <textarea id="comment" class="form-control" required="required" maxlength="250" rows="5" placeholder="Brief message"></textarea>
+                                                    </div>
+                                                    <small class="form-text text-muted">Maximum of 250 characters</small>
+                                                </div>
+                                            </form>
+                                            <button id="btn-4" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="step-5">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h1 class="text-center">Disbursement</h1>
+                                            <div class="alert alert-success" role="alert" style="margin-top: 15px;">
+                                                <h3 class="alert-heading">Loan Disbursement has been successfully initiated!</h3>
+                                                <p>Notifications would be sent to the user accounts related to this loan application to provide updates on this loan disbursement request.</p>
+                                                <hr>
+                                                <p class="mb-0">Please contact the admin for any disbursement related issues.</p>
+                                            </div>
+                                            <button id="btn-5" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .animated -->
+        </div><!-- .content -->
+
+
+    </div><!-- /#right-panel -->
+
+    <!-- Right Panel -->
+
+
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+
+
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            loadUsers();
+            loadWorkflowState();
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const application_id = urlParams.get('id');
+
+        function check(){
+            jQuery.ajax({
+                'url': '/check',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    let num = 5;
+                    var count = JSON.parse(data);
+                    console.log(data);
+                    // jQuery.each(count, function(k, v){
+                    //     num = v.rand;
+                    // });
+                    if (data != 1){
+                        jQuery('#car-models').hide();
+                        jQuery('#new-user').hide();
+                        jQuery('#models-card').hide();
+                        jQuery('#user').html('ATB Admin');
+                    }
+                    else{ jQuery('#user').html('Super Admin'); }
+                },
+                'error': function (err) {
+                    //alert ('Error');
+                    console.log('Error');
+                }
+            });
+        }
+
+        let workflow,
+            application;
+
+        function loadUsers(){
+            $.ajax({
+                'url': '/user/application-id/'+application_id,
+                'type': 'get',
+                'data': {},
+                'success': function (result) {
+                    let data = result.response[0],
+                        tbody = $("#application"),
+                        tr = "";
+                    application = data;
+                    workflow = (localStorage.getItem("workflows"))? ($.grep(JSON.parse(localStorage.getItem("workflows")), function(e){ return e.ID === application.workflowID; }))[0] : {name:'Workflow'};
+                    $("#workflow-div-title").text(workflow.name);
+                    tbody.empty();
+                    if (data.fullname)
+                        tr += "<tr><td>Fullname</td><td>"+data.fullname+"</td></tr>";
+                    if (data.phone)
+                        tr += "<tr><td>Phone Number</td><td>"+data.phone+"</td></tr>";
+                    if (data.email)
+                        tr += "<tr><td>Email</td><td>"+data.email+"</td></tr>";
+                    if (data.loan_amount)
+                        tr += "<tr><td>Loan Amount</td><td>"+data.loan_amount+"</td></tr>";
+                    if (data.collateral)
+                        tr += "<tr><td>Collateral</td><td>"+data.collateral+"</td></tr>";
+                    if (data.jewelry)
+                        tr += "<tr><td>Jewelry</td><td>"+data.jewelry+"</td></tr>";
+                    if (data.brand)
+                        tr += "<tr><td>Brand</td><td>"+data.brand+"</td></tr>";
+                    if (data.model)
+                        tr += "<tr><td>Model</td><td>"+data.model+"</td></tr>";
+                    if (data.year)
+                        tr += "<tr><td>Year</td><td>"+data.year+"</td></tr>";
+                    if (data.date_created)
+                        tr += "<tr><td>Date Created</td><td>"+formatDate(data.date_created)+"</td></tr>";
+                    tbody.html(tr);
+
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
+        }
+
+        function loadWorkflowStages(state) {
+            $.ajax({
+                'url': '/workflow-stages/'+state.workflowID,
+                'type': 'get',
+                'success': function (data) {
+                    let count = 0,
+                        workflow_stages = data.response,
+                        ul = document.getElementById('workflow-ul-list'),
+                        $last_btn = $("#btn-"+workflow_stages[workflow_stages.length-1]['stageID']);
+
+                    $last_btn.text('Workflow Complete');
+                    $last_btn.prop("disabled",true);
+
+                    workflow_stages.forEach(function (stage) {
+                        let index =  workflow_stages.map(function(e) { return e.stageID; }).indexOf(state.current_stage),
+                            li = document.createElement('li');
+                        if (count === index){
+                            li.className = "active";
+                        } else if (count > index) {
+                            li.className = "disabled";
+                        }
+                        ul.appendChild(li);
+                        count++;
+                        li.innerHTML += '<a href="#step-'+stage.stageID+'">\n' +
+                            '<h4 class="list-group-item-heading">Step '+count+'</h4>\n' +
+                            '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p>\n' +
+                            '</a>';
+                    });
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection');
+                }
+            });
+        }
+
+        function loadWorkflowState() {
+            $.ajax({
+                'url': '/user/workflow_process/'+application_id,
+                'type': 'get',
+                'success': function (data) {
+                    let state = data.response,
+                        allWells = $('.setup-content');
+
+                    loadWorkflowStages(state);
+                    allWells.hide();
+                    $('#step-'+state.current_stage).show();
+
+                    $('.next').on('click', function(e) {
+                        nextStage(state);
+                    })
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection');
+                }
+            });
+        }
+
+        function nextStage(state) {
+            $.ajax({
+                'url': '/user/workflow_process/'+application_id+'/'+state.workflowID,
+                'type': 'post',
+                'success': function (data) {
+                    if (data.status === 200){
+                        swal('Workflow updated successfully!');
+                        window.location.reload();
+                    } else {
+                        if (data.message){
+                            swal(data.message);
+                        } else {
+                            swal('No internet connection');
+                        }
+                    }
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection');
+                }
+            });
+        }
+
+        function formatDate(date) {
+            let separator;
+            if (date.indexOf('-') > -1){
+                separator = '-';
+            } else if (date.indexOf('/') > -1){
+                separator = '/';
+            } else {
+                return date;
+            }
+            let date_array = date.split(separator);
+            return date_array[0]+'-'+date_array[1]+'-'+date_array[2];
+        }
+
+        /**
+         * @author Joel Nutt
+         * ITEC136-V1WW(FA11) - Franklin U.
+         * David Crossmier - Instructor
+         * Assigment 8-3 (HW07)
+         * 11/06/2011
+         *
+         */
+
+        function getValues()
+        {
+            //button click gets values from inputs
+            var balance = parseFloat(document.getElementById("principal").value);
+            var interestRate =
+                parseFloat(document.getElementById("interest").value/100.0);
+            var terms = parseInt(document.getElementById("terms").value);
+
+            //set the div string
+            var div = document.getElementById("Result");
+
+            //in case of a re-calc, clear out the div!
+            div.innerHTML = "";
+
+            //validate inputs - display error if invalid, otherwise, display table
+            var balVal = validateInputs(balance);
+            var intrVal = validateInputs(interestRate);
+
+            if (balVal && intrVal)
+            {
+                //Returns div string if inputs are valid
+                div.innerHTML += amort(balance, interestRate, terms);
+            }
+            else
+            {
+                //returns error if inputs are invalid
+                div.innerHTML += "Please Check your inputs and retry - invalid values.";
+            }
+        }
+
+        /**
+         * Amort function:
+         * Calculates the necessary elements of the loan using the supplied user input
+         * and then displays each months updated amortization schedule on the page
+         */
+        function amort(balance, interestRate, terms)
+        {
+            //Calculate the per month interest rate
+            var monthlyRate = interestRate/12;
+
+            //Calculate the payment
+            var payment = balance * (monthlyRate/(1-Math.pow(
+                1+monthlyRate, -terms)));
+
+            //begin building the return string for the display of the amort table
+            var result = "Loan amount: ₦" + balance.toFixed(2) +  "<br />" +
+                "Interest rate: " + (interestRate*100).toFixed(2) +  "%<br />" +
+                "Number of months: " + terms + "<br />" +
+                "Monthly payment: ₦" + payment.toFixed(2) + "<br />" +
+                "Total paid: ₦" + (payment * terms).toFixed(2) + "<br /><br />";
+
+            //add header row for table to return string
+            result += "<table border='1'><tr><th>Month #</th><th>Balance</th>" +
+                "<th>Interest</th><th>Expected Payment</th>";
+
+            /**
+             * Loop that calculates the monthly Loan amortization amounts then adds
+             * them to the return string
+             */
+            for (var count = 0; count < terms; ++count)
+            {
+                //in-loop interest amount holder
+                var interest = 0;
+
+                //in-loop monthly principal amount holder
+                var monthlyPrincipal = 0;
+
+                //start a new table row on each loop iteration
+                result += "<tr align=center>";
+
+                //display the month number in col 1 using the loop count variable
+                result += "<td>" + (count + 1) + "</td>";
+
+
+                //code for displaying in loop balance
+                result += "<td id='balance-"+count+"'>₦ " + balance.toFixed(2) + "</td>";
+
+                //calc the in-loop interest amount and display
+                interest = balance * monthlyRate;
+                result += "<td id='interest-"+count+"'>₦ " + interest.toFixed(2) + "</td>";
+
+                //calc the in-loop monthly principal and display
+                monthlyPrincipal = payment;
+                result += "<td>₦ <input id='payment-"+count+"' type='number' value='" + monthlyPrincipal.toFixed(2) + "' /></td>";
+
+                //end the table row on each iteration of the loop
+                result += "</tr>";
+
+                //update the balance for each loop iteration
+                balance = balance - monthlyPrincipal + interest;
+
+                $(document.body).delegate('#payment-'+count,'change', function(e) {
+                    for (let i=0; i<terms; i++){
+//                        let id = (e.target.id.split('-'))[1],
+                        let id = i,
+                            payment = $('#payment-'+id).val(),
+                            previous_balance = parseFloat(($('#balance-'+id).html().split(" "))[1]),
+                            previous_interest = parseFloat(($('#interest-'+id).html().split(" "))[1]),
+                            new_balance = previous_balance-payment+previous_interest;
+                        $('#balance-'+(id+1)).text("₦ " + new_balance.toFixed(2));
+                    }
+                });
+            }
+
+            //Final piece added to return string before returning it - closes the table
+            result += "</table>";
+
+            //returns the concatenated string to the page
+            return result;
+        }
+
+        function validateInputs(value)
+        {
+            //some code here to validate inputs
+            if ((value == null) || (value == ""))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        // File Upload
+        //
+        function ekUpload(){
+            function Init() {
+
+                console.log("Upload Initialised");
+
+                var fileSelect    = document.getElementById('file-upload'),
+                    fileDrag      = document.getElementById('file-drag'),
+                    submitButton  = document.getElementById('submit-button');
+
+                fileSelect.addEventListener('change', fileSelectHandler, false);
+
+                // Is XHR2 available?
+                var xhr = new XMLHttpRequest();
+                if (xhr.upload) {
+                    // File Drop
+                    fileDrag.addEventListener('dragover', fileDragHover, false);
+                    fileDrag.addEventListener('dragleave', fileDragHover, false);
+                    fileDrag.addEventListener('drop', fileSelectHandler, false);
+                }
+            }
+
+            function fileDragHover(e) {
+                var fileDrag = document.getElementById('file-drag');
+
+                e.stopPropagation();
+                e.preventDefault();
+
+                fileDrag.className = (e.type === 'dragover' ? 'hover' : 'modal-body file-upload');
+            }
+
+            function fileSelectHandler(e) {
+                // Fetch FileList object
+                var files = e.target.files || e.dataTransfer.files;
+
+                // Cancel event and hover styling
+                fileDragHover(e);
+
+                // Process all File objects
+                for (var i = 0, f; f = files[i]; i++) {
+                    parseFile(f);
+                    uploadFile(f);
+                }
+            }
+
+            // Output
+            function output(msg) {
+                // Response
+                var m = document.getElementById('messages');
+                m.innerHTML = msg;
+            }
+
+            function parseFile(file) {
+
+                console.log(file.name);
+                output(
+                    '<strong>' + encodeURI(file.name) + '</strong>'
+                );
+
+                // var fileType = file.type;
+                // console.log(fileType);
+                var imageName = file.name;
+
+                var isGood = (/\.(?=gif|jpg|png|jpeg)/gi).test(imageName);
+                if (isGood) {
+                    document.getElementById('start').classList.add("hidden");
+                    document.getElementById('response').classList.remove("hidden");
+                    document.getElementById('notimage').classList.add("hidden");
+                    // Thumbnail Preview
+                    document.getElementById('file-image').classList.remove("hidden");
+                    document.getElementById('file-image').src = URL.createObjectURL(file);
+                }
+                else {
+                    document.getElementById('file-image').classList.add("hidden");
+                    document.getElementById('notimage').classList.remove("hidden");
+                    document.getElementById('start').classList.remove("hidden");
+                    document.getElementById('response').classList.add("hidden");
+                    document.getElementById("file-upload-form").reset();
+                }
+            }
+
+            function setProgressMaxValue(e) {
+                var pBar = document.getElementById('file-progress');
+
+                if (e.lengthComputable) {
+                    pBar.max = e.total;
+                }
+            }
+
+            function updateFileProgress(e) {
+                var pBar = document.getElementById('file-progress');
+
+                if (e.lengthComputable) {
+                    pBar.value = e.loaded;
+                }
+            }
+
+            function uploadFile(file) {
+
+                var xhr = new XMLHttpRequest(),
+                    fileInput = document.getElementById('class-roster-file'),
+                    pBar = document.getElementById('file-progress'),
+                    fileSizeLimit = 1024; // In MB
+                if (xhr.upload) {
+                    // Check if file is less than x MB
+                    if (file.size <= fileSizeLimit * 1024 * 1024) {
+                        // Progress bar
+                        pBar.style.display = 'inline';
+                        xhr.upload.addEventListener('loadstart', setProgressMaxValue, false);
+                        xhr.upload.addEventListener('progress', updateFileProgress, false);
+
+                        // File received / failed
+                        xhr.onreadystatechange = function(e) {
+                            if (xhr.readyState == 4) {
+                                // Everything is good!
+
+                                // progress.className = (xhr.status == 200 ? "success" : "failure");
+                                // document.location.reload(true);
+                            }
+                        };
+
+                        // Start upload
+                        xhr.open('POST', document.getElementById('file-upload-form').action, true);
+                        xhr.setRequestHeader('X-File-Name', file.name);
+                        xhr.setRequestHeader('X-File-Size', file.size);
+                        xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+                        xhr.send(file);
+                    } else {
+                        output('Please upload a smaller file (< ' + fileSizeLimit + ' MB).');
+                    }
+                }
+            }
+
+            // Check for the various File API support.
+            if (window.File && window.FileList && window.FileReader) {
+                Init();
+            } else {
+                document.getElementById('file-drag').style.display = 'none';
+            }
+        }
+        ekUpload();
+
+        // UPLOAD CLASS DEFINITION
+        // ======================
+
+        var dropZone = document.getElementById('drop-zone');
+        var uploadForm = document.getElementById('js-upload-form');
+
+        var startUpload = function(files) {
+            console.log(files)
+        }
+
+        uploadForm.addEventListener('submit', function(e) {
+            var uploadFiles = document.getElementById('js-upload-files').files;
+            e.preventDefault()
+
+            startUpload(uploadFiles)
+        })
+
+        dropZone.ondrop = function(e) {
+            e.preventDefault();
+            this.className = 'upload-drop-zone';
+
+            startUpload(e.dataTransfer.files)
+        }
+
+        dropZone.ondragover = function() {
+            this.className = 'upload-drop-zone drop';
+            return false;
+        }
+
+        dropZone.ondragleave = function() {
+            this.className = 'upload-drop-zone';
+            return false;
+        }
+    </script>
+
+
+</body>
+</html>

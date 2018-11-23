@@ -45,69 +45,71 @@
     }
     </style>
     <aside id="left-panel" class="left-panel">
-        <nav class="navbar navbar-expand-sm navbar-default">
+            <nav class="navbar navbar-expand-sm navbar-default">
+    
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                    <a class="navbar-brand hidden" href="/dashboard">35</a>
+                </div>
+    
+                <div id="main-menu" class="main-menu collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li id="" class="active">
+                            <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                        </li>
+                        
+                        <li class="active">
+                            <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
+                        </li>
 
-            <div class="navbar-header">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand" href="/dashboard">Loan 35</a>
-                <a class="navbar-brand hidden" href="/dashboard">35</a>
-            </div>
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
+                            </ul>
+                        </li>
+    
+                        <li id="car-models" class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
+                                <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                                <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
+                                <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
+                                <li><i class="fa fa-plus"></i><a href="/add-application">New Application</a></li>
+                            </ul>
+                        </li>
+    
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
+                                <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
+                            </ul>
+                        </li>
 
-            <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li id="" class="active">
-                        <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                    </li>
-
-                    <li class="active">
-                        <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
-                    </li>
-
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
-                            <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
-                        </ul>
-                    </li>
-
-                    <li id="car-models" class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
-                            <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
-                            <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
-                            <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
-                            <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
-                            <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </nav>
+                        <li class="menu-item-has-children dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
+                                <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
+                                <li><i class="fa fa-chain"></i><a href="/workflow">Workflow</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </nav>
     </aside><!-- /#left-panel -->
 
     <!-- Left Panel -->

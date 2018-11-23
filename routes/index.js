@@ -1265,16 +1265,87 @@ router.post('/maintenance-upload/:number_plate/', function(req, res) {
 		}
 		 
 	});
-
-	
   });
+
+router.post('/workflows', function(req, res, next) {
+    let count = 0,
+        stages = req.body.stages,
+        workflow = req.body.workflow,
+        date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    workflow.date_created = date_created;
+
+    db.query('INSERT INTO workflows SET ?', workflow, function (error, response, fields) {
+        if(error || !response)
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        db.query('SELECT * FROM workflows WHERE ID = LAST_INSERT_ID()', function (error, results, fields) {
+            async.forEach(stages, function (stage, callback) {
+                stage.workflowID = results[0]['ID'];
+                stage.date_created = date_created;
+                delete stage.stage_name;
+                db.query('INSERT INTO workflow_stages SET ?', stage, function (error, results, fields) {
+                    if(!error)
+                        count++;
+                    callback();
+                });
+            }, function (data) {
+                db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+                    res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) created successfully!", "response": results});
+                });
+            })
+        })
+    });
+});
+
+router.get('/workflows', function(req, res, next) {
+    let query = 'SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Workflows fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.get('/workflow-stages', function(req, res, next) {
+    let query = 'SELECT w.ID, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.stageID=s.ID ORDER BY w.ID asc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Workflows fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.get('/workflow-stages/:workflow_id', function(req, res, next) {
+    let query = 'SELECT w.ID, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.workflowID =? AND w.stageID=s.ID ORDER BY w.ID asc';
+    db.query(query, [req.params.workflow_id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Workflows fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.get('/stages', function(req, res, next) {
+    let query = 'SELECT * from stages';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send(results);
+        }
+    });
+});
 
 router.post('/submitPermission/:role', function(req, res, next) {
     var ids = req.body;
-    var role_id = ids.role;
-    var count = 0;
     var status = true;
-    async.forEach(ids.modules, function (id, callback) {
+	var role_id = ids.role;
+	var count = 0;
+	async.forEach(ids.modules, function (id, callback) {
 		var module_id = id[0]
 		var read_only = id[1];
 		var write = id[2];
@@ -1298,8 +1369,19 @@ router.post('/submitPermission/:role', function(req, res, next) {
 			return res.send(data);
 		res.send({"status": 200, "error": null, "message": "Permissions Set for Selected Role!"});
         // });
-    })
-
+    });
+	db.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:"", date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
+			if(error){
+				res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+				//If there is error, we send the error in the error section with 500 status
+			} else {
+				//res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissioins for module "+module_id+ "added!"}));
+				//If there is no error, all is good and response is 200OK.
+				console.log("Permissions for module "+module_id+ " added!")
+				count++;
+			}
+			callback();
+		});
 });
 
 router.post('/new-module/', function(req, res, next) {
@@ -1321,7 +1403,7 @@ router.post('/update-module/:id', function(req, res, next) {
     var data = req.body;
     var Date_Modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     data.Date = Date_Modified;
-	var payload = [data.module_name, data.menu_name, data.status, data.main_menu]
+    var payload = [data.module_name, data.menu_name, data.status, data.main_menu]
     var query = 'update modules set module_name = ?, menu_name = ?, status = ?, main_menu = ? where id = ?';
     db.query(query, payload, function (error, results, fields) {
         if(error){
