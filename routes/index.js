@@ -1342,46 +1342,35 @@ router.get('/stages', function(req, res, next) {
 
 router.post('/submitPermission/:role', function(req, res, next) {
     var ids = req.body;
+    var role_id = ids.role;
+    var count = 0;
     var status = true;
-	var role_id = ids.role;
-	var count = 0;
-	async.forEach(ids.modules, function (id, callback) {
-		var module_id = id[0]
-		var read_only = id[1];
-		var write = id[2];
-		var query = 'INSERT INTO permissions SET ?';
+    async.forEach(ids.modules, function (id, callback) {
+        var module_id = id[0]
+        var read_only = id[1];
+        var write = id[2];
+        var query = 'INSERT INTO permissions SET ?';
         db.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:write, date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
             if(error){
                 status = false;
                 return callback({"status": 500, "error": error, "response": null});
                 //If there is error, we send the error in the error section with 500 status
             } else {
-                	//res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissions for module "+module_id+ "added!"}));
+                //res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissions for module "+module_id+ "added!"}));
                 //If there is no error, all is good and response is 200OK.
-				console.log("Permissions for module "+module_id+ " added!")
+                console.log("Permissions for module "+module_id+ " added!")
                 count++;
             }
             callback();
         });
     }, function (data) {
-    	// db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
-		if(status === false)
-			return res.send(data);
-		res.send({"status": 200, "error": null, "message": "Permissions Set for Selected Role!"});
+        // db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+        if(status === false)
+            return res.send(data);
+        res.send({"status": 200, "error": null, "message": "Permissions Set for Selected Role!"});
         // });
-    });
-	db.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:"", date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
-			if(error){
-				res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-				//If there is error, we send the error in the error section with 500 status
-			} else {
-				//res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissioins for module "+module_id+ "added!"}));
-				//If there is no error, all is good and response is 200OK.
-				console.log("Permissions for module "+module_id+ " added!")
-				count++;
-			}
-			callback();
-		});
+    })
+
 });
 
 router.post('/new-module/', function(req, res, next) {
