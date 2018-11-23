@@ -384,6 +384,7 @@
 //    });
 
     let role = localStorage.getItem("selectedRole");
+    console.log(role);
     $(document).on("click", "#submit", function (e) {
         saveRolePermissions(role);
 
