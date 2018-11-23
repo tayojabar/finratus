@@ -27,6 +27,12 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="css/jquery.fileupload.css">
+    <link rel="stylesheet" href="css/jquery.fileupload-ui.css">
+    <!-- CSS adjustments for browsers with JavaScript disabled -->
+    <noscript><link rel="stylesheet" href="css/jquery.fileupload-noscript.css"></noscript>
+    <noscript><link rel="stylesheet" href="css/jquery.fileupload-ui-noscript.css"></noscript>
     <style type="text/css">
         ul.nav li.active p{color: #ffffff;}
         a, a p, a h4, a:hover{color: rgb(66, 139, 202);}
@@ -34,133 +40,6 @@
         li.active a h4 {color: #ffffff;}
         table{width: 100%;}
         table th{text-align: center;}
-        .uploader {
-            display: block;
-            margin: 15px auto;
-            width: 100%;
-        }
-        .uploader label {
-            width: 100%;
-            padding: 5rem 1.5rem;
-            text-align: center;
-            background: #fff;
-            border-radius: 7px;
-            border: 3px solid #eee;
-            transition: all .2s ease;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        .uploader label:hover {
-            border-color: #454cad;
-        }
-        .uploader label.hover {
-            border: 3px solid #454cad;
-            box-shadow: inset 0 0 0 6px #eee;
-        }
-        .uploader label.hover #start i.fa {
-            -webkit-transform: scale(0.8);
-            transform: scale(0.8);
-            opacity: 0.3;
-        }
-        .uploader #start {
-            float: left;
-            clear: both;
-            width: 100%;
-        }
-        .uploader #start.hidden {
-            display: none;
-        }
-        .uploader #start i.fa {
-            font-size: 50px;
-            margin-bottom: 1rem;
-            transition: all .2s ease-in-out;
-        }
-        .uploader #response {
-            float: left;
-            clear: both;
-            width: 100%;
-        }
-        .uploader #response.hidden {
-            display: none;
-        }
-        .uploader #response #messages {
-            margin-bottom: .5rem;
-        }
-        .uploader #file-image {
-            display: inline;
-            margin: 0 auto .5rem auto;
-            width: auto;
-            height: auto;
-            max-width: 180px;
-        }
-        .uploader #file-image.hidden {
-            display: none;
-        }
-        .uploader #notimage {
-            display: block;
-            float: left;
-            clear: both;
-            width: 100%;
-        }
-        .uploader #notimage.hidden {
-            display: none;
-        }
-        .uploader progress,
-        .uploader .progress {
-            display: inline;
-            clear: both;
-            margin: 0 auto;
-            width: 100%;
-            max-width: 180px;
-            height: 8px;
-            border: 0;
-            border-radius: 4px;
-            background-color: #eee;
-            overflow: hidden;
-        }
-        .uploader .progress[value]::-webkit-progress-bar {
-            border-radius: 4px;
-            background-color: #eee;
-        }
-        .uploader .progress[value]::-webkit-progress-value {
-            background: linear-gradient(to right, #393f90 0%, #454cad 50%);
-            border-radius: 4px;
-        }
-        .uploader .progress[value]::-moz-progress-bar {
-            background: linear-gradient(to right, #393f90 0%, #454cad 50%);
-            border-radius: 4px;
-        }
-        .uploader input[type="file"] {
-            display: none;
-        }
-        .uploader div {
-            margin: 0 0 .5rem 0;
-            color: #5f6982;
-        }
-        .uploader .btn {
-            display: inline-block;
-            margin: .5rem .5rem 1rem .5rem;
-            clear: both;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 14px;
-            text-decoration: none;
-            text-transform: initial;
-            border: none;
-            border-radius: .2rem;
-            outline: none;
-            padding: 0 1rem;
-            height: 36px;
-            line-height: 36px;
-            color: #fff;
-            transition: all 0.2s ease-in-out;
-            box-sizing: border-box;
-            background: #454cad;
-            border-color: #454cad;
-            cursor: pointer;
-        }
         .alert-success, .alert-success p {color: #155724;}
         .modal-dialog{
             left: 0;
@@ -226,130 +105,158 @@
             height: 20px;
             z-index: 400;
         }
+        ul#workflow-ul-list li{
+            padding: 5px 0;
+        }
+        .carousel {
+            margin-bottom: 0;
+            padding: 0 40px 30px 40px;
+        }
+        .carousel-control {
+            left: -12px;
+            height: 40px;
+            width: 40px;
+            background: none repeat scroll 0 0 #222222;
+            border: 4px solid #FFFFFF;
+            border-radius: 23px 23px 23px 23px;
+            margin-top: 90px;
+        }
+        .carousel-control.right {
+            right: -12px;
+        }
+        .carousel-indicators {
+            right: 50%;
+            top: auto;
+            bottom: -10px;
+            margin-right: -19px;
+        }
+        .carousel-indicators li {
+            background: #cecece;
+        }
+        .carousel-indicators .active {
+            background: #428bca;
+        }
     </style>
 </head>
 <body>
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+<!-- Left Panel -->
+    <script type="text/javascript">
+        jQuery(document).ready(function($){ check(); });
+    </script>
+
+<aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+
+            <div class="navbar-header">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                <a class="navbar-brand hidden" href="/dashboard">35</a>
+            </div>
+
+            <div id="main-menu" class="main-menu collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li id="" class="active">
+                        <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                    </li>
+
+                    <li class="active">
+                        <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
+                    </li>
+
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
+                            <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
+                        </ul>
+                    </li>
+
+                    <li id="car-models" class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
+                            <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
+                            <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
+                            <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
+                            <li><i class="fa fa-plus"></i><a href="/add-application">New Application</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
+                            <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="menu-item-has-children dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
+                            <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
+                            <li class="active"><i class="fa fa-chain"></i><a href="/workflow">Workflow</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+</aside><!-- /#left-panel -->
     <!-- Left Panel -->
-        <script type="text/javascript">
-            jQuery(document).ready(function($){ check(); });
-        </script>
 
-    <aside id="left-panel" class="left-panel">
-            <nav class="navbar navbar-expand-sm navbar-default">
-    
-                <div class="navbar-header">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <a class="navbar-brand" href="/dashboard">Loan 35</a>
-                    <a class="navbar-brand hidden" href="/dashboard">35</a>
-                </div>
-    
-                <div id="main-menu" class="main-menu collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li id="" class="active">
-                            <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                        </li>
-                        
-                        <li class="active">
-                            <a href="/inspections"> <i class="menu-icon fa fa-dashboard"></i>Inspections </a>
-                        </li>
-    
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Vehicles</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="/all-vehicles">All Vehicles</a></li>
-                                <li><i class="fa fa-table"></i><a href="/add-vehicle">Add Vehicles</a></li>
-                            </ul>
-                        </li>
-    
-                        <li id="car-models" class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Car Models</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="/all-models">All Models</a></li>
-                                <li><i class="fa fa-table"></i><a href="/add-model">New Model</a></li>
-                            </ul>
-                        </li>
-    
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Users</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="/all-users">All Users</a></li>
-                                <li id="new-user"><i class="fa fa-table"></i><a href="/add-user">New User</a></li>
-                                <li><i class="fa fa-table"></i><a href="/all-applications">All Applications</a></li>
-                                <li><i class="fa fa-plus"></i><a href="/add-application">New Application</a></li>
-                            </ul>
-                        </li>
-    
-                        <li class="menu-item-has-children dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Reports</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <!-- <li><i class="fa fa-table"></i><a href="#">Maintenance Report</a></li> -->
-                                <li><i class="fa fa-table"></i><a href="/reports">Valuation Reports</a></li>
-                            </ul>
-                        </li>
+    <!-- Right Panel -->
+    <div id="right-panel" class="right-panel">
+        <!-- Header-->
+        <header id="header" class="header">
 
-                        <li class="menu-item-has-children dropdown active">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-gears"></i>Settings</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="/module">Modules</a></li>
-                                <li><i class="fa fa-table"></i><a href="/manage-permissions">Permissions</a></li>
-                                <li class="active"><i class="fa fa-chain"></i><a href="/workflow">Workflow</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div><!-- /.navbar-collapse -->
-            </nav>
-    </aside><!-- /#left-panel -->
-    
-        <!-- Left Panel -->
-    
-        <!-- Right Panel -->
-    
-        <div id="right-panel" class="right-panel">
-    
-            <!-- Header-->
-            <header id="header" class="header">
-    
-                <div class="header-menu">
-    
-                    <div class="col-sm-7">
-                        <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
-                        <div class="header-left">
-                            <button class="search-trigger"><i class="fa fa-search"></i></button>
-                            <div class="form-inline">
-                                <form class="search-form">
-                                    <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
-                                    <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
-                                </form>
-                            </div>
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                    <div class="header-left">
+                        <button class="search-trigger"><i class="fa fa-search"></i></button>
+                        <div class="form-inline">
+                            <form class="search-form">
+                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                            </form>
                         </div>
                     </div>
-    
-                    <div class="col-sm-5">
-                        <div class="user-area dropdown float-right">
-                            <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
-                            </a>
-    
-                            <div class="user-menu dropdown-menu">
-                                    <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
-    
-                                    <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
-    
-                                    <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
-    
-                                    <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
-                            </div>
-                        </div>
-    
-                    </div>
                 </div>
-    
-            </header><!-- /header -->
-            <!-- Header-->
+
+                <div class="col-sm-5">
+                    <div class="user-area dropdown float-right">
+                        <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                        </a>
+
+                        <div class="user-menu dropdown-menu">
+                                <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+
+                                <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+
+                                <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+
+                                <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </header><!-- /header -->
+        <!-- Header-->
 
         <div class="breadcrumbs">
             <div class="col-sm-4">
@@ -375,26 +282,35 @@
         <div class="content mt-3">
             <div class="animated fadeIn">
                 <div class="row">
-                    <!--<div class="col-md-12">-->
-                        <!--<div class="card">-->
-                            <!--<div class="card-body">-->
-                                <!--<table class="table table-striped table-bordered">-->
-                                    <!--<tbody id="application"></tbody>-->
-                                <!--</table>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong id="workflow-div-title" class="card-title" style="float: left;">Workflow</strong>
-                                <button class ="next btn btn-success" style="float: right;">Save & Proceed <i class="fa fa-forward"></i></button>
-                                <button class ="previous btn btn-danger" style="float: right;"><i class="fa fa-backward"></i> Go To Previous</button>
-                                <div id="stage-actions" style="float: right;" class="btn-group" role="group" aria-label="stage-actions"></div>
-                                <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>
+                                <strong id="workflow-div-title" class="card-title" style="float: left; margin: 15px;">Workflow</strong>
+                                <div id="next-actions" class="btn-group" style="float: right;">
+                                    <button type="button" class="btn btn-success btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-forward"></i>
+                                    </button>
+                                    <div id="stage-actions" class="dropdown-menu">
+                                        <a class="dropdown-item next" href="#">Save & Proceed</a>
+                                        <div class="dropdown-divider"></div>
+                                    </div>
+                                </div>
+                                <button id="current_stage" class ="btn btn-warning btn-lg" style="float: right;" disabled="disabled"></button>
+                                <button class ="previous btn btn-danger btn-lg" style="float: right;"><i class="fa fa-backward"></i></button>
+                                <span style="float: right; margin: 15px;">
+                                    <a href="#" class="pull-right transitions-toggle">Show Transitions <i class="fa fa-chevron-down"></i></a>
+                                    <a href="#" class="pull-right transitions-toggle" style="display: none;">Hide Transitions <i class="fa fa-chevron-up"></i></a>
+                                </span>
                             </div>
+                            <script type="text/javascript">
+                                let $transitions_toggle = $('.transitions-toggle');
+                                $transitions_toggle.click(function () {
+                                    $('#transitions-list').toggle();
+                                    $transitions_toggle.toggle();
+                                });
+                            </script>
                             <div class="card-body">
-                                <div class="row form-group">
+                                <div id="transitions-list" class="row form-group" style="display: none;">
                                     <div class="col-xs-12">
                                         <ul id="workflow-ul-list" class="nav nav-pills nav-justified thumbnail setup-panel"></ul>
                                     </div>
@@ -402,61 +318,123 @@
                                 <div class="row setup-content" id="document-upload" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
-                                            <!-- Standar Form -->
-                                            <h3 id="document-upload-text"></h3>
-                                            <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
-                                                <div class="form-inline">
-                                                    <div class="form-group" style="width: 40%; margin-right: 5%;">
-                                                        <input type="file" name="files[]" id="js-upload-files" multiple>
+                                            <h3 id="document-upload-text" style="margin-bottom: 5px;"></h3>
+
+                                            <form id="fileupload" method="POST" enctype="multipart/form-data">
+                                                <div class="row fileupload-buttonbar">
+                                                    <div class="col-lg-7">
+                                                        <span class="btn btn-success fileinput-button">
+                                                            <i class="glyphicon glyphicon-plus"></i>
+                                                            <span>Add file</span>
+                                                            <input type="file" name="files[]" multiple>
+                                                        </span>
+                                                        <button type="submit" class="btn btn-primary start">
+                                                            <i class="glyphicon glyphicon-upload"></i>
+                                                            <span>Start upload</span>
+                                                        </button>
+                                                        <button type="reset" class="btn btn-warning cancel">
+                                                            <i class="glyphicon glyphicon-ban-circle"></i>
+                                                            <span>Cancel upload</span>
+                                                        </button>
+                                                        <!--<button type="button" class="btn btn-danger delete">-->
+                                                            <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                                            <!--<span>Delete</span>-->
+                                                        <!--</button>-->
+                                                        <!--<input type="checkbox" class="toggle">-->
+                                                        <!-- The global file processing state -->
+                                                        <span class="fileupload-process"></span>
+                                                    </div>
+                                                    <div class="col-lg-5 fileupload-progress fade">
+                                                        <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                                            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                                                        </div>
+                                                        <div class="progress-extended">&nbsp;</div>
                                                     </div>
                                                 </div>
+                                                <table role="presentation" class="table table-striped" style="margin: 0"><tbody class="files"></tbody></table>
                                             </form>
-
-                                            <!-- Drop Zone -->
-                                            <!-- Upload  -->
-                                            <form id="file-upload-form" class="uploader">
-                                                <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
-
-                                                <label for="file-upload" id="file-drag">
-                                                    <img id="file-image" src="#" alt="Preview" class="hidden">
-                                                    <div id="start">
-                                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                                        <div>Select a file or drag here</div>
-                                                        <div id="notimage" class="hidden">Please select an image</div>
-                                                        <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
-                                                    </div>
-                                                    <div id="response" class="hidden">
-                                                        <div id="messages"></div>
-                                                        <progress class="progress" id="file-progress" value="0">
-                                                            <span>0</span>%
-                                                        </progress>
-                                                    </div>
-                                                </label>
-                                            </form>
-
-                                            <!-- Progress Bar -->
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                                                    <span class="sr-only">60% Complete</span>
-                                                </div>
-                                            </div>
-
-                                            <!-- Upload Finished -->
-                                            <div class="js-upload-finished">
-                                                <h3>Processed files</h3>
-                                                <div class="list-group">
-                                                    <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-01.jpg</a>
-                                                    <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>image-02.jpg</a>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn btn-lg btn-success" id="js-upload-submit">Upload files</button>
+                                        </div>
+                                        <!-- The template to display files available for upload -->
+                                        <script id="template-upload" type="text/x-tmpl">
+                                            {% for (var i=0, file; file=o.files[i]; i++) { %}
+                                                <tr class="template-upload fade">
+                                                    <td>
+                                                        <span class="preview"></span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="name">{%=file.name%}</p>
+                                                        <strong class="error text-danger"></strong>
+                                                    </td>
+                                                    <td>
+                                                        <p class="size">Processing...</p>
+                                                        <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+                                                    </td>
+                                                    <td>
+                                                        {% if (!i && !o.options.autoUpload) { %}
+                                                            <button class="btn btn-primary start" disabled>
+                                                                <i class="glyphicon glyphicon-upload"></i>
+                                                                <span>Start</span>
+                                                            </button>
+                                                        {% } %}
+                                                        {% if (!i) { %}
+                                                            <button class="btn btn-warning cancel">
+                                                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                                                <span>Cancel</span>
+                                                            </button>
+                                                        {% } %}
+                                                    </td>
+                                                </tr>
+                                            {% } %}
+                                        </script>
+                                        <!-- The template to display files available for download -->
+                                        <script id="template-download" type="text/x-tmpl">
+                                            {% for (var i=0, file; file=o.files[i]; i++) { %}
+                                                <tr class="template-download fade">
+                                                    <td>
+                                                        <span class="preview">
+                                                            {% if (file.thumbnailUrl) { %}
+                                                                <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                                                            {% } %}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="name">
+                                                            {% if (file.url) { %}
+                                                                <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                                                            {% } else { %}
+                                                                <span>{%=file.name%}</span>
+                                                            {% } %}
+                                                        </p>
+                                                        {% if (file.error) { %}
+                                                            <div><span class="label label-danger">Error</span> {%=file.error%}</div>
+                                                        {% } %}
+                                                    </td>
+                                                    <td>
+                                                        <span class="size">{%=o.formatFileSize(file.size)%}</span>
+                                                    </td>
+                                                    <td>
+                                                       {% if (file.deleteUrl) { %}
+                                                            <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                                                                <i class="glyphicon glyphicon-trash"></i>
+                                                                <span>Delete</span>
+                                                            </button>
+                                                            <input type="checkbox" name="delete" value="1" class="toggle">
+                                                       {% } else { %}
+                                                            <button class="btn btn-warning cancel">
+                                                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                                                <span>Cancel</span>
+                                                            </button>
+                                                       {% } %}
+                                                    </td>
+                                                </tr>
+                                            {% } %}
+                                        </script>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row setup-content" id="generate-schedule">
+                                <div class="row setup-content" id="generate-schedule" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
-                                            <h1 class="text-center">Generate Schedule</h1>
+                                            <h2 class="text-center">Upload Loan Schedule</h2>
                                             <form>
                                                 <fieldset>
                                                     <legend>Inputs</legend>
@@ -489,6 +467,38 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row setup-content" id="schedule">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h2 class="text-center">Loan Overview</h2>
+                                            <div id="Result">Loan amount: ₦200000.00<br>Interest rate: 8.00%<br>Number of months: 12<br>Monthly payment: ₦17397.69<br>Total paid: ₦208772.23<br><br><table border="1"><tbody><tr><th>Month #</th><th>Balance</th><th>Interest</th><th>Expected Payment</th></tr><tr align="center"><td>1</td><td id="balance-0">₦ 200000.00</td><td id="interest-0">₦ 1333.33</td><td>₦ <input id="payment-0" type="number" value="17397.69"></td></tr><tr align="center"><td>2</td><td id="balance-1">₦ 183935.65</td><td id="interest-1">₦ 1226.24</td><td>₦ <input id="payment-1" type="number" value="17397.69"></td></tr><tr align="center"><td>3</td><td id="balance-2">₦ 167764.20</td><td id="interest-2">₦ 1118.43</td><td>₦ <input id="payment-2" type="number" value="17397.69"></td></tr><tr align="center"><td>4</td><td id="balance-3">₦ 151484.94</td><td id="interest-3">₦ 1009.90</td><td>₦ <input id="payment-3" type="number" value="17397.69"></td></tr><tr align="center"><td>5</td><td id="balance-4">₦ 135097.16</td><td id="interest-4">₦ 900.65</td><td>₦ <input id="payment-4" type="number" value="17397.69"></td></tr><tr align="center"><td>6</td><td id="balance-5">₦ 118600.12</td><td id="interest-5">₦ 790.67</td><td>₦ <input id="payment-5" type="number" value="17397.69"></td></tr><tr align="center"><td>7</td><td id="balance-6">₦ 101993.10</td><td id="interest-6">₦ 679.95</td><td>₦ <input id="payment-6" type="number" value="17397.69"></td></tr><tr align="center"><td>8</td><td id="balance-7">₦ 85275.37</td><td id="interest-7">₦ 568.50</td><td>₦ <input id="payment-7" type="number" value="17397.69"></td></tr><tr align="center"><td>9</td><td id="balance-8">₦ 68446.18</td><td id="interest-8">₦ 456.31</td><td>₦ <input id="payment-8" type="number" value="17397.69"></td></tr><tr align="center"><td>10</td><td id="balance-9">₦ 51504.81</td><td id="interest-9">₦ 343.37</td><td>₦ <input id="payment-9" type="number" value="17397.69"></td></tr><tr align="center"><td>11</td><td id="balance-10">₦ 34450.49</td><td id="interest-10">₦ 229.67</td><td>₦ <input id="payment-10" type="number" value="17397.69"></td></tr><tr align="center"><td>12</td><td id="balance-11">₦ 17282.47</td><td id="interest-11">₦ 115.22</td><td>₦ <input id="payment-11" type="number" value="17397.69"></td></tr></tbody></table></div>
+                                            <button class="btn btn-primary btn-lg">Update</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row setup-content" id="files">
+                                    <div class="col-xs-12">
+                                        <div class="col-md-12 well">
+                                            <h2 class="text-center" style="margin-bottom: 15px;">Uploaded Documents</h2>
+                                            <div id="Carousel" class="carousel slide">
+                                                <ol class="carousel-indicators"></ol>
+
+                                                <!-- Carousel items -->
+                                                <div class="carousel-inner"></div>
+
+                                                <a data-slide="prev" href="#Carousel" class="left carousel-control">‹</a>
+                                                <a data-slide="next" href="#Carousel" class="right carousel-control">›</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                    $(document).ready(function() {
+                                        $('#Carousel').carousel({
+                                            interval: 5000
+                                        })
+                                    });
+                                </script>
                                 <div class="row setup-content" id="denied">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
@@ -505,30 +515,28 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <ul id="processes" class="timeline"></ul>
+                <div class="row">
+                    <div class="col-md-4">
+                        <ul id="processes" class="timeline"></ul>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <span style="margin: 5px;">Comments</span>
+                                <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>
                             </div>
-                            <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-header">Comments</div>
-                                    <div class="card-body">
-                                        <div id="comments"></div>
-                                    </div>
-                                </div>
+                            <div class="card-body">
+                                <div id="comments"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div><!-- .animated -->
-        </div><!-- .content -->
-
-
-    </div><!-- /#right-panel -->
-
-    <!-- Right Panel -->
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+<!-- Right Panel -->
 
     <!-- Modal -->
     <div class="modal fade" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
@@ -559,8 +567,8 @@
     </div>
 
 
-    <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
 
@@ -577,6 +585,30 @@
     <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
     <script src="assets/js/lib/data-table/datatables-init.js"></script>
 
+    <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+    <script src="js/vendor/jquery.ui.widget.js"></script>
+    <!-- The Templates plugin is included to render the upload/download listings -->
+    <script src="https://blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
+    <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+    <script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+    <!-- The Canvas to Blob plugin is included for image resizing functionality -->
+    <script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="js/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="js/jquery.fileupload.js"></script>
+    <!-- The File Upload processing plugin -->
+    <script src="js/jquery.fileupload-process.js"></script>
+    <!-- The File Upload image preview & resize plugin -->
+    <script src="js/jquery.fileupload-image.js"></script>
+    <!-- The File Upload audio preview plugin -->
+    <script src="js/jquery.fileupload-audio.js"></script>
+    <!-- The File Upload video preview plugin -->
+    <script src="js/jquery.fileupload-video.js"></script>
+    <!-- The File Upload validation plugin -->
+    <script src="js/jquery.fileupload-validate.js"></script>
+    <!-- The File Upload user interface plugin -->
+    <script src="js/jquery.fileupload-ui.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -594,12 +626,7 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    let num = 5;
-                    var count = JSON.parse(data);
-                    // jQuery.each(count, function(k, v){
-                    //     num = v.rand;
-                    // });
-                    if (data != 1){
+                    if (data !== 1){
                         jQuery('#car-models').hide();
                         jQuery('#new-user').hide();
                         jQuery('#models-card').hide();
@@ -614,42 +641,46 @@
             });
         }
 
-        let workflow;
+        let workflow,
+            application;
 
         function loadUsers(){
             $.ajax({
                 'url': '/user/application-id/'+application_id,
                 'type': 'get',
                 'success': function (result) {
-                    let data = result.response[0],
-                        fullname = data.fullname || '';
-//                        tbody = $("#application"),
-//                        tr = "";
+                    let data = result.response,
+                        fullname = data.fullname || '',
+                        file_names = Object.keys(data.files),
+                        files_count = file_names.length,
+                        $carousel_inner = $('.carousel-inner'),
+                        $carousel_indicators = $('.carousel-indicators');
+
+                    application = data;
+
                     workflow = (localStorage.getItem("workflows"))? ($.grep(JSON.parse(localStorage.getItem("workflows")), function(e){ return e.ID === data.workflowID; }))[0] : {name:'Workflow'};
                     $("#workflow-div-title").text(fullname.toUpperCase()+" ("+workflow.name+")");
-//                    tbody.empty();
-//                    if (data.fullname)
-//                        tr += "<tr><td>Fullname</td><td>"+data.fullname+"</td></tr>";
-//                    if (data.phone)
-//                        tr += "<tr><td>Phone Number</td><td>"+data.phone+"</td></tr>";
-//                    if (data.email)
-//                        tr += "<tr><td>Email</td><td>"+data.email+"</td></tr>";
-//                    if (data.loan_amount)
-//                        tr += "<tr><td>Loan Amount</td><td>"+data.loan_amount+"</td></tr>";
-//                    if (data.collateral)
-//                        tr += "<tr><td>Collateral</td><td>"+data.collateral+"</td></tr>";
-//                    if (data.jewelry)
-//                        tr += "<tr><td>Jewelry</td><td>"+data.jewelry+"</td></tr>";
-//                    if (data.brand)
-//                        tr += "<tr><td>Brand</td><td>"+data.brand+"</td></tr>";
-//                    if (data.model)
-//                        tr += "<tr><td>Model</td><td>"+data.model+"</td></tr>";
-//                    if (data.year)
-//                        tr += "<tr><td>Year</td><td>"+data.year+"</td></tr>";
-//                    if (data.date_created)
-//                        tr += "<tr><td>Date Created</td><td>"+formatDate(data.date_created)+"</td></tr>";
-//                    tbody.html(tr);
 
+                    if (files_count < 1){
+                        $carousel_inner.append('<h3>No Documents Uploaded Yet!</h3>');
+                    } else {
+                        let count = 0,
+                            pages = parseInt(files_count/4);
+                        for (let i=0; i<=pages; i++){
+                            if (i === 0){
+                                $carousel_inner.append('<div class="item active"><div class="row page-0"></div></div>');
+                                $carousel_indicators.append('<li data-target="#Carousel" data-slide-to="0" class="active"></li>');
+                            } else {
+                                $carousel_inner.append('<div class="item"><div class="row page-'+i+'"></div></div>');
+                                $carousel_indicators.append('<li data-target="#Carousel" data-slide-to="'+i+'"></li>');
+                            }
+                            for (let j=0; j<4; j++){
+                                if (count < files_count)
+                                    $('.page-'+i).append('<div class="col-md-3"><a href="#" class="thumbnail"><img src="'+application.files[file_names[count]]+'" alt="'+file_names[count].replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_names[count].replace(/_/g, ' ')+'</p></div>');
+                                count++;
+                            }
+                        }
+                    }
                 },
                 'error': function (err) {
                     console.log('Error');
@@ -706,8 +737,11 @@
             }
         }
 
+        let stage_document = false;
         $('.next').hide();
         $('.previous').hide();
+        $('#next-actions').hide();
+        $('#current_stage').hide();
         function loadWorkflowStages(state) {
             $.ajax({
                 'url': '/workflow-stages/'+state.workflowID,
@@ -715,6 +749,8 @@
                 'success': function (data) {
                     $('.next').show();
                     $('.previous').show();
+                    $('#next-actions').show();
+                    $('#current_stage').show();
 
                     let count = 0,
                         workflow_stages = data.response,
@@ -723,17 +759,24 @@
                         stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0];
 
                     $last_btn.hide();
+                    $('#current_stage').text(stage.name);
+                    if (stage.stage_name === 'Application Started'){
+                        $('#schedule').hide();
+                        $('#generate-schedule').show();
+                    }
                     if (stage.document){
                         $('#document-upload').show();
                         $('#document-upload-text').text('Kindly upload a '+stage.document);
+                        stage_document = stage.document;
+                        fileUpload(stage);
                     }
 
                     if (stage.actions){
                         let actions = stage.actions.split(',');
                         actions.forEach(function (code) {
                             let stage_template = ($.grep(workflow_stages, function(e){ return e.code === code; }))[0];
-                            $('#stage-actions').append('<button type="button" class="btn btn-primary" id="stage-action-'+stage_template.stageID+
-                                '" style="float: right">'+stage_template.name+' ('+stage_template.stage_name+')</button>');
+                            $('#stage-actions').append('<a href="#" class="dropdown-item" id="stage-action-'+stage_template.stageID+'">'
+                                +stage_template.name+' ('+stage_template.stage_name+')</a>');
                         });
                     }
 
@@ -763,9 +806,12 @@
                     });
 
                     if (stage.stage_name === 'Denied'){
-                        $("#generate-schedule").hide();
+                        $("#current_stage").hide();
+                        $("#next-actions").hide();
                         $(".previous").hide();
+                        $("#schedule").hide();
                         $("#denied").show();
+                        $("#files").hide();
                         $(".next").hide();
 
                         let li = document.createElement('li');
@@ -804,7 +850,8 @@
                         previousStage(state,states);
                     });
 
-                    $('#generate-schedule').show();
+                    $('#schedule').show();
+                    $('#files').show();
                 },
                 'error': function (err) {
                     console.log('Error');
@@ -825,8 +872,8 @@
                     if (!states[0])
                         return $processes.append('<h3 style="margin: auto;">No transitions available yet!</h3>');
                     states.forEach(function (state) {
-                        let previous_stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.previous_stage; }))[0] || 'N/A',
-                            current_stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0] || '';
+                        let previous_stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.previous_stage; }))[0] || {stage_name:'N/A'},
+                            current_stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0] || {stage_name:''};
                         $processes.append('<li>\n' +
                             '    <p><a href="#">'+current_stage.stage_name+'</a></p>\n' +
                             '    <p><a href="#">'+state.date_created+'</a></p>\n' +
@@ -847,6 +894,8 @@
                 stage.previous_stage = workflow_stages.map(function(e) { return e.stageID; }).indexOf(state.current_stage);
                 stage.current_stage = action_stage;
             }
+            if (stage_document && !(stage_document.replace(/ /g, '_') in application.files))
+                return swal('Kindly upload required document ('+stage_document+')');
             $.ajax({
                 'url': '/user/workflow_process/'+application_id+'/'+state.workflowID,
                 'type': 'post',
@@ -922,6 +971,30 @@
             });
         }
 
+        function fileUpload(stage) {
+            let $fileupload = $('#fileupload'),
+                stage_document_name = stage.document.replace(/ /g, '_');
+
+            $fileupload.fileupload({
+                url: 'document-upload/'+application_id+'/'+stage_document_name,
+                disableImageResize: /Android(?!.*Chrome)|Opera/
+                    .test(window.navigator.userAgent),
+                maxFileSize: 999000,
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
+            });
+
+            $fileupload.addClass('fileupload-processing');
+            $.ajax({
+                url: $fileupload.fileupload('option', 'url'),
+                context: $fileupload[0]
+            }).always(function () {
+                $(this).removeClass('fileupload-processing');
+            }).done(function (result) {
+                $(this).fileupload('option', 'done')
+                    .call(this, $.Event('done'), {result: result});
+            });
+        }
+
         /**
          * @author Joel Nutt
          * ITEC136-V1WW(FA11) - Franklin U.
@@ -970,11 +1043,9 @@
         {
             //Calculate the per month interest rate
             var monthlyRate = interestRate/12;
-
             //Calculate the payment
             var payment = balance * (monthlyRate/(1-Math.pow(
                 1+monthlyRate, -terms)));
-
             //begin building the return string for the display of the amort table
             var result = "Loan amount: ₦" + balance.toFixed(2) +  "<br />" +
                 "Interest rate: " + (interestRate*100).toFixed(2) +  "%<br />" +
@@ -994,31 +1065,22 @@
             {
                 //in-loop interest amount holder
                 var interest = 0;
-
                 //in-loop monthly principal amount holder
                 var monthlyPrincipal = 0;
-
                 //start a new table row on each loop iteration
                 result += "<tr align=center>";
-
                 //display the month number in col 1 using the loop count variable
                 result += "<td>" + (count + 1) + "</td>";
-
-
                 //code for displaying in loop balance
                 result += "<td id='balance-"+count+"'>₦ " + balance.toFixed(2) + "</td>";
-
                 //calc the in-loop interest amount and display
                 interest = balance * monthlyRate;
                 result += "<td id='interest-"+count+"'>₦ " + interest.toFixed(2) + "</td>";
-
                 //calc the in-loop monthly principal and display
                 monthlyPrincipal = payment;
                 result += "<td>₦ <input id='payment-"+count+"' type='number' value='" + monthlyPrincipal.toFixed(2) + "' /></td>";
-
                 //end the table row on each iteration of the loop
                 result += "</tr>";
-
                 //update the balance for each loop iteration
                 balance = balance - monthlyPrincipal + interest;
 
@@ -1036,7 +1098,6 @@
 
             //Final piece added to return string before returning it - closes the table
             result += "</table>";
-
             //returns the concatenated string to the page
             return result;
         }
@@ -1053,185 +1114,6 @@
                 return true;
             }
         }
-
-        // File Upload
-        //
-        function ekUpload(){
-            function Init() {
-
-                var fileSelect    = document.getElementById('file-upload'),
-                    fileDrag      = document.getElementById('file-drag'),
-                    submitButton  = document.getElementById('submit-button');
-
-                fileSelect.addEventListener('change', fileSelectHandler, false);
-
-                // Is XHR2 available?
-                var xhr = new XMLHttpRequest();
-                if (xhr.upload) {
-                    // File Drop
-                    fileDrag.addEventListener('dragover', fileDragHover, false);
-                    fileDrag.addEventListener('dragleave', fileDragHover, false);
-                    fileDrag.addEventListener('drop', fileSelectHandler, false);
-                }
-            }
-
-            function fileDragHover(e) {
-                var fileDrag = document.getElementById('file-drag');
-
-                e.stopPropagation();
-                e.preventDefault();
-
-                fileDrag.className = (e.type === 'dragover' ? 'hover' : 'modal-body file-upload');
-            }
-
-            function fileSelectHandler(e) {
-                // Fetch FileList object
-                var files = e.target.files || e.dataTransfer.files;
-
-                // Cancel event and hover styling
-                fileDragHover(e);
-
-                // Process all File objects
-                for (var i = 0, f; f = files[i]; i++) {
-                    parseFile(f);
-                    uploadFile(f);
-                }
-            }
-
-            // Output
-            function output(msg) {
-                // Response
-                var m = document.getElementById('messages');
-                m.innerHTML = msg;
-            }
-
-            function parseFile(file) {
-
-                console.log(file.name);
-                output(
-                    '<strong>' + encodeURI(file.name) + '</strong>'
-                );
-
-                // var fileType = file.type;
-                // console.log(fileType);
-                var imageName = file.name;
-
-                var isGood = (/\.(?=gif|jpg|png|jpeg)/gi).test(imageName);
-                if (isGood) {
-                    document.getElementById('start').classList.add("hidden");
-                    document.getElementById('response').classList.remove("hidden");
-                    document.getElementById('notimage').classList.add("hidden");
-                    // Thumbnail Preview
-                    document.getElementById('file-image').classList.remove("hidden");
-                    document.getElementById('file-image').src = URL.createObjectURL(file);
-                }
-                else {
-                    document.getElementById('file-image').classList.add("hidden");
-                    document.getElementById('notimage').classList.remove("hidden");
-                    document.getElementById('start').classList.remove("hidden");
-                    document.getElementById('response').classList.add("hidden");
-                    document.getElementById("file-upload-form").reset();
-                }
-            }
-
-            function setProgressMaxValue(e) {
-                var pBar = document.getElementById('file-progress');
-
-                if (e.lengthComputable) {
-                    pBar.max = e.total;
-                }
-            }
-
-            function updateFileProgress(e) {
-                var pBar = document.getElementById('file-progress');
-
-                if (e.lengthComputable) {
-                    pBar.value = e.loaded;
-                }
-            }
-
-            function uploadFile(file) {
-
-                var xhr = new XMLHttpRequest(),
-                    fileInput = document.getElementById('class-roster-file'),
-                    pBar = document.getElementById('file-progress'),
-                    fileSizeLimit = 1024; // In MB
-                if (xhr.upload) {
-                    // Check if file is less than x MB
-                    if (file.size <= fileSizeLimit * 1024 * 1024) {
-                        // Progress bar
-                        pBar.style.display = 'inline';
-                        xhr.upload.addEventListener('loadstart', setProgressMaxValue, false);
-                        xhr.upload.addEventListener('progress', updateFileProgress, false);
-
-                        // File received / failed
-                        xhr.onreadystatechange = function(e) {
-                            if (xhr.readyState == 4) {
-                                // Everything is good!
-
-                                // progress.className = (xhr.status == 200 ? "success" : "failure");
-                                // document.location.reload(true);
-                            }
-                        };
-
-                        // Start upload
-                        xhr.open('POST', document.getElementById('file-upload-form').action, true);
-                        xhr.setRequestHeader('X-File-Name', file.name);
-                        xhr.setRequestHeader('X-File-Size', file.size);
-                        xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-                        xhr.send(file);
-                    } else {
-                        output('Please upload a smaller file (< ' + fileSizeLimit + ' MB).');
-                    }
-                }
-            }
-
-            // Check for the various File API support.
-            if (window.File && window.FileList && window.FileReader) {
-                Init();
-            } else {
-                document.getElementById('file-drag').style.display = 'none';
-            }
-        }
-        ekUpload();
-
-        // UPLOAD CLASS DEFINITION
-        // ======================
-
-        var dropZone = document.getElementById('drop-zone');
-        var uploadForm = document.getElementById('js-upload-form');
-
-        var startUpload = function(files) {
-            console.log(files)
-        };
-
-        uploadForm.addEventListener('submit', function(e) {
-            var uploadFiles = document.getElementById('js-upload-files').files;
-            e.preventDefault()
-
-            startUpload(uploadFiles)
-        });
-
-        if (dropZone){
-            dropZone.ondrop = function(e) {
-                e.preventDefault();
-                this.className = 'upload-drop-zone';
-
-                startUpload(e.dataTransfer.files)
-            };
-
-            dropZone.ondragover = function() {
-                this.className = 'upload-drop-zone drop';
-                return false;
-            };
-
-            dropZone.ondragleave = function() {
-                this.className = 'upload-drop-zone';
-                return false;
-            }
-        }
     </script>
-
-
 </body>
 </html>

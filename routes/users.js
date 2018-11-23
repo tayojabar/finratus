@@ -552,13 +552,31 @@ users.get('/application/:id', function(req, res, next) {
 });
 
 users.get('/application-id/:id', function(req, res, next) {
-    let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
+    let obj = {},
+        application_id = req.params.id,
+        path = 'files/application-'+application_id+'/',
+        query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
         'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
-    db.query(query, [req.params.id], function (error, results, fields) {
+    db.query(query, [application_id], function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
+            result = (result[0])? result[0] : {};
+            if (!fs.existsSync(path)){
+                result.files = {};
+                return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+            }
+            fs.readdir(path, function (err, files){
+                async.forEach(files, function (file, callback){
+                    let filename = file.split('.')[0].split('_');
+                    filename.shift();
+                    obj[filename.join('_')] = path+file;
+                    callback();
+                }, function(data){
+                    result.files = obj;
+                    return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+                });
+            });
         }
     });
 });

@@ -1423,4 +1423,81 @@ router.post('/update-module/:id', function(req, res, next) {
     });
 });
 
+router.get('/document-upload/:id/:name', function(req, res) {
+	res.send('OK');
+});
+
+router.post('/document-upload/:id/:name', function(req, res) {
+	let	name = req.params.name,
+		application_id = req.params.id;
+
+    if (!req.files) return res.status(400).send('No files were uploaded.');
+    if (!req.params || !application_id || !name) return res.status(400).send('No parameters specified!');
+    let sampleFile = req.files['files[]'],
+		extArray = sampleFile.name.split("."),
+		extension = extArray[extArray.length - 1];
+
+    db.query('SELECT * FROM applications WHERE ID = ?', [application_id], function (error, application, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else if (!application || !application[0]) {
+            res.send({"status": 500, "error": "Application does not exist", "response": null});
+        } else {
+            fs.stat('files/application-'+application_id+'/', function(err) {
+                if (!err) {
+                    console.log('file or directory exists');
+                } else if (err.code === 'ENOENT') {
+                    fs.mkdirSync('files/application-'+application_id+'/');
+                }
+            });
+
+            fs.stat('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function (err) {
+                if (err) {
+                    sampleFile.mv('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function(err) {
+                        if (err) return res.status(500).send(err);
+                        res.send({files:[sampleFile]});
+                    });
+                }
+                else{
+                    fs.unlink('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension,function(err){
+                        if(err){
+                            return console.log(err);
+                        } else{
+                            sampleFile.mv('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function(err) {
+                                if (err)
+                                    return res.status(500).send(err);
+                                res.send({files:[sampleFile]});
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+router.get('/document_check/:id/:name', function(req, res, next) {
+    let obj = {},
+		status = false,
+		path = 'files/application-'+req.params.id+'/';
+    if (fs.existsSync(path)){
+        fs.readdir(path, function (err, files){
+            async.forEach(files, function (file, callback){
+                let filename_array = file.split('.')[0].split('_');
+                filename_array.shift();
+                let filename = filename_array.join('_');
+                if (filename === req.params.name)
+                	status = true;
+                obj[filename] = path+file;
+                callback();
+            }, function(data){
+                res.json({status:status, response:obj});
+            });
+        });
+    }
+    else {
+        res.json({status:status});
+    }
+});
+
 module.exports = router;
