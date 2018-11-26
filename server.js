@@ -215,6 +215,15 @@ app.get('/add-application', requireLogin, function(req, res){
     res.sendFile('add-application.html', { root: __dirname+'/views' });
 });
 
+app.get('/all-workflow', requireLogin, function(req, res){
+    res.sendFile('all-workflow.html', { root: __dirname+'/views' });
+});
+
+app.get('/all-requests', requireLogin, function(req, res){
+    res.sendFile('all-requests' +
+        '.html', { root: __dirname+'/views' });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
