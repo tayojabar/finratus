@@ -26,58 +26,6 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
-    <style type="text/css">
-        .todolist{
-            background-color:#FFF;
-            padding:0 30px;
-        }
-        .todolist h1{
-            margin:0;
-            padding-bottom:20px;
-            text-align:center;
-        }
-        li.ui-state-default{
-            background:#fff;
-            border:1px solid #ddd;
-            cursor: move;
-            padding: 0 15px;
-            -webkit-box-shadow: 0 10px 6px -6px #777;
-            -moz-box-shadow: 0 10px 6px -6px #777;
-            box-shadow: 0 10px 6px -6px #777;
-        }
-        li.ui-state-default:hover{
-            background: #efefef;
-        }
-        li.ui-state-default:last-child{
-            border-bottom:none;
-        }
-        .todo-footer{
-            background-color:#F4FCE8;
-            padding: 10px 20px;
-        }
-        #stages-table th:first-child, #stages-table td:first-child{
-            display: none;
-        }
-        a:hover {
-            color: #0056b3 !important;
-            text-decoration: underline !important;
-            cursor: pointer !important;
-        }
-        li.disabled, option.disabled {
-            pointer-events:none;
-            background: #efefef;
-        }
-        li.ui-state-default > span > small{
-            margin-left: 15px;
-        }
-        li.ui-state-default > span{
-            display: inline-block;
-            padding: 15px 0;
-        }
-        li.ui-state-default > button{
-            margin-top: 8px;
-        }
-    </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <!------ Include the above in your HEAD tag ---------->
@@ -86,126 +34,6 @@
 </head>
 <body>
     <!-- Left Panel -->
-    <script type="text/javascript">
-        jQuery(document).ready(function($){
-            check();
-            let $sortable = $("#sortable");
-            $sortable.sortable();
-            $sortable.disableSelection();
-            localStorage.removeItem('local_stages');
-
-            countTodos();
-
-            // all done btn
-            $("#checkAll").click(function(){
-                AllDone();
-            });
-
-            //mark all tasks as done
-            function AllDone(){
-                $sortable.find('li').remove();
-                countTodos();
-            }
-
-            //create todo
-            $('#add-stage').click(function (e) {
-                e.preventDefault;
-                if($('.add-todo').val() !== ''){
-                    let stage = {},
-                        action_codes = [],
-                        action_names = [],
-                        $document = $('#document-upload-text').val(),
-                        stage_template = $('#stage-template').val(),
-                        code = Math.random().toString(36).substring(7),
-                        actions = $('.local-stages').map(function() {
-                            if (this.value && (this.value !== '-- Choose Action --'))
-                                return this.value;
-                        }).get(),
-                        local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
-                    stage.name = $('#stage-name').val();
-                    stage.description = $('#stage-description').val();
-                    stage.approverID = $('#process-rights').val();
-                    if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
-                        return swal('Kindly fill all required fields!');
-                    if ($document)
-                        stage.document = $document;
-                    if (actions[0]){
-                        $.each(actions, function (key, val) {
-                            let action = JSON.parse(decodeURIComponent(val));
-                            action_codes.push(action.code);
-                            action_names.push(action.name);
-                            if (key === actions.length-1){
-                                if (action_codes[0])
-                                    stage.actions = action_codes.join(',');
-                                if (action_names[0])
-                                    stage.action_names = action_names;
-                                let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                                stage.stageID = stage_template_json.ID;
-                                stage.stage_name = stage_template_json.name;
-                                stage.code = code;
-                                local_stages.push(stage);
-                                localStorage.setItem('local_stages', JSON.stringify(local_stages));
-                                createTodo(stage);
-                                countTodos();
-                            }
-                        });
-                    } else {
-                        let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                        stage.stageID = stage_template_json.ID;
-                        stage.stage_name = stage_template_json.name;
-                        stage.code = code;
-                        local_stages.push(stage);
-                        localStorage.setItem('local_stages', JSON.stringify(local_stages));
-                        createTodo(stage);
-                        countTodos();
-                    }
-                }else{
-                    swal('Kindly fill all required fields!');
-                }
-            });
-
-            //delete done task from "already done"
-            $('.todolist').on('click','.remove-item',function(){
-                let name = $(this).attr("id"),
-                    local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [],
-                    updated_local_stages = $.grep(local_stages, function(e){ return e.name !== name; });
-                localStorage.setItem('local_stages', JSON.stringify(updated_local_stages));
-                removeItem(this);
-            });
-
-            // count tasks
-            function countTodos(){
-                let count = $("#sortable").find("li").length;
-                $('.count-todos').html(count);
-            }
-
-            //create task
-            function createTodo(stage){
-                let markup = '';
-                if (stage.action_names){
-                    markup = '<li class="ui-state-default"><span>'+stage.name+' <small> → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
-                } else {
-                    markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
-                }
-                $sortable.append(markup);
-                $('#stage-name').val('');
-                $('#stage-description').val('');
-                $('#stage-template').val('');
-                $('#process-rights').val('');
-                $('#document-upload-text').val('');
-                $('#document-upload').prop('checked',false);
-                $('#document-upload-div').hide();
-                getLocalStages();
-            }
-
-            //remove done task from list
-            function removeItem(element){
-                $(element).parent().remove();
-                countTodos();
-            }
-        });
-    </script>
-
     <aside id="left-panel" class="left-panel">
         <nav class="navbar navbar-expand-sm navbar-default">
 
@@ -346,54 +174,6 @@
         <div class="content mt-3">
             <div class="animated fadeIn">
                 <div class="row">
-                    <div id="user-form" class="col-xs-12 col-sm-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <strong>Add Loan Process</strong> <small> Workflow Information</small>
-                            </div>
-                            <div class="card-body card-block">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Process Name <strong style="color:red"> *</strong></label>
-                                    <div class="col-sm-8 input-group">
-                                        <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
-                                        <input id="process-name" class="form-control" required="required">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Workflow Transitions <strong style="color:red"> *</strong></label>
-                                    <div class="col-sm-9">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addStage"><i class="fa fa-plus"></i>Add Transition</button>
-                                                <button id="checkAll" class="btn btn-danger"><i class="fa fa-remove"></i>Clear Transition</button>
-                                            </div>
-                                            <div class="col-sm-10" style="margin: 15px;">
-                                                <div class="alert alert-info" role="alert" data-original-title="" title="">A transition defines a change in your workflow from one stage to another. View transitions below. You can also <strong>drag and drop</strong> to re-order.</div>
-                                            </div>
-                                            <div class="col-sm-10 todolist">
-                                                <ul id="sortable" class="list-unstyled"></ul>
-                                            </div>
-                                            <div class="col-sm-9">
-                                                <div class="todo-footer">
-                                                    Number of Transition(s): <strong><span class="count-todos"></span></strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class = "form-group">
-                                    <input type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New Process" onclick="addProcess()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- .animated -->
-        </div><!-- .content -->
-
-        <div class="content mt-3">
-            <div class="animated fadeIn">
-                <div class="row">
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header">
@@ -443,107 +223,6 @@
     <!-- Right Panel -->
 
     <!-- Modal -->
-    <div class="modal fade" id="addStage" tabindex="-1" role="dialog" aria-labelledby="addStageLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="addStageLabel">New Transition</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class=" form-control-label">Transition Name</label><strong style="color:red"> *</strong><span id="stage-name-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-list"></i></div>
-                                <input id="stage-name" type="text" class="form-control add-todo" placeholder="Transition Name" maxlength="50" required="required">
-                            </div>
-                            <small class="form-text text-muted">Maximum of 50 characters</small>
-                        </div>
-                        <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Transition Description</label><span id="stage-description-error" style="padding-left:50px; text-align: center"></span>-->
-                            <!--<div class="input-group">-->
-                                <!--<textarea id="stage-description" class="form-control" placeholder="Transition Description" maxlength="250"></textarea>-->
-                            <!--</div>-->
-                            <!--<small class="form-text text-muted">Maximum of 250 characters</small>-->
-                        <!--</div>-->
-                        <div class="form-group">
-                            <label class=" form-control-label">Previous Stage</label><strong style="color:red"> *</strong>
-                            <div class="input-group">
-                                <select id="stage-template" class="form-control" required="required">
-                                    <option selected="selected">-- Choose Action --</option>
-                                </select>
-                            </div>
-                            <small class="form-text text-muted">Select the relevant template from the list of actions</small>
-                        </div>
-                        <div class="form-group">
-                            <a id="more-actions-link">
-                                <label class=" form-control-label" style="display: block">
-                                    <i class="fa fa-plus"></i> Next Stage(s)</label></a>
-                            <div id="stage-action-div"></div>
-                            <small class="form-text text-muted">Select other actions that can be performed at this stage</small>
-                        </div>
-                        <script type="text/javascript">
-                            $("#more-actions-link").click(function() {
-                                $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
-                                    '<select class="form-control local-stages"><option selected="selected">-- Choose Action --</option>' +
-                                    '</select></div>');
-                                getLocalStages();
-                            });
-                        </script>
-                        <div class="form-group">
-                            <label class="col-form-label">Approval Rights <strong style="color:red"> *</strong></label>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-user"></i></div>
-                                <select id="process-rights" class="form-control" required="required">
-                                    <option selected="selected">-- Choose User Role --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" form-control-label">Rules</label>
-                            <div class="input-group">
-                                <label><input id="document-upload" type="checkbox"> &nbsp; Document Upload Required</label>
-                            </div>
-                        </div>
-                        <div class="form-group" id="document-upload-div" style="display: none;">
-                            <label class=" form-control-label">Document Upload</label>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-upload"></i></div>
-                                <input id="document-upload-text" type="text" class="form-control" placeholder="Document Upload Caption" max="50">
-                            </div>
-                            <small class="form-text text-muted">Maximum of 50 characters</small>
-                        </div>
-                        <div class="form-group">
-                            <label class=" form-control-label">Triggers</label>
-                            <div class="input-group">
-                                <label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>
-                            </div>
-                        </div>
-                        <script type="text/javascript">
-                            $('#document-upload').change(function () {
-                                $('#document-upload-div').toggle();
-                            });
-                            let status = false;
-                            $('#trigger-1').change(function () {
-                                status = !status;
-                                if (status){
-                                    $('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "Denied"; }).val());
-                                } else {
-                                    $('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "-- Choose Action --"; }).val())
-                                }
-                            });
-                        </script>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="add-stage" type="button" class="btn btn-primary" data-dismiss="modal">Add Transition</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="viewProcess" tabindex="-1" role="dialog" aria-labelledby="viewProcessLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -623,10 +302,8 @@
         $(document).ready(function() {
             $('#bootstrap-data-table-export').DataTable();
             $('#stages').DataTable({"bFilter": false, "bInfo" : false});
-            loadWorkflowStages();
             loadProcesses();
             getStages();
-            getRoles();
         });
         
         function check(){
@@ -669,43 +346,6 @@
             });
         }
 
-        function loadWorkflowStages() {
-            $.ajax({
-                'url': '/workflow-stages',
-                'type': 'get',
-                'success': function (data) {
-                    localStorage.setItem('workflow_stages',JSON.stringify(data.response));
-                },
-                'error': function (err) {
-                    console.log('Error');
-                    swal('No internet connection');
-                }
-            });
-        }
-
-        function getLocalStages(){
-            let $local_stages = $(".local-stages"),
-                local_stages = JSON.parse(localStorage.getItem('local_stages'));
-            $local_stages.html('<option selected="selected">-- Choose Action --</option>');
-            $.each(local_stages, function (key, val) {
-                $local_stages.append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
-            });
-            let count = $("#sortable").find("li").length;
-            $('.count-todos').html(count);
-        }
-
-        function getRoles(){
-            $.ajax({
-                type: "GET",
-                url: "/user/user-roles/",
-                success: function (response) {
-                    $.each(JSON.parse(response), function (key, val) {
-                        $("#process-rights").append('<option value = "'+val.id+'">'+val.role_name+'</option>');
-                    });
-                }
-            });
-        }
-
         function getStages(){
             $.ajax({
                 type: "GET",
@@ -714,27 +354,6 @@
                     let local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
                     $("#stages").dataTable().fnClearTable();
                     $.each(response, function (key, val) {
-                        if (val.type === 1){
-                            val.approverID = 1;
-                            val.stageID = val.ID;
-                            delete  val.ID;
-                            val.stage_name = val.name;
-                            val.code = Math.random().toString(36).substring(7);
-                            local_stages.push(val);
-                            $("#stage-template").append('<option class="disabled" value = "' + encodeURIComponent(JSON.stringify(val)) + '" disabled="disabled">' + val.name + '</option>');
-                        } else {
-                            $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
-                        }
-                        if (key === response.length-1){
-                            let local_stages_sorted = local_stages.sort(function(a, b) { return a.stageID - b.stageID; });
-                            localStorage.setItem('local_stages', JSON.stringify(local_stages_sorted));
-                            $.each(local_stages_sorted, function (key, val) {
-                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+'</span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/></li>';
-                                $('#sortable').append(markup);
-                                if (key === local_stages_sorted.length-1)
-                                    return getLocalStages();
-                            });
-                        }
                         $('#stages').dataTable().fnAddData([val.name]);
                     });
                 }
@@ -775,12 +394,6 @@
             });
         }
 
-        function formatDate(timestamp) {
-            timestamp = parseInt(timestamp);
-            let date =  new Date(timestamp);
-            return date.toLocaleString();
-        }
-
         function openModal(id) {
             let stages = localStorage.getItem("workflow_stages");
             if (stages){
@@ -797,44 +410,6 @@
                     $('#stages-table').dataTable().fnSort([[0,'asc']]);
                 });
             }
-        }
-        
-        function addProcess() {
-            let stages,
-                data = {},
-                workflow = {};
-            workflow.name = $('#process-name').val();
-            stages = $('.stage-items').map(function() {
-                return JSON.parse(decodeURIComponent(this.value));
-            }).get();
-
-            if (!workflow.name || !stages[0])
-                return swal('Kindly fill all required fields!');
-            data.workflow = workflow;
-            data.stages = stages;
-
-            $.ajax({
-                type: 'POST',
-                url: '/workflows',
-                data: data,
-                success: function (data) {
-                    localStorage.setItem('workflow_stages',JSON.stringify(data.response));
-                    localStorage.removeItem('local_stages');
-                    let $sortable = $("#sortable"),
-                        processes = data.response,
-                        count = $sortable.find("li").length;
-                    results = processes;
-                    populateDataTable(processes);
-                    $('.count-todos').html(0);
-                    $('#process-name').val("");
-                    $sortable.html("");
-                    swal(data.message);
-                },
-                'error': function (err) {
-                    console.log('Error');
-                    swal('No internet connection');
-                }
-            });
         }
     </script>
 
