@@ -191,7 +191,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Applications</h1>
+                        <h1>All Loan Requests</h1>
                     </div>
                 </div>
             </div>
@@ -201,7 +201,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active">All Applications</li>
+                            <li class="active">All Loan Requests</li>
                         </ol>
                     </div>
                 </div>
@@ -214,7 +214,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <strong class="card-title" style="float: left;">All Applications</strong>
+                            <strong class="card-title" style="float: left;">All Loan Requests</strong>
                             <form id="filter" class="form-inline" style="float: right;">
                                 <div class="form-group">
                                     <label class="" for="startDate">Start date</label>
@@ -233,6 +233,7 @@
                                   <tr>
                                     <th>Full Name</th>
                                     <th>Phone Number</th>
+                                    <th>Collateral</th>
                                     <th>Loan Amount</th>
                                     <th>Date Created</th>
                                     <th>Action</th>
@@ -380,16 +381,13 @@
         });
 
         function check(){
-            if (localStorage.getItem('role') !== 1){
+            if (localStorage.getItem('role') != 1){
                 jQuery('#car-models').hide();
                 jQuery('#new-user').hide();
                 jQuery('#models-card').hide();
-                jQuery('#user').html(localStorage.getItem("name"));
+                jQuery('#user').html('ATB Admin');
             }
-            else{
-                jQuery('#user').html(localStorage.getItem("name"));
-//                jQuery('#h-role').html(localStorage.getItem("user"));
-            }
+            else{ jQuery('#user').html('Super Admin'); }
         }
 
         function loadMenus(){
@@ -424,8 +422,9 @@
 
         function loadUsers(){
             $.ajax({
-                'url': '/user/applications',
+                'url': '/user/requests',
                 'type': 'get',
+                'data': {},
                 'success': function (data) {
                     var applications = data.response;
                     results = applications;
@@ -457,6 +456,7 @@
                 let table = [
                     v.fullname,
                     v.phone,
+                    v.collateral,
                     v.loan_amount,
                     v.date_created,
                     '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View Client</button>'
@@ -479,6 +479,12 @@
                 $('#bootstrap-data-table').dataTable().fnSort([[4,'desc']]);
             });
         }
+
+//        function formatDate(timestamp) {
+//            timestamp = parseInt(timestamp);
+//            let date =  new Date(timestamp);
+//            return date.toLocaleString();
+//        }
 
         function openModal(id) {
             localStorage.setItem("application_id",id);
@@ -534,8 +540,9 @@
 
         function archive(){
             $.ajax({
-                'url': '/user/applications/delete/'+localStorage.getItem("application_id"),
+                'url': '/user/requests/delete/'+localStorage.getItem("application_id"),
                 'type': 'get',
+                'data': {},
                 'success': function (data) {
                     let applications = data.response;
                     results = applications;
@@ -556,7 +563,7 @@
                 return swal('Kindly type a brief comment');
             }
             $.ajax({
-                'url': '/user/applications/comment/'+localStorage.getItem("application_id"),
+                'url': '/user/requests/comment/'+localStorage.getItem("application_id"),
                 'type': 'post',
                 'data': {comment: comment},
                 'success': function (data) {
@@ -579,7 +586,7 @@
             if (workflow_id === "-- Choose Workflow Process --")
                 return swal('Kindly select a workflow for assignment');
             $.ajax({
-                'url': '/user/application/assign_workflow/'+localStorage.getItem("application_id")+'/'+workflow_id,
+                'url': '/user/request/assign_workflow/'+localStorage.getItem("application_id")+'/'+workflow_id,
                 'type': 'get',
                 'success': function (data) {
                     let applications = data.response;
@@ -604,7 +611,7 @@
                 return loadUsers();
 
             $.ajax({
-                'url': '/user/applications/filter/'+formatDate(start)+'/'+formatDate(end),
+                'url': '/user/requests/filter/'+formatDate(start)+'/'+formatDate(end),
                 'type': 'get',
                 'success': function (data) {
                     let applications = data.response;
