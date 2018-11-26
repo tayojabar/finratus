@@ -10,15 +10,9 @@ config.development = {
 };
 
 config.staging = {
-<<<<<<< HEAD
     host     : 'atobz-staging-mysqldbserver.mysql.database.azure.com',
     port     :'3306',
     user     : 'azurestaging@atobz-staging-mysqldbserver',
-=======
-    host     : 'azure-staging-mysqldbserver.mysql.database.azure.com',
-    port     : '3306',
-    user     : 'azure-staging@atobz-staging-mysqldbserver',
->>>>>>> 6dfbdbdf3e63109c839738ca228d11bc1c79918b
     password : 'password123*',
     database : 'azurestaging',
     insecureAuth: true

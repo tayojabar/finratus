@@ -218,7 +218,7 @@
             </div>
 
             <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul class="nav navbar-nav">
+                <ul id="sidebar" class="nav navbar-nav">
                     <li>
                         <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
                     </li>
@@ -628,27 +628,18 @@
             getStages();
             getRoles();
         });
-        
+
         function check(){
-            jQuery.ajax({
-                'url': '/check',
-                'type': 'get',
-                'data': {},
-                'success': function (data) {
-                    let num = 5;
-                    var count = JSON.parse(data);
-                    if (data !== 1){
-                        jQuery('#car-models').hide();
-                        jQuery('#new-user').hide();
-                        jQuery('#models-card').hide();
-                        jQuery('#user').html('ATB Admin');
-                    }
-                    else{ jQuery('#user').html('Super Admin'); }
-                },
-                'error': function (err) {
-                    console.log('Error');
-                }
-            });
+            if (localStorage.getItem('role') != 1){
+                jQuery('#car-models').hide();
+                jQuery('#new-user').hide();
+                jQuery('#models-card').hide();
+                jQuery('#user').html(localStorage.getItem("name"));
+            }
+            else{
+                jQuery('#user').html(localStorage.getItem("name"));
+//                jQuery('#h-role').html(localStorage.getItem("user"));
+            }
         }
 
         let results;

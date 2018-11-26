@@ -533,9 +533,12 @@
                 jQuery('#car-models').hide();
                 jQuery('#new-user').hide();
                 jQuery('#models-card').hide();
-                jQuery('#user').html('ATB Admin');
+                jQuery('#user').html(localStorage.getItem("name"));
             }
-            else{ jQuery('#user').html('Super Admin'); }
+            else{
+                jQuery('#user').html(localStorage.getItem("name"));
+//                jQuery('#h-role').html(localStorage.getItem("user"));
+            }
         }
 
         function loadMenus(){
