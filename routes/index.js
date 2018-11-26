@@ -5,6 +5,7 @@ var db = require('../db');
 const fs = require('fs');
 const moment = require('moment');
 
+<<<<<<< HEAD
 //File Upload - Inspection
 router.post('/upload/:number_plate/:part', function(req, res) {
 	if (!req.files) return res.status(400).send('No files were uploaded.');
@@ -126,20 +127,38 @@ router.post('/addVehicle', function(req, res, next) {
 	payload = [];
     var query =  'INSERT INTO vehicles set ?';
 	db.query(query, postData, function (error, results, fields) {
+=======
+/* Add New User */
+router.post('/addUser', function(req, res, next) {
+    var postData = req.body;  
+    var query =  'INSERT INTO users Set ?';
+	connection.query(query,postData, function (error, results, fields) {
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
+<<<<<<< HEAD
   			res.send(JSON.stringify({"status": 200, "error": null, "response": "New Vehicle Added!"}));
+=======
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
 });
 
+<<<<<<< HEAD
 /* GET Vehicle Owners listing. */
 router.get('/owners', function(req, res, next) {
     var query = 'SELECT * from vehicle_owners';
 	db.query(query, function (error, results, fields) {
+=======
+/* GET users listing. */
+router.get('/users', function(req, res, next) {
+    var query = 'SELECT * from users';
+	connection.query(query, function (error, results, fields) {
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -150,6 +169,23 @@ router.get('/owners', function(req, res, next) {
   	});
 });
 
+<<<<<<< HEAD
+=======
+/* GET Specific User. */
+router.get('/users/:id', function(req, res, next) {
+    var query = 'SELECT * from users where id = ?';
+	connection.query(query, [req.params.id], function (error, results, fields) {
+	  	if(error){
+	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+	  		//If there is error, we send the error in the error section with 500 status
+	  	} else {
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+	  	}
+  	});
+});
+
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
 /* GET vehicles listing. */
 router.get('/vehicles', function(req, res, next) {
 	var query = 'SELECT * from vehicles';
@@ -472,14 +508,22 @@ router.get('/inspections/:number', function(req, res, next) {
   	});
 });
 
+<<<<<<< HEAD
 /* GET specific vehicle by inspector */
 router.get('/inspected-by/:inspector', function(req, res, next) {
     var query = 'SELECT * from vehicles where inspector =?';
 	db.query(query, [req.params.inspector] ,function (error, results, fields) {
+=======
+/* GET specific vehicle. */
+router.get('/vehicles/:id', function(req, res, next) {
+    var query = 'SELECT * from vehicles where id =?';
+	connection.query(query, [req.params.id] ,function (error, results, fields) {
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
 	  	} else {
+<<<<<<< HEAD
 			async.forEach(results, function(k, cb){
                 //k.image = 'goal';
                 var path = 'files/'+k.Number_Plate+'/';
@@ -552,6 +596,10 @@ router.get('/vehicle/:make', function(req, res, next) {
                 res.send(JSON.stringify({"status": 200, "error": null, "response": array}))
                 //If there is no error, all is good and response is 200OK.
             });
+=======
+  			res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  			//If there is no error, all is good and response is 200OK.
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
 	  	}
   	});
 });
@@ -559,7 +607,11 @@ router.get('/vehicle/:make', function(req, res, next) {
 /* GET Car Makes */
 router.get('/vehicle-makes', function(req, res, next) {
     var query = 'SELECT distinct(make) from vehiclemakes';
+<<<<<<< HEAD
 	db.query(query, function (error, results, fields) {
+=======
+	connection.query(query, function (error, results, fields) {
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
@@ -573,7 +625,11 @@ router.get('/vehicle-makes', function(req, res, next) {
 /* GET Car Models */
 router.get('/models/:make', function(req, res, next) {
     var query = 'SELECT distinct(model) from vehiclemakes where make =?';
+<<<<<<< HEAD
 	db.query(query, [req.params.make], function (error, results, fields) {
+=======
+	connection.query(query, [req.params.make], function (error, results, fields) {
+>>>>>>> c434590be25c5df94f6981c7e94d3ad7ef502c2c
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
 	  		//If there is error, we send the error in the error section with 500 status
