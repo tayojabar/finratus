@@ -2,7 +2,7 @@ let config = {};
 
 config.development = {
     host     : '140.86.3.63',
-    port     :'3306',
+    port     : '3306',
     user     : 'appuser',
     password : 'Pass@word1',
     database : 'vehicle_inspection',
@@ -11,7 +11,7 @@ config.development = {
 
 config.staging = {
     host     : 'azurestaging-mysqldbserver.mysql.database.azure.com',
-    port     :'3306',
+    port     : '3306',
     user     : 'azurestaging@atobz-staging-mysqldbserver',
     password : 'password123*',
     database : 'azurestaging',
@@ -20,7 +20,7 @@ config.staging = {
 
 config.production = {
     host     : 'atobz-mysqldbserver.mysql.database.azure.com',
-    port     :'3306',
+    port     : '3306',
     user     : 'loan35dbadmin@atobz-mysqldbserver',
     password : 'Loan35Pass@word2018',
     database : 'loan35',
