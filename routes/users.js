@@ -368,6 +368,34 @@ users.get('/usersCount', function(req, res, next) {
   	});
 });
 
+/* GET All Requests count. */
+users.get('/all-requests', function(req, res, next) {
+    var query = 'select count(*) as requests from applications where interest_rate = 0';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(results);
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+/* GET All Applications count. */
+users.get('/all-applications', function(req, res, next) {
+    var query = 'select count(*) as applications from staging.applications where interest_rate != 0';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(results);
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
 /* GET Specific User. */
 users.get('/user/:id', function(req, res, next) {
     var query = 'SELECT * from users where username = ?';

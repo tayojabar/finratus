@@ -581,9 +581,12 @@
                 jQuery('#car-models').hide();
                 jQuery('#new-user').hide();
                 jQuery('#models-card').hide();
-                jQuery('#user').html('ATB Admin');
+                jQuery('#user').html(localStorage.getItem("name"));
             }
-            else{ jQuery('#user').html('Super Admin'); }
+            else{
+                jQuery('#user').html(localStorage.getItem("name"));
+//                jQuery('#h-role').html(localStorage.getItem("user"));
+            }
         }
 
         function loadMenus(){
@@ -596,6 +599,24 @@
                 }else{
                     $('#sidebar').append(k.module_tag);
                     $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-requests",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#requests-badge').html(v.requests);
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-applications",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#applications-badge').html(v.applications);
+                    });
                 }
             });
         }

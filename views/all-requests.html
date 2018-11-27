@@ -329,6 +329,24 @@
                     $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
                 }
             });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-requests",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#requests-badge').html(v.requests);
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-applications",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#applications-badge').html(v.applications);
+                    });
+                }
+            });
         }
 
         function read_write(){
