@@ -395,15 +395,15 @@
         var i = 0; var j = 0;
 
         $('.RosaCheck').each(function () {
-            if ($(this). prop("checked") == true){
-                arr[i++] = [$(this).attr('id'), 1];
+            if ($(this). prop("checked") === true){
+                arr[i++] = [$(this).attr('ID'), 1];
             }
             else{
-                arr[i++] = [$(this).attr('id'), 0];
+                arr[i++] = [$(this).attr('ID'), 0];
             }
         });
         $('.WriteCheck').each(function(){
-            if ($(this).prop("checked") == true){
+            if ($(this).prop("checked") === true){
                 arr[j][2] = 1;
                 j++;
             }
@@ -473,9 +473,7 @@
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
             }
         });
-        console.log(w);
         if (parseInt(w[0]['editable']) === 1){
-            console.log('Here Now');
             $(".write").hide();
         }
     }
@@ -507,39 +505,36 @@
 
     function loadRolePermissions(id){
         localStorage.setItem("selectedRole", id);
+        let readCheck; let writeCheck; let reads = {}; let writes = {}; let r = 0; let w = 0;
+        //loadModules();
         $.ajax({
             type: "GET",
             url: "/permissions/"+id+"/",
             data: '{}',
             success: function (response) {
-                $("#module-table").dataTable().fnClearTable();
-                if (response.length === 0){
-                    //$("#module-table").dataTable().fnClearTable();
-                    console.log('Heer');
-                    loadModules();
+                console.log(JSON.parse(response).length);
+                if (!(JSON.parse(response).length === 0)){
+                    $.each(JSON.parse(response), function(key, val){
+                        reads[r++] = [val.module_id, val.read_only];
+                        writes[w++] = [val.module_id, val.editable];
+                    });
+
+                    $.each(reads, function(key, val){
+                        let id = '#'+val[0]; //console.log(id);
+                        if (parseInt(val[1]) === 1){
+                            $(id).prop('checked', true);
+                        }
+                    });
+
+                    $.each(writes, function(key, val){
+                        let id = '#'+val[0]+'-write'; //console.log(id);
+                        if (parseInt(val[1]) === 1){
+                            $(id).prop('checked', true);
+                        }
+                    });
                 }else{
-                    $.each(JSON.parse(response), function (key, val) {
-                    let readCheck; let writeCheck;
-//                    let check_read = (val.read_only === 1)? 'checked':'';
-//                    let check_write = (val.read_only === 1)? 'checked':'';
-//                    readCheck = '<input type="checkbox" id="'+val.module_id+'" class="RosaCheck" '+check_read+'>';
-//                    writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck" '+check_write+'>';
-                    if (val.read_only == 1){
-                        readCheck = '<input type="checkbox" id="'+val.module_id+'" class="RosaCheck" checked>';
-                    }
-                    else {
-                        readCheck = '<input type="checkbox" id="'+val.module_id+'" class="RosaCheck">';
-                    }
-                    if (val.editable == 1){
-                        writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck" checked>';
-                    }
-                    else {
-                        writeCheck = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck">';
-                    }
-                    $('#module-table').dataTable().fnAddData( [
-                        val.module, val.menu_name, readCheck, writeCheck
-                    ]);
-                });
+                    $("#module-table").dataTable().fnClearTable();
+                    loadModules();
                 }
             }
         });
@@ -555,8 +550,8 @@
             success: function (response) {
                 mods = JSON.parse(response);
                     $.each(JSON.parse(response), function (key, val) {
-                    var action = '<input type="checkbox" id="'+val.module_id+'" class="ace RosaCheck">';
-                    var write = '<input type="checkbox" id="'+val.module_id+'" class="WriteCheck">';
+                    var action = '<input type="checkbox" id="'+val.id+'" ID="'+val.id+'" class="ace RosaCheck">';
+                    var write = '<input type="checkbox" id="'+val.id+'-write" ID="'+val.id+'" class="WriteCheck">';
                     $('#module-table').dataTable().fnAddData( [
                         val.module_name, val.menu_name, action, write
                         // "Make",
