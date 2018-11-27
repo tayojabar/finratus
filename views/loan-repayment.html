@@ -74,14 +74,14 @@
         select.form-control{
             height: 36px !important;
         }
-        table tr:nth-child(2){
+        #loanCollectionSchedule table tr:nth-child(2){
             font-size: 14px;
         }
-        table tr td{
+        #loanCollectionSchedule table tr td{
             padding: 5px;
             white-space: nowrap;
         }
-        table tr:nth-child(1) td, table tr:nth-child(2) td{
+        #loanCollectionSchedule table tr:nth-child(1) td, table tr:nth-child(2) td{
             padding: 10px;
         }
         .badge-success {
@@ -89,6 +89,9 @@
         }
         .badge-danger {
             background-color: #dc3545;
+        }
+        .badge-warning {
+            background-color: #f0ad4e;
         }
     </style>
 </head>
@@ -190,6 +193,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <strong id="workflow-div-title" class="card-title" style="float: left;"></strong>
+                                <button class="btn btn-primary" onclick="goToLoanOverview()" style="float: right;">Loan Overview <i class="fa fa-forward"></i></button>
                             </div>
                             <div class="card-body" style="overflow-x: scroll; width: 1200px;">
                                 <div id="loanCollectionSchedule" style="margin-top: 30px;"></div>
@@ -373,6 +377,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const application_id = urlParams.get('id');
 
+        function goToLoanOverview() {
+            window.location.href = '/application?id='+application_id;
+        }
+
         function check(){
             if (localStorage.getItem('role') !== 1){
                 jQuery('#car-models').hide();
@@ -505,10 +513,11 @@
         function initRepaymentSchedule(application) {
             let $loanCollectionSchedule = $("#loanCollectionSchedule");
             if (application.schedule && application.schedule[0]){
-                let table = $("<table border='1' style='text-align: center;'/>");
+                let table = $("<table border='1' style='text-align: center;'/>"),
+                    total = ['TOTAL',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
                 for (let i = 0; i < application.schedule.length+2; i++) {
                     let row,
-                        cells = [];
+                        cells = []
                     if (i <= 1){
                         row = $('<tr style="font-weight: bold;" />');
                     } else {
@@ -528,16 +537,44 @@
                         cells[5] = application.schedule[i - 2]['fees_amount'];
                         cells[6] = application.schedule[i - 2]['penalty_amount'];
                         cells[7] = totalPayment(application.schedule[i - 2]);
-                        cells[8] = application.schedule[i - 2]['actual_payment_amount'];
-                        cells[9] = application.schedule[i - 2]['actual_interest_amount'];
-                        cells[10] = application.schedule[i - 2]['actual_fees_amount'];
-                        cells[11] = application.schedule[i - 2]['actual_penalty_amount'];
+                        let payment_history = $.grep(application.payment_history,function(e) {return (e.invoiceID===application.schedule[i - 2]['ID'] && e.status===1)});
+                        cells[8] = 0;
+                        cells[9] = 0;
+                        cells[10] = 0;
+                        cells[11] = 0;
+                        for (let k = 0; k < payment_history.length; k++){
+                            cells[8] += parseFloat(payment_history[k]['payment_amount']);
+                            cells[9] += parseFloat(payment_history[k]['interest_amount']);
+                            cells[10] += parseFloat(payment_history[k]['fees_amount']);
+                            cells[11] += parseFloat(payment_history[k]['penalty_amount']);
+                        }
+                        cells[8] = (cells[8]).toString();
+                        cells[9] = (cells[9]).toString();
+                        cells[10] = (cells[10]).toString();
+                        cells[11] = (cells[11]).toString();
                         cells[12] = totalActualPayment(application.schedule[i - 2]);
                         cells[13] = (parseFloat(cells[3])-parseFloat(cells[8])).toString();
                         cells[14] = (parseFloat(cells[4])-parseFloat(cells[9])).toString();
-                        cells[15] = (parseFloat(cells[5])-parseFloat(cells[10])).toString();
-                        cells[16] = (parseFloat(cells[6])-parseFloat(cells[11])).toString();
+                        cells[15] = (parseFloat(cells[5])-parseFloat(cells[10]) > 0)?(parseFloat(cells[5])-parseFloat(cells[10])).toString():'0';
+                        cells[16] = (parseFloat(cells[6])-parseFloat(cells[11]) > 0)?(parseFloat(cells[6])-parseFloat(cells[11])).toString():'0';
                         cells[17] = (parseFloat(cells[13])+parseFloat(cells[14])+parseFloat(cells[15])+parseFloat(cells[16])).toString();
+                        if (parseFloat(cells[8]) > 0 && parseFloat(cells[13]) > 0)
+                            cells[1] = cells[2] = 2;
+                        total[3] += parseFloat(cells[3]);
+                        total[4] += parseFloat(cells[4]);
+                        total[5] += parseFloat(cells[5]);
+                        total[6] += parseFloat(cells[6]);
+                        total[7] += parseFloat(cells[7]);
+                        total[8] += parseFloat(cells[8]);
+                        total[9] += parseFloat(cells[9]);
+                        total[10] += parseFloat(cells[10]);
+                        total[11] += parseFloat(cells[11]);
+                        total[12] += parseFloat(cells[12]);
+                        total[13] += parseFloat(cells[13]);
+                        total[14] += parseFloat(cells[14]);
+                        total[15] += parseFloat(cells[15]);
+                        total[16] += parseFloat(cells[16]);
+                        total[17] += parseFloat(cells[17]);
                     }
                     for (let j = 0; j < cells.length; j++) {
                         let cell = $("<td />");
@@ -554,6 +591,8 @@
                             } else if (j === 1 && i>1){
                                 if (parseInt(cells[j]) === 0){
                                     cell.html('<span class="badge badge-danger">Not Paid</span>');
+                                } else if (parseInt(cells[j]) === 2) {
+                                    cell.html('<span class="badge badge-warning">Ongoing</span>');
                                 } else {
                                     cell.html('<span class="badge badge-success">Paid</span>');
                                 }
@@ -592,6 +631,19 @@
                     }
                     table.append(row);
                 }
+                let row = $('<tr style="font-weight: bold;" />');
+                for (let i = 0; i<total.length; i++){
+                    let cell = $("<td />");
+                    if (i === 0){
+                        cell = $("<td colspan='3' />");
+                        cell.html(total[i]);
+                        row.append(cell);
+                    } else if (i > 2){
+                        cell.html('₦'+(parseFloat(total[i])).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                        row.append(cell);
+                    }
+                }
+                table.append(row);
                 $loanCollectionSchedule.html('');
                 $loanCollectionSchedule.append(table);
             }
@@ -610,14 +662,17 @@
         function confirmPaymentModal(id) {
             invoice_id = id;
             let invoice = ($.grep(application.schedule, function (e) { return parseInt(e.ID) === parseInt(invoice_id) }))[0];
+            let payment_history = $.grep(application.payment_history,function(e) {return (e.invoiceID===parseInt(invoice_id) && e.status===1)});
+            for (let k = 0; k < payment_history.length; k++){
+                invoice.payment_amount -= parseFloat(payment_history[k]['payment_amount']);
+                invoice.interest_amount -= parseFloat(payment_history[k]['interest_amount']);
+            }
             $('#principal').val(invoice.payment_amount);
             $('#interest').val(invoice.interest_amount);
-            $('#fees').val(invoice.fees_amount);
-            $('#penalty').val(invoice.penalty_amount);
+            $('#fees').val(0);
+            $('#penalty').val(0);
             $('#principal').attr({max:invoice.payment_amount});
             $('#interest').attr({max:invoice.interest_amount});
-            $('#fees').attr({max:invoice.fees_amount});
-            $('#penalty').attr({max:invoice.penalty_amount});
         }
 
         function confirmPayment() {
@@ -656,7 +711,7 @@
                             v.date_created
                         ];
                         $('#invoice-history').dataTable().fnAddData(table);
-                        $('#stages-table').dataTable().fnSort([[0,'desc']]);
+                        $('#invoice-history').dataTable().fnSort([[0,'desc']]);
                     });
                 },
                 'error': function (err) {
