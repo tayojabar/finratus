@@ -283,10 +283,28 @@
             modules.forEach(function(k, v){
                 if (k.menu_name === 'Sub Menu'){
                     let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
-//                    if (k.module_tag)
-                    $('#'+$(main[0]['module_tag']).attr('id')).append('<ul class="sub-menu children dropdown-menu">'+k.module_tag+'</ul>');
+                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
                 }else{
                     $('#sidebar').append(k.module_tag);
+                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-requests",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#requests-badge').html(v.requests);
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-applications",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#applications-badge').html(v.applications);
+                    });
                 }
             });
         }
