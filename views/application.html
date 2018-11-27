@@ -139,9 +139,11 @@
         .badge-success {
             background-color: #28a745;
         }
-
         .badge-danger {
             background-color: #dc3545;
+        }
+        .pb-0{
+            text-align: center;
         }
     </style>
 </head>
@@ -229,7 +231,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active">All Applications</li>
+                            <li class="active"><a href="/all-applications">All Applications</a></li>
                         </ol>
                     </div>
                 </div>
@@ -270,6 +272,40 @@
                                 <div id="transitions-list" class="row form-group" style="display: none;">
                                     <div class="col-xs-12">
                                         <ul id="workflow-ul-list" class="nav nav-pills nav-justified thumbnail setup-panel"></ul>
+                                    </div>
+                                </div>
+                                <div id="disbursement-cards" class="row setup-content" style="display: none;">
+                                    <div class="col-sm-3">
+                                        <div class="card text-white bg-flat-color-1">
+                                            <div class="card-body pb-0">
+                                                <h3 id="loan-amount-text" class="mb-0"></h3>
+                                                <p class="text-light">Loan Balance</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="card text-white bg-flat-color-1">
+                                            <div class="card-body pb-0">
+                                                <h3 id="total-due-text" class="mb-0"></h3>
+                                                <p class="text-light">Total Due Now</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="card text-white bg-flat-color-1">
+                                            <div class="card-body pb-0">
+                                                <h3 id="last-payment-text" class="mb-0"></h3>
+                                                <p class="text-light">Last Payment</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="card text-white bg-flat-color-1">
+                                            <div class="card-body pb-0">
+                                                <h3 id="next-payment-date-text" class="mb-0"></h3>
+                                                <p class="text-light">Next Payment Due Date</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row setup-content" id="document-upload" style="display: none;">
@@ -397,7 +433,7 @@
                                             <!--<p class="mb-0">Please contact the admin for any issues with disbursement.</p>-->
                                         </div>
                                         <div class="col-md-12 well">
-                                            <h2 class="text-center">Loan Overview <button id="collectPaymentButton" class ="btn btn-info" style="float: right; display: none;" data-toggle="modal" data-target="#collectPaymentModal">Collect Payment <i class="fa fa-money"></i></button></h2>
+                                            <h2 class="text-center">Loan Overview <button id="collectPaymentButton" class ="btn btn-primary" style="float: right; display: none;" onclick="goToLoanRepayment()">Collect Payment <i class="fa fa-money"></i></button></h2>
                                             <div id="loanSchedule" style="margin-top: 30px;"></div>
                                         </div>
                                     </div>
@@ -437,8 +473,8 @@
                                             <div class="row">
                                                 <div class="col-sm-8">
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
-                                                    <button id="uploadCSV2" class="btn btn-info">Add Schedule</button>
-                                                    <button id="saveCSV2" class="btn btn-success">Save Schedule</button>
+                                                    <button id="uploadCSV2" class="btn btn-info">Add Reschedule</button>
+                                                    <button id="saveCSV2" class="btn btn-success">Save Reschedule</button>
                                                     <i id="csvLoader2" class="fa fa-spinner fa-spin" style="display: none;"></i>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -477,7 +513,7 @@
                                         })
                                     });
                                 </script>
-                                <div class="row setup-content" id="denied">
+                                <div class="row setup-content" id="denied" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
                                             <div class="alert alert-danger" role="alert" style="margin-top: 15px;">
@@ -543,19 +579,62 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="collectPaymentModal" tabindex="-1" role="dialog" aria-labelledby="collectPaymentModalLabel">
-        <div class="modal-dialog modal-lg" role="document" style="width: 100%; max-width: 100%;">
+    <div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="disburseModalLabel">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="collectPaymentModalLabel">Payment Collection</h4>
+                    <h4 class="modal-title" id="disburseModalLabel">Disburse Loan</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <div id="loanCollectionSchedule" style="margin-top: 30px;"></div>
+                    <form>
+                        <div class="form-group">
+                            <label class=" form-control-label">Actual Disbursement Amount</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="disbursement-amount" type="text" class="form-control" placeholder="0" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Choose a Funding Source</label><strong style="color:red"> *</strong><span id="funding-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <select id="funding" class="form-control" required="required">
+                                    <option selected="selected">-- Select a Funding Source --</option>
+                                    <option value="Default">Default</option>
+                                    <option value="Secondary">Secondary</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Choose a Disbursement Channel</label><strong style="color:red"> *</strong><span id="channel-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <select id="channel" class="form-control" required="required">
+                                    <option selected="selected">-- Select a Channel --</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Disbursement Date</label><strong style="color:red"> *</strong><span id="disbursement-date-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                <input type="date" id="disbursement-date" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">First Repayment Date</label>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                <input type="date" id="repayment-date" class="form-control" required="required">
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="disburse()">Disburse</button>
                 </div>
             </div>
         </div>
@@ -609,11 +688,14 @@
         $(document).ready(function() {
             loadUsers();
             loadComments();
-            loadWorkflowState();
         });
 
         const urlParams = new URLSearchParams(window.location.search);
         const application_id = urlParams.get('id');
+
+        function goToLoanRepayment() {
+            window.location.href = '/loan-repayment?id='+application_id;
+        }
 
         function check(){
             if (localStorage.getItem('role') != 1){
@@ -624,7 +706,6 @@
             }
             else{
                 jQuery('#user').html(localStorage.getItem("name"));
-//                jQuery('#h-role').html(localStorage.getItem("user"));
             }
         }
 
@@ -634,7 +715,6 @@
             modules.forEach(function(k, v){
                 if (k.menu_name === 'Sub Menu'){
                     let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
-//                    if (k.module_tag)
                     $('#'+$(main[0]['module_tag']).attr('id')).append('<ul class="sub-menu children dropdown-menu">'+k.module_tag+'</ul>');
                 }else{
                     $('#sidebar').append(k.module_tag);
@@ -651,16 +731,14 @@
                 'type': 'get',
                 'success': function (result) {
                     let data = result.response,
-                        fullname = data.fullname || '',
                         file_names = Object.keys(data.files),
                         files_count = file_names.length,
                         $carousel_inner = $('.carousel-inner'),
                         $carousel_indicators = $('.carousel-indicators');
 
                     application = data;
-
-                    workflow = (localStorage.getItem("workflows"))? ($.grep(JSON.parse(localStorage.getItem("workflows")), function(e){ return e.ID === data.workflowID; }))[0] : {name:'Workflow'};
-                    $("#workflow-div-title").text(fullname.toUpperCase()+" ("+workflow.name+")");
+                    getWorkflows(application);
+                    loadWorkflowState();
 
                     if (application.schedule && application.schedule[0]){
                         $("#generate-schedule").hide();
@@ -695,6 +773,19 @@
                 },
                 'error': function (err) {
                     console.log('Error');
+                }
+            });
+        }
+
+        function getWorkflows(data){
+            $.ajax({
+                type: "GET",
+                url: "/workflows",
+                success: function (response) {
+                    localStorage.setItem("workflows",JSON.stringify(response.response));
+                    let fullname = data.fullname || '';
+                    workflow = (response.response)? ($.grep(response.response, function(e){ return e.ID === data.workflowID; }))[0] : {name:'Workflow'};
+                    $("#workflow-div-title").text(fullname.toUpperCase()+" ("+workflow.name+")");
                 }
             });
         }
@@ -771,7 +862,7 @@
 
                     $last_btn.hide();
                     $('#current_stage').text(stage.name);
-                    if (stage.stage_name === 'Application Started' && (!application.schedule || !application.schedule[0])){
+                    if (stage.stage_name === 'Application Start' && (!application.schedule || !application.schedule[0])){
                         $('#schedule').hide();
                         $('#generate-schedule').show();
                     }
@@ -794,7 +885,8 @@
 
                     $("#stage-actions").on('click', function (e) {
                         let id = (e.target.id.split('-'))[2];
-                        nextStage(state, workflow_stages, id);
+                        if (id !== '0')
+                            nextStage(state, workflow_stages, id);
                     });
 
                     workflow_stages.forEach(function (stage) {
@@ -833,14 +925,42 @@
                             '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p></a>';
                     }
 
-                    if (stage.stage_name === 'Disbursed'){
-                        $('#collectPaymentButton').show();
-                        $('#generate-schedule-v2').show();
-                        $('#disburse-alert').show();
-                        $("#current_stage").hide();
-                        $("#next-actions").hide();
-                        $(".previous").hide();
-                        $(".next").hide();
+                    if (stage.stage_name === 'Disbursal'){
+                        if (application.status === 2){
+                            $('#collectPaymentButton').show();
+                            $('#generate-schedule-v2').show();
+                            $('#disbursement-cards').show();
+                            $('#disburse-alert').show();
+                            $("#current_stage").hide();
+                            $("#next-actions").hide();
+                            $(".previous").hide();
+                            $(".next").hide();
+
+                            $('#loan-amount-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                            if (!application.payment_history || !application.payment_history[0]){
+                                $('#total-due-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                                $('#last-payment-text').text('N/A');
+                            } else {
+                                let count = 0,
+                                    amount = parseFloat(application.loan_amount);
+                                application.payment_history.forEach(function (payment) {
+                                    count++;
+                                    amount = amount - parseFloat(payment.payment_amount);
+                                    if (count === application.payment_history.length)
+                                        $('#total-due-text').text('₦'+(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                                });
+                                $('#last-payment-text').text(((application.payment_history[0]['date_created']).split(' '))[0]);
+                            }
+                            let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
+                            if (next_payment_date){
+                                let date_array = (((next_payment_date[0]['payment_create_date']).split(' '))[0]).split('-');
+                                $('#next-payment-date-text').text('20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
+                            } else {
+                                $('#next-payment-date-text').text('N/A');
+                            }
+                        }
+                        $('#disbursement-amount').val((parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                        $('#stage-actions').append('<a href="#" id="stage-action-0" class="dropdown-item" data-toggle="modal" data-target="#disburseModal">Disburse Loan</a>');
                     }
 
                     loadAllWorkflowState(workflow_stages);
@@ -918,12 +1038,12 @@
             }
             if (stage_document && !(stage_document.replace(/ /g, '_') in application.files))
                 return swal('Kindly upload required document ('+stage_document+')');
-            if (application.schedule && !application.schedule[0])
+            if (!application.schedule || (application.schedule && !application.schedule[0]))
                 return swal('Kindly upload loan schedule to proceed!');
             $.ajax({
                 'url': '/user/workflow_process/'+application_id+'/'+state.workflowID,
                 'type': 'post',
-                'data': {stage: stage},
+                'data': {stage: stage, user_role:localStorage.getItem('role')},
                 'success': function (data) {
                     if (data.status === 200){
                         $('#document-upload').hide();
@@ -1039,8 +1159,17 @@
                                 let invoice = {},
                                     row = $("<tr />"),
                                     cells = rows[i].split(",");
+                                if (i === 0) {
+                                    cells = ["PRINCIPAL","INTEREST","BALANCE"];
+                                } else if (i === 1) {
+                                    cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
+                                }
                                 for (let j = 0; j < cells.length; j++) {
                                     let cell = $("<td />");
+                                    if (i === 0){
+                                        if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
+                                            cell = $("<td colspan='3' />");
+                                    }
                                     cell.html(cells[j]);
                                     row.append(cell);
                                     switch (j){
@@ -1106,9 +1235,9 @@
                             row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
                     }
                     if (i === 0) {
-                        cells = ["PAYMENT","","","INTEREST","","","BALANCE","COLLECTION"];
+                        cells = ["PRINCIPAL","INTEREST","BALANCE","COLLECTION"];
                     } else if (i === 1) {
-                        cells = ["CREATE","COLLECT","AMOUNT","CREATE","COLLECT","AMOUNT","AMOUNT","STATUS"];
+                        cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT","STATUS"];
                     } else {
                         cells[0] = application.schedule[i - 2]['payment_create_date'];
                         cells[1] = application.schedule[i - 2]['payment_collect_date'];
@@ -1121,6 +1250,10 @@
                     }
                     for (let j = 0; j < cells.length; j++) {
                         let cell = $("<td />");
+                        if (i === 0){
+                            if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
+                                cell = $("<td colspan='3' />");
+                        }
                         if (j === cells.length-1 && i>1){
                             if (parseInt(cells[j]) === 0){
                                 cell.html('<span class="badge badge-danger">Not Paid</span>');
@@ -1137,71 +1270,27 @@
                 $loanSchedule.html('');
                 $loanSchedule.append(table);
             }
-
-            let $loanCollectionSchedule = $("#loanCollectionSchedule");
-            if (application.schedule && application.schedule[0]){
-                let table = $("<table border='1' style='text-align: center;'/>");
-                for (let i = 0; i < application.schedule.length+2; i++) {
-                    let row,
-                        cells = [];
-                    if (i <= 1){
-                        row = $('<tr style="font-weight: bold;" />');
-                    } else {
-                        row = $("<tr />");
-                        if (parseInt(application.schedule[i - 2]['status']) === 0)
-                            row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
-                    }
-                    if (i === 0) {
-                        cells = ["PAYMENT","","","INTEREST","","","BALANCE","COLLECTION",""];
-                    } else if (i === 1) {
-                        cells = ["CREATE","COLLECT","AMOUNT","CREATE","COLLECT","AMOUNT","AMOUNT","STATUS","ACTION"];
-                    } else {
-                        cells[0] = application.schedule[i - 2]['payment_create_date'];
-                        cells[1] = application.schedule[i - 2]['payment_collect_date'];
-                        cells[2] = application.schedule[i - 2]['payment_amount'];
-                        cells[3] = application.schedule[i - 2]['interest_create_date'];
-                        cells[4] = application.schedule[i - 2]['interest_collect_date'];
-                        cells[5] = application.schedule[i - 2]['interest_amount'];
-                        cells[6] = application.schedule[i - 2]['balance'];
-                        cells[7] = cells[8] = application.schedule[i - 2]['payment_status'];
-                    }
-                    for (let j = 0; j < cells.length; j++) {
-                        let cell = $("<td style='padding: 10px;' />");
-                        if (j === cells.length-2 && i>1){
-                            if (parseInt(cells[j]) === 0){
-                                cell.html('<span class="badge badge-danger">Not Paid</span>');
-                            } else {
-                                cell.html('<span class="badge badge-success">Paid</span>');
-                            }
-                        } else if (j === cells.length-1 && i>1) {
-                            if ((parseInt(cells[j]) === 0) && (parseInt(application.schedule[i - 2]['status']))){
-                                cell.html('<button class="btn btn-success" onclick="confirmPayment('+application.schedule[i - 2]['ID'] +
-                                    ')">Confirm Payment <i class="fa fa-check"></i></button>');
-                            }
-                        } else {
-                            cell.html(cells[j]);
-                        }
-                        row.append(cell);
-                    }
-                    table.append(row);
-                }
-                $loanCollectionSchedule.html('');
-                $loanCollectionSchedule.append(table);
-            }
         }
 
-        function confirmPayment(invoice_id) {
+        function disburse() {
+            let disbursal = {};
+            disbursal.funding_source = $('#funding').val();
+            disbursal.disbursement_channel = $('#channel').val();
+            disbursal.disbursement_date = $('#disbursement-date').val();
+            disbursal.repayment_date = $('#repayment-date').val();
+            if (!disbursal.funding_source || !disbursal.disbursement_channel || !disbursal.disbursement_date)
+                return swal('Kindly fill all required fields!');
+
             $.ajax({
-                'url': '/user/application/confirm-payment/'+invoice_id,
-                'type': 'get',
+                'url': '/user/application/disburse/'+application_id,
+                'type': 'post',
+                'data': disbursal,
                 'success': function (data) {
-                    swal('Payment confirmed successfully');
+                    swal('Loan disbursed successfully');
                     window.location.reload();
                 },
                 'error': function (err) {
-                    $csvLoader.hide();
-                    $csvUpload.val('');
-                    swal('Oops! An error occurred while confirming payment');
+                    swal('Oops! An error occurred while disbursing loan');
                 }
             });
         }
@@ -1226,8 +1315,17 @@
                                 let invoice = {},
                                     row = $("<tr />"),
                                     cells = rows[i].split(",");
+                                if (i === 0) {
+                                    cells = ["PRINCIPAL","INTEREST","BALANCE"];
+                                } else if (i === 1) {
+                                    cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
+                                }
                                 for (let j = 0; j < cells.length; j++) {
                                     let cell = $("<td />");
+                                    if (i === 0){
+                                        if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
+                                            cell = $("<td colspan='3' />");
+                                    }
                                     cell.html(cells[j]);
                                     row.append(cell);
                                     switch (j){

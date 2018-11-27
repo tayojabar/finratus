@@ -303,7 +303,7 @@
                             </div>
                             <div class="card-body card-block">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Process Name <strong style="color:red"> *</strong></label>
+                                    <label class="col-sm-3 col-form-label">Workflow Name <strong style="color:red"> *</strong></label>
                                     <div class="col-sm-8 input-group">
                                         <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
                                         <input id="process-name" class="form-control" required="required">
@@ -332,7 +332,7 @@
                                     </div>
                                 </div>
                                 <div class = "form-group">
-                                    <input type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New Process" onclick="addProcess()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                    <input type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New Workflow" onclick="addProcess()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
@@ -372,7 +372,7 @@
                             <!--<small class="form-text text-muted">Maximum of 250 characters</small>-->
                         <!--</div>-->
                         <div class="form-group">
-                            <label class=" form-control-label">Previous Stage</label><strong style="color:red"> *</strong>
+                            <label class=" form-control-label">Start Stage</label><strong style="color:red"> *</strong>
                             <div class="input-group">
                                 <select id="stage-template" class="form-control" required="required">
                                     <option selected="selected">-- Choose Action --</option>
@@ -390,7 +390,7 @@
                         <script type="text/javascript">
                             $("#more-actions-link").click(function() {
                                 $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
-                                    '<select class="form-control local-stages"><option selected="selected">-- Choose Action --</option>' +
+                                    '<select class="form-control local-stages-new"><option selected="selected">-- Choose Action --</option>' +
                                     '</select></div>');
                                 getLocalStages();
                             });
@@ -542,6 +542,14 @@
             });
             let count = $("#sortable").find("li").length;
             $('.count-todos').html(count);
+
+            $.each(JSON.parse(localStorage.getItem('stages')), function (key, val) {
+                if (val.name === 'Application Start'){
+                    $(".local-stages-new").append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                } else {
+                    $(".local-stages-new").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                }
+            });
         }
 
         function getRoles(){
@@ -561,16 +569,20 @@
                 type: "GET",
                 url: "/stages",
                 success: function (response) {
+                    localStorage.setItem('stages',JSON.stringify(response));
                     let local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
                     $.each(response, function (key, val) {
                         if (val.type === 1){
                             val.approverID = 1;
                             val.stageID = val.ID;
-                            delete  val.ID;
+                            delete val.ID;
                             val.stage_name = val.name;
                             val.code = Math.random().toString(36).substring(7);
                             local_stages.push(val);
-                            $("#stage-template").append('<option class="disabled" value = "' + encodeURIComponent(JSON.stringify(val)) + '" disabled="disabled">' + val.name + '</option>');
+//                            $("#stage-template").append('<option class="disabled" value = "' + encodeURIComponent(JSON.stringify(val)) + '" disabled="disabled">' + val.name + '</option>');
+                        }
+                        if (val.name === 'Disbursal'){
+                            $("#stage-template").append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                         } else {
                             $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                         }

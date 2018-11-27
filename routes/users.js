@@ -509,7 +509,7 @@ users.post('/apply', function(req, res) {
                             if(error){
                                 return res.send({"status": 500, "error": error, "response": null});
                             } else {
-                                return res.send({"status": 200, "message": "New Application Added!"});
+                                return res.send({"status": 200, "message": "New Application Added!", "response": application[0]});
                             }
                         });
                     });
@@ -613,26 +613,48 @@ users.get('/application-id/:id', function(req, res, next) {
             result = (result[0])? result[0] : {};
             if (!fs.existsSync(path)){
                 result.files = {};
-                return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
-            }
-            fs.readdir(path, function (err, files){
-                async.forEach(files, function (file, callback){
-                    let filename = file.split('.')[0].split('_');
-                    filename.shift();
-                    obj[filename.join('_')] = path+file;
-                    callback();
-                }, function(data){
-                    result.files = obj;
-                    db.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
-                        if (error) {
-                            res.send({"status": 500, "error": error, "response": null});
-                        } else {
-                            result.schedule = schedule;
-                            return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
-                        }
+                db.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
+                    if (error) {
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        result.schedule = schedule;
+                        db.query('SELECT * FROM schedule_history WHERE applicationID=? AND status=1 ORDER BY ID desc', [application_id], function (error, payment_history, fields) {
+                            if (error) {
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                result.payment_history = payment_history;
+                                return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+                            }
+                        });
+                    }
+                });
+            } else {
+                fs.readdir(path, function (err, files){
+                    async.forEach(files, function (file, callback){
+                        let filename = file.split('.')[0].split('_');
+                        filename.shift();
+                        obj[filename.join('_')] = path+file;
+                        callback();
+                    }, function(data){
+                        result.files = obj;
+                        db.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
+                            if (error) {
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                result.schedule = schedule;
+                                db.query('SELECT * FROM schedule_history WHERE applicationID=? AND status=1 ORDER BY ID desc', [application_id], function (error, payment_history, fields) {
+                                    if (error) {
+                                        res.send({"status": 500, "error": error, "response": null});
+                                    } else {
+                                        result.payment_history = payment_history;
+                                        return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+                                    }
+                                });
+                            }
+                        });
                     });
                 });
-            });
+            }
         }
     });
 });
@@ -824,7 +846,7 @@ users.get('/request/assign_workflow/:id/:workflow_id', function(req, res, next) 
 
 users.post('/workflow_process/:application_id/:workflow_id', function(req, res, next) {
     let stage = req.body.stage,
-        user_role = req.session.user.user_role,
+        user_role = req.body.user_role,
         workflow_id = req.params.workflow_id,
         application_id = req.params.application_id;
     if (!application_id || !workflow_id || !user_role)
@@ -1008,6 +1030,54 @@ users.get('/application/confirm-payment/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Invoice Payment confirmed successfully!"});
+        }
+    });
+});
+
+users.post('/application/confirm-payment/:id/:application_id', function(req, res, next) {
+    let data = req.body;
+    data.payment_status = 1;
+    db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, data, function (error, invoice, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let invoice = {};
+            invoice.invoiceID = req.params.id;
+            invoice.applicationID = req.params.application_id;
+            invoice.payment_amount = data.actual_payment_amount;
+            invoice.interest_amount = data.actual_interest_amount;
+            invoice.fees_amount = data.actual_fees_amount;
+            invoice.penalty_amount = data.actual_penalty_amount;
+            invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Invoice Payment confirmed successfully!"});
+                }
+            });
+        }
+    });
+});
+
+users.post('/application/disburse/:id', function(req, res, next) {
+    let data = req.body;
+    data.status = 2;
+    db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Loan disbursed successfully!"});
+        }
+    });
+});
+
+users.get('/application/invoice-history/:id', function(req, res, next) {
+    db.query('SELECT * FROM schedule_history WHERE invoiceID = ? ORDER BY ID desc', [req.params.id], function (error, history, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Invoice history fetched successfully!", "response":history});
         }
     });
 });

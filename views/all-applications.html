@@ -201,7 +201,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active">All Applications</li>
+                            <li class="active"><a href="/all-applications">All Applications</a></li>
                         </ol>
                     </div>
                 </div>
@@ -476,7 +476,7 @@
                     table[table.length-1] = table[table.length-1].concat(add_workflow_button);
                 }
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
-                $('#bootstrap-data-table').dataTable().fnSort([[4,'desc']]);
+                $('#bootstrap-data-table').dataTable().fnSort([[3,'desc']]);
             });
         }
 
@@ -569,28 +569,6 @@
                 'error': function (err) {
                     $comment.val("");
                     swal('Oops! An error occurred while saving comment');
-                }
-            });
-        }
-
-        function assignWorkflow(){
-            let workflow_id = $("#workflows").val();
-            console.log(workflow_id)
-            if (workflow_id === "-- Choose Workflow Process --")
-                return swal('Kindly select a workflow for assignment');
-            $.ajax({
-                'url': '/user/application/assign_workflow/'+localStorage.getItem("application_id")+'/'+workflow_id,
-                'type': 'get',
-                'success': function (data) {
-                    let applications = data.response;
-                    results = applications;
-                    populateDataTable(applications);
-                    $("#workflows").val("");
-                    swal('Workflow assigned successfully');
-                },
-                'error': function (err) {
-                    $("#workflows").val("");
-                    swal('Oops! An error occurred while assigning workflow');
                 }
             });
         }

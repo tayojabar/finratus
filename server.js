@@ -220,8 +220,11 @@ app.get('/all-workflow', requireLogin, function(req, res){
 });
 
 app.get('/all-requests', requireLogin, function(req, res){
-    res.sendFile('all-requests' +
-        '.html', { root: __dirname+'/views' });
+    res.sendFile('all-requests.html', { root: __dirname+'/views' });
+});
+
+app.get('/loan-repayment', requireLogin, function(req, res){
+    res.sendFile('loan-repayment.html', { root: __dirname+'/views' });
 });
 
 // catch 404 and forward to error handler

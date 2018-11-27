@@ -10,11 +10,11 @@ config.development = {
 };
 
 config.staging = {
-    host     : 'atobz-staging-mysqldbserver.mysql.database.azure.com',
-    port     :'3306',
-    user     : 'azurestaging@atobz-staging-mysqldbserver',
-    password : 'password123*',
-    database : 'azurestaging',
+    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
+    port     : '3306',
+    user     : 'loan35dbadmin@atobz-mysqldbserver',
+    password : 'Loan35Pass@word2018',
+    database : 'staging',
     insecureAuth: true
 };
 

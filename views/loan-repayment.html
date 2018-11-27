@@ -1,0 +1,669 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loan35 Admin</title>
+    <meta name="description" content="Sufee Admin - HTML5 Admin Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="css/jquery.fileupload.css">
+    <link rel="stylesheet" href="css/jquery.fileupload-ui.css">
+    <!-- CSS adjustments for browsers with JavaScript disabled -->
+    <noscript><link rel="stylesheet" href="css/jquery.fileupload-noscript.css"></noscript>
+    <noscript><link rel="stylesheet" href="css/jquery.fileupload-ui-noscript.css"></noscript>
+    <style type="text/css">
+        ul.nav li.active p{color: #ffffff;}
+        a, a p, a h4, a:hover{color: rgb(66, 139, 202);}
+        li.disabled a p, li.disabled a h4 {color: #878787;}
+        li.active a h4 {color: #ffffff;}
+        table{width: 100%;}
+        table th{text-align: center;}
+        .modal-dialog{
+            left: 0;
+        }
+        .thumbnail {
+            padding:0px;
+        }
+        .panel {
+            position:relative;
+        }
+        .panel>.panel-heading:after,.panel>.panel-heading:before{
+            position:absolute;
+            top:11px;left:-16px;
+            right:100%;
+            width:0;
+            height:0;
+            display:block;
+            content:" ";
+            border-color:transparent;
+            border-style:solid solid outset;
+            pointer-events:none;
+        }
+        .panel>.panel-heading:after{
+            border-width:7px;
+            border-right-color:#f7f7f7;
+            margin-top:1px;
+            margin-left:2px;
+        }
+        .panel>.panel-heading:before{
+            border-right-color:#ddd;
+            border-width:8px;
+        }
+        select.form-control{
+            height: 36px !important;
+        }
+        table tr:nth-child(2){
+            font-size: 14px;
+        }
+        table tr td{
+            padding: 5px;
+            white-space: nowrap;
+        }
+        table tr:nth-child(1) td, table tr:nth-child(2) td{
+            padding: 10px;
+        }
+        .badge-success {
+            background-color: #28a745;
+        }
+        .badge-danger {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body class="open">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+<!-- Left Panel -->
+    <script type="text/javascript">
+        jQuery(document).ready(function($){ check(); loadMenus();});
+    </script>
+
+<aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+
+            <div class="navbar-header">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                <a class="navbar-brand hidden" href="/dashboard">35</a>
+            </div>
+
+            <div id="main-menu" class="main-menu collapse navbar-collapse">
+                <ul id="sidebar" class="nav navbar-nav">
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+</aside><!-- /#left-panel -->
+    <!-- Left Panel -->
+
+    <!-- Right Panel -->
+    <div id="right-panel" class="right-panel">
+        <!-- Header-->
+        <header id="header" class="header">
+
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                    <div class="header-left">
+                        <button class="search-trigger"><i class="fa fa-search"></i></button>
+                        <div class="form-inline">
+                            <form class="search-form">
+                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-5">
+                    <div class="user-area dropdown float-right">
+                        <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                        </a>
+
+                        <div class="user-menu dropdown-menu">
+                                <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+
+                                <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+
+                                <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+
+                                <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </header><!-- /header -->
+        <!-- Header-->
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Loan Repayment</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Users</a></li>
+                            <li class="active"><a href="/all-applications">All Applications</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong id="workflow-div-title" class="card-title" style="float: left;"></strong>
+                            </div>
+                            <div class="card-body" style="overflow-x: scroll; width: 1200px;">
+                                <div id="loanCollectionSchedule" style="margin-top: 30px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <span style="margin: 5px;">Comments</span>
+                                <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>
+                            </div>
+                            <div class="card-body">
+                                <div id="comments"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+<!-- Right Panel -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addCommentModalLabel">Post Comment</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class=" form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-comment"></i></div>
+                                <textarea id="comment" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
+                            </div>
+                            <small class="form-text text-muted">Maximum of 250 characters</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="comment()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmPayment" tabindex="-1" role="dialog" aria-labelledby="confirmPaymentLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="confirmPaymentLabel">Repayment</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class=" form-control-label">Principal</label><strong style="color:red"> *</strong><span id="principal-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="principal" type="number" class="form-control" placeholder="0" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Interest</label><strong style="color:red"> *</strong><span id="interest-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="interest" type="number" class="form-control" placeholder="0" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Fees</label><strong style="color:red"> *</strong><span id="fees-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="fees" type="number" class="form-control" placeholder="0" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Penalty</label><strong style="color:red"> *</strong><span id="penalty-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="penalty" type="number" class="form-control" placeholder="0" required="required">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmPayment()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="invoiceHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="invoiceHistoryLabel">Repayment History</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <table id="invoice-history" class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Principal</th>
+                            <th>Interest</th>
+                            <th>Fees</th>
+                            <th>Penalty</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody id="history">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+
+
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>
+
+    <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+    <script src="js/vendor/jquery.ui.widget.js"></script>
+    <!-- The Templates plugin is included to render the upload/download listings -->
+    <script src="https://blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
+    <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+    <script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+    <!-- The Canvas to Blob plugin is included for image resizing functionality -->
+    <script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="js/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="js/jquery.fileupload.js"></script>
+    <!-- The File Upload processing plugin -->
+    <script src="js/jquery.fileupload-process.js"></script>
+    <!-- The File Upload image preview & resize plugin -->
+    <script src="js/jquery.fileupload-image.js"></script>
+    <!-- The File Upload audio preview plugin -->
+    <script src="js/jquery.fileupload-audio.js"></script>
+    <!-- The File Upload video preview plugin -->
+    <script src="js/jquery.fileupload-video.js"></script>
+    <!-- The File Upload validation plugin -->
+    <script src="js/jquery.fileupload-validate.js"></script>
+    <!-- The File Upload user interface plugin -->
+    <script src="js/jquery.fileupload-ui.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            loadUsers();
+            loadComments();
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const application_id = urlParams.get('id');
+
+        function check(){
+            if (localStorage.getItem('role') !== 1){
+                jQuery('#car-models').hide();
+                jQuery('#new-user').hide();
+                jQuery('#models-card').hide();
+                jQuery('#user').html(localStorage.getItem("name"));
+            }
+            else{
+                jQuery('#user').html(localStorage.getItem("name"));
+            }
+        }
+
+        function loadMenus(){
+            var modules = {};
+            modules = JSON.parse(localStorage.getItem("modules"));
+            modules.forEach(function(k, v){
+                if (k.menu_name === 'Sub Menu'){
+                    let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
+                    $('#'+$(main[0]['module_tag']).attr('id')).append('<ul class="sub-menu children dropdown-menu">'+k.module_tag+'</ul>');
+                }else{
+                    $('#sidebar').append(k.module_tag);
+                }
+            });
+        }
+
+        let application;
+
+        function loadUsers(){
+            $.ajax({
+                'url': '/user/application-id/'+application_id,
+                'type': 'get',
+                'success': function (result) {
+                    let data = result.response,
+                        fullname = data.fullname || '';
+                    application = data;
+                    initRepaymentSchedule(application);
+                    $("#workflow-div-title").text(fullname.toUpperCase());
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
+        }
+
+        function loadComments(comments) {
+            if (comments && comments[0]){
+                let $comments = $('#comments');
+                $comments.html('');
+                comments.forEach(function (comment) {
+                    $comments.append('<div class="row">\n' +
+                        '    <div class="col-sm-2">\n' +
+                        '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+                        '    </div>\n' +
+                        '    <div class="col-sm-10">\n' +
+                        '        <div class="panel panel-default">\n' +
+                        '            <div class="panel-heading"><strong>'+comment.fullname+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
+                        '            <div class="panel-body">'+comment.text+'</div>\n' +
+                        '        </div>\n' +
+                        '    </div>\n' +
+                        '</div>');
+                });
+            } else {
+                $.ajax({
+                    'url': '/user/application/comments/'+application_id,
+                    'type': 'get',
+                    'success': function (data) {
+                        let comments = data.response,
+                            $comments = $('#comments');
+                        $comments.html('');
+                        if (!comments[0])
+                            return $comments.append('<h2 style="margin: auto;">No comments available yet!</h2>');
+                        comments.forEach(function (comment) {
+                            $comments.append('<div class="row">\n' +
+                                '    <div class="col-sm-2">\n' +
+                                '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+                                '    </div>\n' +
+                                '    <div class="col-sm-10">\n' +
+                                '        <div class="panel panel-default">\n' +
+                                '            <div class="panel-heading"><strong>'+comment.fullname+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
+                                '            <div class="panel-body">'+comment.text+'</div>\n' +
+                                '        </div>\n' +
+                                '    </div>\n' +
+                                '</div>');
+                        });
+                    },
+                    'error': function (err) {
+                        console.log('Error');
+                        swal('No internet connection');
+                    }
+                });
+            }
+        }
+
+        function comment(){
+            let $comment = $("#comment"),
+                comment = $comment.val();
+            if (!comment || comment === ""){
+                $comment.val("");
+                return swal('Kindly type a brief comment');
+            }
+            $.ajax({
+                'url': '/user/application/comments/'+application_id,
+                'type': 'post',
+                'data': {text: comment},
+                'success': function (data) {
+                    let comments = data.response;
+                    results = comments;
+                    loadComments(comments);
+                    $comment.val("");
+                    swal('Comment saved successfully');
+                },
+                'error': function (err) {
+                    $comment.val("");
+                    swal('Oops! An error occurred while saving comment');
+                }
+            });
+        }
+
+        function formatMoney(n, c, d, t) {
+            var c = isNaN(c = Math.abs(c)) ? 2 : c,
+                d = d == undefined ? "." : d,
+                t = t == undefined ? "," : t,
+                s = n < 0 ? "-" : "",
+                i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
+                j = (j = i.length) > 3 ? j % 3 : 0;
+
+            return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+        }
+
+        function initRepaymentSchedule(application) {
+            let $loanCollectionSchedule = $("#loanCollectionSchedule");
+            if (application.schedule && application.schedule[0]){
+                let table = $("<table border='1' style='text-align: center;'/>");
+                for (let i = 0; i < application.schedule.length+2; i++) {
+                    let row,
+                        cells = [];
+                    if (i <= 1){
+                        row = $('<tr style="font-weight: bold;" />');
+                    } else {
+                        row = $("<tr />");
+                        if (parseInt(application.schedule[i - 2]['status']) === 0)
+                            row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
+                    }
+                    if (i === 0) {
+                        cells = ["","","","SCHEDULED PAYMENTS","ACTUAL PAYMENTS","AMOUNT DUE"];
+                    } else if (i === 1) {
+                        cells = ["DUE","STATUS","ACTION","PRINCIPAL","INTEREST","FEES","PENALTY","TOTAL","PRINCIPAL","INTEREST","FEES","PENALTY","TOTAL","PRINCIPAL","INTEREST","FEES","PENALTY","TOTAL"];
+                    } else {
+                        cells[0] = application.schedule[i - 2]['payment_collect_date'];
+                        cells[1] = cells[2] = application.schedule[i - 2]['payment_status'];
+                        cells[3] = application.schedule[i - 2]['payment_amount'];
+                        cells[4] = application.schedule[i - 2]['interest_amount'];
+                        cells[5] = application.schedule[i - 2]['fees_amount'];
+                        cells[6] = application.schedule[i - 2]['penalty_amount'];
+                        cells[7] = totalPayment(application.schedule[i - 2]);
+                        cells[8] = application.schedule[i - 2]['actual_payment_amount'];
+                        cells[9] = application.schedule[i - 2]['actual_interest_amount'];
+                        cells[10] = application.schedule[i - 2]['actual_fees_amount'];
+                        cells[11] = application.schedule[i - 2]['actual_penalty_amount'];
+                        cells[12] = totalActualPayment(application.schedule[i - 2]);
+                        cells[13] = (parseFloat(cells[3])-parseFloat(cells[8])).toString();
+                        cells[14] = (parseFloat(cells[4])-parseFloat(cells[9])).toString();
+                        cells[15] = (parseFloat(cells[5])-parseFloat(cells[10])).toString();
+                        cells[16] = (parseFloat(cells[6])-parseFloat(cells[11])).toString();
+                        cells[17] = (parseFloat(cells[13])+parseFloat(cells[14])+parseFloat(cells[15])+parseFloat(cells[16])).toString();
+                    }
+                    for (let j = 0; j < cells.length; j++) {
+                        let cell = $("<td />");
+                        if (i === 0){
+                            if (cells[j] !== ""){
+                                cell = $("<td colspan='5' />");
+                                cell.html(cells[j]);
+                            }
+                        } else if (i === 1){
+                            cell.html(cells[j]);
+                        } else {
+                            if (j === 0 && i>1){
+                                cell.html(cells[j]);
+                            } else if (j === 1 && i>1){
+                                if (parseInt(cells[j]) === 0){
+                                    cell.html('<span class="badge badge-danger">Not Paid</span>');
+                                } else {
+                                    cell.html('<span class="badge badge-success">Paid</span>');
+                                }
+                            } else if (j === 2 && i>1) {
+                                if (parseInt(application.schedule[i - 2]['status']) !== 0){
+                                    cell.html('<div class="btn-group">\n' +
+                                                '    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                                                '        <i class="fa fa-list"></i>\n' +
+                                                '    </button>\n' +
+                                                '    <div class="dropdown-menu">\n' +
+                                                '        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirmPayment" onclick="confirmPaymentModal('+application.schedule[i - 2]['ID']+')">Confirm Payment</a>\n' +
+                                                '        <div class="dropdown-divider"></div>\n' +
+                                                '        <a class="dropdown-item" data-toggle="modal" data-target="#invoiceHistory" href="#" onclick="invoiceHistory('+application.schedule[i - 2]['ID']+')">Payment History</a>\n' +
+                                                '    </div>\n' +
+                                                '</div>');
+                                } else {
+                                    cell.html('<div class="btn-group">\n' +
+                                        '    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                                        '        <i class="fa fa-list"></i>\n' +
+                                        '    </button>\n' +
+                                        '    <div class="dropdown-menu">\n' +
+                                        '        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#invoiceHistory" onclick="invoiceHistory('+application.schedule[i - 2]['ID']+')">Payment History</a>\n' +
+                                        '    </div>\n' +
+                                        '</div>');
+                                }
+                            } else {
+                                if (cells[j] !== "0"){
+                                    cell = $("<td style='font-size: 14px;' />");
+                                    cell.html('₦'+(parseFloat(cells[j])).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                                } else {
+                                    cell.html('--');
+                                }
+                            }
+                        }
+                        row.append(cell);
+                    }
+                    table.append(row);
+                }
+                $loanCollectionSchedule.html('');
+                $loanCollectionSchedule.append(table);
+            }
+        }
+
+        function totalPayment(a){
+            return (parseFloat(a.payment_amount)+parseFloat(a.interest_amount)+parseFloat(a.fees_amount)+parseFloat(a.penalty_amount)).toString();
+        }
+
+        function totalActualPayment(a){
+            return (parseFloat(a.actual_payment_amount)+parseFloat(a.actual_interest_amount)+parseFloat(a.actual_fees_amount)+parseFloat(a.actual_penalty_amount)).toString();
+        }
+
+        let invoice_id;
+
+        function confirmPaymentModal(id) {
+            invoice_id = id;
+            let invoice = ($.grep(application.schedule, function (e) { return parseInt(e.ID) === parseInt(invoice_id) }))[0];
+            $('#principal').val(invoice.payment_amount);
+            $('#interest').val(invoice.interest_amount);
+            $('#fees').val(invoice.fees_amount);
+            $('#penalty').val(invoice.penalty_amount);
+            $('#principal').attr({max:invoice.payment_amount});
+            $('#interest').attr({max:invoice.interest_amount});
+            $('#fees').attr({max:invoice.fees_amount});
+            $('#penalty').attr({max:invoice.penalty_amount});
+        }
+
+        function confirmPayment() {
+            let invoice = {};
+            invoice.actual_payment_amount = $('#principal').val();
+            invoice.actual_interest_amount = $('#interest').val();
+            invoice.actual_fees_amount = $('#fees').val();
+            invoice.actual_penalty_amount = $('#penalty').val();
+            $.ajax({
+                'url': '/user/application/confirm-payment/'+invoice_id+'/'+application_id,
+                'type': 'post',
+                'data': invoice,
+                'success': function (data) {
+                    swal('Payment confirmed successfully');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    swal('Oops! An error occurred while confirming payment');
+                }
+            });
+        }
+
+        function invoiceHistory(invoice_id) {
+            $.ajax({
+                'url': '/user/application/invoice-history/'+invoice_id,
+                'type': 'get',
+                'success': function (data) {
+                    $("#invoice-history").dataTable().fnClearTable();
+                    $.each(data.response, function(k, v){
+                        let table = [
+                            v.ID,
+                            v.payment_amount,
+                            v.interest_amount,
+                            v.fees_amount,
+                            v.penalty_amount,
+                            v.date_created
+                        ];
+                        $('#invoice-history').dataTable().fnAddData(table);
+                        $('#stages-table').dataTable().fnSort([[0,'desc']]);
+                    });
+                },
+                'error': function (err) {
+                    swal('No internet connection');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
