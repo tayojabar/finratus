@@ -958,7 +958,15 @@ function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
                         let next_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(application_last_process[0]['next_stage'])),
                             current_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(application_last_process[0]['current_stage']));
                         if (stages[next_stage_index+1]){
-                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                            if (application_last_process[0]['next_stage'] !== stages[next_stage_index+1]['stageID']){//current stage must not be equal to next stage
+                                callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                            } else {
+                                if (stages[next_stage_index+2]){
+                                    callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage_index+2]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                                } else {
+                                    callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'], approver_id:stages[current_stage_index]['approverID']});
+                                }
+                            }
                         } else {
                             callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'], approver_id:stages[current_stage_index]['approverID']});
                         }
@@ -972,7 +980,15 @@ function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
                 if (stage['next_stage']){
                     callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stage['next_stage'], approver_id:stages[current_stage_index]['approverID']});
                 }else if (stages[next_stage_index]){
-                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                    if (stage['current_stage'] !== stages[next_stage_index]['stageID']){
+                        callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                    } else {
+                        if (stages[next_stage_index+1]){
+                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                        } else {
+                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[current_stage_index]['approverID']});
+                        }
+                    }
                 } else {
                     callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[current_stage_index]['approverID']});
                 }

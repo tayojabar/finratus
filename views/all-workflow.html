@@ -194,7 +194,6 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Description</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -321,7 +320,7 @@
         function read_write(){
             let w;
             var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
             perms.forEach(function (k,v){
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
@@ -402,21 +401,25 @@
         }
 
         function openModal(id) {
-            let stages = localStorage.getItem("workflow_stages");
-            if (stages){
-                let data = $.grep(JSON.parse(stages), function(e){ return e.workflowID === id; });
-                $("#stages-table").dataTable().fnClearTable();
-                $.each(data, function(k, v){
-                    let table = [
-                        v.ID,
-                        v.name,
-                        v.description,
-                        v.stage_name
-                    ];
-                    $('#stages-table').dataTable().fnAddData(table);
-                    $('#stages-table').dataTable().fnSort([[0,'asc']]);
-                });
-            }
+            $.ajax({
+                'url': '/workflow-stages/'+id,
+                'type': 'get',
+                'success': function (data) {
+                    $("#stages-table").dataTable().fnClearTable();
+                    $.each(data.response, function(k, v){
+                        let table = [
+                            v.ID,
+                            v.name,
+                            v.stage_name
+                        ];
+                        $('#stages-table').dataTable().fnAddData(table);
+                        $('#stages-table').dataTable().fnSort([[0,'asc']]);
+                    });
+                },
+                'error': function (err) {
+                    swal('No internet connection');
+                }
+            });
         }
     </script>
 
