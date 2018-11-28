@@ -230,7 +230,7 @@
                                         <strong id="back-inspection" class="pull-right"> Back </strong>
                                     </div>
                                     <div class="card-body">
-                                        <table id="inspections" class="table table-striped table-bordered">
+                                        <table id="inspection" class="table table-striped table-bordered">
                                             <thead>
                                             <tr>
                                                 <th>Inspection Date</th>
@@ -572,9 +572,9 @@
         //   $('table.table table-striped table-bordered').dataTable();
             console.log(window.location.pathname.split('/')[1]);
           loadOwners();
-          $('#carousel').carousel({
-				interval: 5000
-		    });
+//          $('#carousel').carousel({
+//				interval: 5000
+//		    });
         } );
 
         $(document).ajaxStart(function(){
@@ -674,7 +674,7 @@
             }
         });
         
-        var myTable3 = $('#inspections')
+        var myTable3 = $('#inspection')
         .DataTable({
             bAutoWidth: false,
             "aoColumns": [
@@ -716,7 +716,7 @@
             var name = $(this).attr("name");
             localStorage.setItem("vehicle", name);
             $('#v-num').html(name+' Inspection(s)');
-            $('#inspections').dataTable().fnClearTable();
+            $('#inspection').dataTable().fnClearTable();
             loadVehicleInspections(id);
         });
         
@@ -811,7 +811,6 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
                     var brands = JSON.parse(data);
                     populateOwnersTable(brands);
                 },
@@ -848,7 +847,6 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
                     var vehicles = JSON.parse(data);
                     populateVehiclesTable(vehicles);
                 },
@@ -860,11 +858,8 @@
         }
 
         function populateVehiclesTable(models){
-            console.log(models.length);
-            console.log("populating data table...");
             // clear the table before populating it with more data
             //$("#models").dataTable().clear();
-            console.log("cleared data table...");
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             if (models.length == 0){
@@ -888,7 +883,6 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
                     var inspections = JSON.parse(data);
                     populateInspectionsTable(inspections);
                 },
@@ -900,38 +894,29 @@
         }
         
         function populateInspectionsTable(inspections){
-            console.log(inspections.length);
-            console.log("populating data table...");
+
             // clear the table before populating it with more data
-            //$("#models").dataTable().clear();
-            console.log("cleared data table...");
             // var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
             //               '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
-            if (inspections.length == 0){
-                $("#inspections").dataTable().fnClearTable();
+            if (inspections.length === 0){
+                $("#inspection").dataTable().fnClearTable();
             }else{
-                $.each(inspections, function(k, v){
-                    var d1 = Date.parse(v.Date_Inspected);
+                jQuery.each(inspections, function(k, v){
                     //alert(k);
                     //alert(d1.toString('dd/mm/yyyy')); 
                     let stat;
-                    if (v.Inspection_Status == 1) {
+                    if (v.Inspection_Status === 1) {
                         stat = '<span class="label label-success" style="background-color:green; color:white; padding: 5px; border-radius: 5px">Passed</span>';
                     }
-                    else if (v.Inspection_Status == 0){
+                    else if (v.Inspection_Status === 0){
                         stat = '<span class="label label-danger" style="background-color:red; color:white; padding: 5px; border-radius: 5px">Failed</span>';
                     }
                     else{
                         stat = '<span class="label label-warning" style="background-color:orange; color:white; padding: 5px; border-radius: 5px">Pending</span>';
                     }
-                    console.log(v.Inspection_Status);
+//                    console.log(v.Inspection_Status);
                     var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+formatDate(v.Date_Inspected)+'" name = "'+v.Vehicle+'" value="'+formatDate(v.Date_Inspected)+'"/></td>';
-                    $('#inspections').dataTable().fnAddData( [
-                        date, stat
-                        // "Make",
-                        // "Make",
-                        // action
-                    ]);
+                    $("#inspection").dataTable().fnAddData([date, stat]);
                 });
             }
         }
@@ -942,7 +927,6 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
                     var details = JSON.parse(data);
                     loadImages(localStorage.getItem("vehicle"));
                     populateCards(details);
