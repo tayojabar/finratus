@@ -103,6 +103,7 @@
                     test[key] = val;
                 });
                 Cookies.set('session', test["id"]);
+                localStorage.setItem("user_obj",JSON.stringify(test));
                 localStorage.setItem("name", test["fullname"]);
                 localStorage.setItem("user", test["role"]);
                 localStorage.setItem("permissions", JSON.stringify(test["permissions"]));
