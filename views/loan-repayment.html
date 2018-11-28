@@ -311,7 +311,9 @@
                             <th>Interest</th>
                             <th>Fees</th>
                             <th>Penalty</th>
+                            <th>Paid By</th>
                             <th>Date</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody id="history">
@@ -552,7 +554,7 @@
                         cells[9] = (cells[9]).toString();
                         cells[10] = (cells[10]).toString();
                         cells[11] = (cells[11]).toString();
-                        cells[12] = totalActualPayment(application.schedule[i - 2]);
+                        cells[12] = totalActualPayment({actual_payment_amount:cells[8],actual_interest_amount:cells[9],actual_fees_amount:cells[10],actual_penalty_amount:cells[11]});
                         cells[13] = (parseFloat(cells[3])-parseFloat(cells[8])).toString();
                         cells[14] = (parseFloat(cells[4])-parseFloat(cells[9])).toString();
                         cells[15] = (parseFloat(cells[5])-parseFloat(cells[10]) > 0)?(parseFloat(cells[5])-parseFloat(cells[10])).toString():'0';
@@ -592,12 +594,12 @@
                                 if (parseInt(cells[j]) === 0){
                                     cell.html('<span class="badge badge-danger">Not Paid</span>');
                                 } else if (parseInt(cells[j]) === 2) {
-                                    cell.html('<span class="badge badge-warning">Ongoing</span>');
-                                } else {
+                                    cell.html('<span class="badge badge-warning">Part Paid</span>');
+                                } else if (parseInt(cells[j]) === 1) {
                                     cell.html('<span class="badge badge-success">Paid</span>');
                                 }
                             } else if (j === 2 && i>1) {
-                                if (parseInt(application.schedule[i - 2]['status']) !== 0){
+                                if ((parseInt(application.schedule[i - 2]['status']) !== 0) && (parseInt(cells[j]) !== 1)){
                                     cell.html('<div class="btn-group">\n' +
                                                 '    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
                                                 '        <i class="fa fa-list"></i>\n' +
@@ -657,16 +659,19 @@
             return (parseFloat(a.actual_payment_amount)+parseFloat(a.actual_interest_amount)+parseFloat(a.actual_fees_amount)+parseFloat(a.actual_penalty_amount)).toString();
         }
 
-        let invoice_id;
+        let invoice_id,
+            expected_invoice;
 
         function confirmPaymentModal(id) {
             invoice_id = id;
-            let invoice = ($.grep(application.schedule, function (e) { return parseInt(e.ID) === parseInt(invoice_id) }))[0];
+            let invoice_obj = ($.grep(application.schedule, function (e) { return parseInt(e.ID) === parseInt(invoice_id) }))[0],
+                invoice = $.extend({},invoice_obj);
             let payment_history = $.grep(application.payment_history,function(e) {return (e.invoiceID===parseInt(invoice_id) && e.status===1)});
             for (let k = 0; k < payment_history.length; k++){
                 invoice.payment_amount -= parseFloat(payment_history[k]['payment_amount']);
                 invoice.interest_amount -= parseFloat(payment_history[k]['interest_amount']);
             }
+            expected_invoice = invoice;
             $('#principal').val(invoice.payment_amount);
             $('#interest').val(invoice.interest_amount);
             $('#fees').val(0);
@@ -676,23 +681,53 @@
         }
 
         function confirmPayment() {
-            let invoice = {};
+            let invoice = {},
+                invoice_index = application.schedule.map(function(e) { return parseInt(e.ID); }).indexOf(parseInt(invoice_id));
             invoice.actual_payment_amount = $('#principal').val();
             invoice.actual_interest_amount = $('#interest').val();
             invoice.actual_fees_amount = $('#fees').val();
             invoice.actual_penalty_amount = $('#penalty').val();
-            $.ajax({
-                'url': '/user/application/confirm-payment/'+invoice_id+'/'+application_id,
-                'type': 'post',
-                'data': invoice,
-                'success': function (data) {
-                    swal('Payment confirmed successfully');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    swal('Oops! An error occurred while confirming payment');
-                }
-            });
+            if (parseFloat(invoice.actual_payment_amount) > parseFloat(expected_invoice.payment_amount)){
+                if (!application.schedule[invoice_index+1])
+                    return swal('Overpayment is not allowed on this invoice');
+                let overpayment = parseFloat(invoice.actual_payment_amount) - parseFloat(expected_invoice.payment_amount);
+                invoice.actual_payment_amount = expected_invoice.payment_amount;
+                $.ajax({
+                    'url': '/user/application/confirm-payment/'+invoice_id+'/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
+                    'type': 'post',
+                    'data': invoice,
+                    'success': function (data) {
+                        $.ajax({
+                            'url': '/user/application/confirm-payment/'+application.schedule[invoice_index+1]['ID']+'/'+application_id,
+                            'type': 'post',
+                            'data': {actual_payment_amount:overpayment,actual_interest_amount:0,actual_fees_amount:0,actual_penalty_amount:0},
+                            'success': function (data) {
+                                swal('Payment confirmed successfully');
+                                window.location.reload();
+                            },
+                            'error': function (err) {
+                                swal('Oops! An error occurred while confirming payment');
+                            }
+                        });
+                    },
+                    'error': function (err) {
+                        swal('Oops! An error occurred while confirming payment');
+                    }
+                });
+            } else {
+                $.ajax({
+                    'url': '/user/application/confirm-payment/'+invoice_id+'/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
+                    'type': 'post',
+                    'data': invoice,
+                    'success': function (data) {
+                        swal('Payment confirmed successfully');
+                        window.location.reload();
+                    },
+                    'error': function (err) {
+                        swal('Oops! An error occurred while confirming payment');
+                    }
+                });
+            }
         }
 
         function invoiceHistory(invoice_id) {
@@ -708,11 +743,31 @@
                             v.interest_amount,
                             v.fees_amount,
                             v.penalty_amount,
+                            v.agent,
                             v.date_created
                         ];
+                        if (v.status === 0){
+                            table.push('Payment Reversed');
+                        } else if (v.status === 1){
+                            table.push('<button class="btn btn-danger" onclick="reversePayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                        }
                         $('#invoice-history').dataTable().fnAddData(table);
                         $('#invoice-history').dataTable().fnSort([[0,'desc']]);
                     });
+                },
+                'error': function (err) {
+                    swal('No internet connection');
+                }
+            });
+        }
+
+        function reversePayment(invoice_id) {
+            $.ajax({
+                'url': '/user/application/payment-reversal/'+invoice_id,
+                'type': 'get',
+                'success': function (data) {
+                    swal('Payment reversed successfully');
+                    window.location.reload();
                 },
                 'error': function (err) {
                     swal('No internet connection');

@@ -245,6 +245,16 @@
                         <div class="card">
                             <div class="card-header">
                                 <strong id="workflow-div-title" class="card-title" style="float: left; margin: 15px;">Workflow</strong>
+                                <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
+                                <div id="close-loan" class="btn-group" style="float: right; display: none;margin-top: 5px;">
+                                    <button type="button" class="btn btn-danger btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Close Loan
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#payOffModal" onclick="openPayOffModal()">Pay Off</a>
+                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#writeOffModal" onclick="openWriteOffModal()">Write Off</a>
+                                    </div>
+                                </div>
                                 <div id="next-actions" class="btn-group" style="float: right;">
                                     <button type="button" class="btn btn-success btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-forward"></i>
@@ -640,6 +650,113 @@
         </div>
     </div>
 
+    <div class="modal fade" id="writeOffModal" tabindex="-1" role="dialog" aria-labelledby="writeOffModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="writeOffModalLabel">Write Off Loan</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class=" form-control-label">Account Holders Name</label>
+                            <div class="input-group">
+                                <input id="writeoff-name" type="text" class="form-control" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Write Off Amount</label>
+                            <div class="input-group">
+                                <input id="writeoff-amount" type="text" class="form-control" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Notes</label>
+                            <div class="input-group">
+                                <textarea id="writeoff-notes" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
+                            </div>
+                            <small class="form-text text-muted">Maximum of 250 characters</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="writeOffLoan()">Write Off</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="payOffModal" tabindex="-1" role="dialog" aria-labelledby="payOffModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="payOffModalLabel">Pay Off Loan</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class=" form-control-label">Payoff Amount</label>
+                            <div class="input-group">
+                                <input id="payoff-amount" type="text" class="form-control" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Write off interest amount</label><strong style="color:red"> *</strong>
+                            <div class="input-group">
+                                <input id="payoff-interest" type="number" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Enter Date</label><strong style="color:red"> *</strong>
+                            <div class="input-group">
+                                <input id="payoff-date" type="date" class="form-control" required="required">
+                            </div>
+                            <small class="form-text text-muted">Note, repayment date cannot be a future date</small>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Choose a Disbursement Channel</label><strong style="color:red"> *</strong>
+                            <div class="input-group">
+                                <select id="payoff-channel" class="form-control" required="required">
+                                    <option selected="selected">-- Select a Channel --</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Include on-hand interest</label>
+                            <div class="input-group">
+                                <div class="radio">
+                                    <label><input type="radio" name="payoff-include-interest" value="Daily">Daily</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input type="radio" name="payoff-include-interest" value="Monthly">Monthly</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input type="radio" name="payoff-include-interest" value="All">All</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Notes</label>
+                            <div class="input-group">
+                                <textarea id="payoff-notes" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
+                            </div>
+                            <small class="form-text text-muted">Maximum of 250 characters</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="payOffLoan()">Pay Off</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
@@ -904,8 +1021,12 @@
 
                     $("#stage-actions").on('click', function (e) {
                         let id = (e.target.id.split('-'))[2];
-                        if (id !== '0')
-                            nextStage(state, workflow_stages, id);
+                        if (!id){
+                            nextStage(state);
+                        } else {
+                            if (id !== '0')
+                                nextStage(state, workflow_stages, id);
+                        }
                     });
 
                     workflow_stages.forEach(function (stage) {
@@ -955,6 +1076,17 @@
                             $(".previous").hide();
                             $(".next").hide();
 
+                            if (application.close_status === 0){
+                                $('#close-loan').show();
+                            } else {
+                                $('#loan_closed').show();
+                                if (application.close_status === 1){
+                                    $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
+                                } else if (application.close_status === 2){
+                                    $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
+                                }
+                            }
+
                             $('#loan-amount-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                             if (!application.payment_history || !application.payment_history[0]){
                                 $('#total-due-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
@@ -971,7 +1103,7 @@
                                 $('#last-payment-text').text(((application.payment_history[0]['date_created']).split(' '))[0]);
                             }
                             let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
-                            if (next_payment_date){
+                            if (next_payment_date && next_payment_date[0]){
                                 let date_array = (((next_payment_date[0]['payment_create_date']).split(' '))[0]).split('-');
                                 $('#next-payment-date-text').text('20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
                             } else {
@@ -1002,10 +1134,6 @@
 
                     loadWorkflowStages(state);
                     allWells.hide();
-
-                    $('.next').on('click', function(e) {
-                        nextStage(state);
-                    });
 
                     $('.previous').on('click', function(e) {
                         previousStage(state,states);
@@ -1394,6 +1522,64 @@
                         swal('Oops! An error occurred while saving schedule');
                     }
                 });
+            });
+        }
+        
+        function openPayOffModal() {
+            $('#payoff-amount').val($('#total-due-text').text());
+            let interest = 0;
+            let invoices = $.grep(application.schedule,function (e) {return (parseInt(e.status)===1 && parseInt(e.payment_status)===0)});
+            if (invoices && invoices[0]){
+                invoices.forEach(function (invoice) {
+                    interest += parseFloat(invoice.interest_amount);
+                    $('#payoff-interest').val(interest);
+                });
+            } else {
+                $('#payoff-interest').val(0);
+            }
+        }
+
+        function openWriteOffModal() {
+            $('#writeoff-name').val(application.fullname);
+            $('#writeoff-amount').val($('#total-due-text').text());
+        }
+        
+        function writeOffLoan() {
+            $.ajax({
+                'url': '/user/application/write-off/'+application_id,
+                'type': 'post',
+                'data': {close_comment:$('#writeoff-notes').val()},
+                'success': function (data) {
+                    swal('Loan closed successfully');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    swal('Oops! An error occurred while closing loan');
+                }
+            });
+        }
+
+        function payOffLoan() {
+            let payoff = {};
+            payoff.close_interest = $('#payoff-interest').val();
+            payoff.close_date = $('#payoff-date').val();
+            payoff.close_channel = $('#payoff-channel').val();
+            payoff.close_comment = $('#payoff-notes').val();
+            if ($('input[name=payoff-include-interest]:checked').val())
+                payoff.close_include_interest = $('input[name=payoff-include-interest]:checked').val();
+            if (!payoff.close_interest || !payoff.close_date || !payoff.close_channel)
+                return swal('Kindly fill all required inputs to close loan');
+            $.ajax({
+                'url': '/user/application/pay-off/'+application_id,
+                'type': 'post',
+                'data': payoff,
+                'success': function (data) {
+                    swal('Loan closed successfully');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    swal('Oops! An error occurred while closing loan');
+                }
             });
         }
     </script>

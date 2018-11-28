@@ -633,7 +633,7 @@ users.get('/application-id/:id', function(req, res, next) {
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
         query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
+        'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.query(query, [application_id], function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -1062,7 +1062,7 @@ users.get('/application/confirm-payment/:id', function(req, res, next) {
     });
 });
 
-users.post('/application/confirm-payment/:id/:application_id', function(req, res, next) {
+users.post('/application/confirm-payment/:id/:application_id/:agent_id', function(req, res, next) {
     let data = req.body;
     data.payment_status = 1;
     db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, data, function (error, invoice, fields) {
@@ -1071,6 +1071,7 @@ users.post('/application/confirm-payment/:id/:application_id', function(req, res
         } else {
             let invoice = {};
             invoice.invoiceID = req.params.id;
+            invoice.agentID = req.params.agent_id;
             invoice.applicationID = req.params.application_id;
             invoice.payment_amount = data.actual_payment_amount;
             invoice.interest_amount = data.actual_interest_amount;
@@ -1101,7 +1102,8 @@ users.post('/application/disburse/:id', function(req, res, next) {
 });
 
 users.get('/application/invoice-history/:id', function(req, res, next) {
-    db.query('SELECT * FROM schedule_history WHERE invoiceID = ? ORDER BY ID desc', [req.params.id], function (error, history, fields) {
+    db.query('SELECT s.ID, s.invoiceID, s.payment_amount, s.interest_amount, s.fees_amount, s.penalty_amount, s.date_created, s.status,' +
+        's.applicationID, u.fullname AS agent FROM schedule_history AS s, users AS u WHERE s.agentID=u.ID AND invoiceID = ? ORDER BY ID desc', [req.params.id], function (error, history, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
@@ -1110,6 +1112,61 @@ users.get('/application/invoice-history/:id', function(req, res, next) {
     });
 });
 
+users.get('/application/payment-reversal/:id', function(req, res, next) {
+    db.query('UPDATE schedule_history SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Payment reversed successfully!", "response":history});
+        }
+    });
+});
+
+users.post('/application/pay-off/:id', function(req, res, next) {
+    let data = req.body;
+    data.close_status = 1;
+    db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1 AND payment_status = 0', [req.params.id], function (error, invoices, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    async.forEach(invoices, function (invoice_obj, callback) {
+                        let invoice = {};
+                        invoice.invoiceID = invoice_obj.ID;
+                        invoice.applicationID = req.params.id;
+                        invoice.payment_amount = invoice_obj.payment_amount;
+                        invoice.interest_amount = invoice_obj.interest_amount;
+                        invoice.fees_amount = invoice_obj.fees_amount;
+                        invoice.penalty_amount = invoice_obj.penalty_amount;
+                        invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+                        db.query('UPDATE application_schedules SET payment_status=1 WHERE ID = ?', [invoice_obj.ID], function (error, result, fields) {
+                            db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
+                                callback();
+                            });
+                        });
+                    }, function (data) {
+                        res.send({"status": 200, "message": "Application write off successful!"});
+                    });
+                }
+            });
+        }
+    });
+});
+
+users.post('/application/write-off/:id', function(req, res, next) {
+    let data = req.body;
+    data.close_status = 2;
+    db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Application write off successful!"});
+        }
+    });
+});
 // users.use(function(req, res, next) {
 //     var token = req.body.token || req.headers['token'];
 //     var appData = {};
