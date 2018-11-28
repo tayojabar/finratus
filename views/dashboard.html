@@ -505,18 +505,32 @@
     });
 }
 
+//        function read_write(){
+//            var perms = JSON.parse(localStorage.getItem("permissions"));
+////            console.log(window.location);
+//            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+//            perms.forEach(function (k,v){
+//               if (k.module_name === page){
+//                   if (k.editable !== 1){
+//                       $('.write').hide();
+//                   }
+//               }
+//            });
+//        }
+
         function read_write(){
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-//            console.log(window.location);
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-               if (k.module_name === page){
-                   if (k.editable !== 1){
-                       $('.write').hide();
-                   }
-               }
-            });
+    let w;
+    var perms = JSON.parse(localStorage.getItem("permissions"));
+    var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
+    perms.forEach(function (k,v){
+        if (k.module_name === page){
+            w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
         }
+    });
+    if (parseInt(w[0]['editable']) != 1){
+        $(".write").hide();
+    }
+}
 
     </script>
 

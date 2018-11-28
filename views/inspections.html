@@ -202,7 +202,9 @@
                                 <strong class="card-title">Vehicles owned by
                                     <span id="brand_name"></span>
                                 </strong>
-                                <strong id="back-vehicle" class="pull-right"> Back </strong>
+                                <button class="btn btn-info pull-right">
+                                    <strong id="back-vehicle"><i class="fa fa-arrow-left"></i> Back </strong>
+                                </button>
                             </div>
                             <div class="card-body">
                                 <!-- Vehicle List for Selected Owner -->
@@ -227,7 +229,9 @@
                                         <strong class="card-title">
                                             <span id="v-num"></span>
                                         </strong>
-                                        <strong id="back-inspection" class="pull-right"> Back </strong>
+                                        <button class="btn btn-info pull-right">
+                                            <strong id="back-inspection"><i class="fa fa-arrow-left"></i> Back </strong>
+                                        </button>
                                     </div>
                                     <div class="card-body">
                                         <table id="inspection" class="table table-striped table-bordered">
@@ -248,11 +252,13 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <strong id="info-head" class="card-title">Inspection Information
-                                                <span id="brand_name"></span>
+                                                <!--<span id="brand_name"></span>-->
                                             </strong>
                                             <span class="pull-right">
-                                                <input id="printButton" style="display: none" type="button" value="Print Report" onclick="printReport()"/>
-                                                <strong id="back-date"> Back </strong>
+                                                <input id="printButton" style="display: none; padding:5px" type="button" class="btn-dark write" value="Print Report" onclick="printReport()"/>
+                                                <button class="btn btn-info pull-right">
+                                                    <strong id="back-date"><i class="fa fa-arrow-left"></i> Back </strong>
+                                                </button>
                                             </span>
                                         </div>
                                         <div class="card-body">
@@ -635,14 +641,13 @@
         function read_write(){
             let w;
             var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
             perms.forEach(function (k,v){
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (parseInt(w[0]['editable']) === 1){
-                console.log('Here Now');
+            if (parseInt(w[0]['editable']) != 1){
                 $(".write").hide();
             }
         }

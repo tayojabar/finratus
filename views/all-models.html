@@ -34,7 +34,7 @@
         <!-- Left Panel -->
         <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
         <script type="text/javascript">
-            jQuery(document).ready(function($){ check(); loadMenus();});
+            jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
         </script>
 
         <aside id="left-panel" class="left-panel">
@@ -350,6 +350,20 @@
             });
         }
 
+        function read_write(){
+            let w;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
+            perms.forEach(function (k,v){
+                if (k.module_name === page){
+                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+                }
+            });
+            if (parseInt(w[0]['editable']) != 1){
+                $(".write").hide();
+            }
+        }
+
         var myTable = $('#makes')
             .DataTable({
                 bAutoWidth: false,
@@ -427,7 +441,6 @@
         function populateModelsTable(models){
             // clear the table before populating it with more data
             $("#models").DataTable().clear();
-            console.log("cleared data table...");
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             $.each(models, function(k, v){

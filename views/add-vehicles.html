@@ -338,7 +338,7 @@
                                 <div class="form-group">
                                     <label class=" form-control-label">Color</label>
                                     <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+                                        <div class="input-group-addon"><i class="fa fa-arrow-left"></i></div>
                                         <select id="color" class="form-control">
                                             <option>Red</option>
                                             <option>Orange</option>
@@ -588,14 +588,13 @@
         function read_write(){
             let w;
             var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
             perms.forEach(function (k,v){
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (parseInt(w[0]['editable']) === 1){
-                console.log('Here Now');
+            if (parseInt(w[0]['editable']) != 1){
                 $(".write").hide();
             }
         }
