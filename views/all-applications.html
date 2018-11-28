@@ -409,9 +409,11 @@
                 if (k.menu_name === 'Sub Menu'){
                     let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
                     $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
-                }else{
+                }else if(k.menu_name === 'Main Menu'){
                     $('#sidebar').append(k.module_tag);
                     $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+                }else{
+                    $('#'+k.module_name).show();
                 }
             });
             $.ajax({
