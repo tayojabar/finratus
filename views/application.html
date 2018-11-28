@@ -151,25 +151,25 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
 <!-- Left Panel -->
     <script type="text/javascript">
-        jQuery(document).ready(function($){ check(); loadMenus();});
+        jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
     </script>
 
 <aside id="left-panel" class="left-panel">
-        <nav class="navbar navbar-expand-sm navbar-default">
+    <nav class="navbar navbar-expand-sm navbar-default">
 
-            <div class="navbar-header">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand" href="/dashboard">Loan 35</a>
-                <a class="navbar-brand hidden" href="/dashboard">35</a>
-            </div>
+        <div class="navbar-header">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="/dashboard">Loan 35</a>
+            <a class="navbar-brand hidden" href="/dashboard">35</a>
+        </div>
 
-            <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul id="sidebar" class="nav navbar-nav">
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </nav>
+        <div id="main-menu" class="main-menu collapse navbar-collapse">
+            <ul id="sidebar" class="nav navbar-nav">
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </nav>
 </aside><!-- /#left-panel -->
     <!-- Left Panel -->
 
@@ -443,7 +443,9 @@
                                             <!--<p class="mb-0">Please contact the admin for any issues with disbursement.</p>-->
                                         </div>
                                         <div class="col-md-12 well">
-                                            <h2 class="text-center">Loan Overview <button id="collectPaymentButton" class ="btn btn-primary" style="float: right; display: none;" onclick="goToLoanRepayment()">Collect Payment <i class="fa fa-money"></i></button></h2>
+                                            <h2 class="text-center">Loan Overview
+                                                <button id="collectPaymentButton" class ="btn btn-primary" style="float: right; display: none;" onclick="goToLoanRepayment()">Collect Payment <i class="fa fa-money"></i></button>
+                                            </h2>
                                             <div id="loanSchedule" style="margin-top: 30px;"></div>
                                         </div>
                                     </div>
@@ -483,8 +485,8 @@
                                             <div class="row">
                                                 <div class="col-sm-8">
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
-                                                    <button id="uploadCSV2" class="btn btn-info">Add Reschedule</button>
-                                                    <button id="saveCSV2" class="btn btn-success">Save Reschedule</button>
+                                                    <button id="uploadCSV2" style="display: none" class="btn btn-info">Add Reschedule</button>
+                                                    <button id="saveCSV2" style="display: none" class="btn btn-success">Save Reschedule</button>
                                                     <i id="csvLoader2" class="fa fa-spinner fa-spin" style="display: none;"></i>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -558,6 +560,7 @@
                 </div>
             </div>
         </div><!-- .animated -->
+        <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 <!-- Right Panel -->
 
@@ -807,6 +810,14 @@
             loadComments();
         });
 
+        $(document).ajaxStart(function(){
+            $("#wait").css("display", "block");
+        });
+
+        $(document).ajaxComplete(function(){
+            $("#wait").css("display", "none");
+        });
+
         const urlParams = new URLSearchParams(window.location.search);
         const application_id = urlParams.get('id');
 
@@ -833,9 +844,11 @@
                 if (k.menu_name === 'Sub Menu'){
                     let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
                     $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
-                }else{
+                }else if(k.menu_name === 'Main Menu'){
                     $('#sidebar').append(k.module_tag);
                     $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+                }else{
+                    $('#'+k.module_name).show();
                 }
             });
             $.ajax({
@@ -856,6 +869,20 @@
                     });
                 }
             });
+        }
+
+        function read_write(){
+            let w;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
+            perms.forEach(function (k,v){
+                if (k.module_name === page){
+                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+                }
+            });
+            if (parseInt(w[0]['editable']) != 1){
+                $(".write").hide();
+            }
         }
 
         let workflow,
@@ -1067,7 +1094,7 @@
 
                     if (stage.stage_name === 'Disbursal'){
                         if (application.status === 2){
-                            $('#collectPaymentButton').show();
+//                            $('#collectPaymentButton').show();
                             $('#generate-schedule-v2').show();
                             $('#disbursement-cards').show();
                             $('#disburse-alert').show();

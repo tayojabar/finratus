@@ -103,21 +103,21 @@
     </script>
 
 <aside id="left-panel" class="left-panel">
-        <nav class="navbar navbar-expand-sm navbar-default">
+    <nav class="navbar navbar-expand-sm navbar-default">
 
-            <div class="navbar-header">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand" href="/dashboard">Loan 35</a>
-                <a class="navbar-brand hidden" href="/dashboard">35</a>
-            </div>
+        <div class="navbar-header">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="/dashboard">Loan 35</a>
+            <a class="navbar-brand hidden" href="/dashboard">35</a>
+        </div>
 
-            <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul id="sidebar" class="nav navbar-nav">
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </nav>
+        <div id="main-menu" class="main-menu collapse navbar-collapse">
+            <ul id="sidebar" class="nav navbar-nav">
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </nav>
 </aside><!-- /#left-panel -->
     <!-- Left Panel -->
 
@@ -217,6 +217,7 @@
                 </div>
             </div>
         </div><!-- .animated -->
+        <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 <!-- Right Panel -->
 
@@ -376,6 +377,14 @@
             loadComments();
         });
 
+        $(document).ajaxStart(function(){
+            $("#wait").css("display", "block");
+        });
+
+        $(document).ajaxComplete(function(){
+            $("#wait").css("display", "none");
+        });
+
         const urlParams = new URLSearchParams(window.location.search);
         const application_id = urlParams.get('id');
 
@@ -401,9 +410,30 @@
             modules.forEach(function(k, v){
                 if (k.menu_name === 'Sub Menu'){
                     let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
-                    $('#'+$(main[0]['module_tag']).attr('id')).append('<ul class="sub-menu children dropdown-menu">'+k.module_tag+'</ul>');
-                }else{
+                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+                }else if(k.menu_name === 'Main Menu'){
                     $('#sidebar').append(k.module_tag);
+                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+                }else{
+                    $('#'+k.module_name).show();
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-requests",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#requests-badge').html(v.requests);
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-applications",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#applications-badge').html(v.applications);
+                    });
                 }
             });
         }

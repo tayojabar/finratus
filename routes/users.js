@@ -384,7 +384,7 @@ users.get('/all-requests', function(req, res, next) {
 
 /* GET All Applications count. */
 users.get('/all-applications', function(req, res, next) {
-    var query = 'select count(*) as applications from staging.applications where interest_rate != 0';
+    var query = 'select count(*) as applications from applications where interest_rate != 0';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));

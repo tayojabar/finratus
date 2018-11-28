@@ -32,7 +32,7 @@
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <!-- Left Panel -->
         <script type="text/javascript">
-            jQuery(document).ready(function($){ check(); loadMenus();});
+            jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
         </script>
 
     <aside id="left-panel" class="left-panel">
@@ -174,6 +174,7 @@
                 </div>
                 </div>
             </div><!-- .animated -->
+            <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 
@@ -307,6 +308,14 @@
           read_write();
         });
 
+        $(document).ajaxStart(function(){
+            $("#wait").css("display", "block");
+        });
+
+        $(document).ajaxComplete(function(){
+            $("#wait").css("display", "none");
+        });
+
         function check(){
             if (localStorage.getItem('role') != 1){
                 jQuery('#car-models').hide();
@@ -324,9 +333,11 @@
                 if (k.menu_name === 'Sub Menu'){
                     let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
                     $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
-                }else{
+                }else if(k.menu_name === 'Main Menu'){
                     $('#sidebar').append(k.module_tag);
                     $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+                }else{
+                    $('#'+k.module_name).show();
                 }
             });
             $.ajax({
@@ -352,13 +363,13 @@
         function read_write(){
             let w;
             var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
             perms.forEach(function (k,v){
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (parseInt(w[0]['editable']) === 1){
+            if (parseInt(w[0]['editable']) != 1){
                 $(".write").hide();
             }
         }
