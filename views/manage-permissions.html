@@ -307,6 +307,7 @@
                 </div>
             </div>
         </div><!-- .animated -->
+        <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 
 
@@ -339,6 +340,14 @@
         $('#bootstrap-data-table-export').DataTable();
         getRoles();
         loadModules();
+    });
+
+    $(document).ajaxStart(function(){
+        $("#wait").css("display", "block");
+    });
+
+    $(document).ajaxComplete(function(){
+        $("#wait").css("display", "none");
     });
 
     var myTable = $('#role-table')
@@ -416,7 +425,7 @@
     });
 
     $(document).on("click", "#submit", function (e) {
-        saveRolePermissions(role);
+        saveRolePermissions(localStorage.getItem("selectedRole"));
     });
 
     function saveRolePermissions(r){
@@ -447,7 +456,7 @@
         obj.role = r;
         obj.modules = arr;
         var test = [];
-//        console.log(obj);
+        console.log(obj);
         $.ajax({
             'url': '/submitPermission/'+r+'/',
             'type': 'post',
@@ -554,7 +563,7 @@
     }
 
     function loadRolePermissions(id){
-        localStorage.setItem("selectedRole", id); let roleP = {}; let name;
+        localStorage.setItem("selectedRole", id);  let roleP = {}; let name;
         roleP = $.grep(glob, function(e){return e.id === id;});
         $.each(roleP, function(k, v){
             name = v.role_name;
@@ -567,7 +576,6 @@
             url: "/permissions/"+id+"/",
             data: '{}',
             success: function (response) {
-                console.log(JSON.parse(response).length);
                 if (!(JSON.parse(response).length === 0)){
                     $.each(JSON.parse(response), function(key, val){
                         reads[r++] = [val.module_id, val.read_only];
