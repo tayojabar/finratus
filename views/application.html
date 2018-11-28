@@ -691,6 +691,7 @@
         $(document).ready(function() {
             loadUsers();
             loadComments();
+            console.log(window.location.pathname.split('/')[1]);
         });
 
         $(document).ajaxStart(function(){
