@@ -1,11 +1,17 @@
 let config = {};
 
 config.development = {
-    host     : '140.86.3.63',
+    // host     : '140.86.3.63',
+    // port     : '3306',
+    // user     : 'appuser',
+    // password : 'Pass@word1',
+    // database : 'vehicle_inspection',
+    // insecureAuth: true
+    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
     port     : '3306',
-    user     : 'appuser',
-    password : 'Pass@word1',
-    database : 'vehicle_inspection',
+    user     : 'loan35dbadmin@atobz-mysqldbserver',
+    password : 'Loan35Pass@word2018',
+    database : 'staging',
     insecureAuth: true
 };
 
