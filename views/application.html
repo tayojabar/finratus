@@ -444,7 +444,7 @@
                                         </div>
                                         <div class="col-md-12 well">
                                             <h2 class="text-center">Loan Overview
-                                                <button id="collectPaymentButton" class ="btn btn-primary" style="float: right; display: none;" onclick="goToLoanRepayment()">Collect Payment <i class="fa fa-money"></i></button>
+                                                <button id="collect-payment-button" class ="btn btn-primary" style="float: right; display: none;" onclick="goToLoanRepayment()">Collect Payment <i class="fa fa-money"></i></button>
                                             </h2>
                                             <div id="loanSchedule" style="margin-top: 30px;"></div>
                                         </div>
@@ -1094,7 +1094,7 @@
 
                     if (stage.stage_name === 'Disbursal'){
                         if (application.status === 2){
-//                            $('#collectPaymentButton').show();
+                            $('#collect-payment-button').show();
                             $('#generate-schedule-v2').show();
                             $('#disbursement-cards').show();
                             $('#disburse-alert').show();

@@ -117,7 +117,11 @@
                         $document = $('#document-upload-text').val(),
                         stage_template = $('#stage-template').val(),
                         code = Math.random().toString(36).substring(7),
-                        actions = $('.local-stages').map(function() {
+//                        actions = $('.local-stages').map(function() {
+//                            if (this.value && (this.value !== '-- Choose Action --'))
+//                                return this.value;
+//                        }).get(),
+                        actions = $('.local-stages-new').map(function() {
                             if (this.value && (this.value !== '-- Choose Action --'))
                                 return this.value;
                         }).get(),
