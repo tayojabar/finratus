@@ -490,7 +490,7 @@
         function read_write(){
             let w;
             var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
             perms.forEach(function (k,v){
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});

@@ -140,7 +140,7 @@
                                 if (action_names[0])
                                     stage.action_names = action_names;
                                 let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                                stage.stageID = stage_template_json.ID;
+                                stage.stageID = stage_template_json.ID || stage_template_json.stageID;
                                 stage.stage_name = stage_template_json.name;
                                 stage.code = code;
                                 local_stages.push(stage);
@@ -151,7 +151,7 @@
                         });
                     } else {
                         let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                        stage.stageID = stage_template_json.ID;
+                        stage.stageID = stage_template_json.ID || stage_template_json.stageID;
                         stage.stage_name = stage_template_json.name;
                         stage.code = code;
                         local_stages.push(stage);
@@ -195,6 +195,7 @@
                 $('#document-upload-text').val('');
                 $('#document-upload').prop('checked',false);
                 $('#document-upload-div').hide();
+                $('#stage-action-div').html('');
                 getLocalStages();
             }
 
@@ -534,7 +535,7 @@
         function read_write(){
             let w;
             var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0]; console.log(page);
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
             perms.forEach(function (k,v){
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
@@ -586,6 +587,7 @@
             let count = $("#sortable").find("li").length;
             $('.count-todos').html(count);
 
+            $(".local-stages-new").html('');
             $.each(JSON.parse(localStorage.getItem('stages')), function (key, val) {
                 if (val.name === 'Application Start'){
                     $(".local-stages-new").append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
