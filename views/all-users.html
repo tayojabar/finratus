@@ -341,7 +341,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <div class="write" style="display: none"><button type="button" class="btn btn-primary" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
+                    <div class="write" style="display: none"><button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
                 </div>
             </div>
         </div>
@@ -380,7 +380,7 @@
                 <div class="modal-footer">
                     <span id="pass-error" style="padding-left:0; text-align: left" class="pull-left"></span>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="validate()"><i class="fa fa-save"></i> Save</button>
+                    <button type="button" class="btn btn-primary write" onclick="validate()"><i class="fa fa-save"></i> Save</button>
                 </div>
             </div>
         </div>
@@ -423,6 +423,8 @@
         });
         
         let results;
+
+        var table = $('#bootstrap-data-table-export').DataTable();
 
         function confirmPassword(){
             console.log("Here");
@@ -473,7 +475,6 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    console.log(data);
                     var users = JSON.parse(data);
                     results = users;
                     populateDataTable(users);
@@ -494,7 +495,7 @@
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
-            });
+            });console.log(parseInt(w[0]['editable']));console.log('Here');
             if (parseInt(w[0]['editable']) != 1){
                 $(".write").hide();
             }
@@ -550,8 +551,8 @@
                     v.username,
                     v.fullname,
                     v.Role,
-                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>' +
-                    '<button type="button" class="btn btn-success write" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</button>'
+                    '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'
+//                    '<div class="write"><button class="write btn btn-success " data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</button></div>'
                 ]);
             });
         }

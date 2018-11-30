@@ -76,7 +76,7 @@ app.post('/login', function(req, res) {
               if (!error) {
                   user.permissions = perm
                   var query = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
-                                'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id)'
+                                'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id) order by menu_name asc'
                   db.query(query, [user.user_role, user.user_role], function (er, mods, fields) {
                     user.modules = mods;
                     // res.setHeader('Set-Cookie', cookie.serialize('user', rows[0], {
@@ -225,6 +225,14 @@ app.get('/all-requests', requireLogin, function(req, res){
 
 app.get('/loan-repayment', requireLogin, function(req, res){
     res.sendFile('loan-repayment.html', { root: __dirname+'/views' });
+});
+
+app.get('/add-client', requireLogin, function(req, res){
+    res.sendFile('add-client.html', { root: __dirname+'/views' });
+});
+
+app.get('/all-clients.html', requireLogin, function(req, res){
+    res.sendFile('all-clients.html.html', { root: __dirname+'/views' });
 });
 
 // catch 404 and forward to error handler

@@ -161,26 +161,6 @@
                     </div>
                 </div>
 
-                <!-- <div class="language-select dropdown" id="language-select">
-                    <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
-                        <i class="flag-icon flag-icon-us"></i>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="language" >
-                        <div class="dropdown-item">
-                            <span class="flag-icon flag-icon-fr"></span>
-                        </div>
-                        <div class="dropdown-item">
-                            <i class="flag-icon flag-icon-es"></i>
-                        </div>
-                        <div class="dropdown-item">
-                            <i class="flag-icon flag-icon-us"></i>
-                        </div>
-                        <div class="dropdown-item">
-                            <i class="flag-icon flag-icon-it"></i>
-                        </div>
-                    </div>
-                </div> -->
-
             </div>
         </div>
 
@@ -255,7 +235,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <span id="submit-error" style="padding-left:50px; text-align: center"></span><button type="button" class="btn btn-primary pull-right" onclick="validate()"><i class="fa fa-save"></i> Save</button>
+                                            <span id="submit-error" style="padding-left:50px; text-align: center"></span><button type="button" class="btn btn-primary pull-right write" onclick="validate()"><i class="fa fa-save"></i> Save</button>
                                         </div>
                                     </div>
                                 </div>
@@ -276,7 +256,7 @@
                                     <thead>
                                     <tr>
                                         <th>Module Name</th>
-                                        <th>Menu Name</th>
+                                        <th>Menu Type</th>
                                         <th>View</th>
                                         <th>Write</th>
                                     </tr>
@@ -292,7 +272,7 @@
 
                                 <div class="card-body">
                                     <div class = "form-group pull-left" >
-                                        <button type="button" id="submit" class="btn btn-sm btn-success">
+                                        <button type="button" id="submit" class="btn btn-sm btn-success write">
                                             Submit<i class="ace-icon fa fa-check icon-on-right bigger-110"></i>
                                         </button>
 
@@ -532,8 +512,8 @@
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
             }
         });
-        if (parseInt(w[0]['editable']) === 1){
-            $(".write").show();
+        if (parseInt(w[0]['editable']) != 1){
+            $(".write").hide();
         }
     }
 
@@ -613,12 +593,17 @@
             url: "/modules/",
             data: '{}',
             success: function (response) {
+                let write;
                 mods = JSON.parse(response); //console.log(mods);
                 $.each(JSON.parse(response), function (key, val) {
                     var action = '<input type="checkbox" id="'+val.id+'" di="'+val.id+'" class="ace RosaCheck" parent="'+val.main_menu+'">';
-                    var write = '<input type="checkbox" id="'+val.id+'-write" di="'+val.id+'" class="WriteCheck" parent="'+val.main_menu+'">';
+                    if (val.menu_name == 'Others' || val.menu_name == 'Main Menu'){
+                        write = "";
+                    }else{
+                        var write = '<input type="checkbox" id="'+val.id+'-write" di="'+val.id+'" class="WriteCheck" parent="'+val.main_menu+'">';
+                    }
                     $('#module-table').dataTable().fnAddData( [
-                        val.module_name, val.menu_name, action, write
+                        val.name, val.menu_name, action, write
                         // "Make",
                         // "Make",
                         // action
