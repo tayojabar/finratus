@@ -617,7 +617,7 @@ router.get('/mf-report/', function(req, res, next) {
 
 /* GET modules.html listing for admin. */
 router.get('/modules', function(req, res, next) {
-    var query = 'SELECT * from modules';
+    var query = 'SELECT * from modules order by menu_name asc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
