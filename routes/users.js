@@ -929,6 +929,8 @@ users.post('/workflow_process/:application_id/:workflow_id', function(req, res, 
     getNextWorkflowProcess(application_id,workflow_id,stage, function (process) {
         process.workflowID = workflow_id;
         process.applicationID = application_id;
+        if (!process.approver_id || (process.approver_id === 0))
+            process.approver_id = 1;
         process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
         db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)', [application_id], function (error, last_process, fields) {
             if(error){
