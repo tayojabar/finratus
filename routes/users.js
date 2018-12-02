@@ -139,11 +139,11 @@ users.post('/login', function(req, res) {
 
 /* Add New User */
 users.post('/new-user', function(req, res, next) {
-    var postData = req.body; 
+    var postData = req.body; var data = []; data.username = req.body.username; data.email = req.body.email;
     postData.date_created = Date.now(); 
 	var query =  'INSERT INTO users Set ?';
-	var query2 = 'select * from users where username = ?';
-	db.query(query2,req.body.username, function (error, results, fields) {
+	var query2 = 'select * from users where username = ? or email = ?';
+	db.query(query2,data, function (error, results, fields) {
 		if (results && results[0]){
 			res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "User already exists!"}));
 		}
@@ -167,6 +167,38 @@ users.post('/new-user', function(req, res, next) {
 			});
 		}
 	});
+});
+
+/* Add New Client */
+users.post('/new-client', function(req, res, next) {
+    var postData = req.body; var data = []; data.username = req.body.username; data.email = req.body.email;
+    postData.date_created = Date.now();
+    var query =  'INSERT INTO users Set ?';
+    var query2 = 'select * from users where username = ? or email = ?';
+    db.query(query2,data, function (error, results, fields) {
+        if (results && results[0]){
+            res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Client already exists!"}));
+        }
+        else {
+            db.query(query,postData, function (error, results, fields) {
+                if(error){
+                    res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    //If there is error, we send the error in the error section with 500 status
+                } else {
+                    db.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
+                        if (!err){
+                            res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                        }
+                        else{
+                            res.send(JSON.stringify({"response": "Error retrieving client details. Please try a new username!"}));
+                        }
+                    });
+                    //res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
+                    //If there is no error, all is good and response is 200OK.
+                }
+            });
+        }
+    });
 });
 
 /* Add New User Role*/
@@ -289,7 +321,7 @@ users.get('/all-users', function(req, res, next) {
 });
 
 users.get('/users-list', function(req, res, next) {
-    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users order by ID desc';
+    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role in (1, 2, 3) order by ID desc';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -299,6 +331,19 @@ users.get('/users-list', function(req, res, next) {
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
+});
+
+users.get('/clients-list', function(req, res, next) {
+    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role = 4 order by ID desc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
 });
 
 users.get('/users-list-v2', function(req, res, next) {
