@@ -142,6 +142,9 @@
         .badge-danger {
             background-color: #dc3545;
         }
+        .badge-warning {
+            background-color: #f0ad4e;
+        }
         .pb-0{
             text-align: center;
         }
@@ -1115,29 +1118,6 @@
                                     $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
                                 }
                             }
-
-                            $('#loan-amount-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                            if (!application.payment_history || !application.payment_history[0]){
-                                $('#total-due-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                                $('#last-payment-text').text('N/A');
-                            } else {
-                                let count = 0,
-                                    amount = parseFloat(application.loan_amount);
-                                application.payment_history.forEach(function (payment) {
-                                    count++;
-                                    amount = amount - parseFloat(payment.payment_amount);
-                                    if (count === application.payment_history.length)
-                                        $('#total-due-text').text('₦'+(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                                });
-                                $('#last-payment-text').text(((application.payment_history[0]['date_created']).split(' '))[0]);
-                            }
-                            let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
-                            if (next_payment_date && next_payment_date[0]){
-                                let date_array = (((next_payment_date[0]['payment_create_date']).split(' '))[0]).split('-');
-                                $('#next-payment-date-text').text('20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
-                            } else {
-                                $('#next-payment-date-text').text('N/A');
-                            }
                         }
                         $('#disbursement-amount').val((parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                         $('#stage-actions').append('<a href="#" id="stage-action-0" class="dropdown-item" data-toggle="modal" data-target="#disburseModal">Disburse Loan</a>');
@@ -1399,7 +1379,8 @@
 
             let $loanSchedule = $("#loanSchedule");
             if (application.schedule && application.schedule[0]){
-                let table = $("<table border='1' style='text-align: center;'/>");
+                let total_principal = 0,
+                    table = $("<table border='1' style='text-align: center;'/>");
                 for (let i = 0; i < application.schedule.length+2; i++) {
                     let row,
                         cells = [];
@@ -1423,6 +1404,15 @@
                         cells[5] = application.schedule[i - 2]['interest_amount'];
                         cells[6] = application.schedule[i - 2]['balance'];
                         cells[7] = application.schedule[i - 2]['payment_status'];
+                        let amount_paid = 0,
+                            payment_history = $.grep(application.payment_history,function(e) {return (e.invoiceID===application.schedule[i - 2]['ID'] && e.status===1)});
+                        for (let k = 0; k < payment_history.length; k++){
+                            amount_paid += parseFloat(payment_history[k]['payment_amount']);
+                        }
+                        let amount_owed = parseFloat(cells[2]) - amount_paid;
+                        if (amount_paid > 0 && amount_owed > 0)
+                            cells[7] = 2;
+                        total_principal += parseFloat(cells[2]);
                     }
                     for (let j = 0; j < cells.length; j++) {
                         let cell = $("<td />");
@@ -1431,13 +1421,26 @@
                                 cell = $("<td colspan='3' />");
                         }
                         if (j === cells.length-1 && i>1){
-                            if (parseInt(cells[j]) === 0){
-                                cell.html('<span class="badge badge-danger">Not Paid</span>');
-                            } else {
-                                cell.html('<span class="badge badge-success">Paid</span>');
+                            switch (cells[j]){
+                                case 0: {
+                                    cell.html('<span class="badge badge-danger">Not Paid</span>');
+                                    break;
+                                }
+                                case 1: {
+                                    cell.html('<span class="badge badge-success">Paid</span>');
+                                    break;
+                                }
+                                case 2: {
+                                    cell.html('<span class="badge badge-warning">Part Paid</span>');
+                                    break;
+                                }
                             }
                         } else {
-                            cell.html(cells[j]);
+                            if (cells[j]){
+                                cell.html(cells[j]);
+                            } else {
+                                cell.html('--');
+                            }
                         }
                         row.append(cell);
                     }
@@ -1445,6 +1448,33 @@
                 }
                 $loanSchedule.html('');
                 $loanSchedule.append(table);
+                initLoanSummary(total_principal);
+            }
+        }
+
+        function initLoanSummary(total_prinicipal) {
+            let total_principal = total_prinicipal;
+            $('#loan-amount-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            if (!application.payment_history || !application.payment_history[0]){
+                $('#total-due-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                $('#last-payment-text').text('N/A');
+            } else {
+                let count = 0,
+                    amount = total_principal;
+                application.payment_history.forEach(function (payment) {
+                    count++;
+                    amount = amount - parseFloat(payment.payment_amount);
+                    if (count === application.payment_history.length)
+                        $('#total-due-text').text('₦'+(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                });
+                $('#last-payment-text').text(((application.payment_history[0]['date_created']).split(' '))[0]);
+            }
+            let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
+            if (next_payment_date && next_payment_date[0]){
+                let date_array = (((next_payment_date[0]['payment_create_date']).split(' '))[0]).split('-');
+                $('#next-payment-date-text').text('20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
+            } else {
+                $('#next-payment-date-text').text('N/A');
             }
         }
 

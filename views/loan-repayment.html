@@ -732,12 +732,19 @@
                             if (j === 0 && i>1){
                                 cell.html(cells[j]);
                             } else if (j === 1 && i>1){
-                                if (parseInt(cells[j]) === 0){
-                                    cell.html('<span class="badge badge-danger">Not Paid</span>');
-                                } else if (parseInt(cells[j]) === 2) {
-                                    cell.html('<span class="badge badge-warning">Part Paid</span>');
-                                } else if (parseInt(cells[j]) === 1) {
-                                    cell.html('<span class="badge badge-success">Paid</span>');
+                                switch (cells[j]){
+                                    case 0: {
+                                        cell.html('<span class="badge badge-danger">Not Paid</span>');
+                                        break;
+                                    }
+                                    case 1: {
+                                        cell.html('<span class="badge badge-success">Paid</span>');
+                                        break;
+                                    }
+                                    case 2: {
+                                        cell.html('<span class="badge badge-warning">Part Paid</span>');
+                                        break;
+                                    }
                                 }
                             } else if (j === 2 && i>1) {
                                 if ((parseInt(application.schedule[i - 2]['status']) !== 0) && (parseInt(cells[j]) !== 1)){

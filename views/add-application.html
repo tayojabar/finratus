@@ -317,6 +317,7 @@
 
         function initCSVUpload2() {
             let schedule = [],
+                loan_amount = 0,
                 $dvCSV = $("#dvCSV2"),
                 $csvUpload = $("#csvUpload2"),
                 $uploadCSV = $("#uploadCSV2");
@@ -349,7 +350,12 @@
                                     switch (j){
                                         case 0:{ invoice.payment_create_date = cells[j]; break; }
                                         case 1:{ invoice.payment_collect_date = cells[j]; break; }
-                                        case 2:{ invoice.payment_amount = cells[j]; break; }
+                                        case 2:{
+                                            if (i > 1)
+                                                loan_amount += parseFloat(cells[j]);
+                                            invoice.payment_amount = cells[j];
+                                            break;
+                                        }
                                         case 3:{ invoice.interest_create_date = cells[j]; break; }
                                         case 4:{ invoice.interest_collect_date = cells[j]; break; }
                                         case 5:{ invoice.interest_amount = cells[j]; break; }
@@ -390,6 +396,10 @@
                 obj.repayment_date = $('#repayment-date').val();
                 if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
                     return swal('Kindly fill all required fields!');
+
+//                if (loan_amount > obj.loan_amount)
+//                    return swal('')
+
                 $.ajax({
                     'url': '/user/apply',
                     'type': 'post',
