@@ -1,17 +1,11 @@
 let config = {};
 
 config.development = {
-    // host     : '140.86.3.63',
-    // port     : '3306',
-    // user     : 'appuser',
-    // password : 'Pass@word1',
-    // database : 'vehicle_inspection',
-    // insecureAuth: true
-    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
+    host     : '140.86.3.63',
     port     : '3306',
-    user     : 'loan35dbadmin@atobz-mysqldbserver',
-    password : 'Loan35Pass@word2018',
-    database : 'staging',
+    user     : 'appuser',
+    password : 'Pass@word1',
+    database : 'vehicle_inspection',
     insecureAuth: true
 };
 
@@ -25,10 +19,10 @@ config.staging = {
 };
 
 config.production = {
-    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
+    host     : '140.86.3.244',
     port     : '3306',
-    user     : 'loan35dbadmin@atobz-mysqldbserver',
-    password : 'Loan35Pass@word2018',
+    user     : 'loan35admin',
+    password : 'Pass@word1',
     database : 'loan35',
     insecureAuth: true
 };

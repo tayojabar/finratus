@@ -4,7 +4,8 @@ require('dotenv').config();
 let mysql = require('mysql'),
     config = require('./config'),
     status = process.env.STATUS || 'development',
-    mysqlConfig = config[status],
-    connection = mysql.createConnection(mysqlConfig);
+    mysqlConfig = config[status];
 
-module.exports = connection;
+mysqlConfig.connectionLimit = 10;
+
+module.exports = mysql.createPool(mysqlConfig);
