@@ -235,15 +235,15 @@ users.post('/upload/:id', function(req, res) {
 	let extArray = sampleFile.name.split(".");
     let extension = extArray[extArray.length - 1];
 	let fileName = name+'.'+extension;
-	//console.log(name);
+	// console.log(req.body.formData);
 
 	fs.stat('files/users/'+req.params.id+'/', function(err) {
 		if (!err) {
 			console.log('file or directory exists');
 		}
 		else if (err.code === 'ENOENT') {
-			console.log('Directory does not exist');
-            console.log('Creating directory ...');
+            // console.log('Directory does not exist');
+            // console.log('Creating directory ...');
             fs.mkdirSync('files/users/'+req.params.id+'/');
 		}
     });
@@ -256,21 +256,21 @@ users.post('/upload/:id', function(req, res) {
 			// Use the mv() method to place the file somewhere on your server
 			sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function(err) {
 				if (err) return res.status(500).send(err);
-                console.log(req.files.file);
+                // console.log(req.files.file);
 				res.send('File uploaded!');
 			});
 		}
 		else{
 			fs.unlink('files/users/'+req.params.id+'/'+req.params.id+'.'+extension,function(err){
 				if(err){
-				   console.log(err);
+				   // console.log(err);
 				   res.send('Unable to delete file!');
 				} 
 				else{
 				   sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'.'+extension, function(err) {
 					   if (err)
 					   return res.status(500).send(err);
-					   console.log(req.files.file);
+					   // console.log(req.files.file);
 					   res.send('File uploaded!');
 				   });
 				}
@@ -282,6 +282,64 @@ users.post('/upload/:id', function(req, res) {
 
 	
   });
+
+//File Upload - New Client (Image and Signature)
+users.post('/upload-file/:id/:item', function(req, res) {
+    if (!req.files) return res.status(400).send('No files were uploaded.');
+    if (!req.params) return res.status(400).send('No Number Plate specified!');
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    let sampleFile = req.files.file;
+    let name = sampleFile.name;
+    let extArray = sampleFile.name.split(".");
+    let extension = extArray[extArray.length - 1];
+    let fileName = name+'.'+extension;
+    // console.log(req.body.formData);
+
+    fs.stat('files/users/'+req.params.id+'/', function(err) {
+        if (!err) {
+            console.log('file or directory exists');
+        }
+        else if (err.code === 'ENOENT') {
+            // console.log('Directory does not exist');
+            // console.log('Creating directory ...');
+            fs.mkdirSync('files/users/'+req.params.id+'/');
+        }
+    });
+
+    fs.stat('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function (err) {
+        //console.log(stats);//here we got all information of file in stats variable
+
+        if (err) {// If file doesn't exist
+            //return console.error(err);
+            // Use the mv() method to place the file somewhere on your server
+            sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function(err) {
+                if (err) return res.status(500).send(err);
+                // console.log(req.files.file);
+                res.send('File uploaded!');
+            });
+        }
+        else{
+            fs.unlink('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension,function(err){
+                if(err){
+                    // console.log(err);
+                    res.send('Unable to delete file!');
+                }
+                else{
+                    sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function(err) {
+                        if (err)
+                            return res.status(500).send(err);
+                        // console.log(req.files.file);
+                        res.send('File uploaded!');
+                    });
+                }
+                //console.log('file deleted successfully');
+            });
+        }
+
+    });
+
+
+});
 
 /* GET users listing. */
 users.get('/all-users', function(req, res, next) {
@@ -331,6 +389,19 @@ users.get('/users-list', function(req, res, next) {
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
+});
+
+users.get('/officers', function(req, res, next) {
+    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role = 2 order by ID desc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
 });
 
 users.get('/clients-list', function(req, res, next) {
