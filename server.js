@@ -231,8 +231,8 @@ app.get('/add-client', requireLogin, function(req, res){
     res.sendFile('add-client.html', { root: __dirname+'/views' });
 });
 
-app.get('/all-clients.html', requireLogin, function(req, res){
-    res.sendFile('all-clients.html.html', { root: __dirname+'/views' });
+app.get('/all-clients', requireLogin, function(req, res){
+    res.sendFile('all-clients.html', { root: __dirname+'/views' });
 });
 
 // catch 404 and forward to error handler
