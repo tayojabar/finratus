@@ -6,6 +6,9 @@ let mysql = require('mysql'),
     status = process.env.STATUS || 'development',
     mysqlConfig = config[status];
 
-mysqlConfig.connectionLimit = 100;
+mysqlConfig.connectionLimit = 1000;
+mysqlConfig.timeout = 60 * 60 * 1000;
+mysqlConfig.acquireTimeout = 60 * 60 * 1000;
+mysqlConfig.connectTimeout = 60 * 60 * 1000;
 
 module.exports = mysql.createPool(mysqlConfig);

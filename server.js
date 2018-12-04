@@ -66,7 +66,6 @@ app.post('/login', function(req, res) {
     var password = req.body.password;
     db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ?', username, function(err, rows, fields) {
       if (err) {
-          console.log('I fell')
         //res.sendFile('/login', { error: 'Invalid email or password.' });
         //res.redirect('/inspections');
         res.sendFile('index.html', { root: __dirname+'/views' });
