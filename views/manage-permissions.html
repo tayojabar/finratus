@@ -408,52 +408,72 @@
         saveRolePermissions(localStorage.getItem("selectedRole"));
     });
 
+    let modules;
+
     function saveRolePermissions(r){
+        console.log(modules);
         var obj = {};
         var arr = [];
         var i = 0; var j = 0;
 
-        $('.RosaCheck').each(function () {
-            if ($(this). prop("checked") === true){
-                arr[i++] = [$(this).attr('di'), 1];
-            }
-            else{
-                arr[i++] = [$(this).attr('di'), 0];
-            }
-        });
-        $('.WriteCheck').each(function(){
-            if ($(this).prop("checked") === true){
-                arr[j][2] = 1;
-                j++;
-            }
-            else{
-                arr[j][2] = 0;
-                j++;
-            }
-        });
-        //console.log(arr);
+//        $('.RosaCheck').each(function () {
+//            if ($(this). prop("checked") === true){
+//                arr[i++] = [$(this).attr('di'), 1];
+//            }
+//            else{
+//                arr[i++] = [$(this).attr('di'), 0];
+//            }
+//        });
+//        $('.WriteCheck').each(function(){
+//            if ($(this).prop("checked") === true){
+//                arr[j][2] = 1;
+//                j++;
+//            }
+//            else{
+//                arr[j][2] = 0;
+//                j++;
+//            }
+//        });
+        for (var a = 0; a < modules.length; a++){
+            var rd; var wt;
+            $('.RosaCheck').each(function (){
+                if ($("input:checkbox.RosaCheck").attr('di') === modules[a]["module_id"]){
 
-        obj.role = r;
-        obj.modules = arr;
-        var test = [];
-        console.log(obj);
-        $.ajax({
-            'url': '/submitPermission/'+r+'/',
-            'type': 'post',
-            'data': obj,
-            'success': function (data) {
-                console.log(data);
-                $.each(data, function (key, val) {
-                    test[key] = val;
-                });
-//                console.log(test);
-                if(test.status == 500){
-                    swal("Error encountered. Please try again.");
                 }
-                else
-                    swal("Views and Read / Write Permissions granted for User "+r+"!");
+            })
+            if ($("input:checkbox.RosaCheck").attr('di') === modules[a]["module_id"]){
+                console.log($(this));
+                if($(this).prop('checked') === true){
+                    rd = 1;
+                } else{
+                    rd = 0;
+                }
+                arr[a]=[modules[a]["module_id"], rd];
             }
-        });
+        }
+        console.log(arr);
+
+//        obj.role = r;
+//        obj.modules = arr;
+//        var test = [];
+////        console.log(obj);
+//        $.ajax({
+//            'url': '/submitPermission/'+r+'/',
+//            'type': 'post',
+//            'data': obj,
+//            'success': function (data) {
+//                console.log(data);
+//                $.each(data, function (key, val) {
+//                    test[key] = val;
+//                });
+////                console.log(test);
+//                if(test.status == 500){
+//                    swal("Error encountered. Please try again.");
+//                }
+//                else
+//                    swal("Views and Read / Write Permissions granted for User "+r+"!");
+//            }
+//        });
     }
 
     function check(){
@@ -558,6 +578,7 @@
             url: "/permissions/"+id+"/",
             data: '{}',
             success: function (response) {
+                modules = JSON.parse(response);
                 if (!(JSON.parse(response).length === 0)){
                     $.each(JSON.parse(response), function(key, val){
                         reads[r++] = [val.module_id, val.read_only];
@@ -598,7 +619,7 @@
                 $.each(JSON.parse(response), function (key, val) {
                     var action = '<input type="checkbox" id="'+val.id+'" di="'+val.id+'" class="ace RosaCheck" parent="'+val.main_menu+'">';
                     if (val.menu_name == 'Others' || val.menu_name == 'Main Menu'){
-                        write = "";
+                        write = '<input type="checkbox" id="'+val.id+'-write" di="'+val.id+'" class="WriteCheck" parent="'+val.main_menu+'" disabled="disabled">';
                     }else{
                         var write = '<input type="checkbox" id="'+val.id+'-write" di="'+val.id+'" class="WriteCheck" parent="'+val.main_menu+'">';
                     }

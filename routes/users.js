@@ -391,18 +391,18 @@ users.get('/users-list', function(req, res, next) {
   	});
 });
 
-users.get('/officers', function(req, res, next) {
-    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role = 2 order by ID desc';
-    db.query(query, function (error, results, fields) {
-        if(error){
-            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-            //If there is error, we send the error in the error section with 500 status
-        } else {
-            res.send(JSON.stringify(results));
-            //If there is no error, all is good and response is 200OK.
-        }
-    });
-});
+// users.get('/officers', function(req, res, next) {
+//     var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role in (1, 2, 3) order by ID desc';
+//     db.query(query, function (error, results, fields) {
+//         if(error){
+//             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+//             //If there is error, we send the error in the error section with 500 status
+//         } else {
+//             res.send(JSON.stringify(results));
+//             //If there is no error, all is good and response is 200OK.
+//         }
+//     });
+// });
 
 users.get('/clients-list', function(req, res, next) {
     var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role = 4 order by ID desc';
