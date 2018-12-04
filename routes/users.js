@@ -1082,6 +1082,7 @@ users.get('/workflow_process_all/:application_id', function(req, res, next) {
 function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
     db.query('SELECT * FROM workflow_stages WHERE workflowID=? ORDER BY ID asc',[workflow_id], function (error, stages, fields) {
         if(stages){
+            stages.push({name:"Denied",stageID:4,stage_name:"Denied",workflowID:workflow_id,approverID:1});
             if(application_id && !stage){
                 db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)',[application_id], function (error, application_last_process, fields) {
                     if (application_last_process){

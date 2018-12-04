@@ -249,7 +249,7 @@
                             <div class="card-header">
                                 <div style="float: left; margin: 0 15px;">
                                     <strong id="workflow-div-title" class="card-title">Workflow</strong>
-                                    <p>Client#: <span id="client-id"></span> | ID#: <span id="application-id"></span></p>
+                                    <p>Client ID#: <span id="client-id"></span> | LOAN ID#: <span id="application-id"></span></p>
                                 </div>
                                 <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
                                 <div id="close-loan" class="btn-group" style="float: right; display: none;margin-top: 5px;">
@@ -1027,12 +1027,14 @@
                 'type': 'get',
                 'success': function (data) {
                     let count = 0,
-                        workflow_stages = data.response,
-                        ul = document.getElementById('workflow-ul-list'),
+                        workflow_stages = data.response;
+                    workflow_stages.push({name:"Denied",stageID:4,stage_name:"Denied",workflowID:state.workflowID,approverID:1});
+
+                    let ul = document.getElementById('workflow-ul-list'),
                         $last_btn = $("#btn-"+workflow_stages[workflow_stages.length-1]['stageID']),
                         stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0];
 
-                    if (!stage.actions || !stage.actions[0])
+                    if ((!stage.actions || !stage.actions[0]) && (stage.stage_name !== 'Disbursal'))
                         $('.next').show();
                     $('.previous').show();
                     $('#next-actions').show();
@@ -1096,11 +1098,12 @@
                     if (stage.stage_name === 'Denied'){
                         $("#current_stage").hide();
                         $("#next-actions").hide();
-                        $(".previous").hide();
                         $("#schedule").hide();
                         $("#denied").show();
                         $("#files").hide();
                         $(".next").hide();
+
+                        $('.previous').append('<span> RE-OPEN</span>');
 
                         let li = document.createElement('li');
                         li.className = "active";

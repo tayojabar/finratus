@@ -116,10 +116,6 @@
                         action_names = [],
                         $document = $('#document-upload-text').val(),
                         stage_template = $('#stage-template').val(),
-//                        actions = $('.local-stages').map(function() {
-//                            if (this.value && (this.value !== '-- Choose Action --'))
-//                                return this.value;
-//                        }).get(),
                         actions = $('.local-stages-new').map(function() {
                             if (this.value && (this.value !== '-- Choose Action --'))
                                 return this.value;
@@ -127,9 +123,10 @@
                         local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
                     stage.name = $('#stage-name').val();
                     stage.description = $('#stage-description').val();
-                    stage.approverID = parseInt($('#process-rights').val());
-                    if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
+                    stage.approverID = $('#process-rights').val();
+                    if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || stage.approverID === "-- Choose User Role --" || !actions || !actions[0])
                         return swal('Kindly fill all required fields!');
+                    stage.approverID = parseInt(stage.approverID);
                     if ($document)
                         stage.document = $document;
                     if (actions[0]){
@@ -151,14 +148,6 @@
                                 countTodos();
                             }
                         });
-                    } else {
-                        let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                        stage.stageID = stage_template_json.ID || stage_template_json.stageID;
-                        stage.stage_name = stage_template_json.name;
-                        local_stages.push(stage);
-                        localStorage.setItem('local_stages', JSON.stringify(local_stages));
-                        createTodo(stage);
-                        countTodos();
                     }
                 }else{
                     swal('Kindly fill all required fields!');
@@ -184,7 +173,7 @@
             function createTodo(stage){
                 let markup = '';
                 if (stage.action_names){
-                    markup = '<li class="ui-state-default"><span>'+stage.name+' <small> → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
                 } else {
                     markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
                 }
@@ -394,9 +383,12 @@
                             $("#more-actions-link").click(function() {
                                 $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
                                     '<select class="form-control local-stages-new"><option selected="selected">-- Choose Action --</option>' +
-                                    '</select></div>');
+                                    '</select><i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeAction(this)"></i></div>');
                                 getLocalStages();
                             });
+                            function removeAction(element) {
+                                $(element).parent().remove();
+                            }
                         </script>
                         <div class="form-group">
                             <label class="col-form-label">Approval Rights <strong style="color:red"> *</strong></label>
@@ -421,12 +413,12 @@
                             </div>
                             <small class="form-text text-muted">Maximum of 50 characters</small>
                         </div>
-                        <div class="form-group">
-                            <label class=" form-control-label">Triggers</label>
-                            <div class="input-group">
-                                <label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>
-                            </div>
-                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label class=" form-control-label">Triggers</label>-->
+                            <!--<div class="input-group">-->
+                                <!--<label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         <script type="text/javascript">
                             $('#document-upload').change(function () {
                                 $('#document-upload-div').toggle();
@@ -624,7 +616,6 @@
                             delete val.ID;
                             val.stage_name = val.name;
                             local_stages.push(val);
-//                            $("#stage-template").append('<option class="disabled" value = "' + encodeURIComponent(JSON.stringify(val)) + '" disabled="disabled">' + val.name + '</option>');
                         }
                         if (val.name === 'Disbursal'){
                             $("#stage-template").append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
