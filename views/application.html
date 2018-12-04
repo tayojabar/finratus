@@ -1107,6 +1107,8 @@
                                 $('#close-loan').show();
                             } else {
                                 $('#loan_closed').show();
+                                $('#collect-payment-button').hide();
+                                $('#generate-schedule-v2').hide();
                                 if (application.close_status === 1){
                                     $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
                                 } else if (application.close_status === 2){

@@ -1186,12 +1186,52 @@ users.get('/application/schedule/:id', function(req, res, next) {
     });
 });
 
+users.post('/application/add-payment/:id/:agent_id', function(req, res, next) {
+    let data = req.body;
+    data.applicationID = req.params.id;
+    data.payment_status = 1;
+    data.payment_collect_date = data.interest_collect_date;
+    db.query('INSERT INTO application_schedules SET ?', data, function (error, response, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('SELECT MAX(ID) AS ID from application_schedules', function(err, invoice_obj, fields) {
+                let invoice = {};
+                invoice.agentID = req.params.agent_id;
+                invoice.applicationID = req.params.id;
+                invoice.invoiceID = invoice_obj[0]['ID'];
+                invoice.interest_amount = data.actual_interest_amount;
+                invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+                db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        res.send({"status": 200, "message": "Payment added successfully!"});
+                    }
+                });
+            });
+        }
+    });
+});
+
 users.get('/application/confirm-payment/:id', function(req, res, next) {
     db.query('UPDATE application_schedules SET payment_status=1 WHERE ID = ?', [req.params.id], function (error, invoice, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Invoice Payment confirmed successfully!"});
+        }
+    });
+});
+
+users.post('/application/edit-schedule/:id', function(req, res, next) {
+    let data = req.body;
+    data.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, data, function (error, response, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Schedule updated successfully!"});
         }
     });
 });
