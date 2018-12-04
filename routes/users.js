@@ -1339,17 +1339,58 @@ users.get('/application/confirm-payment/:id', function(req, res, next) {
     });
 });
 
-users.post('/application/edit-schedule/:id', function(req, res, next) {
+users.post('/application/edit-schedule/:id/:modifier_id', function(req, res, next) {
     let data = req.body;
     data.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, data, function (error, response, fields) {
+    data.modifierID = req.params.modifier_id;
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, data, function (error, response, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                connection.query('SELECT * FROM application_schedules WHERE ID = ?',[req.params.id], function (error, invoice_obj, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        let invoice = {
+                            invoiceID: invoice_obj[0].ID,
+                            applicationID: invoice_obj[0].applicationID,
+                            interest_amount: invoice_obj[0].interest_amount,
+                            payment_amount: invoice_obj[0].payment_amount,
+                            payment_collect_date: invoice_obj[0].payment_collect_date,
+                            fees_amount: invoice_obj[0].fees_amount,
+                            penalty_amount: invoice_obj[0].penalty_amount,
+                            date_modified: invoice_obj[0].date_modified,
+                            modifierID: invoice_obj[0].modifierID
+                        };
+                        connection.query('INSERT INTO edit_schedule_history SET ? ', invoice, function (error, response, fields) {
+                            connection.release();
+                            if(error){
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                res.send({"status": 200, "message": "Schedule updated successfully!"});
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+
+users.get('/application/edit-schedule-history/:id', function(req, res, next) {
+    db.query('SELECT s.ID, s.invoiceID, s.payment_amount, s.interest_amount, s.fees_amount, s.penalty_amount, s.payment_collect_date, s.date_modified, s.modifierID,' +
+        's.applicationID, u.fullname AS modified_by FROM edit_schedule_history AS s, users AS u WHERE s.modifierID=u.ID AND invoiceID = ? ORDER BY ID desc', [req.params.id], function (error, history, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "message": "Schedule updated successfully!"});
+            res.send({"status": 200, "message": "Edit schedule history fetched successfully!", "response":history});
         }
     });
 });
+
 
 users.post('/application/confirm-payment/:id/:application_id/:agent_id', function(req, res, next) {
     let data = req.body;
