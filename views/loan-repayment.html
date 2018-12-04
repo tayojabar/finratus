@@ -666,6 +666,8 @@
                         row = $('<tr style="font-weight: bold;" />');
                     } else {
                         row = $("<tr />");
+                        if (application.schedule[i - 2]['status'] === 2)
+                            continue;
                         if (parseInt(application.schedule[i - 2]['status']) === 0)
                             row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
                     }

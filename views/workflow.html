@@ -165,19 +165,20 @@
 
             // count tasks
             function countTodos(){
-                let count = $("#sortable").find("li").length;
+                let count = $sortable.find("li").length;
                 $('.count-todos').html(count);
             }
 
             //create task
             function createTodo(stage){
-                let markup = '';
+                let markup = '',
+                    count = parseInt($sortable.find("li").length);
                 if (stage.action_names){
                     markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
                 } else {
                     markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
                 }
-                $sortable.append(markup);
+                $sortable.find('li:eq('+(count-2)+')').before(markup);
                 $('#stage-name').val('');
                 $('#stage-description').val('');
                 $('#stage-template').val('');

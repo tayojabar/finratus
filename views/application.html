@@ -487,11 +487,15 @@
                                 <div class="row setup-content" id="generate-schedule-v2" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
+                                            <h2 class="text-center" style="margin-bottom: 15px;">Loan Reschedule</h2>
                                             <div class="row">
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-4">
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
-                                                    <button id="uploadCSV2" style="display: none" class="btn btn-info">Add Reschedule</button>
-                                                    <button id="saveCSV2" style="display: none" class="btn btn-success">Save Reschedule</button>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <button id="approveCSV2" class="btn btn-success" style="float: right;">Approve <i class="fa fa-check"></i></button>
+                                                    <button id="saveCSV2" class="btn btn-primary" style="float: right;">Add <i class="fa fa-plus"></i></button>
+                                                    <button id="uploadCSV2" class="btn btn-info" style="float: right;">Preview <i class="fa fa-eye-slash"></i></button>
                                                     <i id="csvLoader2" class="fa fa-spinner fa-spin" style="display: none;"></i>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -639,13 +643,6 @@
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                 <input type="date" id="disbursement-date" class="form-control" required="required">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" form-control-label">First Repayment Date</label>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                <input type="date" id="repayment-date" class="form-control" required="required">
                             </div>
                         </div>
                     </form>
@@ -1405,6 +1402,8 @@
                         row = $('<tr style="font-weight: bold;" />');
                     } else {
                         row = $("<tr />");
+                        if (application.schedule[i - 2]['status'] === 2)
+                            continue;
                         if (parseInt(application.schedule[i - 2]['status']) === 0)
                             row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
                     }
@@ -1470,22 +1469,37 @@
             }
         }
 
+        let total_due_amount;
         function initLoanSummary(total_prinicipal) {
             let total_principal = total_prinicipal;
             $('#loan-amount-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             if (!application.payment_history || !application.payment_history[0]){
+                total_due_amount = total_prinicipal;
                 $('#total-due-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 $('#last-payment-text').text('N/A');
             } else {
                 let count = 0,
-                    amount = total_principal;
-                application.payment_history.forEach(function (payment) {
-                    count++;
-                    amount = amount - parseFloat(payment.payment_amount);
-                    if (count === application.payment_history.length)
-                        $('#total-due-text').text('₦'+(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                });
-                $('#last-payment-text').text(((application.payment_history[0]['date_created']).split(' '))[0]);
+                    payment_history = [],
+                    amount = total_principal,
+                    invoices = $.grep(application.schedule,function(e){return e.status===1});
+                for (let i=0; i<invoices.length; i++){
+                    let payments = $.grep(application.payment_history,function(e){return e.invoiceID===invoices[i]['ID']});
+                    payment_history = payment_history.concat(payments);
+                }
+                if (payment_history[0]){
+                    payment_history.forEach(function (payment) {
+                        count++;
+                        amount = amount - parseFloat(payment.payment_amount);
+                        if (count === payment_history.length){
+                            total_due_amount = amount;
+                            $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                        }
+                    });
+                    $('#last-payment-text').text(((payment_history[0]['date_created']).split(' '))[0]);
+                } else {
+                    $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    $('#last-payment-text').text('N/A');
+                }
             }
             let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
             if (next_payment_date && next_payment_date[0]){
@@ -1501,7 +1515,6 @@
             disbursal.funding_source = $('#funding').val();
             disbursal.disbursement_channel = $('#channel').val();
             disbursal.disbursement_date = $('#disbursement-date').val();
-            disbursal.repayment_date = $('#repayment-date').val();
             if (!disbursal.funding_source || !disbursal.disbursement_channel || !disbursal.disbursement_date)
                 return swal('Kindly fill all required fields!');
 
@@ -1521,11 +1534,13 @@
 
         function initCSVUpload2(application) {
             let schedule = [],
+                loan_amount = 0,
                 $dvCSV = $("#dvCSV2"),
                 $saveCSV = $("#saveCSV2"),
                 $csvUpload = $("#csvUpload2"),
                 $uploadCSV = $("#uploadCSV2"),
-                $csvLoader = $("#csvLoader2");
+                $csvLoader = $("#csvLoader2"),
+                $approveCSV = $("#approveCSV2");
 
             $uploadCSV.bind("click", function () {
                 let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
@@ -1555,7 +1570,12 @@
                                     switch (j){
                                         case 0:{ invoice.payment_create_date = cells[j]; break; }
                                         case 1:{ invoice.payment_collect_date = cells[j]; break; }
-                                        case 2:{ invoice.payment_amount = cells[j]; break; }
+                                        case 2:{
+                                            if (i > 1)
+                                                loan_amount += parseFloat(cells[j]);
+                                            invoice.payment_amount = cells[j];
+                                            break;
+                                        }
                                         case 3:{ invoice.interest_create_date = cells[j]; break; }
                                         case 4:{ invoice.interest_collect_date = cells[j]; break; }
                                         case 5:{ invoice.interest_amount = cells[j]; break; }
@@ -1580,28 +1600,93 @@
 
             $saveCSV.bind("click", function () {
                 if (!schedule[0])
-                    return swal('Please upload a valid CSV file.');
+                    return swal('Please preview the schedule to be uploaded.');
+
+                if (loan_amount < total_due_amount)
+                    return swal('Total principal on the new schedule must include previous (carried-over) balance');
 
                 $csvLoader.show();
                 $.ajax({
-                    'url': '/user/application/schedule/'+application_id,
+                    'url': '/user/application/add-schedule/'+application_id,
                     'type': 'post',
                     'data': {schedule:schedule},
                     'success': function (data) {
                         $csvLoader.hide();
                         $csvUpload.val('');
-                        swal('Schedule saved successfully');
-                        window.location.reload();
+                        swal('Reschedule added successfully');
                     },
                     'error': function (err) {
                         $csvLoader.hide();
                         $csvUpload.val('');
-                        swal('Oops! An error occurred while saving schedule');
+                        swal('Oops! An error occurred while adding reschedule');
+                    }
+                });
+            });
+
+            let new_reschedule = $.grep(application.schedule,function(e){return e.status===2});
+            if (new_reschedule && new_reschedule[0]){
+                let table = $("<table border='1' style='text-align: center;'/>");
+                for (let i = 0; i < new_reschedule.length+2; i++) {
+                    let row,
+                        cells = [];
+                    if (i <= 1){
+                        row = $('<tr style="font-weight: bold;" />');
+                    } else {
+                        row = $("<tr />");
+                    }
+                    if (i === 0) {
+                        cells = ["PRINCIPAL","INTEREST","BALANCE"];
+                    } else if (i === 1) {
+                        cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
+                    } else {
+                        cells[0] = new_reschedule[i - 2]['payment_create_date'];
+                        cells[1] = new_reschedule[i - 2]['payment_collect_date'];
+                        cells[2] = new_reschedule[i - 2]['payment_amount'];
+                        cells[3] = new_reschedule[i - 2]['interest_create_date'];
+                        cells[4] = new_reschedule[i - 2]['interest_collect_date'];
+                        cells[5] = new_reschedule[i - 2]['interest_amount'];
+                        cells[6] = new_reschedule[i - 2]['balance'];
+                    }
+                    for (let j = 0; j < cells.length; j++) {
+                        let cell = $("<td />");
+                        if (i === 0){
+                            if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
+                                cell = $("<td colspan='3' />");
+                        }
+                        if (cells[j]){
+                            cell.html(cells[j]);
+                        } else {
+                            cell.html('--');
+                        }
+                        row.append(cell);
+                    }
+                    table.append(row);
+                }
+                $dvCSV.html('');
+                $dvCSV.append(table);
+            }
+
+            $approveCSV.bind("click", function () {
+                if (!new_reschedule || !new_reschedule[0])
+                    return swal('There is no reschedule available for approval!');
+
+                $csvLoader.show();
+                $.ajax({
+                    'url': '/user/application/approve-schedule/'+application_id,
+                    'type': 'get',
+                    'success': function (data) {
+                        $csvLoader.hide();
+                        swal('Reschedule approved successfully');
+                        window.location.reload();
+                    },
+                    'error': function (err) {
+                        $csvLoader.hide();
+                        swal('Oops! An error occurred while approving reschedule');
                     }
                 });
             });
         }
-        
+
         function openPayOffModal() {
             $('#payoff-amount').val($('#total-due-text').text());
             let interest = 0;
@@ -1620,7 +1705,7 @@
             $('#writeoff-name').val(application.fullname);
             $('#writeoff-amount').val($('#total-due-text').text());
         }
-        
+
         function writeOffLoan() {
             $.ajax({
                 'url': '/user/application/write-off/'+application_id,
