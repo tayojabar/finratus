@@ -1369,32 +1369,31 @@ router.post('/submitPermission/:role', function(req, res, next) {
     var role_id = ids.role;
     var count = 0;
     var status = true;
-    async.forEach(ids.modules, function (id, callback) {
-        var module_id = id[0]
-        var read_only = id[1];
-        var write = id[2];
-        var query = 'INSERT INTO permissions SET ?';
-        db.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:write, date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
-            if(error){
-                status = false;
-                return callback({"status": 500, "error": error, "response": null});
-                //If there is error, we send the error in the error section with 500 status
-            } else {
-                //res.send(JSON.stringify({"status": 200, "error": null, "response": "Permissions for module "+module_id+ "added!"}));
-                //If there is no error, all is good and response is 200OK.
-                console.log("Permissions for module "+module_id+ " added!")
-                count++;
-            }
-            callback();
-        });
-    }, function (data) {
-        // db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
-        if(status === false)
-            return res.send(data);
-        res.send({"status": 200, "error": null, "message": "Permissions Set for Selected Role!"});
-        // });
-    })
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
 
+        async.forEach(ids.modules, function (id, callback) {
+            var module_id = id[0]
+            var read_only = id[1];
+            var write = id[2];
+            var query = 'INSERT INTO permissions SET ?';
+            connection.query(query, {role_id:role_id, module_id:module_id, read_only:read_only, editable:write, date:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
+                if(error){
+                    status = false;
+                    callback({"status": 500, "error": error, "response": null});
+                } else {
+                    console.log("Permissions for module "+module_id+ " added!");
+                    count++;
+                }
+                callback();
+            });
+        }, function (data) {
+            connection.release();
+            if(status === false)
+                return res.send(data);
+            res.send({"status": 200, "error": null, "message": "Permissions Set for Selected Role!"});
+        })
+    });
 });
 
 router.post('/new-module/', function(req, res, next) {
