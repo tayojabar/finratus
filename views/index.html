@@ -27,6 +27,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
@@ -97,6 +98,7 @@
             'type': 'post',
             'data': obj,
             'success': function (data) {
+                console.log('Success');
 //                localStorage.setItem("user", JSON.stringify(data));
 //                console.log(localStorage.getItem("user"));
                 $.each(data, function (key, val) {
@@ -110,14 +112,14 @@
                 localStorage.setItem("role", test["user_role"]);
                 localStorage.setItem("status", test["status"]);
                 localStorage.setItem("modules", JSON.stringify(test["modules"]));
-
+                console.log(test["permissions"]);
                 if (test["permissions"] != ""){
 //                    console.log(test);
                     window.location.href = "./dashboard";
                 }
                 else{
                     window.location.href = "index.html";
-                    alert("Login Successful! However, No Views Set For This User");
+                    swal("Login Successful! However, No Views Set For This User");
                 }
 //                if(test.status == 500){
 //                    swal("Error encountered. Please try again.");

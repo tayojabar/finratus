@@ -756,7 +756,7 @@ users.get('/requests', function(req, res, next) {
 
 //Get A User's Applications For Profile Page
 users.get('/user-applications/:id', function(req, res, next) {
-    let query = 'SELECT * FROM applications WHERE id = ? AND interest_rate <> 0 ORDER BY id desc';
+    let query = 'SELECT * FROM applications WHERE userid = ? AND interest_rate <> 0 ORDER BY id desc';
     db.query(query, req.params.id, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
