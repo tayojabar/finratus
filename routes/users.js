@@ -645,7 +645,7 @@ users.post('/apply', function(req, res) {
                 if (!workflow_id)
                     return res.send({"status": 200, "message": "New Application Added!"});
                 getNextWorkflowProcess(false,workflow_id,false, function (process) {
-                    db.query('SELECT * from applications where ID = LAST_INSERT_ID()', function(err, application, fields) {
+                    db.query('SELECT MAX(ID) AS ID from applications', function(err, application, fields) {
                         process.workflowID = workflow_id;
                         process.applicationID = application[0]['ID'];
                         process.date_created = postData.date_created;
@@ -748,7 +748,7 @@ users.get('/application-id/:id', function(req, res, next) {
     let obj = {},
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
-        query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
+        query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
         'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.query(query, [application_id], function (error, result, fields) {
         if(error){
@@ -1119,12 +1119,12 @@ function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
     });
 }
 
-users.post('/application/comments/:id', function(req, res, next) {
+users.post('/application/comments/:id/:user_id', function(req, res, next) {
     db.query('SELECT * FROM applications WHERE ID = ?', [req.params.id], function (error, application, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            db.query('INSERT INTO application_comments SET ?', [{applicationID:req.params.id,userID:application[0]['userID'],text:req.body.text,date_created:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}],
+            db.query('INSERT INTO application_comments SET ?', [{applicationID:req.params.id,userID:req.params.user_id,text:req.body.text,date_created:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}],
                 function (error, response, fields) {
                     if(error || !response)
                         res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -1134,7 +1134,7 @@ users.post('/application/comments/:id', function(req, res, next) {
                         } else {
                             res.send({"status": 200, "message": "Application commented successfully!", "response": comments});
                         }
-                    })
+                    });
                 });
         }
     });

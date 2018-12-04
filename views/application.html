@@ -247,7 +247,10 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong id="workflow-div-title" class="card-title" style="float: left; margin: 15px;">Workflow</strong>
+                                <div style="float: left; margin: 0 15px;">
+                                    <strong id="workflow-div-title" class="card-title">Workflow</strong>
+                                    <p>Client#: <span id="client-id"></span> | ID#: <span id="application-id"></span></p>
+                                </div>
                                 <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
                                 <div id="close-loan" class="btn-group" style="float: right; display: none;margin-top: 5px;">
                                     <button type="button" class="btn btn-danger btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -264,7 +267,6 @@
                                     </button>
                                     <div id="stage-actions" class="dropdown-menu">
                                         <a class="dropdown-item next" href="#">Save & Proceed</a>
-                                        <div class="dropdown-divider"></div>
                                     </div>
                                 </div>
                                 <button id="current_stage" class ="btn btn-warning btn-lg" style="float: right;" disabled="disabled"></button>
@@ -589,7 +591,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="comment()">Save</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="comment()">Save</button>
                 </div>
             </div>
         </div>
@@ -906,6 +908,9 @@
                     getWorkflows(application);
                     loadWorkflowState();
 
+                    $('#client-id').text(padWithZeroes(application.userID,6));
+                    $('#application-id').text(padWithZeroes(application.ID,9));
+
                     if (application.schedule && application.schedule[0]){
                         $("#generate-schedule").hide();
                         $("#schedule").show();
@@ -941,6 +946,12 @@
                     console.log('Error');
                 }
             });
+        }
+
+        function padWithZeroes(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
         }
 
         function getWorkflows(data){
@@ -1015,16 +1026,17 @@
                 'url': '/workflow-stages/'+state.workflowID,
                 'type': 'get',
                 'success': function (data) {
-                    $('.next').show();
-                    $('.previous').show();
-                    $('#next-actions').show();
-                    $('#current_stage').show();
-
                     let count = 0,
                         workflow_stages = data.response,
                         ul = document.getElementById('workflow-ul-list'),
                         $last_btn = $("#btn-"+workflow_stages[workflow_stages.length-1]['stageID']),
                         stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0];
+
+                    if (!stage.actions || !stage.actions[0])
+                        $('.next').show();
+                    $('.previous').show();
+                    $('#next-actions').show();
+                    $('#current_stage').show();
 
                     $last_btn.hide();
                     $('#current_stage').text(stage.name);
@@ -1042,10 +1054,12 @@
 
                     if (stage.actions){
                         let actions = stage.actions.split(',');
-                        actions.forEach(function (code) {
-                            let stage_template = ($.grep(workflow_stages, function(e){ return e.code === code; }))[0];
-                            $('#stage-actions').append('<a href="#" class="dropdown-item" id="stage-action-'+stage_template.stageID+'">'
-                                +stage_template.name+' ('+stage_template.stage_name+')</a>');
+                        actions.forEach(function (id) {
+                            let stage_template = ($.grep(workflow_stages, function(e){ return e.stageID === parseInt(id); }))[0];
+                            if (stage_template){
+                                $('#stage-actions').append('<a href="#" class="dropdown-item" id="stage-action-'+stage_template.stageID+'">'
+                                    +stage_template.name+' ('+stage_template.stage_name+')</a>');
+                            }
                         });
                     }
 
@@ -1254,7 +1268,7 @@
                 return swal('Kindly type a brief comment');
             }
             $.ajax({
-                'url': '/user/application/comments/'+application_id,
+                'url': '/user/application/comments/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                 'type': 'post',
                 'data': {text: comment},
                 'success': function (data) {
@@ -1412,7 +1426,8 @@
                         let amount_owed = parseFloat(cells[2]) - amount_paid;
                         if (amount_paid > 0 && amount_owed > 0)
                             cells[7] = 2;
-                        total_principal += parseFloat(cells[2]);
+                        if (application.schedule[i - 2]['status'])
+                            total_principal += parseFloat(cells[2]);
                     }
                     for (let j = 0; j < cells.length; j++) {
                         let cell = $("<td />");

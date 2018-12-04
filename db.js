@@ -6,6 +6,6 @@ let mysql = require('mysql'),
     status = process.env.STATUS || 'development',
     mysqlConfig = config[status];
 
-mysqlConfig.connectionLimit = 10;
+mysqlConfig.connectionLimit = 100;
 
 module.exports = mysql.createPool(mysqlConfig);

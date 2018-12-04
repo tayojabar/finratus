@@ -112,11 +112,10 @@
                 e.preventDefault;
                 if($('.add-todo').val() !== ''){
                     let stage = {},
-                        action_codes = [],
+                        action_ids = [],
                         action_names = [],
                         $document = $('#document-upload-text').val(),
                         stage_template = $('#stage-template').val(),
-                        code = Math.random().toString(36).substring(7),
 //                        actions = $('.local-stages').map(function() {
 //                            if (this.value && (this.value !== '-- Choose Action --'))
 //                                return this.value;
@@ -128,7 +127,7 @@
                         local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
                     stage.name = $('#stage-name').val();
                     stage.description = $('#stage-description').val();
-                    stage.approverID = $('#process-rights').val();
+                    stage.approverID = parseInt($('#process-rights').val());
                     if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === "-- Choose User Role --")
                         return swal('Kindly fill all required fields!');
                     if ($document)
@@ -136,17 +135,16 @@
                     if (actions[0]){
                         $.each(actions, function (key, val) {
                             let action = JSON.parse(decodeURIComponent(val));
-                            action_codes.push(action.code);
+                            action_ids.push(action.ID);
                             action_names.push(action.name);
                             if (key === actions.length-1){
-                                if (action_codes[0])
-                                    stage.actions = action_codes.join(',');
+                                if (action_ids[0])
+                                    stage.actions = action_ids.join(',');
                                 if (action_names[0])
                                     stage.action_names = action_names;
                                 let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
                                 stage.stageID = stage_template_json.ID || stage_template_json.stageID;
                                 stage.stage_name = stage_template_json.name;
-                                stage.code = code;
                                 local_stages.push(stage);
                                 localStorage.setItem('local_stages', JSON.stringify(local_stages));
                                 createTodo(stage);
@@ -157,7 +155,6 @@
                         let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
                         stage.stageID = stage_template_json.ID || stage_template_json.stageID;
                         stage.stage_name = stage_template_json.name;
-                        stage.code = code;
                         local_stages.push(stage);
                         localStorage.setItem('local_stages', JSON.stringify(local_stages));
                         createTodo(stage);
@@ -626,7 +623,6 @@
                             val.stageID = val.ID;
                             delete val.ID;
                             val.stage_name = val.name;
-                            val.code = Math.random().toString(36).substring(7);
                             local_stages.push(val);
 //                            $("#stage-template").append('<option class="disabled" value = "' + encodeURIComponent(JSON.stringify(val)) + '" disabled="disabled">' + val.name + '</option>');
                         }
@@ -707,6 +703,8 @@
                 return swal('Kindly fill all required fields!');
             data.workflow = workflow;
             data.stages = stages;
+            if (($.grep(data.stages,function(e){return e.stage_name==='Application Start'})).length > 1)
+                data.stages.shift();
 
             $.ajax({
                 type: 'POST',
@@ -731,7 +729,5 @@
             });
         }
     </script>
-
-
 </body>
 </html>

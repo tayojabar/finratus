@@ -985,7 +985,7 @@ router.post('/body-frame/:number_plate', function(req, res, next) {
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status
         } else {
-            db.query('SELECT * from inspections where ID = LAST_INSERT_ID()', function(err, re, fields) {
+            db.query('SELECT * from inspections where ID = (select max(ID) from inspections)', function(err, re, fields) {
                 if (!err){
                     res.send({"status": 200, "error": null, "response": re[0]});
                 }
@@ -1274,31 +1274,36 @@ router.post('/workflows', function(req, res, next) {
         date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     workflow.date_created = date_created;
 
-    db.query('INSERT INTO workflows SET ?', workflow, function (error, response, fields) {
-        if(error || !response)
-            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-        db.query('SELECT * FROM workflows WHERE ID = LAST_INSERT_ID()', function (error, results, fields) {
-            async.forEach(stages, function (stage, callback) {
-                stage.workflowID = results[0]['ID'];
-                stage.date_created = date_created;
-                delete stage.stage_name;
-                delete stage.type;
-                if (stage.action_names)
-                    delete stage.action_names;
-                db.query('INSERT INTO workflow_stages SET ?', stage, function (error, results, fields) {
-                    if (error){
-                        console.log(error);
-                    } else {
-                        count++;
-                    }
-                    callback();
-                });
-            }, function (data) {
-                db.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
-                    res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) created successfully!", "response": results});
-                });
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('INSERT INTO workflows SET ?', workflow, function (error, response, fields) {
+            if(error || !response)
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            connection.query('SELECT * FROM workflows WHERE ID = LAST_INSERT_ID()', function (error, results, fields) {
+                async.forEach(stages, function (stage, callback) {
+                    stage.workflowID = results[0]['ID'];
+                    stage.date_created = date_created;
+                    delete stage.stage_name;
+                    delete stage.type;
+                    if (stage.action_names)
+                        delete stage.action_names;
+                    connection.query('INSERT INTO workflow_stages SET ?', stage, function (error, results, fields) {
+                        if (error){
+                            console.log(error);
+                        } else {
+                            count++;
+                        }
+                        callback();
+                    });
+                }, function (data) {
+                    connection.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+                        connection.release();
+                        res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) created successfully!", "response": results});
+                    });
+                })
             })
-        })
+        });
     });
 });
 
@@ -1314,7 +1319,7 @@ router.get('/workflows', function(req, res, next) {
 });
 
 router.get('/workflow-stages', function(req, res, next) {
-    let query = 'SELECT w.ID, w.document, w.code, w.actions, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.stageID=s.ID ORDER BY w.ID asc';
+    let query = 'SELECT w.ID, w.document, w.actions, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.stageID=s.ID ORDER BY w.ID asc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -1325,7 +1330,7 @@ router.get('/workflow-stages', function(req, res, next) {
 });
 
 router.get('/workflow-stages/:workflow_id', function(req, res, next) {
-    let query = 'SELECT w.ID, w.document, w.code, w.actions, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.workflowID =? AND w.stageID=s.ID ORDER BY w.ID asc';
+    let query = 'SELECT w.ID, w.document, w.actions, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.workflowID =? AND w.stageID=s.ID ORDER BY w.ID asc';
     db.query(query, [req.params.workflow_id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
