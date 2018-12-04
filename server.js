@@ -235,6 +235,10 @@ app.get('/all-clients', requireLogin, function(req, res){
     res.sendFile('all-clients.html', { root: __dirname+'/views' });
 });
 
+app.get('/client-info', requireLogin, function(req, res){
+    res.sendFile('client-info.html', { root: __dirname+'/views' });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

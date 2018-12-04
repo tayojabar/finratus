@@ -571,6 +571,22 @@ users.post('/edit-user/:id', function(req, res, next) {
   	});
 });
 
+users.post('/edit-client/:id', function(req, res, next) {
+    var postData = req.body;
+    let date = Date.now();
+    var payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.user_role, postData.email, postData.date_modified, req.params.id];
+    var query = 'Update users SET username = ?, fullname=?, phone=?, address = ?, user_role=?, email=?, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {                   ;
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
 /* Change User Password */
 users.post('/changePassword/:id', function(req, res, next) {
 	var postData = req.body;
