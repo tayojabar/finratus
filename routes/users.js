@@ -754,6 +754,18 @@ users.get('/requests', function(req, res, next) {
     });
 });
 
+//Get A User's Applications For Profile Page
+users.get('/user-applications/:id', function(req, res, next) {
+    let query = 'SELECT * FROM applications WHERE id = ? AND interest_rate <> 0 ORDER BY id desc';
+    db.query(query, req.params.id, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send(results);
+        }
+    });
+});
+
 users.get('/application/:id', function(req, res, next) {
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
         'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM users AS u, applications AS a WHERE u.ID=a.userID AND u.ID =?';

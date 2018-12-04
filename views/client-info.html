@@ -404,7 +404,111 @@
         window.location.href = './add-application?id='+application_id;
     }
 
-    console.log(application_id);
+    function loadDetails(){
+        $.ajax({
+            'url': '/user/user-dets/'+application_id,
+            'type': 'get',
+            'data': {},
+            'success': function (data) {
+                //console.log(data);
+                $('#user-form').slideDown();
+                $('#user-table').slideToggle();
+                //console.log(data[0]);
+                var fullname = data[0].fullname;
+                $('#first_name').val(fullname.split(' ')[0]);
+                $('#middle_name').val(fullname.split(' ')[1]);
+                $('#last_name').val(fullname.split(' ')[2]);
+                $('#phone').val(data[0].phone);
+                $('#address').val(data[0].address);
+                $('#email').val(data[0].email);
+                $('#dob').val(data[0].dob);
+                $('#gender').val(data[0].gender);
+                $('#postcode').val(data[0].postcode);
+                $('#client_country').val(data[0].client_country);
+                $('#marital_status').val(data[0].marital_status);
+                $('#loan_officer').val(data[0].loan_officer);
+                $('#client_state').val(data[0].client_state);
+                $('#years_add').val(data[0].years_add);
+                $('#ownership').val(data[0].ownership);
+                $('#employer_name').val(data[0].employer_name);
+                $('#industry').val(data[0].industry);
+                $('#job').val(data[0].job);
+                $('#job_country').val(data[0].job_country);
+                $('#off_address').val(data[0].off_address);
+                $('#off_state').val(data[0].off_state);
+                $('#doe').val(data[0].doe);
+                $('#guarantor_name').val(data[0].guarantor_name);
+                $('#guarantor_occupation').val(data[0].guarantor_occupation);
+                $('#relationship').val(data[0].relationship);
+                $('#years_known').val(data[0].years_known);
+                $('#guarantor_phone').val(data[0].guarantor_phone);
+                $('#guarantor_email').val(data[0].guarantor_email);
+                $('#guarantor_address').val(data[0].guarantor_address);
+                $('#gua_country').val(data[0].gua_country);
+
+                // var applications = data.message;
+                // results = applications;
+                // populateDataTable(applications);
+                // swal('Application archived successfully');
+            },
+            'error': function (err) {
+                swal('Oops! An error occurred while retrieving details.');
+            }
+        });
+    }
+
+    function loadApplications(){
+        $.ajax({
+            'url': 'user/user-applications/'+id,
+            'type': 'get',
+            'data': {},
+            'success': function (data) {
+                var details = JSON.parse(data);
+                populateLoanTable(details);
+            },
+            'error': function (err) {
+                //alert ('Error');
+                console.log('Error');
+            }
+        });
+    }
+
+    function populateLoanTable(dets){
+        if (dets.length === 0){
+            $("#loan-table").dataTable().fnClearTable();
+        }else{
+            jQuery.each(inspections, function(k, v){
+                //alert(k);
+                //alert(d1.toString('dd/mm/yyyy'));
+                let stat;
+                if (v.status === 1) {
+                    stat = '<span class="label label-success" style="background-color:green; color:white; padding: 5px; border-radius: 5px">Active</span>';
+                }
+                else if (v.Inspection_Status === 0){
+                    stat = '<span class="label label-danger" style="background-color:red; color:white; padding: 5px; border-radius: 5px">Not Active</span>';
+                }
+                else{
+                    stat = '<span class="label label-warning" style="background-color:orange; color:white; padding: 5px; border-radius: 5px">Closed</span>';
+                }
+//                    console.log(v.Inspection_Status);
+                var date = '<td><input style="width:100%; border:none" type="button" id = "'+v.ID+'" class="date" date = "'+formatDate(v.Date_Inspected)+'" name = "'+v.Vehicle+'" value="'+formatDate(v.Date_Inspected)+'"/></td>';
+                $("#loan-table").dataTable().fnAddData([v.loan_amount, formatDate(v.date_created), stat]);
+            });
+        }
+    }
+
+    function formatDate(date) {
+        let separator;
+        if (date.indexOf('-') > -1){
+            separator = '-';
+        } else if (date.indexOf('/') > -1){
+            separator = '/';
+        } else {
+            return date;
+        }
+        let date_array = date.split(separator);
+        return date_array[0]+'-'+date_array[1]+'-'+date_array[2];
+    }
 
 </script>
 
