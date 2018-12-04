@@ -411,7 +411,6 @@
     let modules;
 
     function saveRolePermissions(r){
-        console.log(modules);
         var obj = {};
         var arr = [];
         var i = 0; var j = 0;
@@ -434,46 +433,33 @@
 //                j++;
 //            }
 //        });
-        for (var a = 0; a < modules.length; a++){
-            var rd; var wt;
-            $('.RosaCheck').each(function (){
-                if ($("input:checkbox.RosaCheck").attr('di') === modules[a]["module_id"]){
-
-                }
-            })
-            if ($("input:checkbox.RosaCheck").attr('di') === modules[a]["module_id"]){
-                console.log($(this));
-                if($(this).prop('checked') === true){
-                    rd = 1;
-                } else{
-                    rd = 0;
-                }
-                arr[a]=[modules[a]["module_id"], rd];
-            }
+        for (let a = 0; a < modules.length; a++){
+            let rd; let wt;
+            rd = ($('#'+modules[a]["id"]).prop('checked'))? 1 : 0;
+            wt = ($('#'+modules[a]["id"]+'-write').prop('checked'))? 1 : 0;
+            arr[a]=[modules[a]["id"], rd, wt];
         }
-        console.log(arr);
 
-//        obj.role = r;
-//        obj.modules = arr;
-//        var test = [];
-////        console.log(obj);
-//        $.ajax({
-//            'url': '/submitPermission/'+r+'/',
-//            'type': 'post',
-//            'data': obj,
-//            'success': function (data) {
-//                console.log(data);
-//                $.each(data, function (key, val) {
-//                    test[key] = val;
-//                });
-////                console.log(test);
-//                if(test.status == 500){
-//                    swal("Error encountered. Please try again.");
-//                }
-//                else
-//                    swal("Views and Read / Write Permissions granted for User "+r+"!");
-//            }
-//        });
+        obj.role = r;
+        obj.modules = arr;
+        var test = [];
+        $.ajax({
+            'url': '/submitPermission/'+r+'/',
+            'type': 'post',
+            'data': obj,
+            'success': function (data) {
+                console.log(data);
+                $.each(data, function (key, val) {
+                    test[key] = val;
+                });
+//                console.log(test);
+                if(test.status == 500){
+                    swal("Error encountered. Please try again.");
+                }
+                else
+                    swal("Views and Read / Write Permissions granted for User "+r+"!");
+            }
+        });
     }
 
     function check(){
@@ -578,7 +564,6 @@
             url: "/permissions/"+id+"/",
             data: '{}',
             success: function (response) {
-                modules = JSON.parse(response);
                 if (!(JSON.parse(response).length === 0)){
                     $.each(JSON.parse(response), function(key, val){
                         reads[r++] = [val.module_id, val.read_only];
@@ -614,6 +599,7 @@
             url: "/modules/",
             data: '{}',
             success: function (response) {
+                modules = JSON.parse(response);
                 let write;
                 mods = JSON.parse(response); //console.log(mods);
                 $.each(JSON.parse(response), function (key, val) {

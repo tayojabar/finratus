@@ -473,7 +473,7 @@
 
         function loadMenus(){
     var modules = {};
-    modules = JSON.parse(localStorage.getItem("modules")); console.log(modules);
+    modules = JSON.parse(localStorage.getItem("modules"));
     modules.forEach(function(k, v){
         if (k.menu_name === 'Sub Menu'){
             let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
