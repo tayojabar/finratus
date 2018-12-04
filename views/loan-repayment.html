@@ -734,17 +734,26 @@
                             total[17] += parseFloat(cells[17]);
                         }
                     }
-                    for (let j = 0; j < cells.length; j++) {
+                    let id = (i > 0 && application.schedule[i - 2])? application.schedule[i - 2]['ID']: '';
+                    cells.push(id);
+                    for (let j = -1; j < cells.length-1; j++) {
                         let cell = $("<td />");
                         if (i === 0){
+                            cells[j] = cells[j] || "";
                             if (cells[j] !== ""){
                                 cell = $("<td colspan='5' />");
                                 cell.html(cells[j]);
                             }
                         } else if (i === 1){
-                            cell.html(cells[j]);
+                            if (j === -1){
+                                cell.html('INVOICE NO');
+                            } else {
+                                cell.html(cells[j]);
+                            }
                         } else {
-                            if (j === 0 && i>1){
+                            if (j === -1 && i>1){
+                                cell.html(cells[18]);
+                            } else if (j === 0 && i>1){
                                 cell.html(cells[j]);
                             } else if (j === 1 && i>1){
                                 switch (cells[j]){
@@ -814,7 +823,7 @@
                 for (let i = 0; i<total.length; i++){
                     let cell = $("<td />");
                     if (i === 0){
-                        cell = $("<td colspan='3' />");
+                        cell = $("<td colspan='4' />");
                         cell.html(total[i]);
                         row.append(cell);
                     } else if (i > 2){
