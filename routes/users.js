@@ -1230,6 +1230,30 @@ users.get('/application/approve-schedule/:id', function(req, res, next) {
     });
 });
 
+users.get('/application/reject-schedule/:id', function(req, res, next) {
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 2', [req.params.id], function (error, new_schedule, fields) {
+            if (error) {
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                let count = 0;
+                async.forEach(new_schedule, function (obj, callback2) {
+                    connection.query('DELETE FROM application_schedules WHERE ID = ?', [obj.ID], function (error, response, fields) {
+                        if(!error)
+                            count++;
+                        callback2();
+                    });
+                }, function (data) {
+                    connection.release();
+                    res.send({"status": 200, "message": "Application schedule with "+count+" invoices deleted successfully!", "response": null});
+                });
+            }
+        });
+    });
+});
+
 users.post('/application/add-schedule/:id', function(req, res, next) {
     db.getConnection(function(err, connection) {
         if (err) throw err;

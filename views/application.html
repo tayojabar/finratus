@@ -489,10 +489,11 @@
                                         <div class="col-md-12 well">
                                             <h2 class="text-center" style="margin-bottom: 15px;">Loan Reschedule</h2>
                                             <div class="row">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
                                                 </div>
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
+                                                    <button id="rejectCSV2" class="btn btn-danger" style="float: right;">Reject <i class="fa fa-times"></i></button>
                                                     <button id="approveCSV2" class="btn btn-success" style="float: right;">Approve <i class="fa fa-check"></i></button>
                                                     <button id="saveCSV2" class="btn btn-primary" style="float: right;">Add <i class="fa fa-plus"></i></button>
                                                     <button id="uploadCSV2" class="btn btn-info" style="float: right;">Preview <i class="fa fa-eye-slash"></i></button>
@@ -1540,6 +1541,7 @@
                 $csvUpload = $("#csvUpload2"),
                 $uploadCSV = $("#uploadCSV2"),
                 $csvLoader = $("#csvLoader2"),
+                $rejectCSV = $("#rejectCSV2"),
                 $approveCSV = $("#approveCSV2");
 
             $uploadCSV.bind("click", function () {
@@ -1614,6 +1616,7 @@
                         $csvLoader.hide();
                         $csvUpload.val('');
                         swal('Reschedule added successfully');
+                        window.location.reload();
                     },
                     'error': function (err) {
                         $csvLoader.hide();
@@ -1682,6 +1685,26 @@
                     'error': function (err) {
                         $csvLoader.hide();
                         swal('Oops! An error occurred while approving reschedule');
+                    }
+                });
+            });
+
+            $rejectCSV.bind("click", function () {
+                if (!new_reschedule || !new_reschedule[0])
+                    return swal('There is no reschedule available to delete!');
+
+                $csvLoader.show();
+                $.ajax({
+                    'url': '/user/application/reject-schedule/'+application_id,
+                    'type': 'get',
+                    'success': function (data) {
+                        $csvLoader.hide();
+                        swal('Reschedule deleted successfully');
+                        window.location.reload();
+                    },
+                    'error': function (err) {
+                        $csvLoader.hide();
+                        swal('Oops! An error occurred while deleting reschedule');
                     }
                 });
             });
