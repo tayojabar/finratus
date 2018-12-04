@@ -1098,6 +1098,7 @@ users.get('/workflow_process_all/:application_id', function(req, res, next) {
 function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
     db.query('SELECT * FROM workflow_stages WHERE workflowID=? ORDER BY ID asc',[workflow_id], function (error, stages, fields) {
         if(stages){
+            stages.push({name:"Denied",stageID:4,stage_name:"Denied",workflowID:workflow_id,approverID:1});
             if(application_id && !stage){
                 db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)',[application_id], function (error, application_last_process, fields) {
                     if (application_last_process){
@@ -1202,10 +1203,91 @@ users.post('/application/schedule/:id', function(req, res, next) {
                     }, function (data) {
                         connection.release();
                         res.send({"status": 200, "message": "Application scheduled with "+count+" invoices successfully!", "response": null});
-                    })
+                    });
                 });
             }
         });
+    });
+});
+
+users.get('/application/approve-schedule/:id', function(req, res, next) {
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1', [req.params.id], function (error, invoices, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                async.forEach(invoices, function (invoice, callback) {
+                    connection.query('UPDATE application_schedules SET status=0 WHERE ID = ?', [invoice.ID], function (error, response, fields) {
+                        callback();
+                    });
+                }, function (data) {
+                    connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 2', [req.params.id], function (error, new_schedule, fields) {
+                        if (error) {
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            let count = 0;
+                            async.forEach(new_schedule, function (obj, callback2) {
+                                connection.query('UPDATE application_schedules SET status=1, date_modified=? WHERE ID = ?', [moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'),obj.ID], function (error, response, fields) {
+                                    if(!error)
+                                        count++;
+                                    callback2();
+                                });
+                            }, function (data) {
+                                connection.release();
+                                res.send({"status": 200, "message": "Application schedule approved with "+count+" invoices successfully!", "response": null});
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    });
+});
+
+users.get('/application/reject-schedule/:id', function(req, res, next) {
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 2', [req.params.id], function (error, new_schedule, fields) {
+            if (error) {
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                let count = 0;
+                async.forEach(new_schedule, function (obj, callback2) {
+                    connection.query('DELETE FROM application_schedules WHERE ID = ?', [obj.ID], function (error, response, fields) {
+                        if(!error)
+                            count++;
+                        callback2();
+                    });
+                }, function (data) {
+                    connection.release();
+                    res.send({"status": 200, "message": "Application schedule with "+count+" invoices deleted successfully!", "response": null});
+                });
+            }
+        });
+    });
+});
+
+users.post('/application/add-schedule/:id', function(req, res, next) {
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        let count = 0;
+        async.forEach(req.body.schedule, function (obj, callback) {
+            obj.applicationID = req.params.id;
+            obj.status = 2;
+            obj.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            connection.query('INSERT INTO application_schedules SET ?', obj, function (error, response, fields) {
+                if(!error)
+                    count++;
+                callback();
+            });
+        }, function (data) {
+            connection.release();
+            res.send({"status": 200, "message": "Application scheduled with "+count+" invoices successfully!", "response": null});
+        })
     });
 });
 

@@ -194,7 +194,7 @@
                             <div class="card-header">
                                 <div style="float: left; margin: 0 15px;">
                                     <strong id="workflow-div-title" class="card-title">Workflow</strong>
-                                    <p>Client#: <span id="client-id"></span> | ID#: <span id="application-id"></span></p>
+                                    <p>Client ID#: <span id="client-id"></span> | LOAN ID#: <span id="application-id"></span></p>
                                 </div>
                                 <button class="btn btn-primary" onclick="goToLoanOverview()" style="float: right;">Loan Overview <i class="fa fa-forward"></i></button>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal" style="float: right;">Add Additional Interest</button>
@@ -666,6 +666,8 @@
                         row = $('<tr style="font-weight: bold;" />');
                     } else {
                         row = $("<tr />");
+                        if (application.schedule[i - 2]['status'] === 2)
+                            continue;
                         if (parseInt(application.schedule[i - 2]['status']) === 0)
                             row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
                     }
