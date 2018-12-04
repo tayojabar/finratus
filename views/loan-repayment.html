@@ -192,9 +192,12 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong id="workflow-div-title" class="card-title" style="float: left;"></strong>
+                                <div style="float: left; margin: 0 15px;">
+                                    <strong id="workflow-div-title" class="card-title">Workflow</strong>
+                                    <p>Client#: <span id="client-id"></span> | ID#: <span id="application-id"></span></p>
+                                </div>
                                 <button class="btn btn-primary" onclick="goToLoanOverview()" style="float: right;">Loan Overview <i class="fa fa-forward"></i></button>
-                                <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal" style="float: right;">Add Interest</button>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal" style="float: right;">Add Additional Interest</button>
                             </div>
                             <div class="card-body">
                                 <div id="loanCollectionSchedule" style="margin-top: 30px; overflow-x: scroll; max-width: 1200px"></div>
@@ -549,6 +552,8 @@
                     let data = result.response,
                         fullname = data.fullname || '';
                     application = data;
+                    $('#client-id').text(padWithZeroes(application.userID,6));
+                    $('#application-id').text(padWithZeroes(application.ID,9));
                     initRepaymentSchedule(application);
                     $("#workflow-div-title").text(fullname.toUpperCase());
                 },
@@ -558,16 +563,22 @@
             });
         }
 
+        function padWithZeroes(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+
         function loadComments(comments) {
             if (comments && comments[0]){
                 let $comments = $('#comments');
                 $comments.html('');
                 comments.forEach(function (comment) {
                     $comments.append('<div class="row">\n' +
-                        '    <div class="col-sm-2">\n' +
+                        '    <div class="col-sm-1">\n' +
                         '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
                         '    </div>\n' +
-                        '    <div class="col-sm-10">\n' +
+                        '    <div class="col-sm-11">\n' +
                         '        <div class="panel panel-default">\n' +
                         '            <div class="panel-heading"><strong>'+comment.fullname+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
                         '            <div class="panel-body">'+comment.text+'</div>\n' +
@@ -587,10 +598,10 @@
                             return $comments.append('<h2 style="margin: auto;">No comments available yet!</h2>');
                         comments.forEach(function (comment) {
                             $comments.append('<div class="row">\n' +
-                                '    <div class="col-sm-2">\n' +
+                                '    <div class="col-sm-1">\n' +
                                 '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
                                 '    </div>\n' +
-                                '    <div class="col-sm-10">\n' +
+                                '    <div class="col-sm-11">\n' +
                                 '        <div class="panel panel-default">\n' +
                                 '            <div class="panel-heading"><strong>'+comment.fullname+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
                                 '            <div class="panel-body">'+comment.text+'</div>\n' +
@@ -615,7 +626,7 @@
                 return swal('Kindly type a brief comment');
             }
             $.ajax({
-                'url': '/user/application/comments/'+application_id,
+                'url': '/user/application/comments/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                 'type': 'post',
                 'data': {text: comment},
                 'success': function (data) {
@@ -703,21 +714,23 @@
                         cells[17] = (parseFloat(cells[13])+parseFloat(cells[14])+parseFloat(cells[15])+parseFloat(cells[16])).toString();
                         if (parseFloat(cells[8]) > 0 && parseFloat(cells[13]) > 0)
                             cells[1] = cells[2] = 2;
-                        total[3] += parseFloat(cells[3]);
-                        total[4] += parseFloat(cells[4]);
-                        total[5] += parseFloat(cells[5]);
-                        total[6] += parseFloat(cells[6]);
-                        total[7] += parseFloat(cells[7]);
-                        total[8] += parseFloat(cells[8]);
-                        total[9] += parseFloat(cells[9]);
-                        total[10] += parseFloat(cells[10]);
-                        total[11] += parseFloat(cells[11]);
-                        total[12] += parseFloat(cells[12]);
-                        total[13] += parseFloat(cells[13]);
-                        total[14] += parseFloat(cells[14]);
-                        total[15] += parseFloat(cells[15]);
-                        total[16] += parseFloat(cells[16]);
-                        total[17] += parseFloat(cells[17]);
+                        if (application.schedule[i - 2]['status'] === 1){
+                            total[3] += parseFloat(cells[3]);
+                            total[4] += parseFloat(cells[4]);
+                            total[5] += parseFloat(cells[5]);
+                            total[6] += parseFloat(cells[6]);
+                            total[7] += parseFloat(cells[7]);
+                            total[8] += parseFloat(cells[8]);
+                            total[9] += parseFloat(cells[9]);
+                            total[10] += parseFloat(cells[10]);
+                            total[11] += parseFloat(cells[11]);
+                            total[12] += parseFloat(cells[12]);
+                            total[13] += parseFloat(cells[13]);
+                            total[14] += parseFloat(cells[14]);
+                            total[15] += parseFloat(cells[15]);
+                            total[16] += parseFloat(cells[16]);
+                            total[17] += parseFloat(cells[17]);
+                        }
                     }
                     for (let j = 0; j < cells.length; j++) {
                         let cell = $("<td />");
@@ -732,12 +745,19 @@
                             if (j === 0 && i>1){
                                 cell.html(cells[j]);
                             } else if (j === 1 && i>1){
-                                if (parseInt(cells[j]) === 0){
-                                    cell.html('<span class="badge badge-danger">Not Paid</span>');
-                                } else if (parseInt(cells[j]) === 2) {
-                                    cell.html('<span class="badge badge-warning">Part Paid</span>');
-                                } else if (parseInt(cells[j]) === 1) {
-                                    cell.html('<span class="badge badge-success">Paid</span>');
+                                switch (cells[j]){
+                                    case 0: {
+                                        cell.html('<span class="badge badge-danger">Not Paid</span>');
+                                        break;
+                                    }
+                                    case 1: {
+                                        cell.html('<span class="badge badge-success">Paid</span>');
+                                        break;
+                                    }
+                                    case 2: {
+                                        cell.html('<span class="badge badge-warning">Part Paid</span>');
+                                        break;
+                                    }
                                 }
                             } else if (j === 2 && i>1) {
                                 if ((parseInt(application.schedule[i - 2]['status']) !== 0) && (parseInt(cells[j]) !== 1)){

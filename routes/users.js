@@ -143,30 +143,32 @@ users.post('/new-user', function(req, res, next) {
     postData.date_created = Date.now(); 
 	var query =  'INSERT INTO users Set ?';
 	var query2 = 'select * from users where username = ? or email = ?';
-	db.query(query2,data, function (error, results, fields) {
-		if (results && results[0]){
-			res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "User already exists!"}));
-		}
-		else {
-			db.query(query,postData, function (error, results, fields) {
-				if(error){
-					res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
-					//If there is error, we send the error in the error section with 500 status
-				} else {
-					db.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
-						if (!err){
-							res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
-						}
-						else{
-							res.send(JSON.stringify({"response": "Error retrieving user details. Please try a new username!"}));
-						}
-					});
-					//res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
-					//If there is no error, all is good and response is 200OK.
-				}
-			});
-		}
-	});
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query2,data, function (error, results, fields) {
+            if (results && results[0]){
+                res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "User already exists!"}));
+            }
+            else {
+                connection.query(query,postData, function (error, results, fields) {
+                    if(error){
+                        res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    } else {
+                        connection.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
+                            connection.release();
+                            if (!err){
+                                res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                            }
+                            else{
+                                res.send(JSON.stringify({"response": "Error retrieving user details. Please try a new username!"}));
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
 });
 
 /* Add New Client */
@@ -175,29 +177,33 @@ users.post('/new-client', function(req, res, next) {
     postData.date_created = Date.now();
     var query =  'INSERT INTO users Set ?';
     var query2 = 'select * from users where username = ? or email = ?';
-    db.query(query2,data, function (error, results, fields) {
-        if (results && results[0]){
-            res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Client already exists!"}));
-        }
-        else {
-            db.query(query,postData, function (error, results, fields) {
-                if(error){
-                    res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-                    //If there is error, we send the error in the error section with 500 status
-                } else {
-                    db.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
-                        if (!err){
-                            res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
-                        }
-                        else{
-                            res.send(JSON.stringify({"response": "Error retrieving client details. Please try a new username!"}));
-                        }
-                    });
-                    //res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Added"}));
-                    //If there is no error, all is good and response is 200OK.
-                }
-            });
-        }
+
+
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query2,data, function (error, results, fields) {
+            if (results && results[0]){
+                res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Client already exists!"}));
+            }
+            else {
+                connection.query(query,postData, function (error, results, fields) {
+                    if(error){
+                        res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    } else {
+                        connection.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
+                            connection.release();
+                            if (!err){
+                                res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                            }
+                            else{
+                                res.send(JSON.stringify({"response": "Error retrieving client details. Please try a new username!"}));
+                            }
+                        });
+                    }
+                });
+            }
+        });
     });
 });
 
@@ -645,7 +651,7 @@ users.post('/apply', function(req, res) {
                 if (!workflow_id)
                     return res.send({"status": 200, "message": "New Application Added!"});
                 getNextWorkflowProcess(false,workflow_id,false, function (process) {
-                    db.query('SELECT * from applications where ID = LAST_INSERT_ID()', function(err, application, fields) {
+                    db.query('SELECT MAX(ID) AS ID from applications', function(err, application, fields) {
                         process.workflowID = workflow_id;
                         process.applicationID = application[0]['ID'];
                         process.date_created = postData.date_created;
@@ -748,58 +754,64 @@ users.get('/application-id/:id', function(req, res, next) {
     let obj = {},
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
-        query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
+        query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
         'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status FROM users AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
-    db.query(query, [application_id], function (error, result, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            result = (result[0])? result[0] : {};
-            if (!fs.existsSync(path)){
-                result.files = {};
-                db.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
-                    if (error) {
-                        res.send({"status": 500, "error": error, "response": null});
-                    } else {
-                        result.schedule = schedule;
-                        db.query('SELECT * FROM schedule_history WHERE applicationID=? AND status=1 ORDER BY ID desc', [application_id], function (error, payment_history, fields) {
-                            if (error) {
-                                res.send({"status": 500, "error": error, "response": null});
-                            } else {
-                                result.payment_history = payment_history;
-                                return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
-                            }
-                        });
-                    }
-                });
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query, [application_id], function (error, result, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
             } else {
-                fs.readdir(path, function (err, files){
-                    async.forEach(files, function (file, callback){
-                        let filename = file.split('.')[0].split('_');
-                        filename.shift();
-                        obj[filename.join('_')] = path+file;
-                        callback();
-                    }, function(data){
-                        result.files = obj;
-                        db.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
-                            if (error) {
-                                res.send({"status": 500, "error": error, "response": null});
-                            } else {
-                                result.schedule = schedule;
-                                db.query('SELECT * FROM schedule_history WHERE applicationID=? AND status=1 ORDER BY ID desc', [application_id], function (error, payment_history, fields) {
-                                    if (error) {
-                                        res.send({"status": 500, "error": error, "response": null});
-                                    } else {
-                                        result.payment_history = payment_history;
-                                        return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
-                                    }
-                                });
-                            }
+                result = (result[0])? result[0] : {};
+                if (!fs.existsSync(path)){
+                    result.files = {};
+                    connection.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
+                        if (error) {
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            result.schedule = schedule;
+                            connection.query('SELECT * FROM schedule_history WHERE applicationID=? AND status=1 ORDER BY ID desc', [application_id], function (error, payment_history, fields) {
+                                connection.release();
+                                if (error) {
+                                    res.send({"status": 500, "error": error, "response": null});
+                                } else {
+                                    result.payment_history = payment_history;
+                                    return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    fs.readdir(path, function (err, files){
+                        async.forEach(files, function (file, callback){
+                            let filename = file.split('.')[0].split('_');
+                            filename.shift();
+                            obj[filename.join('_')] = path+file;
+                            callback();
+                        }, function(data){
+                            result.files = obj;
+                            connection.query('SELECT * FROM application_schedules WHERE applicationID=?', [application_id], function (error, schedule, fields) {
+                                if (error) {
+                                    res.send({"status": 500, "error": error, "response": null});
+                                } else {
+                                    result.schedule = schedule;
+                                    connection.query('SELECT * FROM schedule_history WHERE applicationID=? AND status=1 ORDER BY ID desc', [application_id], function (error, payment_history, fields) {
+                                        connection.release();
+                                        if (error) {
+                                            res.send({"status": 500, "error": error, "response": null});
+                                        } else {
+                                            result.payment_history = payment_history;
+                                            return res.send({"status": 200, "message": "User applications fetched successfully!", "response": result});
+                                        }
+                                    });
+                                }
+                            });
                         });
                     });
-                });
+                }
             }
-        }
+        });
     });
 });
 
@@ -1119,12 +1131,12 @@ function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
     });
 }
 
-users.post('/application/comments/:id', function(req, res, next) {
+users.post('/application/comments/:id/:user_id', function(req, res, next) {
     db.query('SELECT * FROM applications WHERE ID = ?', [req.params.id], function (error, application, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            db.query('INSERT INTO application_comments SET ?', [{applicationID:req.params.id,userID:application[0]['userID'],text:req.body.text,date_created:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}],
+            db.query('INSERT INTO application_comments SET ?', [{applicationID:req.params.id,userID:req.params.user_id,text:req.body.text,date_created:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}],
                 function (error, response, fields) {
                     if(error || !response)
                         res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -1134,7 +1146,7 @@ users.post('/application/comments/:id', function(req, res, next) {
                         } else {
                             res.send({"status": 200, "message": "Application commented successfully!", "response": comments});
                         }
-                    })
+                    });
                 });
         }
     });
@@ -1151,28 +1163,33 @@ users.get('/application/comments/:id', function(req, res, next) {
 });
 
 users.post('/application/schedule/:id', function(req, res, next) {
-    db.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1', [req.params.id], function (error, invoices, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            async.forEach(invoices, function (invoice, callback) {
-                db.query('UPDATE application_schedules SET status=0 WHERE ID = ?', [invoice.ID], function (error, response, fields) {
-                   callback();
-                });
-            }, function (data) {
-                let count = 0;
-                async.forEach(req.body.schedule, function (obj, callback2) {
-                    obj.applicationID = req.params.id;
-                    db.query('INSERT INTO application_schedules SET ?', obj, function (error, response, fields) {
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1', [req.params.id], function (error, invoices, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                async.forEach(invoices, function (invoice, callback) {
+                    connection.query('UPDATE application_schedules SET status=0 WHERE ID = ?', [invoice.ID], function (error, response, fields) {
+                        callback();
+                    });
+                }, function (data) {
+                    let count = 0;
+                    async.forEach(req.body.schedule, function (obj, callback2) {
+                        obj.applicationID = req.params.id;
+                        connection.query('INSERT INTO application_schedules SET ?', obj, function (error, response, fields) {
                             if(!error)
                                 count++;
                             callback2();
                         });
-                }, function (data) {
-                    res.send({"status": 200, "message": "Application scheduled with "+count+" invoices successfully!", "response": null});
-                })
-            });
-        }
+                    }, function (data) {
+                        connection.release();
+                        res.send({"status": 200, "message": "Application scheduled with "+count+" invoices successfully!", "response": null});
+                    })
+                });
+            }
+        });
     });
 });
 
@@ -1299,34 +1316,39 @@ users.get('/application/payment-reversal/:id', function(req, res, next) {
 users.post('/application/pay-off/:id', function(req, res, next) {
     let data = req.body;
     data.close_status = 1;
-    db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            db.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1 AND payment_status = 0', [req.params.id], function (error, invoices, fields) {
-                if(error){
-                    res.send({"status": 500, "error": error, "response": null});
-                } else {
-                    async.forEach(invoices, function (invoice_obj, callback) {
-                        let invoice = {};
-                        invoice.invoiceID = invoice_obj.ID;
-                        invoice.applicationID = req.params.id;
-                        invoice.payment_amount = invoice_obj.payment_amount;
-                        invoice.interest_amount = invoice_obj.interest_amount;
-                        invoice.fees_amount = invoice_obj.fees_amount;
-                        invoice.penalty_amount = invoice_obj.penalty_amount;
-                        invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-                        db.query('UPDATE application_schedules SET payment_status=1 WHERE ID = ?', [invoice_obj.ID], function (error, result, fields) {
-                            db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
-                                callback();
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1 AND payment_status = 0', [req.params.id], function (error, invoices, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        async.forEach(invoices, function (invoice_obj, callback) {
+                            let invoice = {};
+                            invoice.invoiceID = invoice_obj.ID;
+                            invoice.applicationID = req.params.id;
+                            invoice.payment_amount = invoice_obj.payment_amount;
+                            invoice.interest_amount = invoice_obj.interest_amount;
+                            invoice.fees_amount = invoice_obj.fees_amount;
+                            invoice.penalty_amount = invoice_obj.penalty_amount;
+                            invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+                            connection.query('UPDATE application_schedules SET payment_status=1 WHERE ID = ?', [invoice_obj.ID], function (error, result, fields) {
+                                connection.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
+                                    callback();
+                                });
                             });
+                        }, function (data) {
+                            connection.release();
+                            res.send({"status": 200, "message": "Application write off successful!"});
                         });
-                    }, function (data) {
-                        res.send({"status": 200, "message": "Application write off successful!"});
-                    });
-                }
-            });
-        }
+                    }
+                });
+            }
+        });
     });
 });
 
