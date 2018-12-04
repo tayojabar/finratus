@@ -209,9 +209,9 @@
                                                 <div class="row">
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Gender<span class="text-danger">*</span></label>
-                                                        <div class="input-group">
+                                                        <div class="form-control">
                                                             <div class="col-md-4">
-                                                                <div class="radio-success">
+                                                                <div>
                                                                     <label class="control r control--radio">
                                                                         <input type="radio" id="male" name="gender" value="Male" required="">&nbsp; Male
                                                                         <div class="control__indicator"></div>
@@ -219,7 +219,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-5">
-                                                                <div class="radio-success">
+                                                                <div>
                                                                     <label class="control r control--radio">
                                                                         <input type="radio" id="female" name="gender" value="Female">&nbsp; Female
                                                                         <div class="control__indicator"></div>
@@ -262,7 +262,19 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Loan Officer<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <select id="loan_officer" name="user" class="form-control" tabindex="5.2" >
+                                                            <select id="loan_officer" class="form-control" tabindex="5.2" >
+                                                            </select>
+                                                            <!-- ngIf: idForm.user.$dirty -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-sm-4 col-md-4">
+                                                        <label class="form-control-label">Branch<span class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <select id="branch" class="form-control" tabindex="5.2" >
+                                                                <option id="0"> -- Select a branch --</option>
+                                                                <option id="Lagos">Lagos</option>
+                                                                <option id="Abuja">Abuja</option>
+                                                                <option id="PH">Port - Harcourt</option>
                                                             </select>
                                                             <!-- ngIf: idForm.user.$dirty -->
                                                         </div>
@@ -373,7 +385,7 @@
 
                                                         </div>
                                                         <div class="form-control pull-right" style="border-color: transparent">
-                                                            <button class="btn btn-primary pull-right" onclick="upload(1)">Save Image</button>
+                                                            <button class="btn btn-primary pull-right write" onclick="upload(1)">Save Image</button>
                                                         </div>
                                                     </div>
 
@@ -392,7 +404,7 @@
 
                                                         </div>
                                                         <div class="form-control pull-right" style="border-color: transparent">
-                                                            <button class="btn btn-primary pull-right" onclick="upload(2)">Save Signature</button>
+                                                            <button class="btn btn-primary pull-right write" onclick="upload(2)">Save Signature</button>
                                                         </div>
 
                                                     </div>
@@ -552,19 +564,19 @@
                                     <div class="panel push-down">
                                         <div class="panel-body">
                                             <div class="example-box-wrapper">
-                                                <h3>Guarantor Information</h3> <span class="text-danger"> Required (*)</span><hr>
+                                                <h3>Reference Information</h3> <span class="text-danger"> Required (*)</span><hr>
 
                                                 <div class="row">
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
-                                                        <label class="form-control-label">Guarantor Full Name</label>
+                                                        <label class="form-control-label">Reference Name</label>
                                                         <div class="input-group">
                                                             <input type="text" id="guarantor_name" class="form-control" placeholder="Enter Guarantor name">
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group">
-                                                        <label class="form-control-label">Guarantor Occupation</label>
+                                                        <label class="form-control-label">Occupation</label>
                                                         <div class="input-group">
                                                             <input type="text" id="guarantor_occupation" class="form-control" placeholder="Enter Guarantor Occupation">
                                                         </div>
@@ -589,21 +601,21 @@
                                                     <div class="form-group">
                                                         <label class="form-control-label">Phone</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="guarantor_phone" class="form-control" placeholder="Enter Guarantor Phone Number">
+                                                            <input type="text" id="guarantor_phone" class="form-control" placeholder="Enter Reference Phone Number">
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label class="form-control-label">Email</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="guarantor_email" class="form-control" placeholder="Enter Guarantor Email">
+                                                            <input type="text" id="guarantor_email" class="form-control" placeholder="Enter Reference Email">
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label class="form-control-label">Address</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="guarantor_address" class="form-control" placeholder="Enter Guarantor Address">
+                                                            <input type="text" id="guarantor_address" class="form-control" placeholder="Enter Reference Address">
                                                         </div>
                                                     </div>
 
@@ -629,8 +641,8 @@
 
                                 <div style="overflow:auto;">
                                     <div style="float:right;">
-                                        <button class="btn btn-danger" type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
-                                        <button class="btn btn-success" type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                                        <button class="btn btn-danger write" type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                                        <button class="btn btn-success write" type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
                                     </div>
                                 </div>
 
@@ -817,7 +829,7 @@
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
             }
         });
-        if (parseInt(w[0]['editable']) != 1){
+        if (parseInt(w[0]['editable']) === 1){
             $(".write").hide();
         }
     }
@@ -841,7 +853,7 @@
     function getOfficers(){
         $.ajax({
             type: "GET",
-            url: "/user/officers/",
+            url: "/user/users-list/",
             data: '{}',
             success: function (response) {
                 var role = $("[id=loan_officer]");
@@ -855,6 +867,7 @@
 
     function createClient(){
         var obj = {};
+        obj.username = $('#email').val();
         obj.fullname = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val();
         obj.phone = $('#phone').val();
         obj.address = $('#address').val();
