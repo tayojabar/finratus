@@ -293,6 +293,17 @@
                                         </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New Role"/>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class=" form-control-label">Branch</label>
+                                    <strong style="color:red"> *</strong>
+                                    <span id="branch_error" style="padding-left:50px; text-align: center"></span>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-building"></i></div>
+                                        <select id="branch" class="form-control" required="required">
+                                            <option selected="selected" id="0">-- Select a branch --</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <!--<div class="form-group">-->
                                 <!--<label class=" form-control-label">Phone Number</label>-->
                                 <!--<div class="input-group">-->
@@ -640,7 +651,7 @@
         }
 
         function edit(){
-            getRoles();
+            getRoles(); getBranches();
             $.ajax({
                 'url': '/user/user-dets/'+localStorage.getItem("user_id"),
                 'type': 'get',
@@ -656,6 +667,7 @@
                     $('#address').val(data[0].address);
                     $('#email').val(data[0].email);
                     $('#role').val(data[0].user_role);
+                    $('#branch').val(data[0].user_role);
                     // var applications = data.message;
                     // results = applications;
                     // populateDataTable(applications);
@@ -675,6 +687,7 @@
 //            obj.address = $('#address').val();
             obj.email = $('#email').val();
             obj.user_role = $('#role').find('option:selected').attr('id');
+            obj.branch = $('#branch').find('option:selected').attr('id');
             var test={};
             console.log(+localStorage.getItem("user_id"));
             $.ajax({
@@ -716,6 +729,21 @@
                 },
                 'error': function(e){
                     swal('Internet Connection Error!');
+                }
+            });
+        }
+
+        function getBranches(){
+            $.ajax({
+                type: "GET",
+                url: "/user/branches/",
+                data: '{}',
+                success: function (response) {
+                    var branch = $("[id=branch]");
+                    branch.empty().append('<option selected="selected" id="0">-- Select a Branch --</option>');
+                    $.each(JSON.parse(response), function (key, val) {
+                        $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
+                    });
                 }
             });
         }
