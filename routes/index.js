@@ -214,6 +214,30 @@ router.get('/inspection-images/:number_plate', function(req, res, next) {
     }
 });
 
+/* GET client profile images. */
+router.get('/profile-images/:folder/:user', function(req, res, next) {
+    var array = [];
+    var path = 'files/users/'+req.params.folder+'/';
+    if (fs.existsSync(path)){
+        fs.readdir(path, function (err, files){
+            //console.log(path+': Exists, hence image '+JSON.stringify(files));
+            var obj = {};
+            async.forEach(files, function (file, callback){
+                let insP = file.split('.')[0].split('_')[1];
+                obj[insP] = path+file;
+                //res.images = obj;
+                callback();
+            }, function(data){
+                //array.push(res);
+                res.send(JSON.stringify({"status": 200, "response":obj}));
+            });
+        })	;
+    }
+    else {
+        res.send(JSON.stringify({"status":500, "response": "No Image Uploaded"}));
+    }
+});
+
 /* GET vehicles listing for admin. */
 router.get('/vehicles-list', function(req, res, next) {
     var query = 'SELECT *, (select fullname from users u where u.ID = owner) as Owner from vehicles order by ID desc';

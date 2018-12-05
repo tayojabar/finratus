@@ -168,7 +168,7 @@
                 <div id="user-form" class="col-xs-12 col-sm-12">
                     <div class="card">
                         <div class="card-header">
-                            <strong>Add Client Data</strong> <small> Client Information</small>
+                            <strong id="new_edit">Add Client Data</strong> <small id="def_name"> Client Information</small>
                         </div>
                         <div class="card-body card-block">
                             <div id="regForm" action="user/new-client" method="post">
@@ -271,10 +271,10 @@
                                                         <label class="form-control-label">Branch<span class="text-danger">*</span></label>
                                                         <div class="input-group">
                                                             <select id="branch" class="form-control" tabindex="5.2" >
-                                                                <option id="0"> -- Select a branch --</option>
-                                                                <option id="Lagos">Lagos</option>
-                                                                <option id="Abuja">Abuja</option>
-                                                                <option id="PH">Port - Harcourt</option>
+                                                                <!--<option id="0"> &#45;&#45; Select a branch &#45;&#45;</option>-->
+                                                                <!--<option id="Lagos">Lagos</option>-->
+                                                                <!--<option id="Abuja">Abuja</option>-->
+                                                                <!--<option id="PH">Port - Harcourt</option>-->
                                                             </select>
                                                             <!-- ngIf: idForm.user.$dirty -->
                                                         </div>
@@ -371,7 +371,7 @@
                                             <div class="example-box-wrapper">
                                                 <h3>Uploads</h3><hr><br>
                                                 <div class="row">
-                                                    <div class="form-group col-sm-6">
+                                                    <div class="form-group col-sm-4">
                                                         <!-- <label class="col-sm-3 control-label">Upload Customer Image</label> -->
 
                                                         <!-- <input type="file" name="customer_image" class="form-control" tabindex="6"> -->
@@ -389,7 +389,27 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group col-sm-6">
+                                                    <div class="form-group col-sm-4">
+                                                        <!-- <label class="col-sm-3 control-label">Upload Customer Signature</label> -->
+
+                                                        <div class="form-control">
+                                                            <!-- <input type="file" name="cust_signature_image" class="form-control" tabindex="7"> -->
+
+                                                            <label for="file-upload-signature" class="custom-file-upload">
+                                                                <i class="fa fa-cloud-upload"></i> Upload ID Card
+                                                            </label>
+                                                            <input id="file-upload-idcard" class="image admin-img" type="file" tabindex="7">
+                                                            <label id="path-idcard"></label><br>
+                                                            <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
+
+                                                        </div>
+                                                        <div class="form-control pull-right" style="border-color: transparent">
+                                                            <button class="btn btn-primary pull-right write" onclick="upload(3)">Save ID Card</button>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="form-group col-sm-4">
                                                         <!-- <label class="col-sm-3 control-label">Upload Customer Signature</label> -->
 
                                                         <div class="form-control">
@@ -684,6 +704,7 @@
 <script>
     jQuery(document).ready(function() {
         getOfficers();
+        getBranches();
     });
 
     var currentTab = 0; // Current tab is set to be the first tab (0)
@@ -858,7 +879,22 @@
                 var role = $("[id=loan_officer]");
                 role.empty().append('<option selected="selected" id="0">-- Choose Loan Officer --</option>');
                 $.each(JSON.parse(response), function (key, val) {
-                    $("#loan_officer").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.fullname + '</option>');
+                    $("#loan_officer").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                });
+            }
+        });
+    }
+
+    function getBranches(){
+        $.ajax({
+            type: "GET",
+            url: "/user/branches/",
+            data: '{}',
+            success: function (response) {
+                var branch = $("[id=branch]");
+                branch.empty().append('<option selected="selected" id="0">-- Select a Branch --</option>');
+                $.each(JSON.parse(response), function (key, val) {
+                    $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
                 });
             }
         });
@@ -872,7 +908,6 @@
         obj.address = $('#address').val();
         obj.email = $('#email').val();
         obj.gender = $('input[name="gender"]:checked').val();
-        obj.user_role = 4;
         obj.dob= $("#dob").val();
         obj.marital_status = $('#marital_status').find('option:selected').attr('value');
         obj.loan_officer = $('#loan_officer').find('option:selected').attr('id');
@@ -924,7 +959,13 @@
     }
 
     function upload(i){
-        var name = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val();
+        var name = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val(); var folder_name = " ";
+        if ($('#email').val() === "" || $('#email').val() === "null"){
+            swal('Please Enter Client Email!');
+        }
+        else {
+            folder_name = name + '_' + $('#email').val();
+        }
         var file; var item;
         if (i === 1){
             file = $('#file-upload')[0].files[0];
@@ -932,6 +973,9 @@
         }else if (i === 2){
             file = $('#file-upload-signature')[0].files[0]
             item = "Signature";
+        }else if (i === 3){
+            file = $('#file-upload-idcard')[0].files[0]
+            item = "ID Card";
         }
         console.log(name);
         if (file === "undefined") {
@@ -940,7 +984,7 @@
             var formData = new FormData();
             formData.append('file', file); formData.append('type', i);
             $.ajax({
-                url: "user/upload-file/"+name+'/'+item,
+                url: "user/upload-file/"+folder_name+'/'+item,
                 type: "POST",
                 data: formData,
                 processData: false,

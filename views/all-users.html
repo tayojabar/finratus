@@ -293,6 +293,17 @@
                                         </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New Role"/>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class=" form-control-label">Branch</label>
+                                    <strong style="color:red"> *</strong>
+                                    <span id="branch_error" style="padding-left:50px; text-align: center"></span>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-building"></i></div>
+                                        <select id="branch" class="form-control" required="required">
+                                            <option selected="selected" id="0">-- Select a branch --</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <!--<div class="form-group">-->
                                 <!--<label class=" form-control-label">Phone Number</label>-->
                                 <!--<div class="input-group">-->
@@ -341,7 +352,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <div class="write" style="display: none"><button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
+                    <div class="write"><button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
                 </div>
             </div>
         </div>
@@ -380,7 +391,7 @@
                 <div class="modal-footer">
                     <span id="pass-error" style="padding-left:0; text-align: left" class="pull-left"></span>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" onclick="validate()"><i class="fa fa-save"></i> Save</button>
+                    <a type="button" class="btn btn-primary write" onclick="validate()"><i class="fa fa-save"></i> Save</a>
                 </div>
             </div>
         </div>
@@ -551,12 +562,30 @@
                     v.username,
                     v.fullname,
                     v.Role,
-                    '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'
-//                    '<div class="write"><button class="write btn btn-success " data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</button></div>'
+                    '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'+
+                    '<div class="write"><button class="write btn btn-success " data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</button></div>'+
+                    '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable User</button>'
                 ]);
             });
         }
-        
+
+        function confirm(id) {
+            // approveInspection(status, "Passed");
+            swal({
+                title: "Disable this user?",
+                text: "Click OK to continue",
+                //icon: "input",
+                //content: "input",
+                buttons: true,
+                closeModal: false
+            }).then(
+                function(isConfirm) {
+                    if (isConfirm){
+                        disableUser(id);
+                    }
+                });
+        }
+
         function openDetailsModal(id) {
             localStorage.setItem("user_id",id);
             let data = ($.grep(results, function(e){ return e.ID === id; }))[0],
@@ -622,7 +651,7 @@
         }
 
         function edit(){
-            getRoles();
+            getRoles(); getBranches();
             $.ajax({
                 'url': '/user/user-dets/'+localStorage.getItem("user_id"),
                 'type': 'get',
@@ -638,6 +667,7 @@
                     $('#address').val(data[0].address);
                     $('#email').val(data[0].email);
                     $('#role').val(data[0].user_role);
+                    $('#branch').val(data[0].user_role);
                     // var applications = data.message;
                     // results = applications;
                     // populateDataTable(applications);
@@ -657,6 +687,7 @@
 //            obj.address = $('#address').val();
             obj.email = $('#email').val();
             obj.user_role = $('#role').find('option:selected').attr('id');
+            obj.branch = $('#branch').find('option:selected').attr('id');
             var test={};
             console.log(+localStorage.getItem("user_id"));
             $.ajax({
@@ -676,6 +707,43 @@
                 },
                 'error': function (err) {
                     swal('Connection Error. Please try again.');
+                }
+            });
+        }
+
+        function disableUser(id){
+            var test = {};
+            $.ajax({
+                'url': '/user/del-user/'+id,
+                'type': 'post',
+                'data': {},
+                'success': function (data) {
+                    test = JSON.parse(data);
+                    if(test.status === 500){
+                        swal("Please Retry Action!");
+                    }
+                    else{
+                        swal("User Disabled Successfully!");
+                        loadUsers();
+                    }
+                },
+                'error': function(e){
+                    swal('Internet Connection Error!');
+                }
+            });
+        }
+
+        function getBranches(){
+            $.ajax({
+                type: "GET",
+                url: "/user/branches/",
+                data: '{}',
+                success: function (response) {
+                    var branch = $("[id=branch]");
+                    branch.empty().append('<option selected="selected" id="0">-- Select a Branch --</option>');
+                    $.each(JSON.parse(response), function (key, val) {
+                        $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
+                    });
                 }
             });
         }

@@ -191,6 +191,10 @@ app.get('/inspections', requireLogin, function(req, res){
     res.sendFile('inspections.html', { root: __dirname+'/views' });
 });
 
+app.get('/branches', requireLogin, function(req, res){
+    res.sendFile('branches.html', { root: __dirname+'/views' });
+});
+
 app.get('/reports', requireLogin, function(req, res){
     res.sendFile('reports.html', { root: __dirname+'/views' });
 });

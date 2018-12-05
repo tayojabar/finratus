@@ -162,47 +162,48 @@
                                 <!--<div class="card-body">-->
                                 <!--</div>-->
                                 <div class="row">
-                                    <div class="col-sm-2">
-                                        <img src="" width="180" height="170"/>
+                                    <div id="pic" class="col-sm-2">
+
                                     </div>
                                     <div class="col-sm-8" style="padding-top: 70px">
-                                        <strong id="fullname">Test Client</strong><br/>
-                                        Client ID<br/>
-                                        <i class="fa fa-phone"></i><span id="phone"></span> <i class="fa fa-envelope"></i><span id="email"></span><br/>
-                                        Loan Officer: <br/>
+                                        <strong id="fullname"></strong><br/>
+                                        Client ID#: <span id="client_id"></span><br/>
+                                        <i class="fa fa-phone"></i><span id="phone"></span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span id="email"></span><br/>
+                                        Loan Officer: <span id="loan_officer"></span><br/>
                                     </div>
                                     <div class="col-sm-2" style="padding-top: 80px">
-                                        <button onclick="newApplication()" class="btn btn-success"><i class="fa fa-plus"></i> New Application</button>
+                                        <button onclick="newApplication()" class="btn btn-success"><i class="fa fa-plus"></i> New Application</button><br/><br/>
+                                        <button onclick="editUser()" class="btn btn-primary"><i class="fa fa-pencil" width="80"></i> Edit User          </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="card">
-                                        <div class="card-header">
-                                            <h4 class="widget-title lighter smaller">Applications</h4>
-                                        </div>
+                                <div class="card-header">
+                                    <h4 class="widget-title lighter smaller"><strong>Applications</strong> <span id="no_of_applications"></span></h4>
+                                </div>
 
-                                        <div class="card-body">
-                                            <div class="widget-main padding-8">
-                                                <div>
-                                                    <table id="loan-table" class="table table-striped table-bordered">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Loan Amount</th>
-                                                            <th>Date Created</th>
-                                                            <th>Status</th>
-                                                            <th></th>
-                                                        </tr>
-                                                        </thead>
+                                <div class="card-body">
+                                    <div class="widget-main padding-8">
+                                        <div>
+                                            <table id="loan-table" class="table table-striped table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th>Loan Amount</th>
+                                                    <th>Date Created</th>
+                                                    <th>Status</th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
 
-                                                        <tbody id="">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                                <tbody id="">
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
                             <!--<div class="col-sm-5">-->
 
@@ -234,33 +235,40 @@
 
                         </div>
                         <div class="col-sm-12">
-                            <div class="card">
-                                <div class="card-header"><h4>Client Information</h4></div>
+                            <div class="col-sm-4">
+                                <div class="card">
+                                    <div class="card-header"><strong>Personal Information</strong></div>
                                 <div class="card-body">
-                                    <div class="col-sm-4">
-                                        <div class="card-header">Personal Information</div>
-                                        <div class="card-body">
-                                            <table class="table table-striped table-bordered">
-                                                <tbody id="personal"></tbody>
-                                            </table>
-                                        </div>
+                                    <div width="100%">
+                                    <table class="table table-striped table-bordered">
+                                        <tbody id="personal"></tbody>
+                                    </table>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="card-header">Employment Information</div>
-                                        <div class="card-body">
-                                            <table class="table table-striped table-bordered">
-                                                <tbody id="employment"></tbody>
-                                            </table>
-                                        </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="card">
+                                    <div class="card-header"><strong>Employment Information</strong></div>
+                                <div class="card-body">
+                                <div width="100%">
+                                    <table class="table table-striped table-bordered">
+                                        <tbody id="employment"></tbody>
+                                    </table>
+                                </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="card">
+                                    <div class="card-header"><strong>Reference Information</strong></div>
+                                <div class="card-body">
+                                    <div width="100%">
+                                    <table class="table table-striped table-bordered">
+                                        <tbody id="reference"></tbody>
+                                    </table>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="card-header">Reference Information</div>
-                                        <div class="card-body">
-                                            <table class="table table-striped table-bordered">
-                                                <tbody id="reference"></tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -403,11 +411,21 @@
         }
     }
 
+    function padWithZeroes(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const application_id = urlParams.get('id');
 
     function newApplication(){
         window.location.href = './add-application?id='+application_id;
+    }
+
+    function editUser(){
+        window.location.href = './all-clients?id='+application_id;
     }
 
     function loadDetails(){
@@ -467,7 +485,7 @@
 
     function loadInfo(){
         $.ajax({
-            'url': 'user/user-dets/'+application_id,
+            'url': 'user/client-dets/'+application_id,
             'type': 'get',
             'data': {},
             'success': function (data) {
@@ -484,7 +502,14 @@
     }
 
     function populateCards(data){
+
             let obj = data[0];
+            loadImages(obj.fullname+'_'+obj.email, obj.fullname);
+        $('#fullname').html(obj.fullname);
+        $('#phone').html(' '+obj.phone);
+        $('#email').html(' '+obj.email);
+        $('#client_id').html(padWithZeroes(obj.id,6));
+        $('#loan_officer').html(obj.officer);
             let pbody = $("#personal");let ebody = $("#employment"); let rbody = $("#reference"),
             tr = ""; let te = ""; let tp = "";
             pbody.empty(); ebody.empty();  rbody.empty();
@@ -500,13 +525,12 @@
             tr += "<tr><td><strong>Phone</strong></td><td>"+obj.phone+"</td></tr>";
         if (obj.address)
             tr += "<tr><td><strong>Address</strong></td><td>"+obj.address+"</td></tr>";
-        if (obj.Role)
-            tr += "<tr><td><strong>User Role</strong></td><td>"+obj.Role+"</td></tr>";
         if (obj.date_created)
             tr += "<tr><td><strong>Date Created</strong></td><td>"+formatDate(obj.date_created)+"</td></tr>";
         pbody.html(tr);
 
         // Employment Info Card
+        console.log(obj.job);
         if (obj.job)
             te += "<tr><td><strong>Job Description</strong></td><td>"+obj.job+"</td></tr>";
         if (obj.employer_name)
@@ -544,6 +568,36 @@
                 console.log('Error');
             }
         });
+    }
+
+    function loadImages(foldername, name){
+        var test = {};
+        $.ajax({
+            'url': '/profile-images/'+foldername+'/'+name,
+            'type': 'get',
+            'data': {},
+            'success': function (data) {
+                // $.each(data[0], function (key, val) {
+                //     test[key] = val;
+                // });
+                let res = JSON.parse(data);
+                if(res.status == 500){
+//                    swal("No Profile Image Uploaded!");
+                    $('#pic').append('<img src="./files/users/default_user_logo.png" width="180" height="170"/>');
+                }
+                else{
+                    let image =
+                        '<a href="#">'+
+                        '<img src="'+res['response']['Image']+'" alt="Profile Pic ' +name+'" style="max-width:100%;" height = 150 width = 150>'+
+                        '</a>';
+                    $('#pic').append(image);
+                }
+            },
+            'error': function (data){
+
+            }
+        });
+
     }
 
     function populateLoanTable(dets){

@@ -139,7 +139,7 @@ users.post('/login', function(req, res) {
 
 /* Add New User */
 users.post('/new-user', function(req, res, next) {
-    var postData = req.body; var data = []; data.username = req.body.username; data.email = req.body.email;
+    var postData = req.body; var data = []; data.username = req.body.username; data.email = req.body.email; postData.status = 1;
     postData.date_created = Date.now(); 
 	var query =  'INSERT INTO users Set ?';
 	var query2 = 'select * from users where username = ? or email = ?';
@@ -173,10 +173,11 @@ users.post('/new-user', function(req, res, next) {
 
 /* Add New Client */
 users.post('/new-client', function(req, res, next) {
-    var postData = req.body; var data = []; data.username = req.body.username; data.email = req.body.email;
-    postData.date_created = Date.now();
-    var query =  'INSERT INTO users Set ?';
-    var query2 = 'select * from users where username = ? or email = ?';
+    var postData = req.body; var data = []; data.username = req.body.username; data.email = req.body.email; postData.status = 1;
+    // postData.date_created = Date.now();
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')
+    var query =  'INSERT INTO clients Set ?';
+    var query2 = 'select * from clients where username = ? or email = ?';
 
 
     db.getConnection(function(err, connection) {
@@ -209,7 +210,7 @@ users.post('/new-client', function(req, res, next) {
 
 /* Add New User Role*/
 users.post('/new-role', function(req, res, next) {
-    var postData = req.body;
+    var postData = req.body; postData.status = 1;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')
     var query =  'INSERT INTO user_roles Set ?';
     var query2 = 'select * from user_roles where role_name = ?';
@@ -218,12 +219,36 @@ users.post('/new-role', function(req, res, next) {
             res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Role name already exists!"}));
         }
         else {
-            db.query(query,{"role_name":postData.role, "date_created": postData.date_created}, function (error, results, fields) {
+            db.query(query,{"role_name":postData.role, "date_created": postData.date_created, "status": 1}, function (error, results, fields) {
                 if(error){
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                     //If there is error, we send the error in the error section with 500 status
                 } else {
                     res.send(JSON.stringify({"status": 200, "error": null, "response": "New User Role Added!"}));
+                    //If there is no error, all is good and response is 200OK.
+                }
+            });
+        }
+    });
+});
+
+/* Add New Branch*/
+users.post('/new-branch', function(req, res, next) {
+    var postData = req.body; postData.status = 1;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')
+    var query =  'INSERT INTO branches Set ?';
+    var query2 = 'select * from branches where branch_name = ?';
+    db.query(query2,req.body.branch_name, function (error, results, fields) {
+        if (results && results[0]){
+            res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Branch name already exists!"}));
+        }
+        else {
+            db.query(query,{"branch_name":postData.branch_name, "date_created": postData.date_created, "status": 1}, function (error, results, fields) {
+                if(error){
+                    res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    //If there is error, we send the error in the error section with 500 status
+                } else {
+                    res.send(JSON.stringify({"status": 200, "error": null, "response": "New Branch Created!"}));
                     //If there is no error, all is good and response is 200OK.
                 }
             });
@@ -312,26 +337,26 @@ users.post('/upload-file/:id/:item', function(req, res) {
         }
     });
 
-    fs.stat('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function (err) {
+    fs.stat('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension, function (err) {
         //console.log(stats);//here we got all information of file in stats variable
 
         if (err) {// If file doesn't exist
             //return console.error(err);
             // Use the mv() method to place the file somewhere on your server
-            sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function(err) {
+            sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension, function(err) {
                 if (err) return res.status(500).send(err);
                 // console.log(req.files.file);
                 res.send('File uploaded!');
             });
         }
         else{
-            fs.unlink('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension,function(err){
+            fs.unlink('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension,function(err){
                 if(err){
                     // console.log(err);
                     res.send('Unable to delete file!');
                 }
                 else{
-                    sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function(err) {
+                    sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension, function(err) {
                         if (err)
                             return res.status(500).send(err);
                         // console.log(req.files.file);
@@ -349,7 +374,7 @@ users.post('/upload-file/:id/:item', function(req, res) {
 
 /* GET users listing. */
 users.get('/all-users', function(req, res, next) {
-	var query = 'SELECT * from users';
+	var query = 'SELECT * from users where status = 1';
 	var array = [];
 	db.query(query, function (error, results, fields) {
 	  	if(error){
@@ -385,7 +410,7 @@ users.get('/all-users', function(req, res, next) {
 });
 
 users.get('/users-list', function(req, res, next) {
-    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role in (1, 2, 3) order by ID desc';
+    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role not in (3, 4) and status = 1 order by ID desc';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -395,6 +420,19 @@ users.get('/users-list', function(req, res, next) {
   			//If there is no error, all is good and response is 200OK.
 	  	}
   	});
+});
+
+users.get('/branches', function(req, res, next) {
+    var query = 'SELECT * from branches where status = 1';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify(results));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
 });
 
 // users.get('/officers', function(req, res, next) {
@@ -411,7 +449,8 @@ users.get('/users-list', function(req, res, next) {
 // });
 
 users.get('/clients-list', function(req, res, next) {
-    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role = 4 order by ID desc';
+    //var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role = 4 order by ID desc';
+    var query = 'select * from clients where status = 1';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -450,8 +489,22 @@ users.get('/user-dets/:id', function(req, res, next) {
   	});
 });
 
+users.get('/client-dets/:id', function(req, res, next) {
+    var query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer from clients where id = ? order by id desc ';
+    db.query(query, req.params.id, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            //res.send({"status": 200, "message": "User details fetched successfully!", "response": results});
+            res.send(results);
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
 users.get('/user-roles', function(req, res, next) {
-    var query = 'SELECT * from user_roles';
+    var query = 'SELECT * from user_roles where status = 1 and id not in (1, 3, 4)';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -464,7 +517,8 @@ users.get('/user-roles', function(req, res, next) {
 });
 
 users.get('/roles/:role', function(req, res, next) {
-    var query = 'SELECT * from user_roles where not id = ?';
+    let query
+    query = (req.params.role === '1') ? 'SELECT * from user_roles where id not in (3, 4, 1) and status = 1' : 'SELECT * from user_roles where id not in (3, 4) and status = 1';
     db.query(query, req.params.role, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -478,7 +532,7 @@ users.get('/roles/:role', function(req, res, next) {
 
 /* GET users count. */
 users.get('/usersCount', function(req, res, next) {
-    var query = 'SELECT count(*) as total from users';
+    var query = 'SELECT count(*) as total from users where status = 1';
 	db.query(query, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -558,8 +612,9 @@ users.get('/user/:id', function(req, res, next) {
 users.post('/edit-user/:id', function(req, res, next) {
 	var postData = req.body;    
 	let date = Date.now();
-    var payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.user_role, postData.email, postData.date_modified, req.params.id];
-    var query = 'Update users SET username = ?, fullname=?, phone=?, address = ?, user_role=?, email=?, date_modified = ? where id=?';
+	postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    var payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.user_role, postData.email, postData.branch, postData.date_modified, req.params.id];
+    var query = 'Update users SET username = ?, fullname=?, phone=?, address = ?, user_role=?, email=?, branch =?, date_modified = ? where id=?';
     db.query(query, payload, function (error, results, fields) {                   ;
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
@@ -574,14 +629,94 @@ users.post('/edit-user/:id', function(req, res, next) {
 users.post('/edit-client/:id', function(req, res, next) {
     var postData = req.body;
     let date = Date.now();
-    var payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.user_role, postData.email, postData.date_modified, req.params.id];
-    var query = 'Update users SET username = ?, fullname=?, phone=?, address = ?, user_role=?, email=?, date_modified = ? where id=?';
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    var payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.email,
+    postData.gender, postData.dob, postData.marital_status, postData.loan_officer, postData.branch , postData.client_state, postData.postcode, postData.client_country,
+    postData.years_add, postData.ownership , postData.employer_name ,postData.industry ,postData.job, postData.job_country , postData.off_address, postData.off_state,
+    postData.doe, postData.guarantor_name, postData.guarantor_occupation, postData.relationship, postData.years_known, postData.guarantor_phone, postData.guarantor_email,
+    postData.guarantor_address, postData.gua_country, postData.date_modified, req.params.id];
+    var query = 'Update clients SET username = ?, fullname=?, phone=?, address = ?, email=?, gender=?, dob = ?, marital_status=?, loan_officer=?, branch=?, ' +
+                'client_state=?, postcode=?, client_country=?, years_add=?, ownership=?, employer_name=?, industry=?, job=?, job_country=?, off_address=?, off_state=?, ' +
+                'doe=?, guarantor_name=?, guarantor_occupation=?, relationship=?, years_known=?, guarantor_phone=?, guarantor_email=?, guarantor_address=?, gua_country=?, ' +
+                'date_modified = ? where id=?';
     db.query(query, payload, function (error, results, fields) {                   ;
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             //If there is error, we send the error in the error section with 500 status
         } else {
             res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+/* Change Branch Status */
+users.post('/del-branch/:id', function(req, res, next) {
+    var postData = req.body;
+    let date = Date.now();
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    var payload = [postData.date_modified, req.params.id];
+    var query = 'Update branches SET status = 0, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {                   ;
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Branch Disabled!"}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+/* Change Role Status */
+users.post('/del-role/:id', function(req, res, next) {
+    var postData = req.body;
+    let date = Date.now();
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    var payload = [postData.date_modified, req.params.id];
+    var query = 'Update roles SET status = 0, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Role Disabled!"}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+// Change User Status
+users.post('/del-user/:id', function(req, res, next) {
+    var postData = req.body;
+    let date = Date.now();
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    var payload = [postData.date_modified, req.params.id];
+    var query = 'Update users SET status = 0, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "User Disabled!"}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+
+// Change Client Status
+users.post('/del-client/:id', function(req, res, next) {
+    var postData = req.body;
+    let date = Date.now();
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    var payload = [postData.date_modified, req.params.id];
+    var query = 'Update clients SET status = 0, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Disabled!"}));
             //If there is no error, all is good and response is 200OK.
         }
     });
