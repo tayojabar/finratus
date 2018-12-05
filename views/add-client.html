@@ -924,7 +924,13 @@
     }
 
     function upload(i){
-        var name = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val();
+        var name = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val(); var folder_name = " ";
+        if ($('#email').val() === "" || $('#email').val() === "null"){
+            swal('Please Enter Client Email!');
+        }
+        else {
+            folder_name = name + '_' + $('#email').val();
+        }
         var file; var item;
         if (i === 1){
             file = $('#file-upload')[0].files[0];
@@ -940,7 +946,7 @@
             var formData = new FormData();
             formData.append('file', file); formData.append('type', i);
             $.ajax({
-                url: "user/upload-file/"+name+'/'+item,
+                url: "user/upload-file/"+folder_name+'/'+item,
                 type: "POST",
                 data: formData,
                 processData: false,

@@ -162,17 +162,18 @@
                                 <!--<div class="card-body">-->
                                 <!--</div>-->
                                 <div class="row">
-                                    <div class="col-sm-2">
-                                        <img src="" width="180" height="170"/>
+                                    <div id="pic" class="col-sm-2">
+
                                     </div>
                                     <div class="col-sm-8" style="padding-top: 70px">
-                                        <strong id="fullname">Test Client</strong><br/>
-                                        Client ID<br/>
-                                        <i class="fa fa-phone"></i><span id="phone"></span> <i class="fa fa-envelope"></i><span id="email"></span><br/>
-                                        Loan Officer: <br/>
+                                        <strong id="fullname"></strong><br/>
+                                        Client ID#: <span id="client_id"></span><br/>
+                                        <i class="fa fa-phone"></i><span id="phone"></span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span id="email"></span><br/>
+                                        Loan Officer: <span id="loan_officer"></span><br/>
                                     </div>
                                     <div class="col-sm-2" style="padding-top: 80px">
-                                        <button onclick="newApplication()" class="btn btn-success"><i class="fa fa-plus"></i> New Application</button>
+                                        <button onclick="newApplication()" class="btn btn-success"><i class="fa fa-plus"></i> New Application</button><br/><br/>
+                                        <button onclick="newApplication()" class="btn btn-primary"><i class="fa fa-pencil" width="80"></i> Edit User          </button>
                                     </div>
                                 </div>
                             </div>
@@ -403,6 +404,12 @@
         }
     }
 
+    function padWithZeroes(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const application_id = urlParams.get('id');
 
@@ -484,7 +491,14 @@
     }
 
     function populateCards(data){
+
             let obj = data[0];
+            loadImages(obj.fullname+'_'+obj.email, obj.fullname);
+        $('#fullname').html(obj.fullname);
+        $('#phone').html(' '+obj.phone);
+        $('#email').html(' '+obj.email);
+        $('#client_id').html(padWithZeroes(obj.ID,6));
+        $('#loan_officer').html(obj.loan_officer);
             let pbody = $("#personal");let ebody = $("#employment"); let rbody = $("#reference"),
             tr = ""; let te = ""; let tp = "";
             pbody.empty(); ebody.empty();  rbody.empty();
@@ -507,6 +521,7 @@
         pbody.html(tr);
 
         // Employment Info Card
+        console.log(obj.job);
         if (obj.job)
             te += "<tr><td><strong>Job Description</strong></td><td>"+obj.job+"</td></tr>";
         if (obj.employer_name)
@@ -544,6 +559,48 @@
                 console.log('Error');
             }
         });
+    }
+
+    function loadImages(foldername, name){
+        var test = {};
+        $.ajax({
+            'url': '/profile-images/'+foldername+'/'+name,
+            'type': 'get',
+            'data': {},
+            'success': function (data) {
+                // $.each(data[0], function (key, val) {
+                //     test[key] = val;
+                // });
+                let res = JSON.parse(data);
+                if(res.status == 500){
+                    swal("No Profile Image Uploaded!");
+                    $('#pic').append('<img src="" width="180" height="170"/>');
+                }
+                else{
+                    let response = {}; //console.log(res['response']);
+                    let count = 0;
+//                    $.each(res['response'], function (key, value){
+//                        count ++;
+//                        let image = '<div class="col-md-3">'+
+//                            '<a href="#">'+
+//                            '<img src="'+value+'" alt="Image" style="max-width:100%;" height = 150 width = 150>'+
+//                            '</a>'+
+//                            '<div style="text-align: center">'+key+' Image</div>'+
+//                            '</div>';
+//                        $('#pic').append(image);
+//                    });
+                    let image =
+                        '<a href="#">'+
+                        '<img src="'+res['response']['Image']+'" alt="Profile Pic ' +name+'" style="max-width:100%;" height = 150 width = 150>'+
+                        '</a>';
+                    $('#pic').append(image);
+                }
+            },
+            'error': function (data){
+
+            }
+        });
+
     }
 
     function populateLoanTable(dets){

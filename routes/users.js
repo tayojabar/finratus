@@ -312,26 +312,26 @@ users.post('/upload-file/:id/:item', function(req, res) {
         }
     });
 
-    fs.stat('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function (err) {
+    fs.stat('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension, function (err) {
         //console.log(stats);//here we got all information of file in stats variable
 
         if (err) {// If file doesn't exist
             //return console.error(err);
             // Use the mv() method to place the file somewhere on your server
-            sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function(err) {
+            sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension, function(err) {
                 if (err) return res.status(500).send(err);
                 // console.log(req.files.file);
                 res.send('File uploaded!');
             });
         }
         else{
-            fs.unlink('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension,function(err){
+            fs.unlink('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension,function(err){
                 if(err){
                     // console.log(err);
                     res.send('Unable to delete file!');
                 }
                 else{
-                    sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+' '+req.params.item+'.'+extension, function(err) {
+                    sampleFile.mv('files/users/'+req.params.id+'/'+req.params.id+'_'+req.params.item+'.'+extension, function(err) {
                         if (err)
                             return res.status(500).send(err);
                         // console.log(req.files.file);
