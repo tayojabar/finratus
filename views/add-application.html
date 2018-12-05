@@ -285,7 +285,7 @@
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (parseInt(w[0]['editable']) != 1){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
         }
@@ -397,8 +397,9 @@
                 if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
                     return swal('Kindly fill all required fields!');
                 if (loan_amount !== parseInt(obj.loan_amount))
-                    return swal('Loan amount ('+parseInt(obj.loan_amount)+') and schedule mismatch ('+loan_amount+')');
+                    return swal('Loan amount ('+parseInt(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch');
 
+                $('#wait').show();
                 $.ajax({
                     'url': '/user/apply',
                     'type': 'post',
@@ -415,6 +416,7 @@
                     },
                     'error': function (err) {
                         console.log(err);
+                        $('#wait').hide();
                         swal('No internet connection');
                     }
                 });
@@ -427,10 +429,12 @@
                 'type': 'post',
                 'data': {schedule:schedule},
                 'success': function (data) {
+                    $('#wait').hide();
                     swal('Loan Application created successfully!');
                     window.location.href = '/application?id='+application_id;
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     swal('Oops! An error occurred while saving schedule');
                 }
             });

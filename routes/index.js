@@ -1428,7 +1428,7 @@ router.post('/update-module/:id', function(req, res, next) {
     });
 });
 
-router.get('/document-upload/:id/:name', function(req, res) {
+router.get('/document-upload/:id/:name?', function(req, res) {
     res.send('OK');
 });
 
@@ -1436,6 +1436,7 @@ router.post('/document-upload/:id/:name', function(req, res) {
     let	name = req.params.name,
         application_id = req.params.id;
 
+    if (!name) return res.status(400).send('No files were uploaded.');
     if (!req.files) return res.status(400).send('No files were uploaded.');
     if (!req.params || !application_id || !name) return res.status(400).send('No parameters specified!');
     let sampleFile = req.files['files[]'],

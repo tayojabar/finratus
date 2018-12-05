@@ -1051,7 +1051,7 @@ users.post('/workflow_process/:application_id/:workflow_id', function(req, res, 
                     if(error){
                         res.send({"status": 500, "error": error, "response": null});
                     } else {
-                        if (parseInt(process.approver_id) !== parseInt(user_role))
+                        if (!(((process.approver_id).split(',')).includes((user_role).toString())))
                             return res.send({"status": 500, "message": "You do not have authorization rights"});
                         delete process.approver_id;
                         db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
@@ -1134,22 +1134,23 @@ function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
                     }
                 });
             } else if(application_id && stage){
-                let current_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(stage['current_stage'])),
+                let previous_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(stage['previous_stage'])),
+                    current_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(stage['current_stage'])),
                     next_stage_index = current_stage_index+1;
                 if (stage['next_stage']){
-                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stage['next_stage'], approver_id:stages[current_stage_index]['approverID']});
+                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stage['next_stage'], approver_id:stages[previous_stage_index]['approverID']});
                 }else if (stages[next_stage_index]){
                     if (stage['current_stage'] !== stages[next_stage_index]['stageID']){
-                        callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                        callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index]['stageID'], approver_id:stages[previous_stage_index]['approverID']});
                     } else {
                         if (stages[next_stage_index+1]){
-                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[current_stage_index]['approverID']});
+                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[previous_stage_index]['approverID']});
                         } else {
-                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[current_stage_index]['approverID']});
+                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[previous_stage_index]['approverID']});
                         }
                     }
                 } else {
-                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[current_stage_index]['approverID']});
+                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[previous_stage_index]['approverID']});
                 }
             } else {
                 callback({current_stage:stages[0]['stageID'],next_stage:stages[1]['stageID']});

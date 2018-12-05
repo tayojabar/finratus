@@ -326,7 +326,7 @@
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (parseInt(w[0]['editable']) != 1){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
         }
@@ -356,7 +356,7 @@
                 success: function (response) {
                     $("#stages").dataTable().fnClearTable();
                     $.each(response, function (key, val) {
-                        if (parseInt(val.type) === 1){
+                        if (parseInt(val.type) < 2){
                             $('#stages').dataTable().fnAddData([val.name+' <i class="fa fa-lock"></i>']);
                         } else {
                             $('#stages').dataTable().fnAddData([val.name]);
