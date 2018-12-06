@@ -1,3 +1,4 @@
+const express = require('express');
 let token,
     fs = require('fs'),
     db = require('../db'),
@@ -6,7 +7,6 @@ let token,
     async = require('async'),
     bcrypt = require('bcrypt'),
     moment  = require('moment'),
-    express = require('express'),
     jwt = require('jsonwebtoken'),
     nodemailer = require('nodemailer'),
 	hbs = require('nodemailer-express-handlebars'),
@@ -73,6 +73,7 @@ users.post('/new-user', function(req, res, next) {
     data.email = req.body.email;
     postData.status = 1;
     postData.date_created = Date.now();
+    postData.password = bcrypt.hashSync(postData.password, parseInt(process.env.SALT_ROUNDS));
     db.getConnection(function(err, connection) {
         if (err) throw err;
 
@@ -84,7 +85,7 @@ users.post('/new-user', function(req, res, next) {
                 connection.query(query,postData, function (error, results, fields) {
                     if(error){
                         res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-                    } else {
+                } else {
                         connection.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
                             connection.release();
                             if (!err){
