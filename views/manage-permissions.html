@@ -532,15 +532,22 @@
     function getRoles(){
         $.ajax({
             type: "GET",
-            url: "/user/roles/"+localStorage.getItem("role"),
+            url: "/user/roles/",
             data: '{}',
             success: function (response) {
                 // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
                 glob = JSON.parse(response);
                 $("#role-table").dataTable().fnClearTable();
                 $.each(JSON.parse(response), function (key, val) {
-                    var action = '<a href="#" class="btn btn-info" onclick="loadRolePermissions('+val.id+')" name="'+val.role_name+'" title="Click to edit"><i class="ace-icon fa fa-pencil bigger-130"></i></a> &nbsp; &nbsp;'
-                    var disable = '<button name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Role</button>'
+                    let actions;
+                    if (val.status === "1"){
+                        var action = '<a href="#" class="btn btn-info" onclick="loadRolePermissions('+val.id+')" name="'+val.role_name+'" title="Click to edit"><i class="ace-icon fa fa-pencil bigger-130"></i></a> &nbsp; &nbsp;'
+                        var disable = '<button name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Role</button>'
+                    }
+                    else {
+                        var action = " ";
+                        var disable = '<button name="'+val.id+'" onclick="confirmEnable('+val.id+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable Role</button>'
+                    }
                     $('#role-table').dataTable().fnAddData( [
                         val.role_name, action + disable
                         // "Make",
@@ -570,6 +577,45 @@
     }
 
     function disableRole(id){
+        var test = {};
+        $.ajax({
+            'url': '/user/del-role/'+id,
+            'type': 'post',
+            'data': {},
+            'success': function (data) {
+                test = JSON.parse(data);
+                if(test.status === 500){
+                    swal("Please Retry Action!");
+                }
+                else{
+                    swal("Role Disabled Successfully!");
+                    getRoles();
+                }
+            },
+            'error': function(e){
+                swal('Internet Connection Error!');
+            }
+        });
+    }
+
+    function confirmEnable(id) {
+        // approveInspection(status, "Passed");
+        swal({
+            title: "Enable this role?",
+            text: "Click OK to continue",
+            //icon: "input",
+            //content: "input",
+            buttons: true,
+            closeModal: false
+        }).then(
+            function(isConfirm) {
+                if (isConfirm){
+                    enableRole(id);
+                }
+            });
+    }
+
+    function enableRole(id){
         var test = {};
         $.ajax({
             'url': '/user/del-role/'+id,

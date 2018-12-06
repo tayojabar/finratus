@@ -482,7 +482,7 @@
         function loadUsers(){
 
             $.ajax({
-                'url': '/user/users-list',
+                'url': '/user/users-list-full',
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -558,16 +558,20 @@
             var length = data.length;
             //var action = '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>';
             $.each(data, function(k, v){
-                console.log(v.status);
                 let actions;
-//                actions = (v.status === 1)
+                if (v.status === "1"){
+                    actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'+
+                        '<div class="write"><button class="write btn btn-success " data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</button></div>'+
+                        '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable User</button>';
+                }
+                else {
+                    actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable User</button>';
+                }
                 $('#bootstrap-data-table').dataTable().fnAddData( [
                     v.username,
                     v.fullname,
                     v.Role,
-                    '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'+
-                    '<div class="write"><button class="write btn btn-success " data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</button></div>'+
-                    '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable User</button>'
+                    actions
                 ]);
             });
         }
@@ -585,6 +589,22 @@
                 function(isConfirm) {
                     if (isConfirm){
                         disableUser(id);
+                    }
+                });
+        }
+
+        function confirmEnable(id) {
+            swal({
+                title: "Make this user active again?",
+                text: "Click OK to continue",
+                //icon: "input",
+                //content: "input",
+                buttons: true,
+                closeModal: false
+            }).then(
+                function(isConfirm) {
+                    if (isConfirm){
+                        enableUser(id);
                     }
                 });
         }
@@ -727,6 +747,28 @@
                     }
                     else{
                         swal("User Disabled Successfully!");
+                        loadUsers();
+                    }
+                },
+                'error': function(e){
+                    swal('Internet Connection Error!');
+                }
+            });
+        }
+
+        function enableUser(id){
+            var test = {};
+            $.ajax({
+                'url': '/user/en-user/'+id,
+                'type': 'post',
+                'data': {},
+                'success': function (data) {
+                    test = JSON.parse(data);
+                    if(test.status === 500){
+                        swal("Please try again!");
+                    }
+                    else{
+                        swal("User Reactivated Successfully!");
                         loadUsers();
                     }
                 },

@@ -1019,7 +1019,7 @@
     function loadUsers(){
 
         $.ajax({
-            'url': '/user/clients-list',
+            'url': '/user/clients-list-full',
             'type': 'get',
             'success': function (data) {
                 var users = JSON.parse(data);
@@ -1094,12 +1094,19 @@
         var length = data.length;
         //var action = '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>';
         $.each(data, function(k, v){
+            let actions;
+            if (v.status === "1"){
+                actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
+                    '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
+                    '<button onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
+            }
+            else {
+                actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable Client</button>';
+            }
             $('#bootstrap-data-table').dataTable().fnAddData( [
                 v.username,
                 v.fullname,
-                '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
-                    '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
-                '<button onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
+                actions
             ]);
         });
     }
@@ -1117,6 +1124,23 @@
             function(isConfirm) {
                 if (isConfirm){
                     disableClient(id);
+                }
+            });
+    }
+
+    function confirmEnable(id) {
+        // approveInspection(status, "Passed");
+        swal({
+            title: "Reactivate this client?",
+            text: "Click OK to continue",
+            //icon: "input",
+            //content: "input",
+            buttons: true,
+            closeModal: false
+        }).then(
+            function(isConfirm) {
+                if (isConfirm){
+                    enableClient(id);
                 }
             });
     }
@@ -1142,6 +1166,29 @@
             }
         });
     }
+
+    function enableClient(id){
+        var test = {};
+        $.ajax({
+            'url': '/user/del-client/'+id,
+            'type': 'post',
+            'data': {},
+            'success': function (data) {
+                test = JSON.parse(data); console.log(test.status);
+                if(test.status == 500){
+                    swal("Please Retry Action!");
+                }
+                else{
+                    swal("Client Enabled Successfully!");
+                    loadUsers();
+                }
+            },
+            'error': function(e){
+                swal('Internet Connection Error!');
+            }
+        });
+    }
+
 
     function openDetailsModal(id) {
         localStorage.setItem("user_id",id);

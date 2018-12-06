@@ -332,6 +332,17 @@ users.get('/clients-list', function(req, res, next) {
     });
 });
 
+users.get('/clients-list-full', function(req, res, next) {
+    let query = 'select * from clients';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
 users.get('/users-list-v2', function(req, res, next) {
     let query = 'SELECT * from clients where status = 1 order by fullname asc';
     db.query(query, function (error, results, fields) {
@@ -376,8 +387,8 @@ users.get('/user-roles', function(req, res, next) {
   	});
 });
 
-users.get('/roles/:role', function(req, res, next) {
-    let query = (req.params.role === '1') ? 'SELECT * from user_roles where id not in (3, 4, 1) and status = 1' : 'SELECT * from user_roles where id not in (3, 4) and status = 1';
+users.get('/roles/', function(req, res, next) {
+    let query = (req.params.role === '1') ? 'SELECT * from user_roles where id not in (3, 4, 1) ' : 'SELECT * from user_roles where id not in (3, 4) ';
     db.query(query, req.params.role, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -510,7 +521,7 @@ users.post('/del-role/:id', function(req, res, next) {
         postData = req.body;
     postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     let payload = [postData.date_modified, req.params.id],
-        query = 'Update roles SET status = 0, date_modified = ? where id=?';
+        query = 'Update user_roles SET status = 0, date_modified = ? where id=?';
     db.query(query, payload, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -520,7 +531,23 @@ users.post('/del-role/:id', function(req, res, next) {
     });
 });
 
-// Change User Status
+/* Reactivate Role */
+users.post('/en-role/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update user_roles SET status = 1, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Role Re-enabled!"}));
+        }
+    });
+});
+
+// Disable User
 users.post('/del-user/:id', function(req, res, next) {
     let date = Date.now(),
         postData = req.body;
@@ -532,6 +559,22 @@ users.post('/del-user/:id', function(req, res, next) {
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
             res.send(JSON.stringify({"status": 200, "error": null, "response": "User Disabled!"}));
+        }
+    });
+});
+
+// Enable User
+users.post('/en-user/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update users SET status = 1, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "User Reactivated!"}));
         }
     });
 });
@@ -548,6 +591,22 @@ users.post('/del-client/:id', function(req, res, next) {
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
             res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Disabled!"}));
+        }
+    });
+});
+
+// Enable Client
+users.post('/en-client/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update clients SET status = 1, date_modified = ? where ID=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Reactivated!"}));
         }
     });
 });
