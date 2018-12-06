@@ -1097,9 +1097,9 @@
             $('#bootstrap-data-table').dataTable().fnAddData( [
                 v.username,
                 v.fullname,
-                '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.id+')"><i class="fa fa-eye"></i> View Details</button>'+
-                    '<a href="./client-info?id='+v.id+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
-                '<button id="'+v.id+'" onclick="confirm('+v.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
+                '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
+                    '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
+                '<button onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
             ]);
         });
     }

@@ -98,34 +98,44 @@
             'type': 'post',
             'data': obj,
             'success': function (data) {
-                console.log('Success');
 //                localStorage.setItem("user", JSON.stringify(data));
 //                console.log(localStorage.getItem("user"));
                 $.each(data, function (key, val) {
                     test[key] = val;
                 });
-                Cookies.set('session', test["id"]);
-                localStorage.setItem("user_obj",JSON.stringify(test));
-                localStorage.setItem("name", test["fullname"]);
-                localStorage.setItem("user", test["role"]);
-                localStorage.setItem("permissions", JSON.stringify(test["permissions"]));
-                localStorage.setItem("role", test["user_role"]);
-                localStorage.setItem("status", test["status"]);
-                localStorage.setItem("modules", JSON.stringify(test["modules"]));
-                console.log(test["permissions"]);
-                if (test["permissions"] != ""){
-//                    console.log(test);
-                    window.location.href = "./dashboard";
+                localStorage.setItem("user_obj",JSON.stringify(test["response"]));
+                if (test["status"] === 500 && test["response"] === "User Disabled!"){
+                    swal("User Disabled");
+//                    window.location.href = "./";
                 }
-                else{
-                    window.location.href = "index.html";
-                    swal("Login Successful! However, No Views Set For This User");
+                else if (test["status"] === 500 && test["response"] === "Connection Error!"){
+                    swal("Error in Communication");
                 }
-//                if(test.status == 500){
-//                    swal("Error encountered. Please try again.");
-//                }
-//                else
-//                    swal("Views and Read / Write Permissions granted for User "+r+"!");
+                else if (test["status"] === 500 && test["response"] === "Login Unsuccessful!"){
+                    swal("Connection Error, try again!");
+                }
+                else if (test["status"] === 200){
+                    if (test["response"]["id"])
+                        Cookies.set('session', test["response"]["id"]);
+                    if (test["response"]["fullname"])
+                        localStorage.setItem("name", test["response"]["fullname"]);
+                    if (test["response"]["role"])
+                        localStorage.setItem("user", test["response"]["role"]);
+                    if (test["response"]["permissions"])
+                        localStorage.setItem("permissions", JSON.stringify(test["response"]["permissions"]));
+                    if (test["response"]["user_role"])
+                        localStorage.setItem("role", test["response"]["user_role"]);
+                    if (test["response"]["status"])
+                        localStorage.setItem("status", test["response"]["status"]);
+                    if (test["response"]["modules"])
+                        localStorage.setItem("modules", JSON.stringify(test["response"]["modules"]));
+                    if (test["response"]["permissions"] != ""){
+                        window.location.href="./dashboard";
+                    }
+                    else {
+                        swal("Login Successful! However, No Views Set For This User");
+                    }
+                }
             }
         });
 

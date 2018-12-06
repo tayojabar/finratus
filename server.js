@@ -64,13 +64,19 @@ app.post('/login', function(req, res) {
     var appData = {}; var user = [];
     var username = req.body.username;
     var password = req.body.password;
-    db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ?', username, function(err, rows, fields) {
+    db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ? and status = 1', username, function(err, rows, fields) {
       if (err) {
         //res.sendFile('/login', { error: 'Invalid email or password.' });
         //res.redirect('/inspections');
-        res.sendFile('index.html', { root: __dirname+'/views' });
-      } else if (password === rows[0].password) {
+        // res.sendFile('index.html', { root: __dirname+'/views' });
+          res.send({"status": 500, "response": "Connection Error!"});
+      }
+      else if (rows.length === 0){
+          res.send({"status": 500, "response": "User Disabled!"});
+      }
+      else if (password === rows[0].password) {
           // sets a cookie with the user's info
+
           user = rows[0];
           db.query('SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
               if (!error) {
@@ -83,7 +89,7 @@ app.post('/login', function(req, res) {
                     //       httpOnly: true,
                     //       maxAge: 60 * 60 * 24 * 7 // 1 week
                     //   }));
-                    res.send(user);
+                    res.send({"status": 200, "response": user});
                   });
               }
               else {
@@ -91,10 +97,12 @@ app.post('/login', function(req, res) {
               }
           });
           //res.sendFile('dashboard.html', { root: __dirname+'/views' });
-      } else {
+      }
+      else {
           //   res.sendFile('/login', { error: 'Invalid email or password.' });
           //res.redirect('/login');
-          res.sendFile('index.html', {root: __dirname + '/views'});
+          // res.sendFile('index.html', {root: __dirname + '/views'});
+          res.send({"status": 500, "response": "Login Unsuccessful!"});
       }
     });
   });
