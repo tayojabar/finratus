@@ -168,8 +168,12 @@
             'type': 'get',
             'success': function (data) {
                 $('#wait').hide();
-                $('#forgot-username').val('');
-                swal('Forgot password request successful!');
+                if (test["status"] === 500){
+                    swal(test["response"]);
+                } else {
+                    $('#forgot-username').val('');
+                    swal('Forgot password request successful!');
+                }
             },
             'error': function (err) {
                 $('#wait').hide();
