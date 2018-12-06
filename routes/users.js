@@ -119,19 +119,11 @@ users.post('/new-client', function(req, res, next) {
         connection.query(query2,data, function (error, results, fields) {
             if (results && results[0])
                 return res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Client already exists!"}));
-            connection.query(query,postData, function (error, results, fields) {
+            connection.query(query,postData, function (error, re, fields) {
                 if(error){
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                 } else {
-                    connection.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
-                        connection.release();
-                        if (!err){
-                            res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
-                        }
-                        else{
-                            res.send(JSON.stringify({"response": "Error retrieving client details. Please try a new username!"}));
-                        }
-                    });
+                    res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
                 }
             });
         });
@@ -305,6 +297,17 @@ users.get('/users-list', function(req, res, next) {
   			res.send(JSON.stringify(results));
 	  	}
   	});
+});
+
+users.get('/users-list-full', function(req, res, next) {
+    let query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role not in (3, 4) order by ID desc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
 });
 
 users.get('/branches', function(req, res, next) {

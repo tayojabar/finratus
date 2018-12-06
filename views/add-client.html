@@ -185,7 +185,7 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">First Name<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" id="first_name" class="form-control" placeholder="Enter first name" tabindex="1" required="" >
+                                                            <input type="text" id="first_name" class="form-control imp" placeholder="Enter first name" tabindex="1" required="" >
                                                         </div>
                                                     </div>
 
@@ -199,7 +199,7 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Last Name<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" id="last_name" class="form-control" placeholder="Enter last name" required="">
+                                                            <input type="text" id="last_name" class="form-control imp" placeholder="Enter last name" required="">
 
                                                             <!-- ngIf: idForm.last_name.$dirty -->
                                                         </div>
@@ -213,7 +213,7 @@
                                                             <div class="col-md-4">
                                                                 <div>
                                                                     <label class="control r control--radio">
-                                                                        <input type="radio" id="male" name="gender" value="Male" required="">&nbsp; Male
+                                                                        <input type="radio" id="male" name="gender" value="Male" required="" class="imp">&nbsp; Male
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -221,7 +221,7 @@
                                                             <div class="col-md-5">
                                                                 <div>
                                                                     <label class="control r control--radio">
-                                                                        <input type="radio" id="female" name="gender" value="Female">&nbsp; Female
+                                                                        <input type="radio" id="female" name="gender" value="Female" class="imp">&nbsp; Female
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -233,7 +233,7 @@
                                                         <label class="form-control-label">Date of Birth<span class="text-danger">*</span></label>
                                                         <div class="input-group">
                                                             <div class="input-group">
-                                                                <input type="date" class="form-control" id="dob" placeholder="yyyy/MM/dd" required="required">
+                                                                <input type="date" class="form-control imp" id="dob" placeholder="yyyy/MM/dd" required="required">
 
                                                             </div>
                                                             <!-- ngIf: idForm.dob.$dirty -->
@@ -241,7 +241,7 @@
                                                     </div>
 
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Marital Status<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Marital Status</label>
                                                         <!--  -->
                                                         <div class="input-group" ng-init="customer.marital_status = 'single'">
 
@@ -262,7 +262,7 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Loan Officer<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <select id="loan_officer" class="form-control" tabindex="5.2" >
+                                                            <select id="loan_officer" class="form-control imp" tabindex="5.2" >
                                                             </select>
                                                             <!-- ngIf: idForm.user.$dirty -->
                                                         </div>
@@ -294,21 +294,21 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Email Address <span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="email" id="email" class="form-control"placeholder="Enter email" required="">
+                                                            <input type="email" id="email" class="form-control imp" placeholder="Enter email" required="">
                                                             <!-- ngIf: idForm.email.$dirty -->
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Phone Number</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="phone" class="form-control" placeholder="555-555-5555" >
+                                                            <input type="text" id="phone" class="form-control imp" placeholder="555-555-5555" >
                                                             <!-- ngIf: idForm.home_phone.$dirty -->
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Address</label>
                                                         <div class="input-group">
-                                                            <textarea type="text" id="address" name="home_phone" class="form-control"  placeholder="Home Address"></textarea>
+                                                            <textarea type="text" id="address" class="form-control imp"  placeholder="Home Address"></textarea>
                                                             <!-- ngIf: idForm.home_phone.$dirty -->
                                                         </div>
                                                     </div>
@@ -379,7 +379,7 @@
                                                             <label for="file-upload" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Customer Image
                                                             </label>
-                                                            <input id="file-upload" class="image admin-img" type="file" tabindex="6">
+                                                            <input id="file-upload" class="image admin-img imp" type="file" tabindex="6">
                                                             <label id="path"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
@@ -398,7 +398,7 @@
                                                             <label for="file-upload-signature" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload ID Card
                                                             </label>
-                                                            <input id="file-upload-idcard" class="image admin-img" type="file" tabindex="7">
+                                                            <input id="file-upload-idcard" class="image admin-img imp" type="file" tabindex="7">
                                                             <label id="path-idcard"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
@@ -418,7 +418,7 @@
                                                             <label for="file-upload-signature" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Signature
                                                             </label>
-                                                            <input id="file-upload-signature" class="image admin-img" type="file" tabindex="7">
+                                                            <input id="file-upload-signature" class="image admin-img imp" type="file" tabindex="7">
                                                             <label id="path-signature"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
@@ -447,7 +447,7 @@
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Employer Name</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="employer_name" class="form-control" placeholder="Enter Employer name">
+                                                            <input type="text" id="employer_name" class="form-control imp" placeholder="Enter Employer name">
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-6 col-md-6">
@@ -520,7 +520,7 @@
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Job Title<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" id="job" class="form-control" placeholder="Enter Job Title" required="">
+                                                            <input type="text" id="job" class="form-control imp" placeholder="Enter Job Title" required="">
 
                                                             <!-- ngIf: idForm.last_name.$dirty -->
                                                         </div>
@@ -554,11 +554,7 @@
                                                         <div class="input-group" ng-init="customer.marital_status = 'single'">
 
                                                             <select class="form-control" id="off_state">
-                                                                <option selected="selected" disabled="disabled" hidden="hidden" id="0">Choose a State</option>
-                                                                <option value="single">Lagos</option>
-                                                                <option value="married">FCT</option>
-                                                                <option value="divorced">Rivers</option>
-                                                                <option value="other">Kano</option>
+                                                                <option id="0" class="" selected="selected">Choose State</option><option label="Abuja Capital Territory" value="string:Abuja Capital Territory">Abuja Capital Territory</option><option label="Abia" value="string:Abia">Abia</option><option label="Adamawa" value="string:Adamawa">Adamawa</option><option label="Akwa Ibom" value="string:Akwa Ibom">Akwa Ibom</option><option label="Anambra" value="string:Anambra">Anambra</option><option label="Bauchi" value="string:Bauchi">Bauchi</option><option label="Bayelsa" value="string:Bayelsa">Bayelsa</option><option label="Benue" value="string:Benue">Benue</option><option label="Borno" value="string:Borno">Borno</option><option label="Cross River" value="string:Cross River">Cross River</option><option label="Delta" value="string:Delta">Delta</option><option label="Ebonyi" value="string:Ebonyi">Ebonyi</option><option label="Edo" value="string:Edo">Edo</option><option label="Ekiti" value="string:Ekiti">Ekiti</option><option label="Enugu" value="string:Enugu">Enugu</option><option label="Gombe" value="string:Gombe">Gombe</option><option label="Imo" value="string:Imo">Imo</option><option label="Jigawa" value="string:Jigawa">Jigawa</option><option label="Kaduna" value="string:Kaduna">Kaduna</option><option label="Kano" value="string:Kano">Kano</option><option label="Katsina" value="string:Katsina">Katsina</option><option label="Kebbi" value="string:Kebbi">Kebbi</option><option label="Kogi" value="string:Kogi">Kogi</option><option label="Kwara" value="string:Kwara">Kwara</option><option label="Lagos" value="string:Lagos">Lagos</option><option label="Nassarawa" value="string:Nassarawa">Nassarawa</option><option label="Niger" value="string:Niger">Niger</option><option label="Ogun" value="string:Ogun">Ogun</option><option label="Ondo" value="string:Ondo">Ondo</option><option label="Osun" value="string:Osun">Osun</option><option label="Oyo" value="string:Oyo">Oyo</option><option label="Rivers" value="string:Rivers">Rivers</option><option label="Sokoto" value="string:Sokoto">Sokoto</option><option label="Taraba" value="string:Taraba">Taraba</option><option label="Yobe" value="string:Yobe">Yobe</option><option label="Zamfara" value="string:Zamfara">Zamfara</option>
                                                             </select>
 
                                                             <!-- ngIf: idForm.marital_status.$dirty -->
@@ -591,7 +587,7 @@
                                                     <div class="form-group">
                                                         <label class="form-control-label">Reference Name</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="guarantor_name" class="form-control" placeholder="Enter Guarantor name">
+                                                            <input type="text" id="guarantor_name" class="form-control imp" placeholder="Enter Guarantor name">
                                                         </div>
                                                     </div>
 
@@ -757,7 +753,8 @@
         // This function deals with validation of the form fields
         var x, y, i, valid = true;
         x = document.getElementsByClassName("tab");
-        y = x[currentTab].getElementsByTagName("input");
+//        y = x[currentTab].getElementsByTagName("input");
+        y = x[currentTab].getElementsByClassName("imp");
         // A loop that checks every input field in the current tab:
         for (i = 0; i < y.length; i++) {
             // If a field is empty...
@@ -948,6 +945,7 @@
                 }
                 else if(test.status == 500){
                     swal("Please recheck entered values");
+                    window.location.href = "./add-client";
                 }
                 else{
                     swal("Client Information Registered!");
