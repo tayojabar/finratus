@@ -66,7 +66,7 @@ app.post('/login', function(req, res) {
         if (rows.length === 0)
             return res.send({"status": 500, "response": "Incorrect Username/Password!"});
 
-        if (rows[0].status === 0)
+        if (rows[0].status === "0")
             return res.send({"status": 500, "response": "User Disabled!"});
 
         if (bcrypt.compareSync(password,rows[0].password)) {
@@ -229,7 +229,7 @@ app.get('/client-info', requireLogin, function(req, res){
     res.sendFile('client-info.html', { root: __dirname+'/views' });
 });
 
-app.get('/forgot-password/:id?', requireLogin, function(req, res) {
+app.get('/forgot-password/:id?', function(req, res) {
     res.sendFile('forgot-password.html', {root: __dirname + '/views'});
 });
 

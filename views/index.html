@@ -145,7 +145,7 @@
                     if (test["response"]["modules"])
                         localStorage.setItem("modules", JSON.stringify(test["response"]["modules"]));
                     if (test["response"]["permissions"] !== ""){
-                        window.location.href="./dashboard";
+//                        window.location.href="./dashboard";
                     }
                     else {
                         swal("Login Successful! However, No Views Set For This User");
@@ -168,8 +168,12 @@
             'type': 'get',
             'success': function (data) {
                 $('#wait').hide();
-                $('#forgot-username').val('');
-                swal('Forgot password request successful!');
+                if (data.status === 500){
+                    swal(data.response);
+                } else {
+                    $('#forgot-username').val('');
+                    swal('Forgot password request successful!');
+                }
             },
             'error': function (err) {
                 $('#wait').hide();
