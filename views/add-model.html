@@ -24,6 +24,8 @@
     <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -223,7 +225,7 @@
                                     <label class=" form-control-label">Car Make</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-phone"></i></div>
-                                        <select class="form-control">
+                                        <select id="make" class="form-control">
                                             <option>Toyota</option>
                                             <option>Honda</option>
                                             <option>Bentley</option>
@@ -239,7 +241,7 @@
                                     <label class=" form-control-label">Model Name</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-usd"></i></div>
-                                        <input class="form-control">
+                                        <input id="model" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">eg G - S67</small>
                                 </div>
@@ -247,12 +249,12 @@
                                     <label class=" form-control-label">Year</label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-male"></i></div>
-                                        <input class="form-control">
+                                        <input id="year" class="form-control">
                                     </div>
                                     <small class="form-text text-muted">ex. 2013</small>
                                 </div>
                                 <div class = "form-group">
-                                        <a href="#" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30">Submit</a>
+                                        <a href="#" id="submit" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30">Submit</a>
                                 </div>
                             </div>
                         </div>
@@ -288,6 +290,7 @@
                 no_results_text: "Oops, nothing found!",
                 width: "100%"
             });
+            getMakes();
         });
 
         $(document).ajaxStart(function(){
@@ -357,6 +360,64 @@
             if (parseInt(w[0]['editable']) != 1){
                 $(".write").hide();
             }
+        }
+
+        function getMakes(){
+            $.ajax({
+                'url': '/makes-list',
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    var make = $("[id=make]");
+                    make.empty().append('<option selected="selected" id="0" make="0">-- Choose Vehicle Make --</option>');
+                    $.each(JSON.parse(data), function (key, val) {
+                        $("#make").append('<option class="deptSp" value = "' + val.make + '" id="' + val.make + '">' + val.make + '</option>');
+                    });
+                }
+            });
+        }
+
+        $("#submit").click(function () {
+            validate();
+        });
+
+        function validate(){
+            if ($('#make').find('option:selected').attr('make') == 0){
+                swal('Select a Vehicle!');
+            }
+            else if ($('#model').val() == "" || $('#model').val() == null){
+                swal('Enter a model!');
+            }
+            else if ($('#year').val() == '' || $('#year').val() == null){
+                swal('Enter a production year!');
+            }
+            else{
+                registerModel();
+            }
+        }
+
+        function registerModel(){
+            var obj = {};
+            obj.Make = $('#make').find('option:selected').text();
+            obj.Model = $('#model').val();
+            obj.Year = $('#year').val();
+            var test = {};
+            //console.log(obj);
+            $.ajax({
+                'url': '/new-model',
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    if(test.status == 500){
+                        swal("Please recheck entered values");
+                    }
+                    else
+                        swal("Model Registered!");
+                }
+            });
         }
 
     </script>
