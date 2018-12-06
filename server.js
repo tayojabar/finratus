@@ -59,14 +59,17 @@ app.post('/login', function(req, res) {
         username = req.body.username,
         password = req.body.password;
 
-    db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ? and status = 1', username, function(err, rows, fields) {
-      if (err)
-          return res.send({"status": 500, "response": "Connection Error!"});
+    db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ?', username, function(err, rows, fields) {
+        if (err)
+            return res.send({"status": 500, "response": "Connection Error!"});
 
-      if (rows.length === 0)
-          return res.send({"status": 500, "response": "User Disabled!"});
+        if (rows.length === 0)
+            return res.send({"status": 500, "response": "Incorrect Username/Password!"});
 
-      if (bcrypt.compareSync(password,rows[0].password)) {
+        if (rows[0].status === 0)
+            return res.send({"status": 500, "response": "User Disabled!"});
+
+        if (bcrypt.compareSync(password,rows[0].password)) {
           user = rows[0];
           db.query('SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
               if (!error) {
@@ -85,7 +88,7 @@ app.post('/login', function(req, res) {
           res.send({"status": 500, "response": "Password is incorrect!"});
       }
     });
-  });
+});
 
 
 app.use(function(req, res, next) {
@@ -223,6 +226,10 @@ app.get('/all-clients', requireLogin, function(req, res){
 
 app.get('/client-info', requireLogin, function(req, res){
     res.sendFile('client-info.html', { root: __dirname+'/views' });
+});
+
+app.get('/forgot-password/:id?', requireLogin, function(req, res) {
+    res.sendFile('forgot-password.html', {root: __dirname + '/views'});
 });
 
 // catch 404 and forward to error handler

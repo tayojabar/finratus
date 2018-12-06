@@ -1470,4 +1470,48 @@ users.post('/application/write-off/:id', function(req, res, next) {
     });
 });
 
+users.get('/forgot-password/:username', function(req, res) {
+    let username = req.params.username;
+    db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ?', username, function(err, rows, fields) {
+        if (err)
+            return res.send({"status": 500, "response": "Connection Error!"});
+
+        if (rows.length === 0)
+            return res.send({"status": 500, "response": "Incorrect Username/Password!"});
+
+        if (rows[0].status === 0)
+            return res.send({"status": 500, "response": "User Disabled!"});
+
+        let user = rows[0];
+        user.forgot_url = req.protocol + '://' + req.get('host') + '/forgot-password?t=' + encodeURIComponent(user.username);
+        user.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+        let mailOptions = {
+            from: 'no-reply@loan35.com',
+            to: user.email,
+            subject: 'Loan35: Forgot Password Request',
+            template: 'forgot',
+            context: user
+        };
+
+        transporter.sendMail(mailOptions, function(error, info){
+            if(error)
+                return res.send({"status": 500, "message": "Oops! An error occurred while sending request", "response": error});
+            return res.send({"status": 200, "message": "Forgot Password request sent successfully!"});
+        });
+
+    });
+});
+
+users.post('/forgot-password', function(req, res) {
+    let user = req.body,
+        date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE users SET password = ?, date_modified = ? WHERE username = ?', [bcrypt.hashSync(user.password, parseInt(process.env.SALT_ROUNDS)), date_modified, user.username], function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "User password updated!"});
+        }
+    });
+});
+
 module.exports = users;
