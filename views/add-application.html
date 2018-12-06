@@ -351,11 +351,8 @@
                                         case 0:{ invoice.payment_create_date = cells[j]; break; }
                                         case 1:{ invoice.payment_collect_date = cells[j]; break; }
                                         case 2:{
-                                            if (i > 1){
-                                                console.log('cells '+cells[j]);
-                                                loan_amount += parseFloat(cells[j]);
-                                                console.log('loan_amount '+loan_amount);
-                                            }
+                                            if (i > 1)
+                                                loan_amount = (loan_amount + parseFloat(cells[j])).round(2);
                                             invoice.payment_amount = cells[j];
                                             break;
                                         }
@@ -371,7 +368,6 @@
                             }
                             $dvCSV.html('');
                             $dvCSV.append(table);
-                            console.log('total amount '+loan_amount);
                         };
                         reader.readAsText($csvUpload[0].files[0]);
                     } else {
@@ -444,6 +440,11 @@
                 }
             });
         }
+
+        Number.prototype.round = function(p) {
+            p = p || 10;
+            return parseFloat( this.toFixed(p) );
+        };
     </script>
 </body>
 </html>
