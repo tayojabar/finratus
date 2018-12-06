@@ -331,7 +331,7 @@ router.get('/vehiclesCount', function(req, res, next) {
 
 /* GET vehicle owners count. */
 router.get('/ownersCount', function(req, res, next) {
-    var query = 'SELECT count(*) as total from clients where user_role = 4';
+    var query = 'SELECT count(*) as total from clients';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
