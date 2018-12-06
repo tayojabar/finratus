@@ -327,7 +327,9 @@
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
                                             <h3 id="document-upload-text" style="margin-bottom: 5px;"></h3>
-
+                                            <select id="stage-documents" class="form-control" required="required" style="margin: 15px 0;">
+                                                <option selected="selected">-- Choose Document --</option>
+                                            </select>
                                             <form id="fileupload" method="POST" enctype="multipart/form-data">
                                                 <div class="row fileupload-buttonbar">
                                                     <div class="col-lg-7">
@@ -883,7 +885,7 @@
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (parseInt(w[0]['editable']) != 1){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
         }
@@ -1014,7 +1016,7 @@
             }
         }
 
-        let stage_document = false;
+        let stage_documents = [];
         $('.next').hide();
         $('.previous').hide();
         $('#next-actions').hide();
@@ -1046,10 +1048,14 @@
                     }
 
                     if (stage.document){
+                        let documents = stage.document.split(',');
                         $('#document-upload').show();
-                        $('#document-upload-text').append('<i class="fa fa-warning"></i> Kindly upload a '+stage.document);
-                        stage_document = stage.document;
-                        fileUpload(stage);
+                        $('#document-upload-text').append('<i class="fa fa-warning"></i> Kindly upload '+documents.join(', '));
+                        documents.forEach(function (document) {
+                            $('#stage-documents').append('<option value = "'+document+'">'+document+'</option>');
+                            stage_documents.push(document);
+                        });
+                        fileUpload();
                     }
 
                     if (stage.actions){
@@ -1204,11 +1210,16 @@
         function nextStage(state, workflow_stages, action_stage) {
             let stage = {};
             if (workflow_stages && action_stage){
-                stage.previous_stage = workflow_stages.map(function(e) { return e.stageID; }).indexOf(state.current_stage);
-                stage.current_stage = action_stage;
+//                stage.previous_stage = workflow_stages.map(function(e) { return e.stageID; }).indexOf(state.current_stage);
+                stage.previous_stage = state.current_stage;
+                stage.current_stage = parseInt(action_stage);
             }
-            if (stage_document && !(stage_document.replace(/ /g, '_') in application.files))
-                return swal('Kindly upload required document ('+stage_document+')');
+            if (stage_documents[0]){
+                for (let i=0; i<stage_documents.length; i++){
+                    if (!(stage_documents[i].replace(/ /g, '_') in application.files))
+                        return swal('Kindly upload required document ('+stage_documents+')');
+                }
+            }
             if (!application.schedule || (application.schedule && !application.schedule[0]))
                 return swal('Kindly upload loan schedule to proceed!');
             $.ajax({
@@ -1286,9 +1297,21 @@
             });
         }
 
-        function fileUpload(stage) {
-            let $fileupload = $('#fileupload'),
-                stage_document_name = stage.document.replace(/ /g, '_');
+        $('#fileupload').click(function () {
+            let document = $('#stage-documents').val();
+
+            if (!document || (document === '-- Choose Document --'))
+                return swal('Ensure you choose documents to be uploaded from the list');
+        });
+
+        $('#stage-documents').change(function () {
+            fileUpload(this.value);
+        });
+
+        function fileUpload(document) {
+            let $fileupload = $('#fileupload');
+            
+            let stage_document_name = (document && document !== '-- Choose Document --')? document.replace(/ /g, '_') : '';
 
             $fileupload.fileupload({
                 url: 'document-upload/'+application_id+'/'+stage_document_name,

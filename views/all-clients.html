@@ -1043,7 +1043,7 @@
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
             }
         });console.log(parseInt(w[0]['editable']));console.log('Here');
-        if (parseInt(w[0]['editable']) != 1){
+        if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
             $(".write").hide();
         }
     }

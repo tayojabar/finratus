@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" href="assets/css/normalize.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/themify-icons.css">
     <link rel="stylesheet" href="assets/css/flag-icon.min.css">
@@ -77,6 +78,19 @@
         li.ui-state-default > button{
             margin-top: 8px;
         }
+        .multiselect-native-select{
+            width: 90%;
+        }
+        .multiselect-native-select div.btn-group, .multiselect-native-select button.multiselect, ul.multiselect-container{
+            width: 100%;
+        }
+        .multiselect-native-select button.multiselect{
+            background: #ffffff;
+            color: #495057;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+        }
+        .multiselect-all
     </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -114,21 +128,22 @@
                     let stage = {},
                         action_ids = [],
                         action_names = [],
-                        $document = $('#document-upload-text').val(),
                         stage_template = $('#stage-template').val(),
+                        documents = $('.document-upload-text').map(function() {
+                            if (this.value) return this.value;
+                        }).get(),
                         actions = $('.local-stages-new').map(function() {
                             if (this.value && (this.value !== '-- Choose Action --'))
                                 return this.value;
-                        }).get(),
-                        local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
+                        }).get();
                     stage.name = $('#stage-name').val();
                     stage.description = $('#stage-description').val();
                     stage.approverID = $('#process-rights').val();
-                    if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || stage.approverID === "-- Choose User Role --" || !actions || !actions[0])
+                    if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || !actions || !actions[0])
                         return swal('Kindly fill all required fields!');
-                    stage.approverID = parseInt(stage.approverID);
-                    if ($document)
-                        stage.document = $document;
+                    stage.approverID = stage.approverID.join(',');
+                    if (documents && documents[0])
+                        stage.document = documents.join(',');
                     if (actions[0]){
                         $.each(actions, function (key, val) {
                             let action = JSON.parse(decodeURIComponent(val));
@@ -142,8 +157,6 @@
                                 let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
                                 stage.stageID = stage_template_json.ID || stage_template_json.stageID;
                                 stage.stage_name = stage_template_json.name;
-                                local_stages.push(stage);
-                                localStorage.setItem('local_stages', JSON.stringify(local_stages));
                                 createTodo(stage);
                                 countTodos();
                             }
@@ -156,10 +169,6 @@
 
             //delete done task from "already done"
             $('.todolist').on('click','.remove-item',function(){
-                let name = $(this).attr("id"),
-                    local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [],
-                    updated_local_stages = $.grep(local_stages, function(e){ return e.name !== name; });
-                localStorage.setItem('local_stages', JSON.stringify(updated_local_stages));
                 removeItem(this);
             });
 
@@ -179,14 +188,13 @@
                     markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
                 }
                 $sortable.find('li:eq('+(count-2)+')').before(markup);
-                $('#stage-name').val('');
+                $('#document-upload').prop('checked',false);
+                $('#document-upload-div').html('');
                 $('#stage-description').val('');
+                $('#stage-action-div').html('');
                 $('#stage-template').val('');
                 $('#process-rights').val('');
-                $('#document-upload-text').val('');
-                $('#document-upload').prop('checked',false);
-                $('#document-upload-div').hide();
-                $('#stage-action-div').html('');
+                $('#stage-name').val('');
                 getLocalStages();
             }
 
@@ -395,45 +403,50 @@
                             <label class="col-form-label">Approval Rights <strong style="color:red"> *</strong></label>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
-                                <select id="process-rights" class="form-control" required="required">
-                                    <option selected="selected">-- Choose User Role --</option>
-                                </select>
+                                <select id="process-rights" class="multiselect-ui form-control" multiple="multiple" required="required"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" form-control-label">Rules</label>
                             <div class="input-group">
-                                <label><input id="document-upload" type="checkbox"> &nbsp; Document Upload Required</label>
+                                <a id="document-upload">
+                                    <label class=" form-control-label" style="display: block">
+                                        <i class="fa fa-plus"></i> Document Upload Required
+                                        </label></a><small class="form-text text-muted">&nbsp; (Maximum of 50 characters)</small>
                             </div>
                         </div>
-                        <div class="form-group" id="document-upload-div" style="display: none;">
-                            <label class=" form-control-label">Document Upload</label>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-upload"></i></div>
-                                <input id="document-upload-text" type="text" class="form-control" placeholder="Document Upload Caption" max="50">
-                            </div>
-                            <small class="form-text text-muted">Maximum of 50 characters</small>
-                        </div>
+                        <div class="form-group" id="document-upload-div"></div>
+                        <script type="text/javascript">
+                            $("#document-upload").click(function() {
+                                $("#document-upload-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                                    '    <div class="input-group-addon"><i class="fa fa-upload"></i></div>\n' +
+                                    '    <input type="text" class="form-control document-upload-text" placeholder="Document Upload Caption" max="50">\n' +
+                                    '<i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeDocumentAction(this)"></i></div>');
+                            });
+                            function removeDocumentAction(element) {
+                                $(element).parent().remove();
+                            }
+                        </script>
                         <!--<div class="form-group">-->
                             <!--<label class=" form-control-label">Triggers</label>-->
                             <!--<div class="input-group">-->
                                 <!--<label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>-->
                             <!--</div>-->
                         <!--</div>-->
-                        <script type="text/javascript">
-                            $('#document-upload').change(function () {
-                                $('#document-upload-div').toggle();
-                            });
-                            let status = false;
-                            $('#trigger-1').change(function () {
-                                status = !status;
-                                if (status){
-                                    $('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "Denied"; }).val());
-                                } else {
-                                    $('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "-- Choose Action --"; }).val())
-                                }
-                            });
-                        </script>
+                        <!--<script type="text/javascript">-->
+                            <!--$('#document-upload').change(function () {-->
+                                <!--$('#document-upload-div').toggle();-->
+                            <!--});-->
+                            <!--let status = false;-->
+                            <!--$('#trigger-1').change(function () {-->
+                                <!--status = !status;-->
+                                <!--if (status){-->
+                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "Denied"; }).val());-->
+                                <!--} else {-->
+                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "&#45;&#45; Choose Action &#45;&#45;"; }).val())-->
+                                <!--}-->
+                            <!--});-->
+                        <!--</script>-->
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -444,8 +457,8 @@
         </div>
     </div>
 
-    <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
 
@@ -462,6 +475,7 @@
     <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
     <script src="assets/js/lib/data-table/datatables-init.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -535,7 +549,7 @@
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (parseInt(w[0]['editable']) != 1){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
         }
@@ -572,21 +586,16 @@
         }
 
         function getLocalStages(){
-            let $local_stages = $(".local-stages"),
-                local_stages = JSON.parse(localStorage.getItem('local_stages'));
-            $local_stages.html('<option selected="selected">-- Choose Action --</option>');
-            $.each(local_stages, function (key, val) {
-                $local_stages.append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+' &nbsp; ('+val.stage_name+')</option>');
-            });
-            let count = $("#sortable").find("li").length;
+            let $local_stages = $(".local-stages-new"),
+                count = $("#sortable").find("li").length;
             $('.count-todos').html(count);
 
-            $(".local-stages-new").html('');
+            $local_stages.html('<option selected="selected">-- Choose Action --</option>');
             $.each(JSON.parse(localStorage.getItem('stages')), function (key, val) {
                 if (val.name === 'Application Start'){
-                    $(".local-stages-new").append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                    $local_stages.append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                 } else {
-                    $(".local-stages-new").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                    $local_stages.append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                 }
             });
         }
@@ -599,6 +608,9 @@
                     $.each(JSON.parse(response), function (key, val) {
                         $("#process-rights").append('<option value = "'+val.id+'">'+val.role_name+'</option>');
                     });
+                    $('.multiselect-ui').multiselect({
+                        includeSelectAllOption: true
+                    });
                 }
             });
         }
@@ -609,7 +621,7 @@
                 url: "/stages",
                 success: function (response) {
                     localStorage.setItem('stages',JSON.stringify(response));
-                    let local_stages = (localStorage.getItem('local_stages') !== null)? JSON.parse(localStorage.getItem('local_stages')) : [];
+                    let local_stages = [];
                     $.each(response, function (key, val) {
                         if (val.type === 1){
                             val.approverID = 1;
@@ -627,7 +639,22 @@
                             let local_stages_sorted = local_stages.sort(function(a, b) { return a.stageID - b.stageID; });
                             localStorage.setItem('local_stages', JSON.stringify(local_stages_sorted));
                             $.each(local_stages_sorted, function (key, val) {
-                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+'</span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/></li>';
+                                let stage_name, action_names;
+                                switch (val.name){
+                                    case 'Application Start':{
+                                        stage_name = "N/A";
+                                        action_names = ['Application Start']; break;
+                                    }
+                                    case 'Final Approval':{
+                                        stage_name = "Pending Approval";
+                                        action_names = ['Approved']; break;
+                                    }
+                                    case 'Disbursal':{
+                                        stage_name = "Pending Disbursal";
+                                        action_names = ['Disbursed']; break;
+                                    }
+                                }
+                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+' <small> '+stage_name+' → '+action_names.join(" → ")+'</small></span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/></li>';
                                 $('#sortable').append(markup);
                                 if (key === local_stages_sorted.length-1)
                                     return getLocalStages();
@@ -698,6 +725,7 @@
             if (($.grep(data.stages,function(e){return e.stage_name==='Application Start'})).length > 1)
                 data.stages.shift();
 
+            $('wait').show();
             $.ajax({
                 type: 'POST',
                 url: '/workflows',
@@ -712,10 +740,12 @@
                     $('.count-todos').html(0);
                     $('#process-name').val("");
                     $sortable.html("");
+                    $('wait').hide();
                     swal(data.message);
                 },
                 'error': function (err) {
                     console.log('Error');
+                    $('wait').hide();
                     swal('No internet connection');
                 }
             });
