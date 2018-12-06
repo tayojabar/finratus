@@ -98,21 +98,12 @@
             'type': 'post',
             'data': obj,
             'success': function (data) {
-//                localStorage.setItem("user", JSON.stringify(data));
-//                console.log(localStorage.getItem("user"));
                 $.each(data, function (key, val) {
                     test[key] = val;
                 });
                 localStorage.setItem("user_obj",JSON.stringify(test["response"]));
-                if (test["status"] === 500 && test["response"] === "User Disabled!"){
-                    swal("User Disabled");
-//                    window.location.href = "./";
-                }
-                else if (test["status"] === 500 && test["response"] === "Connection Error!"){
-                    swal("Error in Communication");
-                }
-                else if (test["status"] === 500 && test["response"] === "Login Unsuccessful!"){
-                    swal("Connection Error, try again!");
+                if (test["status"] === 500){
+                    swal(test["response"]);
                 }
                 else if (test["status"] === 200){
                     if (test["response"]["id"])
@@ -129,7 +120,7 @@
                         localStorage.setItem("status", test["response"]["status"]);
                     if (test["response"]["modules"])
                         localStorage.setItem("modules", JSON.stringify(test["response"]["modules"]));
-                    if (test["response"]["permissions"] != ""){
+                    if (test["response"]["permissions"] !== ""){
                         window.location.href="./dashboard";
                     }
                     else {
