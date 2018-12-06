@@ -126,7 +126,7 @@
                                         <div class="input-group">
                                             <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                             <select id="user-list" class="form-control" required="required">
-                                                <option selected="selected">-- Choose User --</option>
+                                                <option selected="selected">-- Choose Client --</option>
                                             </select>
                                         </div>
                                     </div>
@@ -385,6 +385,7 @@
                 let obj = {},
                     $user_list = $('#user-list'),
                     user = ($user_list.val() !== '-- Choose User --')? JSON.parse(decodeURIComponent($user_list.val())) : false;
+
                 obj.userID = user.ID;
                 obj.email = user.email;
                 obj.username = user.username;

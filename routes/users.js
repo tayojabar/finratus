@@ -463,7 +463,7 @@ users.get('/clients-list', function(req, res, next) {
 });
 
 users.get('/users-list-v2', function(req, res, next) {
-    var query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users order by fullname asc';
+    var query = 'SELECT * from clients where status = 1 order by fullname asc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -798,7 +798,7 @@ users.post('/apply', function(req, res) {
             };
             transporter.sendMail(mailOptions, function(error, info){
                 if(error)
-                    return res.send({"status": 500, "message": "Error occurred!", "response": error});
+                    console.log({"status": 500, "message": "Error occurred!", "response": error});
                 if (!workflow_id)
                     return res.send({"status": 200, "message": "New Application Added!"});
                 getNextWorkflowProcess(false,workflow_id,false, function (process) {
