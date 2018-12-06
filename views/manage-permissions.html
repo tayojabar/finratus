@@ -610,7 +610,6 @@
                         reads[r++] = [val.module_id, val.read_only];
                         writes[w++] = [val.module_id, val.editable];
                     });
-                    console.log(reads); console.log(writes);
                     $.each(reads, function(key, val){
                         let id = '#'+val[0]; //console.log(id);
                         if (parseInt(val[1]) === 1){
