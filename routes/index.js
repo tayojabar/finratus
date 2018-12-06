@@ -274,7 +274,7 @@ router.get('/profile-images/:folder/:user', function(req, res, next) {
 
 /* GET vehicles listing for admin. */
 router.get('/vehicles-list', function(req, res, next) {
-    var query = 'SELECT *, (select fullname from users u where u.ID = owner) as Owner from vehicles order by ID desc';
+    var query = 'SELECT *, (select fullname from clients u where u.ID = owner) as Owner from vehicles order by ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -331,7 +331,7 @@ router.get('/vehiclesCount', function(req, res, next) {
 
 /* GET vehicle owners count. */
 router.get('/ownersCount', function(req, res, next) {
-    var query = 'SELECT count(*) as total from users where user_role = 4';
+    var query = 'SELECT count(*) as total from clients where user_role = 4';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
