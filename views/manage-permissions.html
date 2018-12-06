@@ -538,7 +538,7 @@
                 glob = JSON.parse(response);
                 $("#role-table").dataTable().fnClearTable();
                 $.each(JSON.parse(response), function (key, val) {
-                    var action = '<a href="#" class="btn btn-info" onclick="loadRolePermissions('+val.id+')" id="'+val.id+'" name="'+val.role_name+'" title="Click to edit"><i class="ace-icon fa fa-pencil bigger-130"></i></a> &nbsp; &nbsp;'
+                    var action = '<a href="#" class="btn btn-info" onclick="loadRolePermissions('+val.id+')" name="'+val.role_name+'" title="Click to edit"><i class="ace-icon fa fa-pencil bigger-130"></i></a> &nbsp; &nbsp;'
                     var disable = '<button name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Role</button>'
                     $('#role-table').dataTable().fnAddData( [
                         val.role_name, action + disable

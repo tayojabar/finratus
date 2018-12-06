@@ -55,9 +55,10 @@ app.use(session({
 }));
 
 app.post('/login', function(req, res) {
-    var appData = {}; var user = [];
-    var username = req.body.username;
-    var password = req.body.password;
+    let user = [],
+        username = req.body.username,
+        password = req.body.password;
+
     db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ? and status = 1', username, function(err, rows, fields) {
       if (err)
           return res.send({"status": 500, "response": "Connection Error!"});
