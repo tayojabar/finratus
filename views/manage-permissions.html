@@ -539,7 +539,7 @@
                 $("#role-table").dataTable().fnClearTable();
                 $.each(JSON.parse(response), function (key, val) {
                     var action = '<a href="#" class="btn btn-info" onclick="loadRolePermissions('+val.id+')" id="'+val.id+'" name="'+val.role_name+'" title="Click to edit"><i class="ace-icon fa fa-pencil bigger-130"></i></a> &nbsp; &nbsp;'
-                    var disable = '<button id="'+val.id+'" name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Role</button>'
+                    var disable = '<button name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Role</button>'
                     $('#role-table').dataTable().fnAddData( [
                         val.role_name, action + disable
                         // "Make",
@@ -609,7 +609,7 @@
                         reads[r++] = [val.module_id, val.read_only];
                         writes[w++] = [val.module_id, val.editable];
                     });
-
+                    console.log(reads); console.log(writes);
                     $.each(reads, function(key, val){
                         let id = '#'+val[0]; //console.log(id);
                         if (parseInt(val[1]) === 1){

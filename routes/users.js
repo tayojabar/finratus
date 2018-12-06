@@ -490,7 +490,7 @@ users.get('/user-dets/:id', function(req, res, next) {
 });
 
 users.get('/client-dets/:id', function(req, res, next) {
-    var query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer from clients where id = ? order by id desc ';
+    var query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer from clients where ID = ? order by id desc ';
     db.query(query, req.params.id, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -638,7 +638,7 @@ users.post('/edit-client/:id', function(req, res, next) {
     var query = 'Update clients SET username = ?, fullname=?, phone=?, address = ?, email=?, gender=?, dob = ?, marital_status=?, loan_officer=?, branch=?, ' +
                 'client_state=?, postcode=?, client_country=?, years_add=?, ownership=?, employer_name=?, industry=?, job=?, job_country=?, off_address=?, off_state=?, ' +
                 'doe=?, guarantor_name=?, guarantor_occupation=?, relationship=?, years_known=?, guarantor_phone=?, guarantor_email=?, guarantor_address=?, gua_country=?, ' +
-                'date_modified = ? where id=?';
+                'date_modified = ? where ID=?';
     db.query(query, payload, function (error, results, fields) {                   ;
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -710,7 +710,7 @@ users.post('/del-client/:id', function(req, res, next) {
     let date = Date.now();
     postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     var payload = [postData.date_modified, req.params.id];
-    var query = 'Update clients SET status = 0, date_modified = ? where id=?';
+    var query = 'Update clients SET status = 0, date_modified = ? where ID=?';
     db.query(query, payload, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
