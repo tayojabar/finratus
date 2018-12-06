@@ -136,6 +136,40 @@ router.post('/addVehicle', function(req, res, next) {
     });
 });
 
+/* Add New User */
+router.post('/new-model', function(req, res, next) {
+    var postData = req.body; var data = []; data.make = req.body.make; data.model = req.body.model; data.year=req.body.year;
+    postData.Date_Created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    var query =  'INSERT INTO vehiclemakes Set ?';
+    var query2 = 'select * from vehiclemakes where model = ? and make = ? and year=?';
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query2,data, function (error, results, fields) {
+            if (results && results[0]){
+                res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Model already exists!"}));
+            }
+            else {
+                connection.query(query,postData, function (error, results, fields) {
+                    if(error){
+                        res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    } else {
+                        connection.query('SELECT * from vehiclemakes where ID = LAST_INSERT_ID()', function(err, re, fields) {
+                            connection.release();
+                            if (!err){
+                                res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                            }
+                            else{
+                                res.send(JSON.stringify({"response": "Error retrieving model details. Please try a new username!"}));
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+
 /* GET Vehicle Owners listing. */
 router.get('/owners', function(req, res, next) {
     var query = 'SELECT * from vehicle_owners';
