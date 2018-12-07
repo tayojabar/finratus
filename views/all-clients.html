@@ -288,11 +288,505 @@
                         </div>
                     </div>
                 </div>
+                <div>
+                <!--<div id="user-form" class="col-xs-12 col-sm-12" style="display: none">-->
+                    <!--<div class="card">-->
+                        <!--<div class="card-header">-->
+                            <!--<strong>Edit Client Data</strong> <small id="client_name"> Client Information</small>-->
+                        <!--</div>-->
+                        <!--<div class="card-body card-block">-->
+                            <!--<div id="regForm" action="user/new-client" method="post">-->
 
-                <div id="user-form" class="col-xs-12 col-sm-12" style="display: none">
+                                <!--&lt;!&ndash; One "tab" for each step in the form: &ndash;&gt;-->
+                                <!--<div class="tab">-->
+                                    <!--<div class="panel push-down">-->
+                                        <!--<div class="panel-body">-->
+                                            <!--<div class="example-box-wrapper">-->
+                                                <!--<h3>Personal Information</h3> <span class="text-danger"> Required (*)</span><hr>-->
+
+
+                                                <!--<div class="row">-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">First Name<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="text" id="first_name" class="form-control" placeholder="Enter first name" tabindex="1" required="" >-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Middle Name</label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="text" id="middle_name" class="form-control" placeholder="Enter middle name">-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Last Name<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="text" id="last_name" class="form-control" placeholder="Enter last name" required="">-->
+
+                                                            <!--&lt;!&ndash; ngIf: idForm.last_name.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="row">-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Gender<span class="text-danger">*</span></label>-->
+                                                        <!--<div>-->
+                                                            <!--<div class="col-md-4">-->
+                                                                <!--<div>-->
+                                                                    <!--<label class="control r control&#45;&#45;radio">-->
+                                                                        <!--<input type="radio" id="male" name="gender" value="Male" required="">&nbsp; Male-->
+                                                                        <!--<div class="control__indicator"></div>-->
+                                                                    <!--</label>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                            <!--<div class="col-md-5">-->
+                                                                <!--<div>-->
+                                                                    <!--<label class="control r control&#45;&#45;radio">-->
+                                                                        <!--<input type="radio" id="female" name="gender" value="Female">&nbsp; Female-->
+                                                                        <!--<div class="control__indicator"></div>-->
+                                                                    <!--</label>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Date of Birth<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="date" class="form-control" id="dob" placeholder="yyyy/MM/dd" required="required">-->
+
+                                                            <!--</div>-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.dob.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Marital Status<span class="text-danger">*</span></label>-->
+                                                        <!--&lt;!&ndash;  &ndash;&gt;-->
+                                                        <!--<div class="input-group" ng-init="customer.marital_status = 'single'">-->
+
+                                                            <!--<select class="form-control" id="marital_status">-->
+                                                                <!--<option selected="selected" disabled="disabled" hidden="hidden" value="">Please select a status</option>-->
+                                                                <!--<option id="1" value="single">Single</option>-->
+                                                                <!--<option id="2" value="married">Married</option>-->
+                                                                <!--<option id="3" value="divorced">Divorced</option>-->
+                                                                <!--<option id="4" value="other">Other</option>-->
+                                                            <!--</select>-->
+
+                                                            <!--&lt;!&ndash; ngIf: idForm.marital_status.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="row">-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Loan Officer<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<select id="loan_officer" class="form-control" tabindex="5.2" >-->
+                                                            <!--</select>-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.user.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Branch<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<select id="branch" class="form-control" tabindex="5.2" >-->
+                                                                <!--&lt;!&ndash;<option id="0"> &#45;&#45; Select a branch &#45;&#45;</option>&ndash;&gt;-->
+                                                                <!--&lt;!&ndash;<option id="Lagos">Lagos</option>&ndash;&gt;-->
+                                                                <!--&lt;!&ndash;<option id="Abuja">Abuja</option>&ndash;&gt;-->
+                                                                <!--&lt;!&ndash;<option id="PH">Port - Harcourt</option>&ndash;&gt;-->
+                                                            <!--</select>-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.user.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<hr/>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="panel push-down">-->
+                                        <!--<div class="panel-body">-->
+
+                                            <!--<div class="example-box-wrapper">-->
+                                                <!--<h3>Contact Information</h3><hr><br>-->
+                                                <!--<div class="row">-->
+
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Email Address <span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="email" id="email" class="form-control"placeholder="Enter email" required="">-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.email.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Phone Number</label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="text" id="phone" class="form-control" placeholder="555-555-5555" >-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.home_phone.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Address</label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<textarea type="text" id="address" name="home_phone" class="form-control"  placeholder="Home Address"></textarea>-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.home_phone.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<div class="row">-->
+
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">State <span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<select class="form-control" id="client_state">-->
+                                                                <!--<option id="0" class="" selected="selected">Choose State</option><option label="Abuja Capital Territory" value="string:Abuja Capital Territory">Abuja Capital Territory</option><option label="Abia" value="string:Abia">Abia</option><option label="Adamawa" value="string:Adamawa">Adamawa</option><option label="Akwa Ibom" value="string:Akwa Ibom">Akwa Ibom</option><option label="Anambra" value="string:Anambra">Anambra</option><option label="Bauchi" value="string:Bauchi">Bauchi</option><option label="Bayelsa" value="string:Bayelsa">Bayelsa</option><option label="Benue" value="string:Benue">Benue</option><option label="Borno" value="string:Borno">Borno</option><option label="Cross River" value="string:Cross River">Cross River</option><option label="Delta" value="string:Delta">Delta</option><option label="Ebonyi" value="string:Ebonyi">Ebonyi</option><option label="Edo" value="string:Edo">Edo</option><option label="Ekiti" value="string:Ekiti">Ekiti</option><option label="Enugu" value="string:Enugu">Enugu</option><option label="Gombe" value="string:Gombe">Gombe</option><option label="Imo" value="string:Imo">Imo</option><option label="Jigawa" value="string:Jigawa">Jigawa</option><option label="Kaduna" value="string:Kaduna">Kaduna</option><option label="Kano" value="string:Kano">Kano</option><option label="Katsina" value="string:Katsina">Katsina</option><option label="Kebbi" value="string:Kebbi">Kebbi</option><option label="Kogi" value="string:Kogi">Kogi</option><option label="Kwara" value="string:Kwara">Kwara</option><option label="Lagos" value="string:Lagos">Lagos</option><option label="Nassarawa" value="string:Nassarawa">Nassarawa</option><option label="Niger" value="string:Niger">Niger</option><option label="Ogun" value="string:Ogun">Ogun</option><option label="Ondo" value="string:Ondo">Ondo</option><option label="Osun" value="string:Osun">Osun</option><option label="Oyo" value="string:Oyo">Oyo</option><option label="Rivers" value="string:Rivers">Rivers</option><option label="Sokoto" value="string:Sokoto">Sokoto</option><option label="Taraba" value="string:Taraba">Taraba</option><option label="Yobe" value="string:Yobe">Yobe</option><option label="Zamfara" value="string:Zamfara">Zamfara</option>-->
+                                                            <!--</select>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Postal Code</label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="text" id="postcode" class="form-control" placeholder="" >-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.home_phone.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Country</label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<select id="client_country" class="form-control" required="" >-->
+                                                                <!--<option value="" class="" selected="selected">Please select a country</option><option label="Afghanistan" value="string:AF">Afghanistan</option><option label="Albania" value="string:AL">Albania</option><option label="Algeria" value="string:DZ">Algeria</option><option label="American Samoa" value="string:AS">American Samoa</option><option label="Andorra" value="string:AD">Andorra</option><option label="Angola" value="string:AO">Angola</option><option label="Anguilla" value="string:AI">Anguilla</option><option label="Antarctica" value="string:AQ">Antarctica</option><option label="Antigua and Barbuda" value="string:AG">Antigua and Barbuda</option><option label="Argentina" value="string:AR">Argentina</option><option label="Armenia" value="string:AM">Armenia</option><option label="Aruba" value="string:AW">Aruba</option><option label="Australia" value="string:AU">Australia</option><option label="Austria" value="string:AT">Austria</option><option label="Azerbaijan" value="string:AZ">Azerbaijan</option><option label="Bahrain" value="string:BH">Bahrain</option><option label="Bangladesh" value="string:BD">Bangladesh</option><option label="Barbados" value="string:BB">Barbados</option><option label="Belarus" value="string:BY">Belarus</option><option label="Belgium" value="string:BE">Belgium</option><option label="Belize" value="string:BZ">Belize</option><option label="Benin" value="string:BJ">Benin</option><option label="Bermuda" value="string:BM">Bermuda</option><option label="Bhutan" value="string:BT">Bhutan</option><option label="Bolivia" value="string:BO">Bolivia</option><option label="Bosnia and Herzegovina" value="string:BA">Bosnia and Herzegovina</option><option label="Botswana" value="string:BW">Botswana</option><option label="Bouvet Island" value="string:BV">Bouvet Island</option><option label="Brazil" value="string:BR">Brazil</option><option label="British Indian Ocean Territory" value="string:IO">British Indian Ocean Territory</option><option label="Virgin Islands, British" value="string:VG">Virgin Islands, British</option><option label="Brunei Darussalam" value="string:BN">Brunei Darussalam</option><option label="Bulgaria" value="string:BG">Bulgaria</option><option label="Burkina Faso" value="string:BF">Burkina Faso</option><option label="Myanmar" value="string:MM">Myanmar</option><option label="Burundi" value="string:BI">Burundi</option><option label="Cambodia" value="string:KH">Cambodia</option><option label="Cameroon" value="string:CM">Cameroon</option><option label="Canada" value="string:CA">Canada</option><option label="Cape Verde" value="string:CV">Cape Verde</option><option label="Cayman Islands" value="string:KY">Cayman Islands</option><option label="Central African Republic" value="string:CF">Central African Republic</option><option label="Chad" value="string:TD">Chad</option><option label="Chile" value="string:CL">Chile</option><option label="China" value="string:CN">China</option><option label="Christmas Island" value="string:CX">Christmas Island</option><option label="Cocos (Keeling) Islands" value="string:CC">Cocos (Keeling) Islands</option><option label="Colombia" value="string:CO">Colombia</option><option label="Comoros" value="string:KM">Comoros</option><option label="Congo, The Democratic Republic of the" value="string:CD">Congo, The Democratic Republic of the</option><option label="Congo" value="string:CG">Congo</option><option label="Cook Islands" value="string:CK">Cook Islands</option><option label="Costa Rica" value="string:CR">Costa Rica</option><option label="Côte d'Ivoire" value="string:CI">Côte d'Ivoire</option><option label="Croatia" value="string:HR">Croatia</option><option label="Cuba" value="string:CU">Cuba</option><option label="Cyprus" value="string:CY">Cyprus</option><option label="Czech Republic" value="string:CZ">Czech Republic</option><option label="Denmark" value="string:DK">Denmark</option><option label="Djibouti" value="string:DJ">Djibouti</option><option label="Dominica" value="string:DM">Dominica</option><option label="Dominican Republic" value="string:DO">Dominican Republic</option><option label="Timor-Leste" value="string:TL">Timor-Leste</option><option label="Ecuador" value="string:EC">Ecuador</option><option label="Egypt" value="string:EG">Egypt</option><option label="El Salvador" value="string:SV">El Salvador</option><option label="Equatorial Guinea" value="string:GQ">Equatorial Guinea</option><option label="Eritrea" value="string:ER">Eritrea</option><option label="Estonia" value="string:EE">Estonia</option><option label="Ethiopia" value="string:ET">Ethiopia</option><option label="Falkland Islands (Malvinas)" value="string:FK">Falkland Islands (Malvinas)</option><option label="Faroe Islands" value="string:FO">Faroe Islands</option><option label="Fiji" value="string:FJ">Fiji</option><option label="Finland" value="string:FI">Finland</option><option label="France" value="string:FR">France</option><option label="French Guiana" value="string:GF">French Guiana</option><option label="French Polynesia" value="string:PF">French Polynesia</option><option label="French Southern Territories" value="string:TF">French Southern Territories</option><option label="Gabon" value="string:GA">Gabon</option><option label="Georgia" value="string:GE">Georgia</option><option label="Germany" value="string:DE">Germany</option><option label="Ghana" value="string:GH">Ghana</option><option label="Gibraltar" value="string:GI">Gibraltar</option><option label="Greece" value="string:GR">Greece</option><option label="Greenland" value="string:GL">Greenland</option><option label="Grenada" value="string:GD">Grenada</option><option label="Guadeloupe" value="string:GP">Guadeloupe</option><option label="Guam" value="string:GU">Guam</option><option label="Guatemala" value="string:GT">Guatemala</option><option label="Guinea" value="string:GN">Guinea</option><option label="Guinea-Bissau" value="string:GW">Guinea-Bissau</option><option label="Guyana" value="string:GY">Guyana</option><option label="Haiti" value="string:HT">Haiti</option><option label="Heard Island and McDonald Islands" value="string:HM">Heard Island and McDonald Islands</option><option label="Holy See (Vatican City State)" value="string:VA">Holy See (Vatican City State)</option><option label="Honduras" value="string:HN">Honduras</option><option label="Hong Kong" value="string:HK">Hong Kong</option><option label="Hungary" value="string:HU">Hungary</option><option label="Iceland" value="string:IS">Iceland</option><option label="India" value="string:IN">India</option><option label="Indonesia" value="string:ID">Indonesia</option><option label="Iran, Islamic Republic of" value="string:IR">Iran, Islamic Republic of</option><option label="Iraq" value="string:IQ">Iraq</option><option label="Ireland" value="string:IE">Ireland</option><option label="Israel" value="string:IL">Israel</option><option label="Italy" value="string:IT">Italy</option><option label="Jamaica" value="string:JM">Jamaica</option><option label="Japan" value="string:JP">Japan</option><option label="Jordan" value="string:JO">Jordan</option><option label="Kazakhstan" value="string:KZ">Kazakhstan</option><option label="Kenya" value="string:KE">Kenya</option><option label="Kiribati" value="string:KI">Kiribati</option><option label="Korea, Democratic People's Republic of" value="string:KP">Korea, Democratic People's Republic of</option><option label="Korea, Republic of" value="string:KR">Korea, Republic of</option><option label="Kuwait" value="string:KW">Kuwait</option><option label="Kyrgyzstan" value="string:KG">Kyrgyzstan</option><option label="Lao People's Democratic Republic" value="string:LA">Lao People's Democratic Republic</option><option label="Latvia" value="string:LV">Latvia</option><option label="Lebanon" value="string:LB">Lebanon</option><option label="Lesotho" value="string:LS">Lesotho</option><option label="Liberia" value="string:LR">Liberia</option><option label="Libyan Arab Jamahiriya" value="string:LY">Libyan Arab Jamahiriya</option><option label="Liechtenstein" value="string:LI">Liechtenstein</option><option label="Lithuania" value="string:LT">Lithuania</option><option label="Luxembourg" value="string:LU">Luxembourg</option><option label="Macao" value="string:MO">Macao</option><option label="Macedonia, Republic of" value="string:MK">Macedonia, Republic of</option><option label="Madagascar" value="string:MG">Madagascar</option><option label="Malawi" value="string:MW">Malawi</option><option label="Malaysia" value="string:MY">Malaysia</option><option label="Maldives" value="string:MV">Maldives</option><option label="Mali" value="string:ML">Mali</option><option label="Malta" value="string:MT">Malta</option><option label="Marshall Islands" value="string:MH">Marshall Islands</option><option label="Martinique" value="string:MQ">Martinique</option><option label="Mauritania" value="string:MR">Mauritania</option><option label="Mauritius" value="string:MU">Mauritius</option><option label="Mayotte" value="string:YT">Mayotte</option><option label="Mexico" value="string:MX">Mexico</option><option label="Micronesia, Federated States of" value="string:FM">Micronesia, Federated States of</option><option label="Moldova" value="string:MD">Moldova</option><option label="Monaco" value="string:MC">Monaco</option><option label="Mongolia" value="string:MN">Mongolia</option><option label="Montserrat" value="string:MS">Montserrat</option><option label="Morocco" value="string:MA">Morocco</option><option label="Mozambique" value="string:MZ">Mozambique</option><option label="Namibia" value="string:NA">Namibia</option><option label="Nauru" value="string:NR">Nauru</option><option label="Nepal" value="string:NP">Nepal</option><option label="Netherlands Antilles" value="string:AN">Netherlands Antilles</option><option label="Netherlands" value="string:NL">Netherlands</option><option label="New Caledonia" value="string:NC">New Caledonia</option><option label="New Zealand" value="string:NZ">New Zealand</option><option label="Nicaragua" value="string:NI">Nicaragua</option><option label="Niger" value="string:NE">Niger</option><option label="Nigeria" value="string:NG" selected="selected">Nigeria</option><option label="Niue" value="string:NU">Niue</option><option label="Norfolk Island" value="string:NF">Norfolk Island</option><option label="Northern Mariana Islands" value="string:MP">Northern Mariana Islands</option><option label="Norway" value="string:NO">Norway</option><option label="Oman" value="string:OM">Oman</option><option label="Pakistan" value="string:PK">Pakistan</option><option label="Palau" value="string:PW">Palau</option><option label="Palestinian Territory, Occupied" value="string:PS">Palestinian Territory, Occupied</option><option label="Panama" value="string:PA">Panama</option><option label="Papua New Guinea" value="string:PG">Papua New Guinea</option><option label="Paraguay" value="string:PY">Paraguay</option><option label="Peru" value="string:PE">Peru</option><option label="Philippines" value="string:PH">Philippines</option><option label="Pitcairn" value="string:PN">Pitcairn</option><option label="Poland" value="string:PL">Poland</option><option label="Portugal" value="string:PT">Portugal</option><option label="Puerto Rico" value="string:PR">Puerto Rico</option><option label="Qatar" value="string:QA">Qatar</option><option label="Romania" value="string:RO">Romania</option><option label="Russian Federation" value="string:RU">Russian Federation</option><option label="Rwanda" value="string:RW">Rwanda</option><option label="Reunion" value="string:RE">Reunion</option><option label="Saint Helena" value="string:SH">Saint Helena</option><option label="Saint Kitts and Nevis" value="string:KN">Saint Kitts and Nevis</option><option label="Saint Lucia" value="string:LC">Saint Lucia</option><option label="Saint Pierre and Miquelon" value="string:PM">Saint Pierre and Miquelon</option><option label="Saint Vincent and the Grenadines" value="string:VC">Saint Vincent and the Grenadines</option><option label="Samoa" value="string:WS">Samoa</option><option label="San Marino" value="string:SM">San Marino</option><option label="Saudi Arabia" value="string:SA">Saudi Arabia</option><option label="Senegal" value="string:SN">Senegal</option><option label="Seychelles" value="string:SC">Seychelles</option><option label="Sierra Leone" value="string:SL">Sierra Leone</option><option label="Singapore" value="string:SG">Singapore</option><option label="Slovakia" value="string:SK">Slovakia</option><option label="Slovenia" value="string:SI">Slovenia</option><option label="Solomon Islands" value="string:SB">Solomon Islands</option><option label="Somalia" value="string:SO">Somalia</option><option label="South Africa" value="string:ZA">South Africa</option><option label="South Georgia and the South Sandwich Islands" value="string:GS">South Georgia and the South Sandwich Islands</option><option label="Spain" value="string:ES">Spain</option><option label="Sri Lanka" value="string:LK">Sri Lanka</option><option label="Sudan" value="string:SD">Sudan</option><option label="Suriname" value="string:SR">Suriname</option><option label="Svalbard and Jan Mayen" value="string:SJ">Svalbard and Jan Mayen</option><option label="Swaziland" value="string:SZ">Swaziland</option><option label="Sweden" value="string:SE">Sweden</option><option label="Switzerland" value="string:CH">Switzerland</option><option label="Syrian Arab Republic" value="string:SY">Syrian Arab Republic</option><option label="Sao Tome and Principe" value="string:ST">Sao Tome and Principe</option><option label="Taiwan" value="string:TW">Taiwan</option><option label="Tajikistan" value="string:TJ">Tajikistan</option><option label="Tanzania, United Republic of" value="string:TZ">Tanzania, United Republic of</option><option label="Thailand" value="string:TH">Thailand</option><option label="Bahamas" value="string:BS">Bahamas</option><option label="Gambia" value="string:GM">Gambia</option><option label="Togo" value="string:TG">Togo</option><option label="Tokelau" value="string:TK">Tokelau</option><option label="Tonga" value="string:TO">Tonga</option><option label="Trinidad and Tobago" value="string:TT">Trinidad and Tobago</option><option label="Tunisia" value="string:TN">Tunisia</option><option label="Turkey" value="string:TR">Turkey</option><option label="Turkmenistan" value="string:TM">Turkmenistan</option><option label="Turks and Caicos Islands" value="string:TC">Turks and Caicos Islands</option><option label="Tuvalu" value="string:TV">Tuvalu</option><option label="Uganda" value="string:UG">Uganda</option><option label="Ukraine" value="string:UA">Ukraine</option><option label="United Arab Emirates" value="string:AE">United Arab Emirates</option><option label="United Kingdom" value="string:GB">United Kingdom</option><option label="United States Minor Outlying Islands" value="string:UM">United States Minor Outlying Islands</option><option label="United States" value="string:US">United States</option><option label="Uruguay" value="string:UY">Uruguay</option><option label="Uzbekistan" value="string:UZ">Uzbekistan</option><option label="Vanuatu" value="string:VU">Vanuatu</option><option label="Venezuela" value="string:VE">Venezuela</option><option label="Viet Nam" value="string:VN">Viet Nam</option><option label="Virgin Islands, U.S." value="string:VI">Virgin Islands, U.S.</option><option label="Wallis and Futuna" value="string:WF">Wallis and Futuna</option><option label="Western Sahara" value="string:EH">Western Sahara</option><option label="Yemen" value="string:YE">Yemen</option><option label="Serbia and Montenegro" value="string:CS">Serbia and Montenegro</option><option label="Zambia" value="string:ZM">Zambia</option><option label="Zimbabwe" value="string:ZW">Zimbabwe</option><option label="Åland Islands" value="string:AX">Åland Islands</option><option label="Serbia" value="string:RS">Serbia</option><option label="Montenegro" value="string:ME">Montenegro</option><option label="Jersey" value="string:JE">Jersey</option><option label="Guernsey" value="string:GG">Guernsey</option><option label="Isle of Man" value="string:IM">Isle of Man</option>-->
+                                                            <!--</select>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<div class="row">-->
+
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Years at Address <span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="number" id="years_add" class="form-control"placeholder="Number of Years" required="">-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.email.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-4 col-md-4">-->
+                                                        <!--<label class="form-control-label">Ownership</label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<select class="form-control" tabindex="7" required="" id="ownership">-->
+                                                                <!--<option selected="selected" disabled="disabled" value="" id="0">Please select one</option>-->
+                                                                <!--<option id="1" value="family-home">Family Home</option>-->
+                                                                <!--<option id="2" value="lease">Lease</option>-->
+                                                                <!--<option id="3" value="owner">Owner</option>-->
+                                                                <!--<option id="4" value="rent">Rent</option>-->
+                                                            <!--</select>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<hr/>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="panel push-down">-->
+                                        <!--<div class="panel-body">-->
+
+                                            <!--<div class="example-box-wrapper">-->
+                                                <!--<h3>Uploads</h3><hr><br>-->
+                                                <!--<div class="row">-->
+                                                    <!--<div class="form-group col-sm-6">-->
+                                                        <!--&lt;!&ndash; <label class="col-sm-3 control-label">Upload Customer Image</label> &ndash;&gt;-->
+
+                                                        <!--&lt;!&ndash; <input type="file" name="customer_image" class="form-control" tabindex="6"> &ndash;&gt;-->
+                                                        <!--<div class="form-control">-->
+                                                            <!--<label for="file-upload" class="custom-file-upload">-->
+                                                                <!--<i class="fa fa-cloud-upload"></i> Upload Customer Image-->
+                                                            <!--</label>-->
+                                                            <!--<input id="file-upload" class="image admin-img" type="file" tabindex="6">-->
+                                                            <!--<label id="path"></label><br>-->
+                                                            <!--<small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>-->
+
+                                                        <!--</div>-->
+                                                        <!--<div class="form-control pull-right" style="border-color: transparent">-->
+                                                            <!--<button class="btn btn-primary pull-right write" onclick="upload(1)">Save Image</button>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                    <!--<div class="form-group col-sm-6">-->
+                                                        <!--&lt;!&ndash; <label class="col-sm-3 control-label">Upload Customer Signature</label> &ndash;&gt;-->
+
+                                                        <!--<div class="form-control">-->
+                                                            <!--&lt;!&ndash; <input type="file" name="cust_signature_image" class="form-control" tabindex="7"> &ndash;&gt;-->
+
+                                                            <!--<label for="file-upload-signature" class="custom-file-upload">-->
+                                                                <!--<i class="fa fa-cloud-upload"></i> Upload Signature-->
+                                                            <!--</label>-->
+                                                            <!--<input id="file-upload-signature" class="image admin-img" type="file" tabindex="7">-->
+                                                            <!--<label id="path-signature"></label><br>-->
+                                                            <!--<small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>-->
+
+                                                        <!--</div>-->
+                                                        <!--<div class="form-control pull-right" style="border-color: transparent">-->
+                                                            <!--<button class="btn btn-primary pull-right write" onclick="upload(2)">Save Signature</button>-->
+                                                        <!--</div>-->
+
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<hr>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--<div class="tab">:-->
+                                    <!--<div class="panel push-down">-->
+                                        <!--<div class="panel-body">-->
+                                            <!--<div class="example-box-wrapper">-->
+                                                <!--<h3>Employment Information</h3> <span class="text-danger"> Required (*)</span><hr>-->
+
+
+                                                <!--<div class="row">-->
+
+                                                    <!--<div class="form-group col-sm-6 col-md-6">-->
+                                                        <!--<label class="form-control-label">Employer Name</label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="text" id="employer_name" class="form-control" placeholder="Enter Employer name">-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-6 col-md-6">-->
+                                                        <!--<label class="form-control-label">Industry<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<select class="form-control" id="industry" name="industry" >-->
+                                                                <!--<option selected="selected" disabled="disabled" hidden="hidden" value="">Please select an industry</option>-->
+                                                                <!--<option value="accounts-banking&#45;&#45;finance">Accounts, Banking &amp; Finance</option>-->
+                                                                <!--<option value="administration">Administration</option>-->
+                                                                <!--<option value="agriculture">Agriculture</option>-->
+                                                                <!--<option value="automotive">Automotive</option-->
+                                                                <!--&gt;<option value="beauty">Beauty</option>-->
+                                                                <!--<option value="construction">Construction</option>-->
+                                                                <!--<option value="creative-arts">Creative Arts</option>-->
+                                                                <!--<option value="customer-service">Customer Service</option>-->
+                                                                <!--<option value="energy">Energy</option>-->
+                                                                <!--<option value="engineering&#45;&#45;utilities">Engineering &amp; Utilities</option>-->
+                                                                <!--<option value="environmental">Environmental</option>-->
+                                                                <!--<option value="general-management">General Management</option>-->
+                                                                <!--<option value="hospitality&#45;&#45;tourism">Hospitality &amp; Tourism</option>-->
+                                                                <!--<option value="human-resources">Human Resources</option>-->
+                                                                <!--<option value="insurance">Insurance</option>-->
+                                                                <!--<option value="information-technology">Information Technology</option>-->
+                                                                <!--<option value="legal">Legal</option>-->
+                                                                <!--<option value="marine">Marine</option>-->
+                                                                <!--<option value="marketing">Marketing</option>-->
+                                                                <!--<option value="medical-professionals">Medical Professionals</option>-->
+                                                                <!--<option value="mining">Mining</option>-->
+                                                                <!--<option value="production&#45;&#45;manufacturing">Production &amp; Manufacturing</option>-->
+                                                                <!--<option value="project-management">Project Management</option>-->
+                                                                <!--<option value="public-sector">Public Sector</option>-->
+                                                                <!--<option value="media">Media</option>-->
+                                                                <!--<option value="retailing">Retailing</option>-->
+                                                                <!--<option value="sales">Sales</option>-->
+                                                                <!--<option value="pharmaceutical">Pharmaceutical</option>-->
+                                                                <!--<option value="security">Security</option>-->
+                                                                <!--<option value="social-work">Social Work</option>-->
+                                                                <!--<option value="sports">Sports</option>-->
+                                                                <!--<option value="telecommunication">Telecommunication</option>-->
+                                                                <!--<option value="transport">Transport</option>-->
+                                                                <!--<option value="waste-management">Waste Management</option>-->
+                                                                <!--<option value="bearer">Bearer</option>-->
+                                                                <!--<option value="chicken-farmer">Chicken Farmer</option>-->
+                                                                <!--<option value="adv-consultant">Adv Consultant</option>-->
+                                                                <!--<option value="merchandizer">Merchandizer</option>-->
+                                                                <!--<option value="security-guard">security guard</option>-->
+                                                                <!--<option value="custom-framer">Custom Framer</option>-->
+                                                                <!--<option value="registered-nurse">Registered Nurse</option>-->
+                                                                <!--<option value="sales-and-distribution">Sales and Distribution</option>-->
+                                                                <!--<option value="teacher">Teacher</option>-->
+                                                                <!--<option value="financial-institution">Financial Institution</option>-->
+                                                                <!--<option value="law-firm">Law Firm</option>-->
+                                                                <!--<option value="merchandiser">Merchandiser</option>-->
+                                                                <!--<option value="banker">Banker</option>-->
+                                                                <!--<option value="banking">Banking</option>-->
+                                                                <!--<option value="retail">Retail</option>-->
+                                                                <!--<option value="cooking-gas-provider">cooking Gas provider</option>-->
+                                                                <!--<option value="internal-security">Internal Security</option>-->
+                                                                <!--<option value="market-department">Market Department</option>-->
+                                                                <!--<option value="radio-station">Radio Station</option>-->
+                                                                <!--<option value="distribution">Distribution</option>-->
+                                                                <!--<option value="store">Store</option>-->
+                                                                <!--<option value="meat-shop">meat shop</option><option value="stationary-solutions&#45;&#45;more">Stationary Solutions &amp; More</option><option value="accounts-receivablebilling-clerk">Accounts receivable/billing clerk</option><option value="auto-body">AUTO BODY</option><option value="customer-service-rep">Customer Service Rep</option><option value="embroidery">Embroidery</option><option value="industrial">Industrial</option><option value="office-attendant">Office Attendant</option><option value="domestic-work">Domestic Work</option><option value="operations-manager">Operations Manager</option><option value="executive-assistant">Executive Assistant</option><option value="juicy-patty">Juicy Patty</option><option value="investments">Investments</option><option value="monitoring-agent">Monitoring Agent</option><option value="dress-making">Dress Making</option><option value="fast-food-restaurant">Fast Food Restaurant</option><option value="high-school">High School</option><option value="marketing-assistant">marketing assistant</option><option value="basic-school">Basic School</option><option value="vice-president">Vice President</option><option value="postman-for-the-mona-branch">Postman for the Mona branch</option><option value="advertising-consultant">Advertising Consultant</option><option value="social-media-executive-merchant-loyalty-programme-marketing-officer">Social Media Executive/ Merchant Loyalty Programme Marketing Officer</option><option value="supervisor">Supervisor</option><option value="early-childhood-practitioner">Early childhood practitioner</option><option value="bank">Bank</option><option value="ramp-attendant">Ramp Attendant</option><option value="soldier">Soldier</option><option value="bar">Bar</option><option value="mobile-wallet">Mobile Wallet</option><option value="janitor">Janitor</option><option value="policy&#45;&#45;advocacy-officer">Policy &amp; Advocacy Officer</option><option value="hoteljnr-ue-chef">hotel/jnr Ue chef</option><option value="consultant">Consultant</option><option value="bank-teller">Bank Teller</option><option value="insurancefinancial-adviser">Insurance/Financial Adviser</option><option value="accounting-clerck">Accounting Clerck</option><option value="admin-assistant">Admin Assistant</option><option value="cashier-sales-rep">Cashier/ Sales rep</option><option value="primary-school">Primary school</option><option value="registration-clerk">Registration Clerk</option><option value="record-officer">Record Officer</option><option value="receptionist">Receptionist</option><option value="relief-tennis-pro">RELIEF TENNIS PRO</option><option value="senior-sales-executive">Senior Sales Executive</option><option value="call-center">Call Center</option><option value="bag-juice">Bag Juice</option><option value="garage">Garage</option><option value="pharmacy">Pharmacy</option><option value="printing">Printing</option><option value="water-delivery">Water Delivery</option><option value="interior-design">Interior Design</option><option value="events-planningmarketing-and-project-management">Events Planning/Marketing and Project management.</option><option value="accounts-banking-finance">Accounts, Banking &amp; Finance</option><option value="education">Education</option><option value="engineering-utilities">Engineering &amp; Utilities</option><option value="hospitality-tourism">Hospitality &amp; Tourism</option><option value="production-manufacturing">Production &amp; Manufacturing</option><option value="real-estate">Real Estate</option><option value="travel">Travel</option><option value="other">Other</option></select>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="row">-->
+
+                                                    <!--<div class="form-group col-sm-6 col-md-6">-->
+                                                        <!--<label class="form-control-label">Job Title<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="text" id="job" class="form-control" placeholder="Enter Job Title" required="">-->
+
+                                                            <!--&lt;!&ndash; ngIf: idForm.last_name.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group col-sm-6 col-md-6">-->
+                                                        <!--<label class="form-control-label">Country<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<select id="job_country" class="form-control" required="" >-->
+                                                                <!--<option value="" class="" selected="selected">Please select a country</option><option label="Afghanistan" value="string:AF">Afghanistan</option><option label="Albania" value="string:AL">Albania</option><option label="Algeria" value="string:DZ">Algeria</option><option label="American Samoa" value="string:AS">American Samoa</option><option label="Andorra" value="string:AD">Andorra</option><option label="Angola" value="string:AO">Angola</option><option label="Anguilla" value="string:AI">Anguilla</option><option label="Antarctica" value="string:AQ">Antarctica</option><option label="Antigua and Barbuda" value="string:AG">Antigua and Barbuda</option><option label="Argentina" value="string:AR">Argentina</option><option label="Armenia" value="string:AM">Armenia</option><option label="Aruba" value="string:AW">Aruba</option><option label="Australia" value="string:AU">Australia</option><option label="Austria" value="string:AT">Austria</option><option label="Azerbaijan" value="string:AZ">Azerbaijan</option><option label="Bahrain" value="string:BH">Bahrain</option><option label="Bangladesh" value="string:BD">Bangladesh</option><option label="Barbados" value="string:BB">Barbados</option><option label="Belarus" value="string:BY">Belarus</option><option label="Belgium" value="string:BE">Belgium</option><option label="Belize" value="string:BZ">Belize</option><option label="Benin" value="string:BJ">Benin</option><option label="Bermuda" value="string:BM">Bermuda</option><option label="Bhutan" value="string:BT">Bhutan</option><option label="Bolivia" value="string:BO">Bolivia</option><option label="Bosnia and Herzegovina" value="string:BA">Bosnia and Herzegovina</option><option label="Botswana" value="string:BW">Botswana</option><option label="Bouvet Island" value="string:BV">Bouvet Island</option><option label="Brazil" value="string:BR">Brazil</option><option label="British Indian Ocean Territory" value="string:IO">British Indian Ocean Territory</option><option label="Virgin Islands, British" value="string:VG">Virgin Islands, British</option><option label="Brunei Darussalam" value="string:BN">Brunei Darussalam</option><option label="Bulgaria" value="string:BG">Bulgaria</option><option label="Burkina Faso" value="string:BF">Burkina Faso</option><option label="Myanmar" value="string:MM">Myanmar</option><option label="Burundi" value="string:BI">Burundi</option><option label="Cambodia" value="string:KH">Cambodia</option><option label="Cameroon" value="string:CM">Cameroon</option><option label="Canada" value="string:CA">Canada</option><option label="Cape Verde" value="string:CV">Cape Verde</option><option label="Cayman Islands" value="string:KY">Cayman Islands</option><option label="Central African Republic" value="string:CF">Central African Republic</option><option label="Chad" value="string:TD">Chad</option><option label="Chile" value="string:CL">Chile</option><option label="China" value="string:CN">China</option><option label="Christmas Island" value="string:CX">Christmas Island</option><option label="Cocos (Keeling) Islands" value="string:CC">Cocos (Keeling) Islands</option><option label="Colombia" value="string:CO">Colombia</option><option label="Comoros" value="string:KM">Comoros</option><option label="Congo, The Democratic Republic of the" value="string:CD">Congo, The Democratic Republic of the</option><option label="Congo" value="string:CG">Congo</option><option label="Cook Islands" value="string:CK">Cook Islands</option><option label="Costa Rica" value="string:CR">Costa Rica</option><option label="Côte d'Ivoire" value="string:CI">Côte d'Ivoire</option><option label="Croatia" value="string:HR">Croatia</option><option label="Cuba" value="string:CU">Cuba</option><option label="Cyprus" value="string:CY">Cyprus</option><option label="Czech Republic" value="string:CZ">Czech Republic</option><option label="Denmark" value="string:DK">Denmark</option><option label="Djibouti" value="string:DJ">Djibouti</option><option label="Dominica" value="string:DM">Dominica</option><option label="Dominican Republic" value="string:DO">Dominican Republic</option><option label="Timor-Leste" value="string:TL">Timor-Leste</option><option label="Ecuador" value="string:EC">Ecuador</option><option label="Egypt" value="string:EG">Egypt</option><option label="El Salvador" value="string:SV">El Salvador</option><option label="Equatorial Guinea" value="string:GQ">Equatorial Guinea</option><option label="Eritrea" value="string:ER">Eritrea</option><option label="Estonia" value="string:EE">Estonia</option><option label="Ethiopia" value="string:ET">Ethiopia</option><option label="Falkland Islands (Malvinas)" value="string:FK">Falkland Islands (Malvinas)</option><option label="Faroe Islands" value="string:FO">Faroe Islands</option><option label="Fiji" value="string:FJ">Fiji</option><option label="Finland" value="string:FI">Finland</option><option label="France" value="string:FR">France</option><option label="French Guiana" value="string:GF">French Guiana</option><option label="French Polynesia" value="string:PF">French Polynesia</option><option label="French Southern Territories" value="string:TF">French Southern Territories</option><option label="Gabon" value="string:GA">Gabon</option><option label="Georgia" value="string:GE">Georgia</option><option label="Germany" value="string:DE">Germany</option><option label="Ghana" value="string:GH">Ghana</option><option label="Gibraltar" value="string:GI">Gibraltar</option><option label="Greece" value="string:GR">Greece</option><option label="Greenland" value="string:GL">Greenland</option><option label="Grenada" value="string:GD">Grenada</option><option label="Guadeloupe" value="string:GP">Guadeloupe</option><option label="Guam" value="string:GU">Guam</option><option label="Guatemala" value="string:GT">Guatemala</option><option label="Guinea" value="string:GN">Guinea</option><option label="Guinea-Bissau" value="string:GW">Guinea-Bissau</option><option label="Guyana" value="string:GY">Guyana</option><option label="Haiti" value="string:HT">Haiti</option><option label="Heard Island and McDonald Islands" value="string:HM">Heard Island and McDonald Islands</option><option label="Holy See (Vatican City State)" value="string:VA">Holy See (Vatican City State)</option><option label="Honduras" value="string:HN">Honduras</option><option label="Hong Kong" value="string:HK">Hong Kong</option><option label="Hungary" value="string:HU">Hungary</option><option label="Iceland" value="string:IS">Iceland</option><option label="India" value="string:IN">India</option><option label="Indonesia" value="string:ID">Indonesia</option><option label="Iran, Islamic Republic of" value="string:IR">Iran, Islamic Republic of</option><option label="Iraq" value="string:IQ">Iraq</option><option label="Ireland" value="string:IE">Ireland</option><option label="Israel" value="string:IL">Israel</option><option label="Italy" value="string:IT">Italy</option><option label="Jamaica" value="string:JM">Jamaica</option><option label="Japan" value="string:JP">Japan</option><option label="Jordan" value="string:JO">Jordan</option><option label="Kazakhstan" value="string:KZ">Kazakhstan</option><option label="Kenya" value="string:KE">Kenya</option><option label="Kiribati" value="string:KI">Kiribati</option><option label="Korea, Democratic People's Republic of" value="string:KP">Korea, Democratic People's Republic of</option><option label="Korea, Republic of" value="string:KR">Korea, Republic of</option><option label="Kuwait" value="string:KW">Kuwait</option><option label="Kyrgyzstan" value="string:KG">Kyrgyzstan</option><option label="Lao People's Democratic Republic" value="string:LA">Lao People's Democratic Republic</option><option label="Latvia" value="string:LV">Latvia</option><option label="Lebanon" value="string:LB">Lebanon</option><option label="Lesotho" value="string:LS">Lesotho</option><option label="Liberia" value="string:LR">Liberia</option><option label="Libyan Arab Jamahiriya" value="string:LY">Libyan Arab Jamahiriya</option><option label="Liechtenstein" value="string:LI">Liechtenstein</option><option label="Lithuania" value="string:LT">Lithuania</option><option label="Luxembourg" value="string:LU">Luxembourg</option><option label="Macao" value="string:MO">Macao</option><option label="Macedonia, Republic of" value="string:MK">Macedonia, Republic of</option><option label="Madagascar" value="string:MG">Madagascar</option><option label="Malawi" value="string:MW">Malawi</option><option label="Malaysia" value="string:MY">Malaysia</option><option label="Maldives" value="string:MV">Maldives</option><option label="Mali" value="string:ML">Mali</option><option label="Malta" value="string:MT">Malta</option><option label="Marshall Islands" value="string:MH">Marshall Islands</option><option label="Martinique" value="string:MQ">Martinique</option><option label="Mauritania" value="string:MR">Mauritania</option><option label="Mauritius" value="string:MU">Mauritius</option><option label="Mayotte" value="string:YT">Mayotte</option><option label="Mexico" value="string:MX">Mexico</option><option label="Micronesia, Federated States of" value="string:FM">Micronesia, Federated States of</option><option label="Moldova" value="string:MD">Moldova</option><option label="Monaco" value="string:MC">Monaco</option><option label="Mongolia" value="string:MN">Mongolia</option><option label="Montserrat" value="string:MS">Montserrat</option><option label="Morocco" value="string:MA">Morocco</option><option label="Mozambique" value="string:MZ">Mozambique</option><option label="Namibia" value="string:NA">Namibia</option><option label="Nauru" value="string:NR">Nauru</option><option label="Nepal" value="string:NP">Nepal</option><option label="Netherlands Antilles" value="string:AN">Netherlands Antilles</option><option label="Netherlands" value="string:NL">Netherlands</option><option label="New Caledonia" value="string:NC">New Caledonia</option><option label="New Zealand" value="string:NZ">New Zealand</option><option label="Nicaragua" value="string:NI">Nicaragua</option><option label="Niger" value="string:NE">Niger</option><option label="Nigeria" value="string:NG" selected="selected">Nigeria</option><option label="Niue" value="string:NU">Niue</option><option label="Norfolk Island" value="string:NF">Norfolk Island</option><option label="Northern Mariana Islands" value="string:MP">Northern Mariana Islands</option><option label="Norway" value="string:NO">Norway</option><option label="Oman" value="string:OM">Oman</option><option label="Pakistan" value="string:PK">Pakistan</option><option label="Palau" value="string:PW">Palau</option><option label="Palestinian Territory, Occupied" value="string:PS">Palestinian Territory, Occupied</option><option label="Panama" value="string:PA">Panama</option><option label="Papua New Guinea" value="string:PG">Papua New Guinea</option><option label="Paraguay" value="string:PY">Paraguay</option><option label="Peru" value="string:PE">Peru</option><option label="Philippines" value="string:PH">Philippines</option><option label="Pitcairn" value="string:PN">Pitcairn</option><option label="Poland" value="string:PL">Poland</option><option label="Portugal" value="string:PT">Portugal</option><option label="Puerto Rico" value="string:PR">Puerto Rico</option><option label="Qatar" value="string:QA">Qatar</option><option label="Romania" value="string:RO">Romania</option><option label="Russian Federation" value="string:RU">Russian Federation</option><option label="Rwanda" value="string:RW">Rwanda</option><option label="Reunion" value="string:RE">Reunion</option><option label="Saint Helena" value="string:SH">Saint Helena</option><option label="Saint Kitts and Nevis" value="string:KN">Saint Kitts and Nevis</option><option label="Saint Lucia" value="string:LC">Saint Lucia</option><option label="Saint Pierre and Miquelon" value="string:PM">Saint Pierre and Miquelon</option><option label="Saint Vincent and the Grenadines" value="string:VC">Saint Vincent and the Grenadines</option><option label="Samoa" value="string:WS">Samoa</option><option label="San Marino" value="string:SM">San Marino</option><option label="Saudi Arabia" value="string:SA">Saudi Arabia</option><option label="Senegal" value="string:SN">Senegal</option><option label="Seychelles" value="string:SC">Seychelles</option><option label="Sierra Leone" value="string:SL">Sierra Leone</option><option label="Singapore" value="string:SG">Singapore</option><option label="Slovakia" value="string:SK">Slovakia</option><option label="Slovenia" value="string:SI">Slovenia</option><option label="Solomon Islands" value="string:SB">Solomon Islands</option><option label="Somalia" value="string:SO">Somalia</option><option label="South Africa" value="string:ZA">South Africa</option><option label="South Georgia and the South Sandwich Islands" value="string:GS">South Georgia and the South Sandwich Islands</option><option label="Spain" value="string:ES">Spain</option><option label="Sri Lanka" value="string:LK">Sri Lanka</option><option label="Sudan" value="string:SD">Sudan</option><option label="Suriname" value="string:SR">Suriname</option><option label="Svalbard and Jan Mayen" value="string:SJ">Svalbard and Jan Mayen</option><option label="Swaziland" value="string:SZ">Swaziland</option><option label="Sweden" value="string:SE">Sweden</option><option label="Switzerland" value="string:CH">Switzerland</option><option label="Syrian Arab Republic" value="string:SY">Syrian Arab Republic</option><option label="Sao Tome and Principe" value="string:ST">Sao Tome and Principe</option><option label="Taiwan" value="string:TW">Taiwan</option><option label="Tajikistan" value="string:TJ">Tajikistan</option><option label="Tanzania, United Republic of" value="string:TZ">Tanzania, United Republic of</option><option label="Thailand" value="string:TH">Thailand</option><option label="Bahamas" value="string:BS">Bahamas</option><option label="Gambia" value="string:GM">Gambia</option><option label="Togo" value="string:TG">Togo</option><option label="Tokelau" value="string:TK">Tokelau</option><option label="Tonga" value="string:TO">Tonga</option><option label="Trinidad and Tobago" value="string:TT">Trinidad and Tobago</option><option label="Tunisia" value="string:TN">Tunisia</option><option label="Turkey" value="string:TR">Turkey</option><option label="Turkmenistan" value="string:TM">Turkmenistan</option><option label="Turks and Caicos Islands" value="string:TC">Turks and Caicos Islands</option><option label="Tuvalu" value="string:TV">Tuvalu</option><option label="Uganda" value="string:UG">Uganda</option><option label="Ukraine" value="string:UA">Ukraine</option><option label="United Arab Emirates" value="string:AE">United Arab Emirates</option><option label="United Kingdom" value="string:GB">United Kingdom</option><option label="United States Minor Outlying Islands" value="string:UM">United States Minor Outlying Islands</option><option label="United States" value="string:US">United States</option><option label="Uruguay" value="string:UY">Uruguay</option><option label="Uzbekistan" value="string:UZ">Uzbekistan</option><option label="Vanuatu" value="string:VU">Vanuatu</option><option label="Venezuela" value="string:VE">Venezuela</option><option label="Viet Nam" value="string:VN">Viet Nam</option><option label="Virgin Islands, U.S." value="string:VI">Virgin Islands, U.S.</option><option label="Wallis and Futuna" value="string:WF">Wallis and Futuna</option><option label="Western Sahara" value="string:EH">Western Sahara</option><option label="Yemen" value="string:YE">Yemen</option><option label="Serbia and Montenegro" value="string:CS">Serbia and Montenegro</option><option label="Zambia" value="string:ZM">Zambia</option><option label="Zimbabwe" value="string:ZW">Zimbabwe</option><option label="Åland Islands" value="string:AX">Åland Islands</option><option label="Serbia" value="string:RS">Serbia</option><option label="Montenegro" value="string:ME">Montenegro</option><option label="Jersey" value="string:JE">Jersey</option><option label="Guernsey" value="string:GG">Guernsey</option><option label="Isle of Man" value="string:IM">Isle of Man</option>-->
+                                                            <!--</select>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="row">-->
+
+                                                    <!--<div class="form-group col-sm-6 col-md-6">-->
+                                                        <!--<label class="form-control-label">Address<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="off_address" class="form-control" required="required">-->
+
+                                                            <!--</div>-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.dob.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                    <!--<div class="form-group col-sm-6 col-md-6">-->
+                                                        <!--<label class="form-control-label">State<span class="text-danger">*</span></label>-->
+                                                        <!--&lt;!&ndash;  &ndash;&gt;-->
+                                                        <!--<div class="input-group" ng-init="customer.marital_status = 'single'">-->
+
+                                                            <!--<select class="form-control" id="off_state">-->
+                                                                <!--<option selected="selected" disabled="disabled" hidden="hidden" id="0">Choose a State</option>-->
+                                                                <!--<option value="single">Lagos</option>-->
+                                                                <!--<option value="married">FCT</option>-->
+                                                                <!--<option value="divorced">Rivers</option>-->
+                                                                <!--<option value="other">Kano</option>-->
+                                                            <!--</select>-->
+
+                                                            <!--&lt;!&ndash; ngIf: idForm.marital_status.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="row">-->
+                                                    <!--<div class="form-group col-sm-6 col-md-6">-->
+                                                        <!--<label class="form-control-label">Date of Employment<span class="text-danger">*</span></label>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<input type="date" id="doe" class="form-control"/>-->
+                                                            <!--&lt;!&ndash; ngIf: idForm.user.$dirty &ndash;&gt;-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--<div class="tab">-->
+                                    <!--<div class="panel push-down">-->
+                                        <!--<div class="panel-body">-->
+                                            <!--<div class="example-box-wrapper">-->
+                                                <!--<h3>Reference Information</h3> <span class="text-danger"> Required (*)</span><hr>-->
+
+                                                <!--<div class="row">-->
+                                                    <!--<div class="col-sm-6 col-md-6">-->
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Reference Name</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="guarantor_name" class="form-control" placeholder="Enter Guarantor name">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Occupation</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="guarantor_occupation" class="form-control" placeholder="Enter Guarantor Occupation">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Relationship</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="relationship" class="form-control" placeholder="Enter relationship with client">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Years Known</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="years_known" class="form-control" placeholder="Choose Number of Years">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                    <!--<div class="col-sm-6 col-md-6">-->
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Phone</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="guarantor_phone" class="form-control" placeholder="Enter Reference Phone Number">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Email</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="guarantor_email" class="form-control" placeholder="Enter Reference Email">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Address</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<input type="text" id="guarantor_address" class="form-control" placeholder="Enter Reference Address">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="form-control-label">Country</label>-->
+                                                            <!--<div class="input-group">-->
+                                                                <!--<select id="gua_country" class="form-control" required="" >-->
+                                                                    <!--<option value="" class="" selected="selected">Please select a country</option><option label="Afghanistan" value="string:AF">Afghanistan</option><option label="Albania" value="string:AL">Albania</option><option label="Algeria" value="string:DZ">Algeria</option><option label="American Samoa" value="string:AS">American Samoa</option><option label="Andorra" value="string:AD">Andorra</option><option label="Angola" value="string:AO">Angola</option><option label="Anguilla" value="string:AI">Anguilla</option><option label="Antarctica" value="string:AQ">Antarctica</option><option label="Antigua and Barbuda" value="string:AG">Antigua and Barbuda</option><option label="Argentina" value="string:AR">Argentina</option><option label="Armenia" value="string:AM">Armenia</option><option label="Aruba" value="string:AW">Aruba</option><option label="Australia" value="string:AU">Australia</option><option label="Austria" value="string:AT">Austria</option><option label="Azerbaijan" value="string:AZ">Azerbaijan</option><option label="Bahrain" value="string:BH">Bahrain</option><option label="Bangladesh" value="string:BD">Bangladesh</option><option label="Barbados" value="string:BB">Barbados</option><option label="Belarus" value="string:BY">Belarus</option><option label="Belgium" value="string:BE">Belgium</option><option label="Belize" value="string:BZ">Belize</option><option label="Benin" value="string:BJ">Benin</option><option label="Bermuda" value="string:BM">Bermuda</option><option label="Bhutan" value="string:BT">Bhutan</option><option label="Bolivia" value="string:BO">Bolivia</option><option label="Bosnia and Herzegovina" value="string:BA">Bosnia and Herzegovina</option><option label="Botswana" value="string:BW">Botswana</option><option label="Bouvet Island" value="string:BV">Bouvet Island</option><option label="Brazil" value="string:BR">Brazil</option><option label="British Indian Ocean Territory" value="string:IO">British Indian Ocean Territory</option><option label="Virgin Islands, British" value="string:VG">Virgin Islands, British</option><option label="Brunei Darussalam" value="string:BN">Brunei Darussalam</option><option label="Bulgaria" value="string:BG">Bulgaria</option><option label="Burkina Faso" value="string:BF">Burkina Faso</option><option label="Myanmar" value="string:MM">Myanmar</option><option label="Burundi" value="string:BI">Burundi</option><option label="Cambodia" value="string:KH">Cambodia</option><option label="Cameroon" value="string:CM">Cameroon</option><option label="Canada" value="string:CA">Canada</option><option label="Cape Verde" value="string:CV">Cape Verde</option><option label="Cayman Islands" value="string:KY">Cayman Islands</option><option label="Central African Republic" value="string:CF">Central African Republic</option><option label="Chad" value="string:TD">Chad</option><option label="Chile" value="string:CL">Chile</option><option label="China" value="string:CN">China</option><option label="Christmas Island" value="string:CX">Christmas Island</option><option label="Cocos (Keeling) Islands" value="string:CC">Cocos (Keeling) Islands</option><option label="Colombia" value="string:CO">Colombia</option><option label="Comoros" value="string:KM">Comoros</option><option label="Congo, The Democratic Republic of the" value="string:CD">Congo, The Democratic Republic of the</option><option label="Congo" value="string:CG">Congo</option><option label="Cook Islands" value="string:CK">Cook Islands</option><option label="Costa Rica" value="string:CR">Costa Rica</option><option label="Côte d'Ivoire" value="string:CI">Côte d'Ivoire</option><option label="Croatia" value="string:HR">Croatia</option><option label="Cuba" value="string:CU">Cuba</option><option label="Cyprus" value="string:CY">Cyprus</option><option label="Czech Republic" value="string:CZ">Czech Republic</option><option label="Denmark" value="string:DK">Denmark</option><option label="Djibouti" value="string:DJ">Djibouti</option><option label="Dominica" value="string:DM">Dominica</option><option label="Dominican Republic" value="string:DO">Dominican Republic</option><option label="Timor-Leste" value="string:TL">Timor-Leste</option><option label="Ecuador" value="string:EC">Ecuador</option><option label="Egypt" value="string:EG">Egypt</option><option label="El Salvador" value="string:SV">El Salvador</option><option label="Equatorial Guinea" value="string:GQ">Equatorial Guinea</option><option label="Eritrea" value="string:ER">Eritrea</option><option label="Estonia" value="string:EE">Estonia</option><option label="Ethiopia" value="string:ET">Ethiopia</option><option label="Falkland Islands (Malvinas)" value="string:FK">Falkland Islands (Malvinas)</option><option label="Faroe Islands" value="string:FO">Faroe Islands</option><option label="Fiji" value="string:FJ">Fiji</option><option label="Finland" value="string:FI">Finland</option><option label="France" value="string:FR">France</option><option label="French Guiana" value="string:GF">French Guiana</option><option label="French Polynesia" value="string:PF">French Polynesia</option><option label="French Southern Territories" value="string:TF">French Southern Territories</option><option label="Gabon" value="string:GA">Gabon</option><option label="Georgia" value="string:GE">Georgia</option><option label="Germany" value="string:DE">Germany</option><option label="Ghana" value="string:GH">Ghana</option><option label="Gibraltar" value="string:GI">Gibraltar</option><option label="Greece" value="string:GR">Greece</option><option label="Greenland" value="string:GL">Greenland</option><option label="Grenada" value="string:GD">Grenada</option><option label="Guadeloupe" value="string:GP">Guadeloupe</option><option label="Guam" value="string:GU">Guam</option><option label="Guatemala" value="string:GT">Guatemala</option><option label="Guinea" value="string:GN">Guinea</option><option label="Guinea-Bissau" value="string:GW">Guinea-Bissau</option><option label="Guyana" value="string:GY">Guyana</option><option label="Haiti" value="string:HT">Haiti</option><option label="Heard Island and McDonald Islands" value="string:HM">Heard Island and McDonald Islands</option><option label="Holy See (Vatican City State)" value="string:VA">Holy See (Vatican City State)</option><option label="Honduras" value="string:HN">Honduras</option><option label="Hong Kong" value="string:HK">Hong Kong</option><option label="Hungary" value="string:HU">Hungary</option><option label="Iceland" value="string:IS">Iceland</option><option label="India" value="string:IN">India</option><option label="Indonesia" value="string:ID">Indonesia</option><option label="Iran, Islamic Republic of" value="string:IR">Iran, Islamic Republic of</option><option label="Iraq" value="string:IQ">Iraq</option><option label="Ireland" value="string:IE">Ireland</option><option label="Israel" value="string:IL">Israel</option><option label="Italy" value="string:IT">Italy</option><option label="Jamaica" value="string:JM">Jamaica</option><option label="Japan" value="string:JP">Japan</option><option label="Jordan" value="string:JO">Jordan</option><option label="Kazakhstan" value="string:KZ">Kazakhstan</option><option label="Kenya" value="string:KE">Kenya</option><option label="Kiribati" value="string:KI">Kiribati</option><option label="Korea, Democratic People's Republic of" value="string:KP">Korea, Democratic People's Republic of</option><option label="Korea, Republic of" value="string:KR">Korea, Republic of</option><option label="Kuwait" value="string:KW">Kuwait</option><option label="Kyrgyzstan" value="string:KG">Kyrgyzstan</option><option label="Lao People's Democratic Republic" value="string:LA">Lao People's Democratic Republic</option><option label="Latvia" value="string:LV">Latvia</option><option label="Lebanon" value="string:LB">Lebanon</option><option label="Lesotho" value="string:LS">Lesotho</option><option label="Liberia" value="string:LR">Liberia</option><option label="Libyan Arab Jamahiriya" value="string:LY">Libyan Arab Jamahiriya</option><option label="Liechtenstein" value="string:LI">Liechtenstein</option><option label="Lithuania" value="string:LT">Lithuania</option><option label="Luxembourg" value="string:LU">Luxembourg</option><option label="Macao" value="string:MO">Macao</option><option label="Macedonia, Republic of" value="string:MK">Macedonia, Republic of</option><option label="Madagascar" value="string:MG">Madagascar</option><option label="Malawi" value="string:MW">Malawi</option><option label="Malaysia" value="string:MY">Malaysia</option><option label="Maldives" value="string:MV">Maldives</option><option label="Mali" value="string:ML">Mali</option><option label="Malta" value="string:MT">Malta</option><option label="Marshall Islands" value="string:MH">Marshall Islands</option><option label="Martinique" value="string:MQ">Martinique</option><option label="Mauritania" value="string:MR">Mauritania</option><option label="Mauritius" value="string:MU">Mauritius</option><option label="Mayotte" value="string:YT">Mayotte</option><option label="Mexico" value="string:MX">Mexico</option><option label="Micronesia, Federated States of" value="string:FM">Micronesia, Federated States of</option><option label="Moldova" value="string:MD">Moldova</option><option label="Monaco" value="string:MC">Monaco</option><option label="Mongolia" value="string:MN">Mongolia</option><option label="Montserrat" value="string:MS">Montserrat</option><option label="Morocco" value="string:MA">Morocco</option><option label="Mozambique" value="string:MZ">Mozambique</option><option label="Namibia" value="string:NA">Namibia</option><option label="Nauru" value="string:NR">Nauru</option><option label="Nepal" value="string:NP">Nepal</option><option label="Netherlands Antilles" value="string:AN">Netherlands Antilles</option><option label="Netherlands" value="string:NL">Netherlands</option><option label="New Caledonia" value="string:NC">New Caledonia</option><option label="New Zealand" value="string:NZ">New Zealand</option><option label="Nicaragua" value="string:NI">Nicaragua</option><option label="Niger" value="string:NE">Niger</option><option label="Nigeria" value="string:NG" selected="selected">Nigeria</option><option label="Niue" value="string:NU">Niue</option><option label="Norfolk Island" value="string:NF">Norfolk Island</option><option label="Northern Mariana Islands" value="string:MP">Northern Mariana Islands</option><option label="Norway" value="string:NO">Norway</option><option label="Oman" value="string:OM">Oman</option><option label="Pakistan" value="string:PK">Pakistan</option><option label="Palau" value="string:PW">Palau</option><option label="Palestinian Territory, Occupied" value="string:PS">Palestinian Territory, Occupied</option><option label="Panama" value="string:PA">Panama</option><option label="Papua New Guinea" value="string:PG">Papua New Guinea</option><option label="Paraguay" value="string:PY">Paraguay</option><option label="Peru" value="string:PE">Peru</option><option label="Philippines" value="string:PH">Philippines</option><option label="Pitcairn" value="string:PN">Pitcairn</option><option label="Poland" value="string:PL">Poland</option><option label="Portugal" value="string:PT">Portugal</option><option label="Puerto Rico" value="string:PR">Puerto Rico</option><option label="Qatar" value="string:QA">Qatar</option><option label="Romania" value="string:RO">Romania</option><option label="Russian Federation" value="string:RU">Russian Federation</option><option label="Rwanda" value="string:RW">Rwanda</option><option label="Reunion" value="string:RE">Reunion</option><option label="Saint Helena" value="string:SH">Saint Helena</option><option label="Saint Kitts and Nevis" value="string:KN">Saint Kitts and Nevis</option><option label="Saint Lucia" value="string:LC">Saint Lucia</option><option label="Saint Pierre and Miquelon" value="string:PM">Saint Pierre and Miquelon</option><option label="Saint Vincent and the Grenadines" value="string:VC">Saint Vincent and the Grenadines</option><option label="Samoa" value="string:WS">Samoa</option><option label="San Marino" value="string:SM">San Marino</option><option label="Saudi Arabia" value="string:SA">Saudi Arabia</option><option label="Senegal" value="string:SN">Senegal</option><option label="Seychelles" value="string:SC">Seychelles</option><option label="Sierra Leone" value="string:SL">Sierra Leone</option><option label="Singapore" value="string:SG">Singapore</option><option label="Slovakia" value="string:SK">Slovakia</option><option label="Slovenia" value="string:SI">Slovenia</option><option label="Solomon Islands" value="string:SB">Solomon Islands</option><option label="Somalia" value="string:SO">Somalia</option><option label="South Africa" value="string:ZA">South Africa</option><option label="South Georgia and the South Sandwich Islands" value="string:GS">South Georgia and the South Sandwich Islands</option><option label="Spain" value="string:ES">Spain</option><option label="Sri Lanka" value="string:LK">Sri Lanka</option><option label="Sudan" value="string:SD">Sudan</option><option label="Suriname" value="string:SR">Suriname</option><option label="Svalbard and Jan Mayen" value="string:SJ">Svalbard and Jan Mayen</option><option label="Swaziland" value="string:SZ">Swaziland</option><option label="Sweden" value="string:SE">Sweden</option><option label="Switzerland" value="string:CH">Switzerland</option><option label="Syrian Arab Republic" value="string:SY">Syrian Arab Republic</option><option label="Sao Tome and Principe" value="string:ST">Sao Tome and Principe</option><option label="Taiwan" value="string:TW">Taiwan</option><option label="Tajikistan" value="string:TJ">Tajikistan</option><option label="Tanzania, United Republic of" value="string:TZ">Tanzania, United Republic of</option><option label="Thailand" value="string:TH">Thailand</option><option label="Bahamas" value="string:BS">Bahamas</option><option label="Gambia" value="string:GM">Gambia</option><option label="Togo" value="string:TG">Togo</option><option label="Tokelau" value="string:TK">Tokelau</option><option label="Tonga" value="string:TO">Tonga</option><option label="Trinidad and Tobago" value="string:TT">Trinidad and Tobago</option><option label="Tunisia" value="string:TN">Tunisia</option><option label="Turkey" value="string:TR">Turkey</option><option label="Turkmenistan" value="string:TM">Turkmenistan</option><option label="Turks and Caicos Islands" value="string:TC">Turks and Caicos Islands</option><option label="Tuvalu" value="string:TV">Tuvalu</option><option label="Uganda" value="string:UG">Uganda</option><option label="Ukraine" value="string:UA">Ukraine</option><option label="United Arab Emirates" value="string:AE">United Arab Emirates</option><option label="United Kingdom" value="string:GB">United Kingdom</option><option label="United States Minor Outlying Islands" value="string:UM">United States Minor Outlying Islands</option><option label="United States" value="string:US">United States</option><option label="Uruguay" value="string:UY">Uruguay</option><option label="Uzbekistan" value="string:UZ">Uzbekistan</option><option label="Vanuatu" value="string:VU">Vanuatu</option><option label="Venezuela" value="string:VE">Venezuela</option><option label="Viet Nam" value="string:VN">Viet Nam</option><option label="Virgin Islands, U.S." value="string:VI">Virgin Islands, U.S.</option><option label="Wallis and Futuna" value="string:WF">Wallis and Futuna</option><option label="Western Sahara" value="string:EH">Western Sahara</option><option label="Yemen" value="string:YE">Yemen</option><option label="Serbia and Montenegro" value="string:CS">Serbia and Montenegro</option><option label="Zambia" value="string:ZM">Zambia</option><option label="Zimbabwe" value="string:ZW">Zimbabwe</option><option label="Åland Islands" value="string:AX">Åland Islands</option><option label="Serbia" value="string:RS">Serbia</option><option label="Montenegro" value="string:ME">Montenegro</option><option label="Jersey" value="string:JE">Jersey</option><option label="Guernsey" value="string:GG">Guernsey</option><option label="Isle of Man" value="string:IM">Isle of Man</option>-->
+                                                                <!--</select>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--&lt;!&ndash;<div class="tab">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<p><input placeholder="Username..." oninput="this.className = ''"></p>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<p><input placeholder="Password..." oninput="this.className = ''"></p>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+                                <!--<div style="overflow:auto;">-->
+                                    <!--<div style="float:right;">-->
+                                        <!--<button class="btn btn-danger write" type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>-->
+                                        <!--<button class="btn btn-success write" type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--&lt;!&ndash; Circles which indicates the steps of the form: &ndash;&gt;-->
+                                <!--<div style="text-align:center;margin-top:40px;">-->
+                                    <!--<span class="step"></span>-->
+                                    <!--<span class="step"></span>-->
+                                    <!--<span class="step"></span>-->
+                                    <!--<span class="step"></span>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                </div>
+                <div id="user-form" class="col-xs-12 col-sm-12" style="display:none">
                     <div class="card">
                         <div class="card-header">
-                            <strong>Edit Client Data</strong> <small id="client_name"> Client Information</small>
+                            <strong id="new_edit">Edit Client</strong> <small id="client_name"> Client Information</small>
                         </div>
                         <div class="card-body card-block">
                             <div id="regForm" action="user/new-client" method="post">
@@ -309,7 +803,7 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">First Name<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" id="first_name" class="form-control" placeholder="Enter first name" tabindex="1" required="" >
+                                                            <input type="text" id="first_name" class="form-control imp" placeholder="Enter first name" tabindex="1" required="" >
                                                         </div>
                                                     </div>
 
@@ -323,7 +817,7 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Last Name<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" id="last_name" class="form-control" placeholder="Enter last name" required="">
+                                                            <input type="text" id="last_name" class="form-control imp" placeholder="Enter last name" required="">
 
                                                             <!-- ngIf: idForm.last_name.$dirty -->
                                                         </div>
@@ -333,11 +827,11 @@
                                                 <div class="row">
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Gender<span class="text-danger">*</span></label>
-                                                        <div>
+                                                        <div style="border-radius: 4px; border-color: #9fcdff">
                                                             <div class="col-md-4">
                                                                 <div>
                                                                     <label class="control r control--radio">
-                                                                        <input type="radio" id="male" name="gender" value="Male" required="">&nbsp; Male
+                                                                        <input type="radio" id="male" name="gender" value="Male" required="" class="imp">&nbsp; Male
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -345,7 +839,7 @@
                                                             <div class="col-md-5">
                                                                 <div>
                                                                     <label class="control r control--radio">
-                                                                        <input type="radio" id="female" name="gender" value="Female">&nbsp; Female
+                                                                        <input type="radio" id="female" name="gender" value="Female" class="imp">&nbsp; Female
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -357,7 +851,7 @@
                                                         <label class="form-control-label">Date of Birth<span class="text-danger">*</span></label>
                                                         <div class="input-group">
                                                             <div class="input-group">
-                                                                <input type="date" class="form-control" id="dob" placeholder="yyyy/MM/dd" required="required">
+                                                                <input type="date" class="form-control imp" id="dob" placeholder="yyyy/MM/dd" required="required">
 
                                                             </div>
                                                             <!-- ngIf: idForm.dob.$dirty -->
@@ -365,7 +859,7 @@
                                                     </div>
 
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Marital Status<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Marital Status</label>
                                                         <!--  -->
                                                         <div class="input-group" ng-init="customer.marital_status = 'single'">
 
@@ -386,7 +880,7 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Loan Officer<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <select id="loan_officer" class="form-control" tabindex="5.2" >
+                                                            <select id="loan_officer" class="form-control imp" tabindex="5.2" >
                                                             </select>
                                                             <!-- ngIf: idForm.user.$dirty -->
                                                         </div>
@@ -418,21 +912,21 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Email Address <span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="email" id="email" class="form-control"placeholder="Enter email" required="">
+                                                            <input type="email" id="email" class="form-control imp" placeholder="Enter email" required="">
                                                             <!-- ngIf: idForm.email.$dirty -->
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Phone Number</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="phone" class="form-control" placeholder="555-555-5555" >
+                                                            <input type="text" id="phone" class="form-control imp" placeholder="555-555-5555" >
                                                             <!-- ngIf: idForm.home_phone.$dirty -->
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Address</label>
                                                         <div class="input-group">
-                                                            <textarea type="text" id="address" name="home_phone" class="form-control"  placeholder="Home Address"></textarea>
+                                                            <textarea type="text" id="address" class="form-control imp"  placeholder="Home Address"></textarea>
                                                             <!-- ngIf: idForm.home_phone.$dirty -->
                                                         </div>
                                                     </div>
@@ -495,7 +989,7 @@
                                             <div class="example-box-wrapper">
                                                 <h3>Uploads</h3><hr><br>
                                                 <div class="row">
-                                                    <div class="form-group col-sm-6">
+                                                    <div class="form-group col-sm-4">
                                                         <!-- <label class="col-sm-3 control-label">Upload Customer Image</label> -->
 
                                                         <!-- <input type="file" name="customer_image" class="form-control" tabindex="6"> -->
@@ -503,17 +997,37 @@
                                                             <label for="file-upload" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Customer Image
                                                             </label>
-                                                            <input id="file-upload" class="image admin-img" type="file" tabindex="6">
+                                                            <input id="file-upload" class="image admin-img imp" type="file" tabindex="6">
                                                             <label id="path"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
                                                         </div>
                                                         <div class="form-control pull-right" style="border-color: transparent">
-                                                            <button class="btn btn-primary pull-right write" onclick="upload(1)">Save Image</button>
+                                                            <button class="btn btn-primary pull-right write" onclick="upload(1)">Upload Image</button>
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group col-sm-6">
+                                                    <div class="form-group col-sm-4">
+                                                        <!-- <label class="col-sm-3 control-label">Upload Customer Signature</label> -->
+
+                                                        <div class="form-control">
+                                                            <!-- <input type="file" name="cust_signature_image" class="form-control" tabindex="7"> -->
+
+                                                            <label for="file-upload-signature" class="custom-file-upload">
+                                                                <i class="fa fa-cloud-upload"></i> Upload ID Card
+                                                            </label>
+                                                            <input id="file-upload-idcard" class="image admin-img imp" type="file" tabindex="7">
+                                                            <label id="path-idcard"></label><br>
+                                                            <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
+
+                                                        </div>
+                                                        <div class="form-control pull-right" style="border-color: transparent">
+                                                            <button class="btn btn-primary pull-right write" onclick="upload(3)">Upload ID Card</button>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="form-group col-sm-4">
                                                         <!-- <label class="col-sm-3 control-label">Upload Customer Signature</label> -->
 
                                                         <div class="form-control">
@@ -522,13 +1036,13 @@
                                                             <label for="file-upload-signature" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Signature
                                                             </label>
-                                                            <input id="file-upload-signature" class="image admin-img" type="file" tabindex="7">
+                                                            <input id="file-upload-signature" class="image admin-img imp" type="file" tabindex="7">
                                                             <label id="path-signature"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
                                                         </div>
                                                         <div class="form-control pull-right" style="border-color: transparent">
-                                                            <button class="btn btn-primary pull-right write" onclick="upload(2)">Save Signature</button>
+                                                            <button class="btn btn-primary pull-right write" onclick="upload(2)">Upload Signature</button>
                                                         </div>
 
                                                     </div>
@@ -551,7 +1065,7 @@
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Employer Name</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="employer_name" class="form-control" placeholder="Enter Employer name">
+                                                            <input type="text" id="employer_name" class="form-control imp" placeholder="Enter Employer name">
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-6 col-md-6">
@@ -624,7 +1138,7 @@
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Job Title<span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" id="job" class="form-control" placeholder="Enter Job Title" required="">
+                                                            <input type="text" id="job" class="form-control imp" placeholder="Enter Job Title" required="">
 
                                                             <!-- ngIf: idForm.last_name.$dirty -->
                                                         </div>
@@ -658,11 +1172,7 @@
                                                         <div class="input-group" ng-init="customer.marital_status = 'single'">
 
                                                             <select class="form-control" id="off_state">
-                                                                <option selected="selected" disabled="disabled" hidden="hidden" id="0">Choose a State</option>
-                                                                <option value="single">Lagos</option>
-                                                                <option value="married">FCT</option>
-                                                                <option value="divorced">Rivers</option>
-                                                                <option value="other">Kano</option>
+                                                                <option id="0" class="" selected="selected">Choose State</option><option label="Abuja Capital Territory" value="string:Abuja Capital Territory">Abuja Capital Territory</option><option label="Abia" value="string:Abia">Abia</option><option label="Adamawa" value="string:Adamawa">Adamawa</option><option label="Akwa Ibom" value="string:Akwa Ibom">Akwa Ibom</option><option label="Anambra" value="string:Anambra">Anambra</option><option label="Bauchi" value="string:Bauchi">Bauchi</option><option label="Bayelsa" value="string:Bayelsa">Bayelsa</option><option label="Benue" value="string:Benue">Benue</option><option label="Borno" value="string:Borno">Borno</option><option label="Cross River" value="string:Cross River">Cross River</option><option label="Delta" value="string:Delta">Delta</option><option label="Ebonyi" value="string:Ebonyi">Ebonyi</option><option label="Edo" value="string:Edo">Edo</option><option label="Ekiti" value="string:Ekiti">Ekiti</option><option label="Enugu" value="string:Enugu">Enugu</option><option label="Gombe" value="string:Gombe">Gombe</option><option label="Imo" value="string:Imo">Imo</option><option label="Jigawa" value="string:Jigawa">Jigawa</option><option label="Kaduna" value="string:Kaduna">Kaduna</option><option label="Kano" value="string:Kano">Kano</option><option label="Katsina" value="string:Katsina">Katsina</option><option label="Kebbi" value="string:Kebbi">Kebbi</option><option label="Kogi" value="string:Kogi">Kogi</option><option label="Kwara" value="string:Kwara">Kwara</option><option label="Lagos" value="string:Lagos">Lagos</option><option label="Nassarawa" value="string:Nassarawa">Nassarawa</option><option label="Niger" value="string:Niger">Niger</option><option label="Ogun" value="string:Ogun">Ogun</option><option label="Ondo" value="string:Ondo">Ondo</option><option label="Osun" value="string:Osun">Osun</option><option label="Oyo" value="string:Oyo">Oyo</option><option label="Rivers" value="string:Rivers">Rivers</option><option label="Sokoto" value="string:Sokoto">Sokoto</option><option label="Taraba" value="string:Taraba">Taraba</option><option label="Yobe" value="string:Yobe">Yobe</option><option label="Zamfara" value="string:Zamfara">Zamfara</option>
                                                             </select>
 
                                                             <!-- ngIf: idForm.marital_status.$dirty -->
@@ -695,7 +1205,7 @@
                                                         <div class="form-group">
                                                             <label class="form-control-label">Reference Name</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="guarantor_name" class="form-control" placeholder="Enter Guarantor name">
+                                                                <input type="text" id="guarantor_name" class="form-control imp" placeholder="Enter Guarantor name">
                                                             </div>
                                                         </div>
 
@@ -782,7 +1292,6 @@
                         </div>
                     </div>
                 </div>
-
 
             </div>
         </div><!-- .animated -->
@@ -974,22 +1483,6 @@
 
     var table = $('#bootstrap-data-table-export').DataTable();
 
-    function confirmPassword(){
-        console.log("Here");
-        console.log($('#cpassword').val());
-        console.log($('#new-password').val());
-        if ($('#cpassword').val() == "" || $('#cpassword').val() != $('#new-password').val()){
-            $('#cpassword').css('border-color', 'red');
-            $('#cpassword-error').html("Passwords don't match");
-            $('#cpassword-error').css("color", 'red');
-        }
-        else{
-            $('#cpassword').css('border-color', 'green');
-            $('#cpassword-error').html("Passwords are a match!");
-            $('#cpassword-error').css("color", 'green');
-        }
-    }
-
     function validate(){
         if ($('#new-password').val() == "" || $('#new-password').val() == null){
             $('#password-error').html("Enter password");
@@ -1042,7 +1535,7 @@
             if (k.module_name === page){
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
             }
-        });console.log(parseInt(w[0]['editable']));console.log('Here');
+        });
         if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
             $(".write").hide();
         }
@@ -1096,8 +1589,8 @@
         $.each(data, function(k, v){
             let actions;
             if (v.status === "1"){
-                actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
-                    '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
+//                actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
+                    actions = '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
                     '<button onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
             }
             else {
@@ -1303,9 +1796,9 @@
 
         if (application_id){
             client_id = application_id;
-            $('#new_edit').html("Edit User Details");
+            $('#new_edit').html("Edit Client");
             $.ajax({
-                'url': '/user/user-dets/'+client_id,
+                'url': '/user/client-dets/'+client_id,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -1416,6 +1909,47 @@
                 swal('Connection Error. Please try again.');
             }
         });
+    }
+
+    function upload(i){
+        var name = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val(); var folder_name = " ";
+        if ($('#email').val() === "" || $('#email').val() === "null"){
+            swal('Please Enter Client Email!');
+        }
+        else {
+            folder_name = name + '_' + $('#email').val();
+        }
+        var file; var item;
+        if (i === 1){
+            file = $('#file-upload')[0].files[0];
+            item ="Image";
+        }else if (i === 2){
+            file = $('#file-upload-signature')[0].files[0]
+            item = "Signature";
+        }else if (i === 3){
+            file = $('#file-upload-idcard')[0].files[0]
+            item = "ID Card";
+        }
+        console.log(name);
+        if (file === "undefined") {
+            swal ("Choose file to upload");
+        }else{
+            var formData = new FormData();
+            formData.append('file', file); formData.append('type', i);
+            $.ajax({
+                url: "user/upload-file/"+folder_name+'/'+item,
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    swal("File Uploaded Successfully!");
+                },
+                error: function() {
+                    swal("Error! Please Try Again");
+                }
+            });
+        }
     }
 
 </script>
