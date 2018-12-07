@@ -1527,8 +1527,22 @@
             }
             let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
             if (next_payment_date && next_payment_date[0]){
-                let date_array = (((next_payment_date[0]['payment_create_date']).split(' '))[0]).split('-');
-                $('#next-payment-date-text').text('20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
+                let date = ((next_payment_date[0]['payment_create_date']).split(' '))[0];
+                if ((date.indexOf('-') > -1) || (date.indexOf('/') > -1)){
+                    let date_array;
+                    if(date.indexOf('-') > -1){
+                        date_array = date.split('-');
+                    } else if (date.indexOf('/') > -1){
+                        date_array = date.split('/');
+                    }
+                    if (date_array[2].length !== 2){
+                        $('#next-payment-date-text').text(date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
+                    } else {
+                        $('#next-payment-date-text').text('20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
+                    }
+                } else {
+                    $('#next-payment-date-text').text(next_payment_date[0]);
+                }
             } else {
                 $('#next-payment-date-text').text('N/A');
             }
