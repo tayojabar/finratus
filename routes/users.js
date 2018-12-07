@@ -1635,4 +1635,62 @@ users.post('/forgot-password', function(req, res) {
     });
 });
 
+/////// REPORTS
+
+/* GET Report Cards. */
+users.get('/report-cards', function(req, res, next) {
+    let query, query1, query2, query3;
+    query = 'select count(*) as branches from branches'
+    query1 = 'select count(*) as loan_officers from users where ID not in (3, 4)'
+    query2 = 'select count(*) as all_applications from applications where status = 2'
+    query3 = 'select count(*) as apps from applications'
+    var items = {}; var num;
+    var den;
+    db.query(query, function (error, results, fields) {
+        items.branches = results;
+        db.query(query1, function (error, results, fields) {
+            items.loan_officers = results;
+            db.query(query2, function (error, results, fields) {
+                items.active_loans = results;
+                db.query(query3, function (error, results, fields) {
+                    den = parseInt(items.loan_officers[0]["loan_officers"]);
+                    num = parseInt(results[0]["apps"])
+                    avg_loan_per_officers = parseInt(num/den)
+                    items.avg_loan_per_officers = avg_loan_per_officers;
+                    res.send({"status": 200, "response": items})
+                });
+            });
+        });
+    });
+    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
+});
+
+/* GET Report Cards. */
+users.get('/report-cards', function(req, res, next) {
+    let query, query1, query2, query3;
+    query = 'select count(*) as branches from branches'
+    query1 = 'select count(*) as loan_officers from users where ID not in (3, 4)'
+    query2 = 'select count(*) as all_applications from applications where status = 2'
+    query3 = 'select count(*) as apps from applications'
+    var items = {}; var num;
+    var den;
+    db.query(query, function (error, results, fields) {
+        items.branches = results;
+        db.query(query1, function (error, results, fields) {
+            items.loan_officers = results;
+            db.query(query2, function (error, results, fields) {
+                items.active_loans = results;
+                db.query(query3, function (error, results, fields) {
+                    den = parseInt(items.loan_officers[0]["loan_officers"]);
+                    num = parseInt(results[0]["apps"])
+                    avg_loan_per_officers = parseInt(num/den)
+                    items.avg_loan_per_officers = avg_loan_per_officers;
+                    res.send({"status": 200, "response": items})
+                });
+            });
+        });
+    });
+    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
+});
+
 module.exports = users;
