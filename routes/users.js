@@ -25,6 +25,43 @@ let token,
 	transporter = nodemailer.createTransport(smtpConfig);
 transporter.use('compile', hbs(options));
 
+users.get('/import-bulk-clients', function(req, res) {
+let clients = [{
+        "username": "Donald-Okunbor",
+        "fullname": "Donald Okunbor",
+        "marital_status": "married",
+        "gender": "Female",
+        "phone": 2348040000000,
+        "client_country": "Nigeria",
+        "client_state": "Lagos",
+        "address": "Lagos",
+        "branch": 1,
+        "loan_officer": 3
+    }],
+    count=0,
+    errors = [];
+
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+        async.forEach(clients, function (client, callback) {
+            client.status = 1;
+            client.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            console.log(client.fullname);
+            connection.query('INSERT INTO clients SET ?', client, function (err, result, fields) {
+                if (err) {
+                    console.log(err);
+                    errors.push(client);
+                } else {
+                    count++;
+                }
+                callback();
+            });
+        }, function (data) {
+            connection.release();
+            res.json({count: count, errors: errors})
+        })
+    });
+});
 
 /* User Authentication */
 users.post('/login', function(req, res) {
