@@ -539,7 +539,7 @@
         }
 
         function loadMenus(){
-            var modules = {};
+            let modules = {};
             modules = JSON.parse(localStorage.getItem("modules"));
             modules.forEach(function(k, v){
                 if (k.menu_name === 'Sub Menu'){
@@ -1001,7 +1001,7 @@
                         if (v.status === 0){
                             table.push('Payment Reversed');
                         } else if (v.status === 1){
-                            table.push('<button class="btn btn-danger" onclick="reversePayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                            table.push('<button class="btn btn-danger" onclick="reversePayment('+v.ID+','+v.invoiceID+')"><i class="fa fa-remove"></i> Reverse</button>');
                         }
                         $('#invoice-history').dataTable().fnAddData(table);
                         $('#invoice-history').dataTable().fnSort([[0,'desc']]);
@@ -1039,9 +1039,9 @@
             });
         }
 
-        function reversePayment(invoice_id) {
+        function reversePayment(payment_id,invoice_id) {
             $.ajax({
-                'url': '/user/application/payment-reversal/'+invoice_id,
+                'url': '/user/application/payment-reversal/'+payment_id+'/'+invoice_id,
                 'type': 'get',
                 'success': function (data) {
                     swal('Payment reversed successfully');

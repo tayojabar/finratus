@@ -464,7 +464,7 @@
     }
 
     function check(){
-        if (localStorage.getItem('role') != 1){
+        if (localStorage.getItem('role') !== 1){
             jQuery('#car-models').hide();
             jQuery('#new-user').hide();
             jQuery('#models-card').hide();
@@ -472,12 +472,11 @@
         }
         else{
             jQuery('#user').html(localStorage.getItem("name"));
-//                jQuery('#h-role').html(localStorage.getItem("user"));
         }
     }
 
     function loadMenus(){
-        var modules = {};
+        let modules = {};
         modules = JSON.parse(localStorage.getItem("modules"));
         modules.forEach(function(k, v){
             if (k.menu_name === 'Sub Menu'){
