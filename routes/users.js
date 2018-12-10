@@ -5,8 +5,8 @@ let token,
     path = require('path'),
     users = express.Router(),
     async = require('async'),
-    bcrypt = require('bcryptjs'),
     moment  = require('moment'),
+    bcrypt = require('bcryptjs'),
     jwt = require('jsonwebtoken'),
     nodemailer = require('nodemailer'),
 	hbs = require('nodemailer-express-handlebars'),
@@ -788,7 +788,8 @@ users.post('/sendmail', function(req, res) {
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 ORDER BY a.ID desc';
+        'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 ' +
+        'AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ORDER BY a.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -900,13 +901,42 @@ users.get('/application-id/:id', function(req, res, next) {
 });
 
 /* GET User Applications. */
-users.get('/applications/filter/:start/:end', function(req, res, next) {
-    let start = req.params.start,
-		end = req.params.end;
+users.get('/applications/filter', function(req, res, next) {
+    let start = req.query.start,
+		end = req.query.end,
+		type = req.query.type;
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+
 	let query = "SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, " +
-        "a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 " +
-			"AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ORDER BY a.ID desc";
+        "a.loan_amount, a.date_modified, a.comment, a.close_status, a.workflowID, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w " +
+        "WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ";
+    if (type){
+	    switch (type){
+            case '1': {
+                //do nothing
+                break;
+            }
+            case '2': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=2 ");
+                break;
+            }
+            case '3': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=3 ");
+                break;
+            }
+            case '4': {
+                query = query.concat("AND a.status = 2  AND a.close_status = 0 ");
+                break;
+            }
+            case '5': {
+                query = query.concat("AND a.close_status <> 0 ");
+                break;
+            }
+        }
+    }
+    if (start && end)
+        query = query.concat("AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ");
+    query = query.concat("ORDER BY a.ID desc");
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
