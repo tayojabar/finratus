@@ -1217,7 +1217,6 @@
         function nextStage(state, workflow_stages, action_stage) {
             let stage = {};
             if (workflow_stages && action_stage){
-//                stage.previous_stage = workflow_stages.map(function(e) { return e.stageID; }).indexOf(state.current_stage);
                 stage.previous_stage = state.current_stage;
                 stage.current_stage = parseInt(action_stage);
             }
