@@ -240,6 +240,10 @@ app.get('/client-info', requireLogin, function(req, res){
     res.sendFile('client-info.html', { root: __dirname+'/views' });
 });
 
+app.get('/loan-reports', requireLogin, function(req, res){
+    res.sendFile('loan-reports.html', { root: __dirname+'/views' });
+});
+
 app.get('/forgot-password/:id?', function(req, res) {
     res.sendFile('forgot-password.html', {root: __dirname + '/views'});
 });
