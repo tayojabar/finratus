@@ -158,6 +158,7 @@ users.post('/new-client', function(req, res, next) {
                 return res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Client already exists!"}));
             connection.query(query,postData, function (error, re, fields) {
                 if(error){
+                    console.log(error);
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                 } else {
                     res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
