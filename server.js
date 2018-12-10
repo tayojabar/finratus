@@ -120,7 +120,6 @@ app.use(function(req, res, next) {
 });
 
 function requireLogin (req, res, next) {
-    console.log(req.headers)
     if (!req.headers.cookie) {
       res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
