@@ -723,6 +723,7 @@ users.post('/apply', function(req, res) {
                 getNextWorkflowProcess(false,workflow_id,false, function (process) {
                     db.query('SELECT MAX(ID) AS ID from applications', function(err, application, fields) {
                         process.workflowID = workflow_id;
+                        process.agentID = postData.agentID;
                         process.applicationID = application[0]['ID'];
                         process.date_created = postData.date_created;
                         db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
@@ -837,7 +838,7 @@ users.get('/application-id/:id', function(req, res, next) {
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
         query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
+        'a.workflowID, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
 
@@ -1016,8 +1017,9 @@ users.post('/requests/comment/:id', function(req, res, next) {
     });
 });
 
-users.get('/application/assign_workflow/:id/:workflow_id', function(req, res, next) {
+users.get('/application/assign_workflow/:id/:workflow_id/:agent_id', function(req, res, next) {
     let id = req.params.id,
+        agent_id = req.params.agent_id,
         workflow_id = req.params.workflow_id,
         date_modified = Date.now(),
         query =  'UPDATE applications SET workflowID=?, date_modified=? where ID=?';
@@ -1028,6 +1030,7 @@ users.get('/application/assign_workflow/:id/:workflow_id', function(req, res, ne
             getNextWorkflowProcess(false,workflow_id,false, function (process) {
                 process.workflowID = workflow_id;
                 process.applicationID = id;
+                process.agentID = agent_id;
                 process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
                 db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
                     if(error){
@@ -1084,6 +1087,7 @@ users.get('/request/assign_workflow/:id/:workflow_id', function(req, res, next) 
 
 users.post('/workflow_process/:application_id/:workflow_id', function(req, res, next) {
     let stage = req.body.stage,
+        agent_id = req.body.agentID,
         user_role = req.body.user_role,
         workflow_id = req.params.workflow_id,
         application_id = req.params.application_id;
@@ -1096,6 +1100,7 @@ users.post('/workflow_process/:application_id/:workflow_id', function(req, res, 
         process.applicationID = application_id;
         if (!process.approver_id || (process.approver_id === 0))
             process.approver_id = 1;
+        process.agentID = agent_id;
         process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
         db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)', [application_id], function (error, last_process, fields) {
             if(error){
@@ -1151,7 +1156,8 @@ users.get('/workflow_process/:application_id', function(req, res, next) {
 });
 
 users.get('/workflow_process_all/:application_id', function(req, res, next) {
-    let query = 'SELECT * FROM workflow_processes WHERE applicationID = ?';
+    let query = 'SELECT w.ID, w.workflowID, w.previous_stage, w.current_stage, w.next_stage, w.approval_status, w.date_created, w.applicationID, w.status,' +
+        'w.agentID, u.fullname AS agent FROM workflow_processes AS w, users AS u WHERE applicationID = ? AND w.agentID = u.ID';
     db.query(query, [req.params.application_id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -1508,12 +1514,28 @@ users.get('/application/invoice-history/:id', function(req, res, next) {
     });
 });
 
-users.get('/application/payment-reversal/:id', function(req, res, next) {
+users.get('/application/payment-reversal/:id/:invoice_id', function(req, res, next) {
     db.query('UPDATE schedule_history SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "message": "Payment reversed successfully!", "response":history});
+            db.query('UPDATE application_schedules SET payment_status=0 WHERE ID=?', [req.params.invoice_id], function (error, history, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Payment reversed successfully!", "response":history});
+                }
+            });
+        }
+    });
+});
+
+users.post('/application/loancirrus-id/:application_id', function(req, res, next) {
+    db.query('UPDATE applications SET loanCirrusID=? WHERE ID=?', [req.body.id,req.params.application_id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Loan Cirrus ID updated successfully!"});
         }
     });
 });

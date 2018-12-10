@@ -249,7 +249,7 @@
                             <div class="card-header">
                                 <div style="float: left; margin: 0 15px;">
                                     <strong id="workflow-div-title" class="card-title">Workflow</strong>
-                                    <p>Client ID#: <span id="client-id"></span> | LOAN ID#: <span id="application-id"></span></p>
+                                    <p>Client ID#: <span id="client-id"></span> | LOAN ID#: <span id="application-id"></span> | <span id="loancirrus-id" style="display: none;"></span><span id="loancirrus-id-form" style="display: none;"><input id="loancirrus-id-input" type="text" style="width: 100px;" placeholder="L-CIRRUS ID" /><button class="btn btn-success" style="padding:4px 10px;" onclick="saveLoanCirrusID()"><i class="fa fa-check"></i></button></span></p>
                                 </div>
                                 <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
                                 <div id="close-loan" class="btn-group" style="float: right; display: none;margin-top: 5px;">
@@ -831,7 +831,7 @@
         }
 
         function check(){
-            if (localStorage.getItem('role') != 1){
+            if (localStorage.getItem('role') !== 1){
                 jQuery('#car-models').hide();
                 jQuery('#new-user').hide();
                 jQuery('#models-card').hide();
@@ -843,7 +843,7 @@
         }
 
         function loadMenus(){
-            var modules = {};
+            let modules = {};
             modules = JSON.parse(localStorage.getItem("modules"));
             modules.forEach(function(k, v){
                 if (k.menu_name === 'Sub Menu'){
@@ -910,6 +910,12 @@
 
                     $('#client-id').text(padWithZeroes(application.userID,6));
                     $('#application-id').text(padWithZeroes(application.ID,9));
+                    if (application.loanCirrusID){
+                        $('#loancirrus-id').show();
+                        $('#loancirrus-id').text('L-CIRRUS ID#: '+application.loanCirrusID);
+                    } else {
+                        $('#loancirrus-id-form').show();
+                    }
 
                     if (application.schedule && application.schedule[0]){
                         $("#generate-schedule").hide();
@@ -1192,11 +1198,12 @@
                         return $processes.append('<h3 style="margin: auto;">No transitions available yet!</h3>');
                     states.forEach(function (state) {
                         let previous_stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.previous_stage; }))[0] || {stage_name:'N/A'},
-                            current_stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0] || {stage_name:''};
+                            current_stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0] || {stage_name:''},
+                            by = (state.agentID)? ' by '+state.agent : '';
                         $processes.append('<li>\n' +
                             '    <p><a href="#">'+current_stage.stage_name+'</a></p>\n' +
                             '    <p><a href="#">'+state.date_created+'</a></p>\n' +
-                            '    <p>Moved from '+previous_stage.stage_name+' to '+current_stage.stage_name+'</p>\n' +
+                            '    <p>Moved from '+previous_stage.stage_name+' to '+current_stage.stage_name+by+'</p>\n' +
                             '</li>');
                     });
                 },
@@ -1225,7 +1232,7 @@
             $.ajax({
                 'url': '/user/workflow_process/'+application_id+'/'+state.workflowID,
                 'type': 'post',
-                'data': {stage: stage, user_role:localStorage.getItem('role')},
+                'data': {stage: stage, user_role:localStorage.getItem('role'), agentID:(JSON.parse(localStorage.getItem("user_obj"))).ID},
                 'success': function (data) {
                     if (data.status === 200){
                         $('#document-upload').hide();
@@ -1801,6 +1808,24 @@
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred while closing loan');
+                }
+            });
+        }
+
+        function saveLoanCirrusID() {
+            let id = $('#loancirrus-id-input').val();
+            if (!id)
+                return swal('Kindly input loan cirrus id');
+            $.ajax({
+                'url': '/user/application/loancirrus-id/'+application_id,
+                'type': 'post',
+                'data': {id:id},
+                'success': function (data) {
+                    swal('Loan cirrus id updated successfully');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    swal('Oops! An error occurred while updating loan cirrus id');
                 }
             });
         }

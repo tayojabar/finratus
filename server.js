@@ -74,11 +74,23 @@ app.post('/login', function(req, res) {
           db.query('SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
               if (!error) {
                   user.permissions = perm;
-                  let query = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
-                                'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id) order by menu_name asc'
-                  db.query(query, [user.user_role, user.user_role], function (er, mods, fields) {
-                    user.modules = mods;
-                    res.send({"status": 200, "response": user});
+                  let modules = [],
+                      query1 = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
+                                'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id) and menu_name = "Main Menu" order by id asc',
+                      query2 = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
+                          'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id) and menu_name = "Sub Menu" order by id asc',
+                      query3 = 'select * from modules m where m.id in (select p.module_id from permissions p where read_only = 1 ' +
+                          'and p.role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id) and menu_name = "Others" order by id asc';
+                  db.query(query1, [user.user_role, user.user_role], function (er, mods, fields) {
+                      modules = modules.concat(mods);
+                      db.query(query2, [user.user_role, user.user_role], function (er, mods, fields) {
+                          modules = modules.concat(mods);
+                          db.query(query3, [user.user_role, user.user_role], function (er, mods, fields) {
+                              modules = modules.concat(mods);
+                              user.modules = modules;
+                              res.send({"status": 200, "response": user});
+                          });
+                      });
                   });
               } else {
                   res.send({"status": 500, "response": "No permissions set for this user"})
