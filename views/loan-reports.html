@@ -140,7 +140,7 @@
                 <div class="page-title">
                     <ol class="breadcrumb text-right">
                         <li><a href="#">Dashboard</a></li>
-                        <li><a href="#">Reports</a></li>
+                        <li><a href="#">Loan Reports</a></li>
                     </ol>
                 </div>
             </div>
@@ -159,7 +159,7 @@
                                     <div class="col-sm-3">
                                         <div class="card text-white bg-flat-color-1">
                                             <div class="card-body pb-0" style="text-align: center">
-                                                <h3 id="branches" class="mb-0">₦50,000.00</h3>
+                                                <h3 id="branch" class="mb-0"></h3>
                                                 <p class="text-light">Branches</p>
                                             </div>
                                         </div>
@@ -215,7 +215,7 @@
 
                             <!-- Tab panes -->
                             <div class="tab-content">
-                                <div role="tabpanel" class="tab-pane fade in active" id="intelliboard">
+                                <div role="tabpanel" class="tab-pane fade active show in" id="intelliboard">
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="row">
@@ -245,7 +245,7 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Payments</strong>
-                                                            <span class="pull-right">Total: &#8358<span id="total-payments" ></span></span>
+                                                            <span class="pull-right">Total: <span id="total-payments" ></span></span>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="payments-table" class="table table-striped table-bordered">
@@ -290,7 +290,7 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Projected Interest</strong>
-                                                            <span class="pull-right">Total: &#8358 <span id="total-interests"></span></span>
+                                                            <span class="pull-right">Total: <span id="total-interests"></span></span>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="projected-interests-table" class="table table-striped table-bordered">
@@ -352,9 +352,17 @@
 
 <script>
     jQuery(document).ready(function() {
+        $('ul.nav-tabs').find('a.active').click();
+        $('#intelliboard').show();
+        loadInfo();
         loadDisbursed();
         loadPayments();
     });
+
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'NGN'
+    })
 
     var myTable = $('#disbursed-table')
         .DataTable({
@@ -499,17 +507,13 @@
         return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
     }
 
-    let client_det;
-
     function loadInfo(){
         $.ajax({
-            'url': 'user/client-dets/'+application_id,
+            'url': 'user/report-cards/',
             'type': 'get',
-            'data': {},
             'success': function (data) {
-//                var details = JSON.parse(data);
-                client_det = data;
-                populateCards(client_det);
+                console.log(data);
+                populateCards(data.response);
             },
             'error': function (err) {
                 //alert ('Error');
@@ -519,57 +523,11 @@
     }
 
     function populateCards(data){
-
-        let obj = data[0];
-        loadImages(obj.fullname+'_'+obj.email, obj.fullname);
-        $('#fullname').html(obj.fullname);
-        $('#phone').html(' '+obj.phone);
-        $('#email').html(' '+obj.email);
-        $('#client_id').html(padWithZeroes(obj.ID,6));
-        $('#loan_officer').html(obj.officer);
-        let pbody = $("#personal");let ebody = $("#employment"); let rbody = $("#reference"),
-            tr = ""; let te = ""; let tp = "";
-        pbody.empty(); ebody.empty();  rbody.empty();
-
-        // Personal Info Card
-        if (obj.fullname)
-            tr += "<tr><td><strong>Fullname</strong></td><td>"+obj.fullname+"</td></tr>";
-        if (obj.username)
-            tr += "<tr><td><strong>Username</strong></td><td>"+obj.username+"</td></tr>";
-        if (obj.email)
-            tr += "<tr><td><strong>Email</strong></td><td>"+obj.email+"</td></tr>";
-        if (obj.phone)
-            tr += "<tr><td><strong>Phone</strong></td><td>"+obj.phone+"</td></tr>";
-        if (obj.address)
-            tr += "<tr><td><strong>Address</strong></td><td>"+obj.address+"</td></tr>";
-        if (obj.date_created)
-            tr += "<tr><td><strong>Date Created</strong></td><td>"+formatDate(obj.date_created)+"</td></tr>";
-        pbody.html(tr);
-
-        // Employment Info Card
-        console.log(obj.job);
-        if (obj.job)
-            te += "<tr><td><strong>Job Description</strong></td><td>"+obj.job+"</td></tr>";
-        if (obj.employer_name)
-            te += "<tr><td><strong>Employer</strong></td><td>"+obj.employer_name+"</td></tr>";
-        if (obj.off_address)
-            te += "<tr><td><strong>Office Address</strong></td><td>"+obj.off_address+"</td></tr>";
-        if (obj.doe)
-            te += "<tr><td><strong>Date of Employment</strong></td><td>"+obj.doe+"</td></tr>";
-        ebody.html(te);
-
-        // Reference Info Card
-        if (obj.guarantor_name)
-            tp += "<tr><td><strong>Reference Name</strong></td><td>"+obj.guarantor_name+"</td></tr>";
-        if (obj.guarantor_occupation)
-            tp += "<tr><td><strong>Occupation</strong></td><td>"+obj.guarantor_occupation+"</td></tr>";
-        if (obj.relationship)
-            tp += "<tr><td><strong>Relationship</strong></td><td>"+obj.relationship+"</td></tr>";
-        if (obj.guarantor_phone)
-            tp += "<tr><td><strong>Phone</strong></td><td>"+obj.guarantor_phone+"</td></tr>";
-        if (obj.guarantor_email)
-            tp += "<tr><td><strong>Email</strong></td><td>"+obj.guarantor_email+"</td></tr>";
-        rbody.html(tp);
+        console.log(data.branches[0]["branches"]);
+        $('#branch').html(data.branches[0]["branches"]);
+        $('#loan-officers').html(data.loan_officers[0]["loan_officers"]);
+        $('#loans-active').html(data.active_loans[0]["all_applications"]);
+        $('#loan-per').html(data["avg_loan_per_officers"]);
     }
 
     function loadDisbursed(){
@@ -595,8 +553,8 @@
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.applicationID),6),
                     v.fullname,
-                    '₦'+(parseFloat(v.loan_amount)).toFixed(2),
-                    '₦'+(parseFloat(v.balance)).toFixed(2),
+                    formatter.format(parseFloat(v.loan_amount)),
+                    formatter.format(parseFloat(v.balance)),
                     v.date
                 ]);
             });
@@ -605,12 +563,12 @@
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.ID),6),
                     v.fullname,
-                    '₦'+(parseFloat(v.loan_amount)).toFixed(2),
-                    '₦'+(parseFloat(v.loan_amount)).toFixed(2),
+                    formatter.format(parseFloat(v.loan_amount)),
+                    formatter.format(parseFloat(v.loan_amount)),
                     v.date_modified
                 ]);
             });
-            $('#total-disbursements').html(total.toFixed(2));
+            $('#total-disbursements').html(formatter.format(total));
         }
     }
 
@@ -636,12 +594,12 @@
                 $("#payments-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.clientid),6),
                     v.fullname,
-                    '₦'+(parseFloat(v.paid)).toFixed(2),
+                    format.formatter(parseFloat(v.paid)),
                     v.date
                 ]);
             });
             total = dets.total[0]["total"];
-            $('#total-payments').html(total.toFixed(2));
+            $('#total-payments').html(formatter.format(total));
         }
     }
 
