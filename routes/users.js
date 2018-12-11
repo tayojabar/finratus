@@ -1546,6 +1546,7 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
 users.post('/application/disburse/:id', function(req, res, next) {
     let data = req.body;
     data.status = 2;
+    data.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});

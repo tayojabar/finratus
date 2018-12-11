@@ -33,6 +33,7 @@
     <!-- CSS adjustments for browsers with JavaScript disabled -->
     <noscript><link rel="stylesheet" href="css/jquery.fileupload-noscript.css"></noscript>
     <noscript><link rel="stylesheet" href="css/jquery.fileupload-ui-noscript.css"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.3/jquery.fancybox.min.css">
     <style type="text/css">
         ul.nav li.active p{color: #ffffff;}
         a, a p, a h4, a:hover{color: rgb(66, 139, 202);}
@@ -330,6 +331,7 @@
                                             <select id="stage-documents" class="form-control" required="required" style="margin: 15px 0;">
                                                 <option selected="selected">-- Choose Document --</option>
                                             </select>
+                                            <input id="stage-documents-others" class="form-control" placeholder="Document Title" style="margin: 15px 0; display: none;" />
                                             <form id="fileupload" method="POST" enctype="multipart/form-data">
                                                 <div class="row fileupload-buttonbar">
                                                     <div class="col-lg-7">
@@ -604,6 +606,32 @@
         </div>
     </div>
 
+    <div class="modal fade" id="addDocumentModal" tabindex="-1" role="dialog" aria-labelledby="addDocumentModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addDocumentModalLabel">Add Document Title</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class=" form-control-label">Document Title</label><strong style="color:red"> *</strong><span id="others-document-title-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-comment"></i></div>
+                                <input id="others-document-title" class="form-control" placeholder="Document Title" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="setDocumentTitle()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="disburseModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -808,6 +836,7 @@
     <script src="js/jquery.fileupload-validate.js"></script>
     <!-- The File Upload user interface plugin -->
     <script src="js/jquery.fileupload-ui.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.3/jquery.fancybox.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -939,7 +968,7 @@
                             }
                             for (let j=0; j<4; j++){
                                 if (count < files_count)
-                                    $('.page-'+i).append('<div class="col-md-3"><a href="#" class="thumbnail"><img src="'+application.files[file_names[count]]+'" alt="'+file_names[count].replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_names[count].replace(/_/g, ' ')+'</p></div>');
+                                    $('.page-'+i).append('<div class="col-md-3"><a class="grouped_elements" rel="grouped_elements" data-toggle="tooltip" title="Click to Expand!" href="'+application.files[file_names[count]]+'" class="thumbnail"><img src="'+application.files[file_names[count]]+'" alt="'+file_names[count].replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_names[count].replace(/_/g, ' ')+'</p></div>');
                                 count++;
                             }
                         }
@@ -947,6 +976,8 @@
 
                     initCSVUpload(application);
                     initCSVUpload2(application);
+                    $("a.grouped_elements").fancybox();
+                    $('[data-toggle="tooltip"]').tooltip();
                 },
                 'error': function (err) {
                     console.log('Error');
@@ -1058,9 +1089,14 @@
                         $('#document-upload').show();
                         $('#document-upload-text').append('<i class="fa fa-warning"></i> Kindly upload '+documents.join(', '));
                         documents.forEach(function (document) {
-                            $('#stage-documents').append('<option value = "'+document+'">'+document+'</option>');
+                            if (document.replace(/ /g, '_') in application.files){
+                                $('#stage-documents').append('<option value = "'+document+'">'+document+' &nbsp; (&check;)</option>');
+                            } else {
+                                $('#stage-documents').append('<option value = "'+document+'">'+document+'</option>');
+                            }
                             stage_documents.push(document);
                         });
+                        $('#stage-documents').append('<option value = "others">Others</option>');
                         fileUpload();
                     }
 
@@ -1303,21 +1339,55 @@
             });
         }
 
+        let document_others = false;
         $('#fileupload').click(function () {
-            let document = $('#stage-documents').val();
+            let document = $('#stage-documents').val(),
+                $others = $('#stage-documents-others');
 
             if (!document || (document === '-- Choose Document --'))
                 return swal('Ensure you choose documents to be uploaded from the list');
+
+            if ((document === 'others') && !$others.val())
+                return swal('Ensure you input the document title');
+        });
+        
+        function setDocumentTitle() {
+            let $title = $('#others-document-title');
+            if (!$title.val())
+                return swal('Document title cannot be empty');
+            $('#stage-documents-others').val($title.val());
+            fileUpload($title.val());
+        }
+
+        $('#stage-documents-others').click(function () {
+            $('#addDocumentModal').modal('show');
         });
 
         $('#stage-documents').change(function () {
+            let $othersModal = $('#addDocumentModal'),
+                $others = $('#stage-documents-others');
+            if (this.value === "others"){
+                $others.show();
+                $others.val('');
+                document_others = true;
+                $othersModal.modal('show');
+            } else {
+                $others.hide();
+                document_others = false;
+            }
             fileUpload(this.value);
         });
 
         function fileUpload(document) {
-            let $fileupload = $('#fileupload');
-            
-            let stage_document_name = (document && document !== '-- Choose Document --')? document.replace(/ /g, '_') : '';
+            let stage_document_name,
+                $fileupload = $('#fileupload'),
+                others = $('#stage-documents-others').val();
+
+            if (document_others){
+                stage_document_name = (others)? others.replace(/ /g, '_') : '';
+            } else {
+                stage_document_name = (document && document !== '-- Choose Document --')? document.replace(/ /g, '_') : '';
+            }
 
             $fileupload.fileupload({
                 url: 'document-upload/'+application_id+'/'+stage_document_name,
