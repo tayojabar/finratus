@@ -1719,24 +1719,58 @@ users.get('/report-cards', function(req, res, next) {
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
-/* GET Report Cards. */
+/* Disbursements  */
 users.get('/disbursements', function(req, res, next) {
     let query
     query = 'select \n' +
-        '(select userID from staging.applications where ID = applicationID) as user, (select fullname from staging.clients where ID = user) as fullname, \n' +
-        'applicationID, (select loan_amount from staging.applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
-        '((select loan_amount from staging.applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from staging.applications where ID = applicationID) as date\n' +
-        'from staging.schedule_history \n' +
-        'where applicationID in (select applicationID from staging.application_schedules\n' +
-        '\t\t\t\t\t\twhere applicationID in (select ID from staging.applications where status = 2) and status = 1)\n' +
-        'group by applicationID'
+            '(select userID from staging.applications where ID = applicationID) as user, (select fullname from staging.clients where ID = user) as fullname, \n' +
+            'applicationID, (select loan_amount from staging.applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
+            '((select loan_amount from staging.applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from staging.applications where ID = applicationID) as date\n' +
+            'from staging.schedule_history \n' +
+            'where applicationID in (select applicationID from staging.application_schedules\n' +
+            '\t\t\t\t\t\twhere applicationID in (select ID from staging.applications where status = 2) and status = 1)\n' +
+            'group by applicationID';
+    let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified ' +
+                 'from applications where status = 2 and ID not in (select applicationID from schedule_history)'
     var items = {};
     db.query(query, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            res.send({"status": 200, "error": null, "response": results, "message": "All Disbursements pulled!"});
-        }
+        items.with_payments = results
+        db.query(query2, function (error, results, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                items.without_pay = results
+                res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
+            }
+        });
+    });
+    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
+});
+
+/* Payments */
+users.get('/payments', function(req, res, next) {
+    let query
+    query = 'select \n' +
+        '(select fullname from staging.clients where ID = (select userID from staging.applications where ID = applicationID)) as fullname,\n' +
+        '(select userID from staging.applications where ID = applicationID) as clientid,\n' +
+        'applicationID, sum(payment_amount) as paid, max(date_created) as date\n' +
+        'from staging.schedule_history \n' +
+        'where applicationID in (select ID from staging.applications) and status = 1\n' +
+        'group by applicationID';
+    let query2 = 'select sum(payment_amount) as total from staging.schedule_history \n' +
+        'where applicationID in (select ID from staging.applications)\n' +
+        'and status = 1'
+    var items = {};
+    db.query(query, function (error, results, fields) {
+        items.payment = results;
+        db.query(query2, function (error, results, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                items.total = results;
+                res.send({"status": 200, "error": null, "response": items, "message": "All Payments pulled!"});
+            }
+        });
     });
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
