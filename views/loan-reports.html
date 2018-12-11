@@ -352,6 +352,7 @@
 
 <script>
     jQuery(document).ready(function() {
+        loadDisbursed();
     });
 
     var myTable = $('#disbursed-table')
@@ -572,10 +573,11 @@
 
     function loadDisbursed(){
         $.ajax({
-            'url': 'user/disbursed/',
+            'url': 'user/disbursements/',
             'type': 'get',
             'success': function (data) {
-                populateDisbursed(data);
+                console.log(data.status);
+                (data.status === 200) ? populateDisbursed(data.response) : swal('Error in Connection')
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -587,9 +589,18 @@
         if (dets.length === 0){
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
+            var total = 0;
             jQuery.each(dets, function(k, v){
-                $("#disbursed-table").dataTable().fnAddData([]);
+                total+= parseFloat(v.loan_amount);
+                $("#disbursed-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.applicationID),6),
+                    v.fullname,
+                    '₦'+(parseFloat(v.loan_amount)).toFixed(2),
+                    '₦'+(parseFloat(v.balance)).toFixed(2),
+                    v.date
+                ]);
             });
+            $('#total-disbursements').html(total.toFixed(2));
         }
     }
 
