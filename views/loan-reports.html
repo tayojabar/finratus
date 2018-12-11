@@ -353,6 +353,7 @@
 <script>
     jQuery(document).ready(function() {
         loadDisbursed();
+        loadPayments();
     });
 
     var myTable = $('#disbursed-table')
@@ -576,8 +577,7 @@
             'url': 'user/disbursements/',
             'type': 'get',
             'success': function (data) {
-                console.log(data.status);
-                (data.status === 200) ? populateDisbursed(data.response) : swal('Error in Connection')
+                (data.status === 200) ? populateDisbursed(data.response) : swal('Database Error')
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -590,7 +590,7 @@
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
             var total = 0;
-            jQuery.each(dets, function(k, v){
+            jQuery.each(dets.with_payments, function(k, v){
                 total+= parseFloat(v.loan_amount);
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.applicationID),6),
@@ -598,6 +598,16 @@
                     '₦'+(parseFloat(v.loan_amount)).toFixed(2),
                     '₦'+(parseFloat(v.balance)).toFixed(2),
                     v.date
+                ]);
+            });
+            jQuery.each(dets.without_pay, function(k, v){
+                total+= parseFloat(v.loan_amount);
+                $("#disbursed-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.ID),6),
+                    v.fullname,
+                    '₦'+(parseFloat(v.loan_amount)).toFixed(2),
+                    '₦'+(parseFloat(v.loan_amount)).toFixed(2),
+                    v.date_modified
                 ]);
             });
             $('#total-disbursements').html(total.toFixed(2));
@@ -609,7 +619,7 @@
             'url': 'user/payments/',
             'type': 'get',
             'success': function (data) {
-                populatePayments(data);
+                (data.status === 200) ? populatePayments(data.response) : swal('Database Error')
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -621,9 +631,17 @@
         if (dets.length === 0){
             $("#payments-table").dataTable().fnClearTable();
         }else{
-            jQuery.each(dets, function(k, v){
-                $("#paayments-table").dataTable().fnAddData([]);
+            var total = 0;
+            jQuery.each(dets.payment, function(k, v){
+                $("#payments-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.clientid),6),
+                    v.fullname,
+                    '₦'+(parseFloat(v.paid)).toFixed(2),
+                    v.date
+                ]);
             });
+            total = dets.total[0]["total"];
+            $('#total-payments').html(total.toFixed(2));
         }
     }
 
