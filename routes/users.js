@@ -26,18 +26,7 @@ let token,
 transporter.use('compile', hbs(options));
 
 users.get('/import-bulk-clients', function(req, res) {
-let clients = [{
-        "username": "Donald-Okunbor",
-        "fullname": "Donald Okunbor",
-        "marital_status": "married",
-        "gender": "Female",
-        "phone": 2348040000000,
-        "client_country": "Nigeria",
-        "client_state": "Lagos",
-        "address": "Lagos",
-        "branch": 1,
-        "loan_officer": 3
-    }],
+let clients = [],
     count=0,
     errors = [];
 
@@ -48,6 +37,38 @@ let clients = [{
             client.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
             console.log(client.fullname);
             connection.query('INSERT INTO clients SET ?', client, function (err, result, fields) {
+                if (err) {
+                    console.log(err);
+                    errors.push(client);
+                } else {
+                    count++;
+                }
+                callback();
+            });
+        }, function (data) {
+            connection.release();
+            res.json({count: count, errors: errors})
+        })
+    });
+});
+
+users.get('/bulk-update-clients', function(req, res) {
+    let clients = [],
+        count=0,
+        errors = [];
+
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+        async.forEach(clients, function (client, callback) {
+            console.log(client.fullname);
+            switch (client.loan_officer){
+                case "Abiodun Atobatele":{client.loan_officer = 2; break;}
+                case "Afeez Ishola":{client.loan_officer = 6; break;}
+                case "Ayokunnumi Olugbemiro":{client.loan_officer = 3; break;}
+                case "Blessing Ebulueye":{client.loan_officer = 5; break;}
+                case "Damola Sunday":{client.loan_officer = 7; break;}
+            }
+            connection.query('UPDATE clients SET loan_officer=? WHERE fullname=?', [client.loan_officer,client.fullname], function (err, result, fields) {
                 if (err) {
                     console.log(err);
                     errors.push(client);
