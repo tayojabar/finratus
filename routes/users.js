@@ -1775,4 +1775,27 @@ users.get('/payments', function(req, res, next) {
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
+/* Loans by Branches */
+users.get('/loans-by-branches', function(req, res, next) {
+    let query
+    query = 'select (select branch from staging.clients where ID = userID) as branchID, \n' +
+            '(select branch_name from staging.branches br where br.id = branchID) as branch,\n' +
+            'loan_amount, sum(loan_amount) as disbursed,\n' +
+            '(select sum(payment_amount) from staging.schedule_history sh\n' +
+            'where \n' +
+            '(select branch from staging.clients c where c.ID = (select userID from staging.applications b where b.ID = sh.applicationID)) = branchID) as collected\n' +
+            '\n' +
+            'from staging.applications a\n' +
+            'where status = 2\n' +
+            'group by branchID'
+    var items = {};
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "All Payments pulled!"});
+        }
+    });
+});
+
 module.exports = users;

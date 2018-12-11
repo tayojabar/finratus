@@ -223,7 +223,7 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Disbursements</strong>
-                                                            <span class="pull-right">Total: &#8358<span id="total-disbursements"></span></span>
+                                                            <span class="pull-right">Total: <span id="total-disbursements"></span></span>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="disbursed-table" class="table table-striped table-bordered" width="100%">
@@ -267,8 +267,10 @@
                                                 <div class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong>Loans by Branch</strong>
-                                                            <span class="pull-right">Total GLP: &#8358<span id="total-loans-by-branch"></span></span>
+                                                            <strong>Loans by Branch</strong>&nbsp;&nbsp;&nbsp;
+                                                            <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
+                                                            <!--</select>-->
+                                                            <span class="pull-right">Total GLP: <span id="total-loans-by-branch"></span></span>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="loan-by-branch-table" class="table table-striped table-bordered">
@@ -352,11 +354,10 @@
 
 <script>
     jQuery(document).ready(function() {
-        $('ul.nav-tabs').find('a.active').click();
-        $('#intelliboard').show();
         loadInfo();
         loadDisbursed();
         loadPayments();
+        loadLoansByBranch();
     });
 
     const formatter = new Intl.NumberFormat('en-US', {
@@ -512,7 +513,6 @@
             'url': 'user/report-cards/',
             'type': 'get',
             'success': function (data) {
-                console.log(data);
                 populateCards(data.response);
             },
             'error': function (err) {
@@ -523,7 +523,6 @@
     }
 
     function populateCards(data){
-        console.log(data.branches[0]["branches"]);
         $('#branch').html(data.branches[0]["branches"]);
         $('#loan-officers').html(data.loan_officers[0]["loan_officers"]);
         $('#loans-active').html(data.active_loans[0]["all_applications"]);
@@ -594,7 +593,7 @@
                 $("#payments-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.clientid),6),
                     v.fullname,
-                    format.formatter(parseFloat(v.paid)),
+                    formatter.format(parseFloat(v.paid)),
                     v.date
                 ]);
             });
@@ -605,10 +604,10 @@
 
     function loadLoansByBranch(){
         $.ajax({
-            'url': 'user/loans-by-branch/',
+            'url': 'user/loans-by-branches/',
             'type': 'get',
             'success': function (data) {
-                populateLoanByBranch(data);
+                (data.status === 200) ? populateLoanByBranch(data.response) : swal('Database Error')
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -620,9 +619,18 @@
         if (dets.length === 0){
             $("#loan-by-branch-table").dataTable().fnClearTable();
         }else{
+            var total = 0;
             jQuery.each(dets, function(k, v){
-                $("#loan-by-branch-table").dataTable().fnAddData([]);
+                total += v.disbursed;
+                $("#loan-by-branch-table").dataTable().fnAddData([
+                    padWithZeroes(v.branchID, 6),
+                    v.branch,
+                    formatter.format(v.disbursed),
+                    formatter.format(v.collected),
+                    formatter.format(v.disbursed)
+                ]);
             });
+            $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
 
