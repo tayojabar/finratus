@@ -338,7 +338,7 @@
                                                         <span class="btn btn-success fileinput-button">
                                                             <i class="glyphicon glyphicon-plus"></i>
                                                             <span>Add file</span>
-                                                            <input type="file" name="files[]" multiple>
+                                                            <input id="document-file" type="file" name="files[]" multiple>
                                                         </span>
                                                         <button type="submit" class="btn btn-primary start">
                                                             <i class="glyphicon glyphicon-upload"></i>
@@ -363,7 +363,8 @@
                                                         <div class="progress-extended">&nbsp;</div>
                                                     </div>
                                                 </div>
-                                                <table role="presentation" class="table table-striped" style="margin: 0"><tbody class="files"></tbody></table>
+                                                <table id="images-preview" role="presentation" class="table table-striped" style="margin: 0"><tbody class="files"></tbody></table>
+                                                <table id="files-preview" role="presentation" class="table table-striped" style="margin: 0; display: none;"><tbody></tbody></table>
                                             </form>
                                         </div>
                                         <!-- The template to display files available for upload -->
@@ -919,6 +920,15 @@
             }
         }
 
+        function isUriImage(uri) {
+            uri = uri.split('?')[0];
+            let parts = uri.split('.'),
+                extension = parts[parts.length-1],
+                imageTypes = ['jpg','jpeg','tiff','png','gif','bmp'];
+            if(imageTypes.indexOf(extension) !== -1)
+                return true;
+        }
+
         let workflow,
             application;
 
@@ -958,7 +968,7 @@
                     } else {
                         let count = 0,
                             pages = parseInt(files_count/4);
-                        for (let i=0; i<=pages; i++){
+                        for (let i=0; i<pages; i++){
                             if (i === 0){
                                 $carousel_inner.append('<div class="item active"><div class="row page-0"></div></div>');
                                 $carousel_indicators.append('<li data-target="#Carousel" data-slide-to="0" class="active"></li>');
@@ -967,17 +977,26 @@
                                 $carousel_indicators.append('<li data-target="#Carousel" data-slide-to="'+i+'"></li>');
                             }
                             for (let j=0; j<4; j++){
-                                if (count < files_count)
-                                    $('.page-'+i).append('<div class="col-md-3"><a class="grouped_elements" rel="grouped_elements" data-toggle="tooltip" title="Click to Expand!" href="'+application.files[file_names[count]]+'" class="thumbnail"><img src="'+application.files[file_names[count]]+'" alt="'+file_names[count].replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_names[count].replace(/_/g, ' ')+'</p></div>');
+                                if (count < files_count){
+                                    let file_name = file_names[count],
+                                        file = application.files[file_name];
+                                    if (isUriImage(file)){
+                                        $('.page-'+i).append('<div class="col-md-3"><a class="thumbnail grouped_elements" rel="grouped_elements" data-toggle="tooltip" data-placement="bottom" title="Click to Expand!" href="'+file+'"><img src="'+file+'" alt="'+file_name.replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_name.replace(/_/g, ' ')+'</p></div>');
+                                    } else {
+                                        $('.page-'+i).append('<div class="col-md-3"><a class="thumbnail" data-target="_blank" data-toggle="tooltip" data-placement="bottom" title="Click to Download!" href="'+file+'" style="padding: 25px 0;"><i class="fa fa-file" style="font-size: 150px; display: block; text-align: center;"></i></a><p style="text-align: center;">'+file_name.replace(/_/g, ' ')+'</p></div>');
+                                    }
+                                }
                                 count++;
+                                if (count === files_count){
+                                    $("a.grouped_elements").fancybox();
+                                    $('.thumbnail').tooltip();
+                                }
                             }
                         }
                     }
 
                     initCSVUpload(application);
                     initCSVUpload2(application);
-                    $("a.grouped_elements").fancybox();
-                    $('[data-toggle="tooltip"]').tooltip();
                 },
                 'error': function (err) {
                     console.log('Error');
@@ -1339,7 +1358,8 @@
             });
         }
 
-        let document_others = false;
+        let stage_file_name,
+            document_others = false;
         $('#fileupload').click(function () {
             let document = $('#stage-documents').val(),
                 $others = $('#stage-documents-others');
@@ -1375,7 +1395,74 @@
                 $others.hide();
                 document_others = false;
             }
+            stage_file_name = this.value;
             fileUpload(this.value);
+        });
+
+        function formatBytes(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]}
+
+        $('#document-file').change(function () {
+            let _self = this,
+                $images_preview = $('#images-preview'),
+                $files_preview = $('#files-preview');
+            if (this.files[0].type && (this.files[0].type).split('/') && ((this.files[0].type).split('/'))[0]){
+                if (((this.files[0].type).split('/'))[0] !== 'image'){
+                    $images_preview.hide();
+                    $files_preview.show();
+                    $files_preview.find('tbody').html('');
+                    $images_preview.find('tbody').html('');
+                    $files_preview.find('tbody').append('<tr class="template-upload fade in">\n' +
+                        '    <td><span class="preview"><i style="font-size:70px" class="fa fa-file"></i></span></td>\n' +
+                        '    <td><p class="name">'+this.files[0].name+'</p></td>\n' +
+                        '    <td><p class="size">'+formatBytes(this.files[0].size)+'</p><div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div></td>\n' +
+                        '    <td><button class="btn btn-primary start"><i class="glyphicon glyphicon-upload"></i><span>Start</span></button>\n' +
+                        '        <button class="btn btn-warning cancel"><i class="glyphicon glyphicon-ban-circle"></i><span>Cancel</span></button></td>\n' +
+                        '</tr>');
+
+                    $('.start').click(function (e) {
+                        e.preventDefault();
+
+                        let stage_document_name,
+                            formData = new FormData(),
+                            document = stage_file_name,
+                            others = $('#stage-documents-others').val();
+
+                        if (document_others){
+                            stage_document_name = (others)? others.replace(/ /g, '_') : '';
+                        } else {
+                            stage_document_name = (document && document !== '-- Choose Document --')? document.replace(/ /g, '_') : '';
+                        }
+
+                        formData.append('files[]', _self.files[0]);
+                        $.ajax({
+                            url: 'document-upload/'+application_id+'/'+stage_document_name,
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                swal("File uploaded successfully!");
+                                window.location.reload();
+                            },
+                            error: function() {
+                                swal("Error! Please Try Again");
+                            }
+                        });
+                    });
+
+                    $('.cancel').click(function (e) {
+                        e.preventDefault();
+                        $files_preview.find('tbody').html('');
+                    });
+                } else {
+                    $images_preview.show();
+                    $files_preview.hide();
+                    $files_preview.find('tbody').html('');
+                    $images_preview.find('tbody').html('');
+                }
+            } else {
+                return swal('Kindly upload a valid file format');
+            }
         });
 
         function fileUpload(document) {

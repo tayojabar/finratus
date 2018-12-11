@@ -60,15 +60,15 @@ users.get('/bulk-update-clients', function(req, res) {
     db.getConnection(function(err, connection) {
         if (err) throw err;
         async.forEach(clients, function (client, callback) {
-            console.log(client.fullname);
-            switch (client.loan_officer){
-                case "Abiodun Atobatele":{client.loan_officer = 2; break;}
-                case "Afeez Ishola":{client.loan_officer = 6; break;}
-                case "Ayokunnumi Olugbemiro":{client.loan_officer = 3; break;}
-                case "Blessing Ebulueye":{client.loan_officer = 5; break;}
-                case "Damola Sunday":{client.loan_officer = 7; break;}
-            }
-            connection.query('UPDATE clients SET loan_officer=? WHERE fullname=?', [client.loan_officer,client.fullname], function (err, result, fields) {
+            console.log(client.username);
+            // switch (client.loan_officer){
+            //     case "Abiodun Atobatele":{client.loan_officer = 2; break;}
+            //     case "Afeez Ishola":{client.loan_officer = 6; break;}
+            //     case "Ayokunnumi Olugbemiro":{client.loan_officer = 3; break;}
+            //     case "Blessing Ebulueye":{client.loan_officer = 5; break;}
+            //     case "Damola Sunday":{client.loan_officer = 7; break;}
+            // }
+            connection.query('UPDATE clients SET username=? WHERE username=?', [client.email,client.username], function (err, result, fields) {
                 if (err) {
                     console.log(err);
                     errors.push(client);
