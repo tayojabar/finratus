@@ -144,9 +144,10 @@ users.post('/new-client', function(req, res, next) {
     let data = [],
         postData = req.body,
         query =  'INSERT INTO clients Set ?',
-        query2 = 'select * from clients where username = ? or email = ?';
+        query2 = 'select * from clients where username = ? or email = ? or phone = ?';
     data.username = req.body.username;
     data.email = req.body.email;
+    data.phone = req.body.phone;
     postData.status = 1;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 
@@ -155,7 +156,7 @@ users.post('/new-client', function(req, res, next) {
 
         connection.query(query2,data, function (error, results, fields) {
             if (results && results[0])
-                return res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Client already exists!"}));
+                return res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Information in use by existing client!"}));
             connection.query(query,postData, function (error, re, fields) {
                 if(error){
                     console.log(error);
@@ -1699,10 +1700,21 @@ users.get('/report-cards', function(req, res, next) {
 /* GET Report Cards. */
 users.get('/disbursements', function(req, res, next) {
     let query
-    query = 'select count(*) as branches from branches'
+    query = 'select \n' +
+        '(select userID from staging.applications where ID = applicationID) as user, (select fullname from staging.clients where ID = user) as fullname, \n' +
+        'applicationID, (select loan_amount from staging.applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
+        '((select loan_amount from staging.applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from staging.applications where ID = applicationID) as date\n' +
+        'from staging.schedule_history \n' +
+        'where applicationID in (select applicationID from staging.application_schedules\n' +
+        '\t\t\t\t\t\twhere applicationID in (select ID from staging.applications where status = 2) and status = 1)\n' +
+        'group by applicationID'
     var items = {};
     db.query(query, function (error, results, fields) {
-
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "All Disbursements pulled!"});
+        }
     });
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
