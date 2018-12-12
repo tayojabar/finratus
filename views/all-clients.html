@@ -120,79 +120,6 @@
             <div class="col-sm-7">
                 <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
                 <div class="header-left">
-                    <!--<button class="search-trigger"><i class="fa fa-search"></i></button>-->
-                    <!--<div class="form-inline">-->
-                    <!--<form class="search-form">-->
-                    <!--<input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">-->
-                    <!--<button class="search-close" type="submit"><i class="fa fa-close"></i></button>-->
-                    <!--</form>-->
-                    <!--</div>-->
-
-                    <!-- <div class="dropdown for-notification">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-bell"></i>
-                        <span class="count bg-danger">5</span>
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="notification">
-                        <p class="red">You have 3 Notification</p>
-                        <a class="dropdown-item media bg-flat-color-1" href="#">
-                            <i class="fa fa-check"></i>
-                            <p>Server #1 overloaded.</p>
-                        </a>
-                        <a class="dropdown-item media bg-flat-color-4" href="#">
-                            <i class="fa fa-info"></i>
-                            <p>Server #2 overloaded.</p>
-                        </a>
-                        <a class="dropdown-item media bg-flat-color-5" href="#">
-                            <i class="fa fa-warning"></i>
-                            <p>Server #3 overloaded.</p>
-                        </a>
-                      </div>
-                    </div> -->
-
-                    <!-- <div class="dropdown for-message">
-                      <button class="btn btn-secondary dropdown-toggle" type="button"
-                            id="message"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="ti-email"></i>
-                        <span class="count bg-primary">9</span>
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="message">
-                        <p class="red">You have 4 Mails</p>
-                        <a class="dropdown-item media bg-flat-color-1" href="#">
-                            <span class="photo media-left"><img alt="avatar" src="images/avatar/1.jpg"></span>
-                            <span class="message media-body">
-                                <span class="name float-left">Jonathan Smith</span>
-                                <span class="time float-right">Just now</span>
-                                    <p>Hello, this is an example msg</p>
-                            </span>
-                        </a>
-                        <a class="dropdown-item media bg-flat-color-4" href="#">
-                            <span class="photo media-left"><img alt="avatar" src="images/avatar/2.jpg"></span>
-                            <span class="message media-body">
-                                <span class="name float-left">Jack Sanders</span>
-                                <span class="time float-right">5 minutes ago</span>
-                                    <p>Lorem ipsum dolor sit amet, consectetur</p>
-                            </span>
-                        </a>
-                        <a class="dropdown-item media bg-flat-color-5" href="#">
-                            <span class="photo media-left"><img alt="avatar" src="images/avatar/3.jpg"></span>
-                            <span class="message media-body">
-                                <span class="name float-left">Cheryl Wheeler</span>
-                                <span class="time float-right">10 minutes ago</span>
-                                    <p>Hello, this is an example msg</p>
-                            </span>
-                        </a>
-                        <a class="dropdown-item media bg-flat-color-3" href="#">
-                            <span class="photo media-left"><img alt="avatar" src="images/avatar/4.jpg"></span>
-                            <span class="message media-body">
-                                <span class="name float-left">Rachel Santos</span>
-                                <span class="time float-right">15 minutes ago</span>
-                                    <p>Lorem ipsum dolor sit amet, consectetur</p>
-                            </span>
-                        </a>
-                      </div>
-                    </div> -->
                 </div>
             </div>
 
@@ -826,12 +753,12 @@
 
                                                 <div class="row">
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Gender<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Gender</label>
                                                         <div style="border-radius: 4px; border-color: #9fcdff">
                                                             <div class="col-md-4">
                                                                 <div>
                                                                     <label class="control r control--radio">
-                                                                        <input type="radio" id="male" name="gender" value="Male" required="" class="imp">&nbsp; Male
+                                                                        <input type="radio" id="male" name="gender" value="Male" required="">&nbsp; Male
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -839,7 +766,7 @@
                                                             <div class="col-md-5">
                                                                 <div>
                                                                     <label class="control r control--radio">
-                                                                        <input type="radio" id="female" name="gender" value="Female" class="imp">&nbsp; Female
+                                                                        <input type="radio" id="female" name="gender" value="Female" >&nbsp; Female
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -848,10 +775,10 @@
                                                     </div>
 
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Date of Birth<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Date of Birth</label>
                                                         <div class="input-group">
                                                             <div class="input-group">
-                                                                <input type="date" class="form-control imp" id="dob" placeholder="yyyy/MM/dd" required="required">
+                                                                <input type="date" class="form-control" id="dob" placeholder="yyyy/MM/dd" required="required">
 
                                                             </div>
                                                             <!-- ngIf: idForm.dob.$dirty -->
@@ -878,15 +805,15 @@
 
                                                 <div class="row">
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Loan Officer<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Loan Officer</label>
                                                         <div class="input-group">
-                                                            <select id="loan_officer" class="form-control imp" tabindex="5.2" >
+                                                            <select id="loan_officer" class="form-control" tabindex="5.2" >
                                                             </select>
                                                             <!-- ngIf: idForm.user.$dirty -->
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Branch<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Branch</label>
                                                         <div class="input-group">
                                                             <select id="branch" class="form-control" tabindex="5.2" >
                                                                 <!--<option id="0"> &#45;&#45; Select a branch &#45;&#45;</option>-->
@@ -917,16 +844,16 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Phone Number</label>
+                                                        <label class="form-control-label">Phone Number <span class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" id="phone" class="form-control imp" placeholder="555-555-5555" >
+                                                            <input type="number" id="phone" class="form-control imp" placeholder="555-555-5555" >
                                                             <!-- ngIf: idForm.home_phone.$dirty -->
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Address</label>
                                                         <div class="input-group">
-                                                            <textarea type="text" id="address" class="form-control imp"  placeholder="Home Address"></textarea>
+                                                            <textarea type="text" id="address" class="form-control "  placeholder="Home Address"></textarea>
                                                             <!-- ngIf: idForm.home_phone.$dirty -->
                                                         </div>
                                                     </div>
@@ -934,10 +861,9 @@
                                                 <div class="row">
 
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">State <span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">State </label>
                                                         <div class="input-group">
                                                             <select class="form-control" id="client_state">
-                                                                <option id="0" class="" selected="selected">Choose State</option><option label="Abuja Capital Territory" value="string:Abuja Capital Territory">Abuja Capital Territory</option><option label="Abia" value="string:Abia">Abia</option><option label="Adamawa" value="string:Adamawa">Adamawa</option><option label="Akwa Ibom" value="string:Akwa Ibom">Akwa Ibom</option><option label="Anambra" value="string:Anambra">Anambra</option><option label="Bauchi" value="string:Bauchi">Bauchi</option><option label="Bayelsa" value="string:Bayelsa">Bayelsa</option><option label="Benue" value="string:Benue">Benue</option><option label="Borno" value="string:Borno">Borno</option><option label="Cross River" value="string:Cross River">Cross River</option><option label="Delta" value="string:Delta">Delta</option><option label="Ebonyi" value="string:Ebonyi">Ebonyi</option><option label="Edo" value="string:Edo">Edo</option><option label="Ekiti" value="string:Ekiti">Ekiti</option><option label="Enugu" value="string:Enugu">Enugu</option><option label="Gombe" value="string:Gombe">Gombe</option><option label="Imo" value="string:Imo">Imo</option><option label="Jigawa" value="string:Jigawa">Jigawa</option><option label="Kaduna" value="string:Kaduna">Kaduna</option><option label="Kano" value="string:Kano">Kano</option><option label="Katsina" value="string:Katsina">Katsina</option><option label="Kebbi" value="string:Kebbi">Kebbi</option><option label="Kogi" value="string:Kogi">Kogi</option><option label="Kwara" value="string:Kwara">Kwara</option><option label="Lagos" value="string:Lagos">Lagos</option><option label="Nassarawa" value="string:Nassarawa">Nassarawa</option><option label="Niger" value="string:Niger">Niger</option><option label="Ogun" value="string:Ogun">Ogun</option><option label="Ondo" value="string:Ondo">Ondo</option><option label="Osun" value="string:Osun">Osun</option><option label="Oyo" value="string:Oyo">Oyo</option><option label="Rivers" value="string:Rivers">Rivers</option><option label="Sokoto" value="string:Sokoto">Sokoto</option><option label="Taraba" value="string:Taraba">Taraba</option><option label="Yobe" value="string:Yobe">Yobe</option><option label="Zamfara" value="string:Zamfara">Zamfara</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -952,7 +878,6 @@
                                                         <label class="form-control-label">Country</label>
                                                         <div class="input-group">
                                                             <select id="client_country" class="form-control" required="" >
-                                                                <option value="" class="" selected="selected">Please select a country</option><option label="Afghanistan" value="string:AF">Afghanistan</option><option label="Albania" value="string:AL">Albania</option><option label="Algeria" value="string:DZ">Algeria</option><option label="American Samoa" value="string:AS">American Samoa</option><option label="Andorra" value="string:AD">Andorra</option><option label="Angola" value="string:AO">Angola</option><option label="Anguilla" value="string:AI">Anguilla</option><option label="Antarctica" value="string:AQ">Antarctica</option><option label="Antigua and Barbuda" value="string:AG">Antigua and Barbuda</option><option label="Argentina" value="string:AR">Argentina</option><option label="Armenia" value="string:AM">Armenia</option><option label="Aruba" value="string:AW">Aruba</option><option label="Australia" value="string:AU">Australia</option><option label="Austria" value="string:AT">Austria</option><option label="Azerbaijan" value="string:AZ">Azerbaijan</option><option label="Bahrain" value="string:BH">Bahrain</option><option label="Bangladesh" value="string:BD">Bangladesh</option><option label="Barbados" value="string:BB">Barbados</option><option label="Belarus" value="string:BY">Belarus</option><option label="Belgium" value="string:BE">Belgium</option><option label="Belize" value="string:BZ">Belize</option><option label="Benin" value="string:BJ">Benin</option><option label="Bermuda" value="string:BM">Bermuda</option><option label="Bhutan" value="string:BT">Bhutan</option><option label="Bolivia" value="string:BO">Bolivia</option><option label="Bosnia and Herzegovina" value="string:BA">Bosnia and Herzegovina</option><option label="Botswana" value="string:BW">Botswana</option><option label="Bouvet Island" value="string:BV">Bouvet Island</option><option label="Brazil" value="string:BR">Brazil</option><option label="British Indian Ocean Territory" value="string:IO">British Indian Ocean Territory</option><option label="Virgin Islands, British" value="string:VG">Virgin Islands, British</option><option label="Brunei Darussalam" value="string:BN">Brunei Darussalam</option><option label="Bulgaria" value="string:BG">Bulgaria</option><option label="Burkina Faso" value="string:BF">Burkina Faso</option><option label="Myanmar" value="string:MM">Myanmar</option><option label="Burundi" value="string:BI">Burundi</option><option label="Cambodia" value="string:KH">Cambodia</option><option label="Cameroon" value="string:CM">Cameroon</option><option label="Canada" value="string:CA">Canada</option><option label="Cape Verde" value="string:CV">Cape Verde</option><option label="Cayman Islands" value="string:KY">Cayman Islands</option><option label="Central African Republic" value="string:CF">Central African Republic</option><option label="Chad" value="string:TD">Chad</option><option label="Chile" value="string:CL">Chile</option><option label="China" value="string:CN">China</option><option label="Christmas Island" value="string:CX">Christmas Island</option><option label="Cocos (Keeling) Islands" value="string:CC">Cocos (Keeling) Islands</option><option label="Colombia" value="string:CO">Colombia</option><option label="Comoros" value="string:KM">Comoros</option><option label="Congo, The Democratic Republic of the" value="string:CD">Congo, The Democratic Republic of the</option><option label="Congo" value="string:CG">Congo</option><option label="Cook Islands" value="string:CK">Cook Islands</option><option label="Costa Rica" value="string:CR">Costa Rica</option><option label="Côte d'Ivoire" value="string:CI">Côte d'Ivoire</option><option label="Croatia" value="string:HR">Croatia</option><option label="Cuba" value="string:CU">Cuba</option><option label="Cyprus" value="string:CY">Cyprus</option><option label="Czech Republic" value="string:CZ">Czech Republic</option><option label="Denmark" value="string:DK">Denmark</option><option label="Djibouti" value="string:DJ">Djibouti</option><option label="Dominica" value="string:DM">Dominica</option><option label="Dominican Republic" value="string:DO">Dominican Republic</option><option label="Timor-Leste" value="string:TL">Timor-Leste</option><option label="Ecuador" value="string:EC">Ecuador</option><option label="Egypt" value="string:EG">Egypt</option><option label="El Salvador" value="string:SV">El Salvador</option><option label="Equatorial Guinea" value="string:GQ">Equatorial Guinea</option><option label="Eritrea" value="string:ER">Eritrea</option><option label="Estonia" value="string:EE">Estonia</option><option label="Ethiopia" value="string:ET">Ethiopia</option><option label="Falkland Islands (Malvinas)" value="string:FK">Falkland Islands (Malvinas)</option><option label="Faroe Islands" value="string:FO">Faroe Islands</option><option label="Fiji" value="string:FJ">Fiji</option><option label="Finland" value="string:FI">Finland</option><option label="France" value="string:FR">France</option><option label="French Guiana" value="string:GF">French Guiana</option><option label="French Polynesia" value="string:PF">French Polynesia</option><option label="French Southern Territories" value="string:TF">French Southern Territories</option><option label="Gabon" value="string:GA">Gabon</option><option label="Georgia" value="string:GE">Georgia</option><option label="Germany" value="string:DE">Germany</option><option label="Ghana" value="string:GH">Ghana</option><option label="Gibraltar" value="string:GI">Gibraltar</option><option label="Greece" value="string:GR">Greece</option><option label="Greenland" value="string:GL">Greenland</option><option label="Grenada" value="string:GD">Grenada</option><option label="Guadeloupe" value="string:GP">Guadeloupe</option><option label="Guam" value="string:GU">Guam</option><option label="Guatemala" value="string:GT">Guatemala</option><option label="Guinea" value="string:GN">Guinea</option><option label="Guinea-Bissau" value="string:GW">Guinea-Bissau</option><option label="Guyana" value="string:GY">Guyana</option><option label="Haiti" value="string:HT">Haiti</option><option label="Heard Island and McDonald Islands" value="string:HM">Heard Island and McDonald Islands</option><option label="Holy See (Vatican City State)" value="string:VA">Holy See (Vatican City State)</option><option label="Honduras" value="string:HN">Honduras</option><option label="Hong Kong" value="string:HK">Hong Kong</option><option label="Hungary" value="string:HU">Hungary</option><option label="Iceland" value="string:IS">Iceland</option><option label="India" value="string:IN">India</option><option label="Indonesia" value="string:ID">Indonesia</option><option label="Iran, Islamic Republic of" value="string:IR">Iran, Islamic Republic of</option><option label="Iraq" value="string:IQ">Iraq</option><option label="Ireland" value="string:IE">Ireland</option><option label="Israel" value="string:IL">Israel</option><option label="Italy" value="string:IT">Italy</option><option label="Jamaica" value="string:JM">Jamaica</option><option label="Japan" value="string:JP">Japan</option><option label="Jordan" value="string:JO">Jordan</option><option label="Kazakhstan" value="string:KZ">Kazakhstan</option><option label="Kenya" value="string:KE">Kenya</option><option label="Kiribati" value="string:KI">Kiribati</option><option label="Korea, Democratic People's Republic of" value="string:KP">Korea, Democratic People's Republic of</option><option label="Korea, Republic of" value="string:KR">Korea, Republic of</option><option label="Kuwait" value="string:KW">Kuwait</option><option label="Kyrgyzstan" value="string:KG">Kyrgyzstan</option><option label="Lao People's Democratic Republic" value="string:LA">Lao People's Democratic Republic</option><option label="Latvia" value="string:LV">Latvia</option><option label="Lebanon" value="string:LB">Lebanon</option><option label="Lesotho" value="string:LS">Lesotho</option><option label="Liberia" value="string:LR">Liberia</option><option label="Libyan Arab Jamahiriya" value="string:LY">Libyan Arab Jamahiriya</option><option label="Liechtenstein" value="string:LI">Liechtenstein</option><option label="Lithuania" value="string:LT">Lithuania</option><option label="Luxembourg" value="string:LU">Luxembourg</option><option label="Macao" value="string:MO">Macao</option><option label="Macedonia, Republic of" value="string:MK">Macedonia, Republic of</option><option label="Madagascar" value="string:MG">Madagascar</option><option label="Malawi" value="string:MW">Malawi</option><option label="Malaysia" value="string:MY">Malaysia</option><option label="Maldives" value="string:MV">Maldives</option><option label="Mali" value="string:ML">Mali</option><option label="Malta" value="string:MT">Malta</option><option label="Marshall Islands" value="string:MH">Marshall Islands</option><option label="Martinique" value="string:MQ">Martinique</option><option label="Mauritania" value="string:MR">Mauritania</option><option label="Mauritius" value="string:MU">Mauritius</option><option label="Mayotte" value="string:YT">Mayotte</option><option label="Mexico" value="string:MX">Mexico</option><option label="Micronesia, Federated States of" value="string:FM">Micronesia, Federated States of</option><option label="Moldova" value="string:MD">Moldova</option><option label="Monaco" value="string:MC">Monaco</option><option label="Mongolia" value="string:MN">Mongolia</option><option label="Montserrat" value="string:MS">Montserrat</option><option label="Morocco" value="string:MA">Morocco</option><option label="Mozambique" value="string:MZ">Mozambique</option><option label="Namibia" value="string:NA">Namibia</option><option label="Nauru" value="string:NR">Nauru</option><option label="Nepal" value="string:NP">Nepal</option><option label="Netherlands Antilles" value="string:AN">Netherlands Antilles</option><option label="Netherlands" value="string:NL">Netherlands</option><option label="New Caledonia" value="string:NC">New Caledonia</option><option label="New Zealand" value="string:NZ">New Zealand</option><option label="Nicaragua" value="string:NI">Nicaragua</option><option label="Niger" value="string:NE">Niger</option><option label="Nigeria" value="string:NG" selected="selected">Nigeria</option><option label="Niue" value="string:NU">Niue</option><option label="Norfolk Island" value="string:NF">Norfolk Island</option><option label="Northern Mariana Islands" value="string:MP">Northern Mariana Islands</option><option label="Norway" value="string:NO">Norway</option><option label="Oman" value="string:OM">Oman</option><option label="Pakistan" value="string:PK">Pakistan</option><option label="Palau" value="string:PW">Palau</option><option label="Palestinian Territory, Occupied" value="string:PS">Palestinian Territory, Occupied</option><option label="Panama" value="string:PA">Panama</option><option label="Papua New Guinea" value="string:PG">Papua New Guinea</option><option label="Paraguay" value="string:PY">Paraguay</option><option label="Peru" value="string:PE">Peru</option><option label="Philippines" value="string:PH">Philippines</option><option label="Pitcairn" value="string:PN">Pitcairn</option><option label="Poland" value="string:PL">Poland</option><option label="Portugal" value="string:PT">Portugal</option><option label="Puerto Rico" value="string:PR">Puerto Rico</option><option label="Qatar" value="string:QA">Qatar</option><option label="Romania" value="string:RO">Romania</option><option label="Russian Federation" value="string:RU">Russian Federation</option><option label="Rwanda" value="string:RW">Rwanda</option><option label="Reunion" value="string:RE">Reunion</option><option label="Saint Helena" value="string:SH">Saint Helena</option><option label="Saint Kitts and Nevis" value="string:KN">Saint Kitts and Nevis</option><option label="Saint Lucia" value="string:LC">Saint Lucia</option><option label="Saint Pierre and Miquelon" value="string:PM">Saint Pierre and Miquelon</option><option label="Saint Vincent and the Grenadines" value="string:VC">Saint Vincent and the Grenadines</option><option label="Samoa" value="string:WS">Samoa</option><option label="San Marino" value="string:SM">San Marino</option><option label="Saudi Arabia" value="string:SA">Saudi Arabia</option><option label="Senegal" value="string:SN">Senegal</option><option label="Seychelles" value="string:SC">Seychelles</option><option label="Sierra Leone" value="string:SL">Sierra Leone</option><option label="Singapore" value="string:SG">Singapore</option><option label="Slovakia" value="string:SK">Slovakia</option><option label="Slovenia" value="string:SI">Slovenia</option><option label="Solomon Islands" value="string:SB">Solomon Islands</option><option label="Somalia" value="string:SO">Somalia</option><option label="South Africa" value="string:ZA">South Africa</option><option label="South Georgia and the South Sandwich Islands" value="string:GS">South Georgia and the South Sandwich Islands</option><option label="Spain" value="string:ES">Spain</option><option label="Sri Lanka" value="string:LK">Sri Lanka</option><option label="Sudan" value="string:SD">Sudan</option><option label="Suriname" value="string:SR">Suriname</option><option label="Svalbard and Jan Mayen" value="string:SJ">Svalbard and Jan Mayen</option><option label="Swaziland" value="string:SZ">Swaziland</option><option label="Sweden" value="string:SE">Sweden</option><option label="Switzerland" value="string:CH">Switzerland</option><option label="Syrian Arab Republic" value="string:SY">Syrian Arab Republic</option><option label="Sao Tome and Principe" value="string:ST">Sao Tome and Principe</option><option label="Taiwan" value="string:TW">Taiwan</option><option label="Tajikistan" value="string:TJ">Tajikistan</option><option label="Tanzania, United Republic of" value="string:TZ">Tanzania, United Republic of</option><option label="Thailand" value="string:TH">Thailand</option><option label="Bahamas" value="string:BS">Bahamas</option><option label="Gambia" value="string:GM">Gambia</option><option label="Togo" value="string:TG">Togo</option><option label="Tokelau" value="string:TK">Tokelau</option><option label="Tonga" value="string:TO">Tonga</option><option label="Trinidad and Tobago" value="string:TT">Trinidad and Tobago</option><option label="Tunisia" value="string:TN">Tunisia</option><option label="Turkey" value="string:TR">Turkey</option><option label="Turkmenistan" value="string:TM">Turkmenistan</option><option label="Turks and Caicos Islands" value="string:TC">Turks and Caicos Islands</option><option label="Tuvalu" value="string:TV">Tuvalu</option><option label="Uganda" value="string:UG">Uganda</option><option label="Ukraine" value="string:UA">Ukraine</option><option label="United Arab Emirates" value="string:AE">United Arab Emirates</option><option label="United Kingdom" value="string:GB">United Kingdom</option><option label="United States Minor Outlying Islands" value="string:UM">United States Minor Outlying Islands</option><option label="United States" value="string:US">United States</option><option label="Uruguay" value="string:UY">Uruguay</option><option label="Uzbekistan" value="string:UZ">Uzbekistan</option><option label="Vanuatu" value="string:VU">Vanuatu</option><option label="Venezuela" value="string:VE">Venezuela</option><option label="Viet Nam" value="string:VN">Viet Nam</option><option label="Virgin Islands, U.S." value="string:VI">Virgin Islands, U.S.</option><option label="Wallis and Futuna" value="string:WF">Wallis and Futuna</option><option label="Western Sahara" value="string:EH">Western Sahara</option><option label="Yemen" value="string:YE">Yemen</option><option label="Serbia and Montenegro" value="string:CS">Serbia and Montenegro</option><option label="Zambia" value="string:ZM">Zambia</option><option label="Zimbabwe" value="string:ZW">Zimbabwe</option><option label="Åland Islands" value="string:AX">Åland Islands</option><option label="Serbia" value="string:RS">Serbia</option><option label="Montenegro" value="string:ME">Montenegro</option><option label="Jersey" value="string:JE">Jersey</option><option label="Guernsey" value="string:GG">Guernsey</option><option label="Isle of Man" value="string:IM">Isle of Man</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -960,7 +885,7 @@
                                                 <div class="row">
 
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Years at Address <span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Years at Address </label>
                                                         <div class="input-group">
                                                             <input type="number" id="years_add" class="form-control"placeholder="Number of Years" required="">
                                                             <!-- ngIf: idForm.email.$dirty -->
@@ -997,7 +922,7 @@
                                                             <label for="file-upload" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Customer Image
                                                             </label>
-                                                            <input id="file-upload" class="image admin-img imp" type="file" tabindex="6">
+                                                            <input id="file-upload" class="image admin-img " type="file" tabindex="6">
                                                             <label id="path"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
@@ -1016,7 +941,7 @@
                                                             <label for="file-upload-signature" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload ID Card
                                                             </label>
-                                                            <input id="file-upload-idcard" class="image admin-img imp" type="file" tabindex="7">
+                                                            <input id="file-upload-idcard" class="image admin-img " type="file" tabindex="7">
                                                             <label id="path-idcard"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
@@ -1036,7 +961,7 @@
                                                             <label for="file-upload-signature" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Signature
                                                             </label>
-                                                            <input id="file-upload-signature" class="image admin-img imp" type="file" tabindex="7">
+                                                            <input id="file-upload-signature" class="image admin-img " type="file" tabindex="7">
                                                             <label id="path-signature"></label><br>
                                                             <small><strong>Image must be JPG/JPEG or PNG format, maximum 2MB</strong></small>
 
@@ -1057,7 +982,7 @@
                                     <div class="panel push-down">
                                         <div class="panel-body">
                                             <div class="example-box-wrapper">
-                                                <h3>Employment Information</h3> <span class="text-danger"> Required (*)</span><hr>
+                                                <h3>Employment Information</h3> <hr>
 
 
                                                 <div class="row">
@@ -1065,11 +990,11 @@
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Employer Name</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="employer_name" class="form-control imp" placeholder="Enter Employer name">
+                                                            <input type="text" id="employer_name" class="form-control " placeholder="Enter Employer name">
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-6 col-md-6">
-                                                        <label class="form-control-label">Industry<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Industry</label>
                                                         <div class="input-group">
                                                             <select class="form-control" id="industry" name="industry" >
                                                                 <option selected="selected" disabled="disabled" hidden="hidden" value="">Please select an industry</option>
@@ -1136,18 +1061,17 @@
                                                 <div class="row">
 
                                                     <div class="form-group col-sm-6 col-md-6">
-                                                        <label class="form-control-label">Job Title<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Job Title</label>
                                                         <div class="input-group">
-                                                            <input type="text" id="job" class="form-control imp" placeholder="Enter Job Title" required="">
+                                                            <input type="text" id="job" class="form-control " placeholder="Enter Job Title" required="">
 
                                                             <!-- ngIf: idForm.last_name.$dirty -->
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-6 col-md-6">
-                                                        <label class="form-control-label">Country<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Country</label>
                                                         <div class="input-group">
                                                             <select id="job_country" class="form-control" required="" >
-                                                                <option value="" class="" selected="selected">Please select a country</option><option label="Afghanistan" value="string:AF">Afghanistan</option><option label="Albania" value="string:AL">Albania</option><option label="Algeria" value="string:DZ">Algeria</option><option label="American Samoa" value="string:AS">American Samoa</option><option label="Andorra" value="string:AD">Andorra</option><option label="Angola" value="string:AO">Angola</option><option label="Anguilla" value="string:AI">Anguilla</option><option label="Antarctica" value="string:AQ">Antarctica</option><option label="Antigua and Barbuda" value="string:AG">Antigua and Barbuda</option><option label="Argentina" value="string:AR">Argentina</option><option label="Armenia" value="string:AM">Armenia</option><option label="Aruba" value="string:AW">Aruba</option><option label="Australia" value="string:AU">Australia</option><option label="Austria" value="string:AT">Austria</option><option label="Azerbaijan" value="string:AZ">Azerbaijan</option><option label="Bahrain" value="string:BH">Bahrain</option><option label="Bangladesh" value="string:BD">Bangladesh</option><option label="Barbados" value="string:BB">Barbados</option><option label="Belarus" value="string:BY">Belarus</option><option label="Belgium" value="string:BE">Belgium</option><option label="Belize" value="string:BZ">Belize</option><option label="Benin" value="string:BJ">Benin</option><option label="Bermuda" value="string:BM">Bermuda</option><option label="Bhutan" value="string:BT">Bhutan</option><option label="Bolivia" value="string:BO">Bolivia</option><option label="Bosnia and Herzegovina" value="string:BA">Bosnia and Herzegovina</option><option label="Botswana" value="string:BW">Botswana</option><option label="Bouvet Island" value="string:BV">Bouvet Island</option><option label="Brazil" value="string:BR">Brazil</option><option label="British Indian Ocean Territory" value="string:IO">British Indian Ocean Territory</option><option label="Virgin Islands, British" value="string:VG">Virgin Islands, British</option><option label="Brunei Darussalam" value="string:BN">Brunei Darussalam</option><option label="Bulgaria" value="string:BG">Bulgaria</option><option label="Burkina Faso" value="string:BF">Burkina Faso</option><option label="Myanmar" value="string:MM">Myanmar</option><option label="Burundi" value="string:BI">Burundi</option><option label="Cambodia" value="string:KH">Cambodia</option><option label="Cameroon" value="string:CM">Cameroon</option><option label="Canada" value="string:CA">Canada</option><option label="Cape Verde" value="string:CV">Cape Verde</option><option label="Cayman Islands" value="string:KY">Cayman Islands</option><option label="Central African Republic" value="string:CF">Central African Republic</option><option label="Chad" value="string:TD">Chad</option><option label="Chile" value="string:CL">Chile</option><option label="China" value="string:CN">China</option><option label="Christmas Island" value="string:CX">Christmas Island</option><option label="Cocos (Keeling) Islands" value="string:CC">Cocos (Keeling) Islands</option><option label="Colombia" value="string:CO">Colombia</option><option label="Comoros" value="string:KM">Comoros</option><option label="Congo, The Democratic Republic of the" value="string:CD">Congo, The Democratic Republic of the</option><option label="Congo" value="string:CG">Congo</option><option label="Cook Islands" value="string:CK">Cook Islands</option><option label="Costa Rica" value="string:CR">Costa Rica</option><option label="Côte d'Ivoire" value="string:CI">Côte d'Ivoire</option><option label="Croatia" value="string:HR">Croatia</option><option label="Cuba" value="string:CU">Cuba</option><option label="Cyprus" value="string:CY">Cyprus</option><option label="Czech Republic" value="string:CZ">Czech Republic</option><option label="Denmark" value="string:DK">Denmark</option><option label="Djibouti" value="string:DJ">Djibouti</option><option label="Dominica" value="string:DM">Dominica</option><option label="Dominican Republic" value="string:DO">Dominican Republic</option><option label="Timor-Leste" value="string:TL">Timor-Leste</option><option label="Ecuador" value="string:EC">Ecuador</option><option label="Egypt" value="string:EG">Egypt</option><option label="El Salvador" value="string:SV">El Salvador</option><option label="Equatorial Guinea" value="string:GQ">Equatorial Guinea</option><option label="Eritrea" value="string:ER">Eritrea</option><option label="Estonia" value="string:EE">Estonia</option><option label="Ethiopia" value="string:ET">Ethiopia</option><option label="Falkland Islands (Malvinas)" value="string:FK">Falkland Islands (Malvinas)</option><option label="Faroe Islands" value="string:FO">Faroe Islands</option><option label="Fiji" value="string:FJ">Fiji</option><option label="Finland" value="string:FI">Finland</option><option label="France" value="string:FR">France</option><option label="French Guiana" value="string:GF">French Guiana</option><option label="French Polynesia" value="string:PF">French Polynesia</option><option label="French Southern Territories" value="string:TF">French Southern Territories</option><option label="Gabon" value="string:GA">Gabon</option><option label="Georgia" value="string:GE">Georgia</option><option label="Germany" value="string:DE">Germany</option><option label="Ghana" value="string:GH">Ghana</option><option label="Gibraltar" value="string:GI">Gibraltar</option><option label="Greece" value="string:GR">Greece</option><option label="Greenland" value="string:GL">Greenland</option><option label="Grenada" value="string:GD">Grenada</option><option label="Guadeloupe" value="string:GP">Guadeloupe</option><option label="Guam" value="string:GU">Guam</option><option label="Guatemala" value="string:GT">Guatemala</option><option label="Guinea" value="string:GN">Guinea</option><option label="Guinea-Bissau" value="string:GW">Guinea-Bissau</option><option label="Guyana" value="string:GY">Guyana</option><option label="Haiti" value="string:HT">Haiti</option><option label="Heard Island and McDonald Islands" value="string:HM">Heard Island and McDonald Islands</option><option label="Holy See (Vatican City State)" value="string:VA">Holy See (Vatican City State)</option><option label="Honduras" value="string:HN">Honduras</option><option label="Hong Kong" value="string:HK">Hong Kong</option><option label="Hungary" value="string:HU">Hungary</option><option label="Iceland" value="string:IS">Iceland</option><option label="India" value="string:IN">India</option><option label="Indonesia" value="string:ID">Indonesia</option><option label="Iran, Islamic Republic of" value="string:IR">Iran, Islamic Republic of</option><option label="Iraq" value="string:IQ">Iraq</option><option label="Ireland" value="string:IE">Ireland</option><option label="Israel" value="string:IL">Israel</option><option label="Italy" value="string:IT">Italy</option><option label="Jamaica" value="string:JM">Jamaica</option><option label="Japan" value="string:JP">Japan</option><option label="Jordan" value="string:JO">Jordan</option><option label="Kazakhstan" value="string:KZ">Kazakhstan</option><option label="Kenya" value="string:KE">Kenya</option><option label="Kiribati" value="string:KI">Kiribati</option><option label="Korea, Democratic People's Republic of" value="string:KP">Korea, Democratic People's Republic of</option><option label="Korea, Republic of" value="string:KR">Korea, Republic of</option><option label="Kuwait" value="string:KW">Kuwait</option><option label="Kyrgyzstan" value="string:KG">Kyrgyzstan</option><option label="Lao People's Democratic Republic" value="string:LA">Lao People's Democratic Republic</option><option label="Latvia" value="string:LV">Latvia</option><option label="Lebanon" value="string:LB">Lebanon</option><option label="Lesotho" value="string:LS">Lesotho</option><option label="Liberia" value="string:LR">Liberia</option><option label="Libyan Arab Jamahiriya" value="string:LY">Libyan Arab Jamahiriya</option><option label="Liechtenstein" value="string:LI">Liechtenstein</option><option label="Lithuania" value="string:LT">Lithuania</option><option label="Luxembourg" value="string:LU">Luxembourg</option><option label="Macao" value="string:MO">Macao</option><option label="Macedonia, Republic of" value="string:MK">Macedonia, Republic of</option><option label="Madagascar" value="string:MG">Madagascar</option><option label="Malawi" value="string:MW">Malawi</option><option label="Malaysia" value="string:MY">Malaysia</option><option label="Maldives" value="string:MV">Maldives</option><option label="Mali" value="string:ML">Mali</option><option label="Malta" value="string:MT">Malta</option><option label="Marshall Islands" value="string:MH">Marshall Islands</option><option label="Martinique" value="string:MQ">Martinique</option><option label="Mauritania" value="string:MR">Mauritania</option><option label="Mauritius" value="string:MU">Mauritius</option><option label="Mayotte" value="string:YT">Mayotte</option><option label="Mexico" value="string:MX">Mexico</option><option label="Micronesia, Federated States of" value="string:FM">Micronesia, Federated States of</option><option label="Moldova" value="string:MD">Moldova</option><option label="Monaco" value="string:MC">Monaco</option><option label="Mongolia" value="string:MN">Mongolia</option><option label="Montserrat" value="string:MS">Montserrat</option><option label="Morocco" value="string:MA">Morocco</option><option label="Mozambique" value="string:MZ">Mozambique</option><option label="Namibia" value="string:NA">Namibia</option><option label="Nauru" value="string:NR">Nauru</option><option label="Nepal" value="string:NP">Nepal</option><option label="Netherlands Antilles" value="string:AN">Netherlands Antilles</option><option label="Netherlands" value="string:NL">Netherlands</option><option label="New Caledonia" value="string:NC">New Caledonia</option><option label="New Zealand" value="string:NZ">New Zealand</option><option label="Nicaragua" value="string:NI">Nicaragua</option><option label="Niger" value="string:NE">Niger</option><option label="Nigeria" value="string:NG" selected="selected">Nigeria</option><option label="Niue" value="string:NU">Niue</option><option label="Norfolk Island" value="string:NF">Norfolk Island</option><option label="Northern Mariana Islands" value="string:MP">Northern Mariana Islands</option><option label="Norway" value="string:NO">Norway</option><option label="Oman" value="string:OM">Oman</option><option label="Pakistan" value="string:PK">Pakistan</option><option label="Palau" value="string:PW">Palau</option><option label="Palestinian Territory, Occupied" value="string:PS">Palestinian Territory, Occupied</option><option label="Panama" value="string:PA">Panama</option><option label="Papua New Guinea" value="string:PG">Papua New Guinea</option><option label="Paraguay" value="string:PY">Paraguay</option><option label="Peru" value="string:PE">Peru</option><option label="Philippines" value="string:PH">Philippines</option><option label="Pitcairn" value="string:PN">Pitcairn</option><option label="Poland" value="string:PL">Poland</option><option label="Portugal" value="string:PT">Portugal</option><option label="Puerto Rico" value="string:PR">Puerto Rico</option><option label="Qatar" value="string:QA">Qatar</option><option label="Romania" value="string:RO">Romania</option><option label="Russian Federation" value="string:RU">Russian Federation</option><option label="Rwanda" value="string:RW">Rwanda</option><option label="Reunion" value="string:RE">Reunion</option><option label="Saint Helena" value="string:SH">Saint Helena</option><option label="Saint Kitts and Nevis" value="string:KN">Saint Kitts and Nevis</option><option label="Saint Lucia" value="string:LC">Saint Lucia</option><option label="Saint Pierre and Miquelon" value="string:PM">Saint Pierre and Miquelon</option><option label="Saint Vincent and the Grenadines" value="string:VC">Saint Vincent and the Grenadines</option><option label="Samoa" value="string:WS">Samoa</option><option label="San Marino" value="string:SM">San Marino</option><option label="Saudi Arabia" value="string:SA">Saudi Arabia</option><option label="Senegal" value="string:SN">Senegal</option><option label="Seychelles" value="string:SC">Seychelles</option><option label="Sierra Leone" value="string:SL">Sierra Leone</option><option label="Singapore" value="string:SG">Singapore</option><option label="Slovakia" value="string:SK">Slovakia</option><option label="Slovenia" value="string:SI">Slovenia</option><option label="Solomon Islands" value="string:SB">Solomon Islands</option><option label="Somalia" value="string:SO">Somalia</option><option label="South Africa" value="string:ZA">South Africa</option><option label="South Georgia and the South Sandwich Islands" value="string:GS">South Georgia and the South Sandwich Islands</option><option label="Spain" value="string:ES">Spain</option><option label="Sri Lanka" value="string:LK">Sri Lanka</option><option label="Sudan" value="string:SD">Sudan</option><option label="Suriname" value="string:SR">Suriname</option><option label="Svalbard and Jan Mayen" value="string:SJ">Svalbard and Jan Mayen</option><option label="Swaziland" value="string:SZ">Swaziland</option><option label="Sweden" value="string:SE">Sweden</option><option label="Switzerland" value="string:CH">Switzerland</option><option label="Syrian Arab Republic" value="string:SY">Syrian Arab Republic</option><option label="Sao Tome and Principe" value="string:ST">Sao Tome and Principe</option><option label="Taiwan" value="string:TW">Taiwan</option><option label="Tajikistan" value="string:TJ">Tajikistan</option><option label="Tanzania, United Republic of" value="string:TZ">Tanzania, United Republic of</option><option label="Thailand" value="string:TH">Thailand</option><option label="Bahamas" value="string:BS">Bahamas</option><option label="Gambia" value="string:GM">Gambia</option><option label="Togo" value="string:TG">Togo</option><option label="Tokelau" value="string:TK">Tokelau</option><option label="Tonga" value="string:TO">Tonga</option><option label="Trinidad and Tobago" value="string:TT">Trinidad and Tobago</option><option label="Tunisia" value="string:TN">Tunisia</option><option label="Turkey" value="string:TR">Turkey</option><option label="Turkmenistan" value="string:TM">Turkmenistan</option><option label="Turks and Caicos Islands" value="string:TC">Turks and Caicos Islands</option><option label="Tuvalu" value="string:TV">Tuvalu</option><option label="Uganda" value="string:UG">Uganda</option><option label="Ukraine" value="string:UA">Ukraine</option><option label="United Arab Emirates" value="string:AE">United Arab Emirates</option><option label="United Kingdom" value="string:GB">United Kingdom</option><option label="United States Minor Outlying Islands" value="string:UM">United States Minor Outlying Islands</option><option label="United States" value="string:US">United States</option><option label="Uruguay" value="string:UY">Uruguay</option><option label="Uzbekistan" value="string:UZ">Uzbekistan</option><option label="Vanuatu" value="string:VU">Vanuatu</option><option label="Venezuela" value="string:VE">Venezuela</option><option label="Viet Nam" value="string:VN">Viet Nam</option><option label="Virgin Islands, U.S." value="string:VI">Virgin Islands, U.S.</option><option label="Wallis and Futuna" value="string:WF">Wallis and Futuna</option><option label="Western Sahara" value="string:EH">Western Sahara</option><option label="Yemen" value="string:YE">Yemen</option><option label="Serbia and Montenegro" value="string:CS">Serbia and Montenegro</option><option label="Zambia" value="string:ZM">Zambia</option><option label="Zimbabwe" value="string:ZW">Zimbabwe</option><option label="Åland Islands" value="string:AX">Åland Islands</option><option label="Serbia" value="string:RS">Serbia</option><option label="Montenegro" value="string:ME">Montenegro</option><option label="Jersey" value="string:JE">Jersey</option><option label="Guernsey" value="string:GG">Guernsey</option><option label="Isle of Man" value="string:IM">Isle of Man</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -1156,7 +1080,7 @@
                                                 <div class="row">
 
                                                     <div class="form-group col-sm-6 col-md-6">
-                                                        <label class="form-control-label">Address<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Address</label>
                                                         <div class="input-group">
                                                             <div class="input-group">
                                                                 <input type="text" id="off_address" class="form-control" required="required">
@@ -1167,12 +1091,11 @@
                                                     </div>
 
                                                     <div class="form-group col-sm-6 col-md-6">
-                                                        <label class="form-control-label">State<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">State</label>
                                                         <!--  -->
-                                                        <div class="input-group" ng-init="customer.marital_status = 'single'">
+                                                        <div class="input-group" >
 
                                                             <select class="form-control" id="off_state">
-                                                                <option id="0" class="" selected="selected">Choose State</option><option label="Abuja Capital Territory" value="string:Abuja Capital Territory">Abuja Capital Territory</option><option label="Abia" value="string:Abia">Abia</option><option label="Adamawa" value="string:Adamawa">Adamawa</option><option label="Akwa Ibom" value="string:Akwa Ibom">Akwa Ibom</option><option label="Anambra" value="string:Anambra">Anambra</option><option label="Bauchi" value="string:Bauchi">Bauchi</option><option label="Bayelsa" value="string:Bayelsa">Bayelsa</option><option label="Benue" value="string:Benue">Benue</option><option label="Borno" value="string:Borno">Borno</option><option label="Cross River" value="string:Cross River">Cross River</option><option label="Delta" value="string:Delta">Delta</option><option label="Ebonyi" value="string:Ebonyi">Ebonyi</option><option label="Edo" value="string:Edo">Edo</option><option label="Ekiti" value="string:Ekiti">Ekiti</option><option label="Enugu" value="string:Enugu">Enugu</option><option label="Gombe" value="string:Gombe">Gombe</option><option label="Imo" value="string:Imo">Imo</option><option label="Jigawa" value="string:Jigawa">Jigawa</option><option label="Kaduna" value="string:Kaduna">Kaduna</option><option label="Kano" value="string:Kano">Kano</option><option label="Katsina" value="string:Katsina">Katsina</option><option label="Kebbi" value="string:Kebbi">Kebbi</option><option label="Kogi" value="string:Kogi">Kogi</option><option label="Kwara" value="string:Kwara">Kwara</option><option label="Lagos" value="string:Lagos">Lagos</option><option label="Nassarawa" value="string:Nassarawa">Nassarawa</option><option label="Niger" value="string:Niger">Niger</option><option label="Ogun" value="string:Ogun">Ogun</option><option label="Ondo" value="string:Ondo">Ondo</option><option label="Osun" value="string:Osun">Osun</option><option label="Oyo" value="string:Oyo">Oyo</option><option label="Rivers" value="string:Rivers">Rivers</option><option label="Sokoto" value="string:Sokoto">Sokoto</option><option label="Taraba" value="string:Taraba">Taraba</option><option label="Yobe" value="string:Yobe">Yobe</option><option label="Zamfara" value="string:Zamfara">Zamfara</option>
                                                             </select>
 
                                                             <!-- ngIf: idForm.marital_status.$dirty -->
@@ -1182,7 +1105,7 @@
 
                                                 <div class="row">
                                                     <div class="form-group col-sm-6 col-md-6">
-                                                        <label class="form-control-label">Date of Employment<span class="text-danger">*</span></label>
+                                                        <label class="form-control-label">Date of Employment</label>
                                                         <div class="input-group">
                                                             <input type="date" id="doe" class="form-control"/>
                                                             <!-- ngIf: idForm.user.$dirty -->
@@ -1198,21 +1121,21 @@
                                     <div class="panel push-down">
                                         <div class="panel-body">
                                             <div class="example-box-wrapper">
-                                                <h3>Reference Information</h3> <span class="text-danger"> Required (*)</span><hr>
+                                                <h3>Reference Information</h3><hr>
 
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6">
                                                         <div class="form-group">
                                                             <label class="form-control-label">Reference Name</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="guarantor_name" class="form-control imp" placeholder="Enter Guarantor name">
+                                                                <input type="text" id="guarantor_name" class="form-control " placeholder="Enter Reference name">
                                                             </div>
                                                         </div>
 
                                                         <div class="form-group">
                                                             <label class="form-control-label">Occupation</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="guarantor_occupation" class="form-control" placeholder="Enter Guarantor Occupation">
+                                                                <input type="text" id="guarantor_occupation" class="form-control" placeholder="Enter Reference Occupation">
                                                             </div>
                                                         </div>
 
@@ -1235,7 +1158,7 @@
                                                         <div class="form-group">
                                                             <label class="form-control-label">Phone</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="guarantor_phone" class="form-control" placeholder="Enter Reference Phone Number">
+                                                                <input type="number" id="guarantor_phone" class="form-control" placeholder="Enter Reference Phone Number">
                                                             </div>
                                                         </div>
 
@@ -1257,7 +1180,6 @@
                                                             <label class="form-control-label">Country</label>
                                                             <div class="input-group">
                                                                 <select id="gua_country" class="form-control" required="" >
-                                                                    <option value="" class="" selected="selected">Please select a country</option><option label="Afghanistan" value="string:AF">Afghanistan</option><option label="Albania" value="string:AL">Albania</option><option label="Algeria" value="string:DZ">Algeria</option><option label="American Samoa" value="string:AS">American Samoa</option><option label="Andorra" value="string:AD">Andorra</option><option label="Angola" value="string:AO">Angola</option><option label="Anguilla" value="string:AI">Anguilla</option><option label="Antarctica" value="string:AQ">Antarctica</option><option label="Antigua and Barbuda" value="string:AG">Antigua and Barbuda</option><option label="Argentina" value="string:AR">Argentina</option><option label="Armenia" value="string:AM">Armenia</option><option label="Aruba" value="string:AW">Aruba</option><option label="Australia" value="string:AU">Australia</option><option label="Austria" value="string:AT">Austria</option><option label="Azerbaijan" value="string:AZ">Azerbaijan</option><option label="Bahrain" value="string:BH">Bahrain</option><option label="Bangladesh" value="string:BD">Bangladesh</option><option label="Barbados" value="string:BB">Barbados</option><option label="Belarus" value="string:BY">Belarus</option><option label="Belgium" value="string:BE">Belgium</option><option label="Belize" value="string:BZ">Belize</option><option label="Benin" value="string:BJ">Benin</option><option label="Bermuda" value="string:BM">Bermuda</option><option label="Bhutan" value="string:BT">Bhutan</option><option label="Bolivia" value="string:BO">Bolivia</option><option label="Bosnia and Herzegovina" value="string:BA">Bosnia and Herzegovina</option><option label="Botswana" value="string:BW">Botswana</option><option label="Bouvet Island" value="string:BV">Bouvet Island</option><option label="Brazil" value="string:BR">Brazil</option><option label="British Indian Ocean Territory" value="string:IO">British Indian Ocean Territory</option><option label="Virgin Islands, British" value="string:VG">Virgin Islands, British</option><option label="Brunei Darussalam" value="string:BN">Brunei Darussalam</option><option label="Bulgaria" value="string:BG">Bulgaria</option><option label="Burkina Faso" value="string:BF">Burkina Faso</option><option label="Myanmar" value="string:MM">Myanmar</option><option label="Burundi" value="string:BI">Burundi</option><option label="Cambodia" value="string:KH">Cambodia</option><option label="Cameroon" value="string:CM">Cameroon</option><option label="Canada" value="string:CA">Canada</option><option label="Cape Verde" value="string:CV">Cape Verde</option><option label="Cayman Islands" value="string:KY">Cayman Islands</option><option label="Central African Republic" value="string:CF">Central African Republic</option><option label="Chad" value="string:TD">Chad</option><option label="Chile" value="string:CL">Chile</option><option label="China" value="string:CN">China</option><option label="Christmas Island" value="string:CX">Christmas Island</option><option label="Cocos (Keeling) Islands" value="string:CC">Cocos (Keeling) Islands</option><option label="Colombia" value="string:CO">Colombia</option><option label="Comoros" value="string:KM">Comoros</option><option label="Congo, The Democratic Republic of the" value="string:CD">Congo, The Democratic Republic of the</option><option label="Congo" value="string:CG">Congo</option><option label="Cook Islands" value="string:CK">Cook Islands</option><option label="Costa Rica" value="string:CR">Costa Rica</option><option label="Côte d'Ivoire" value="string:CI">Côte d'Ivoire</option><option label="Croatia" value="string:HR">Croatia</option><option label="Cuba" value="string:CU">Cuba</option><option label="Cyprus" value="string:CY">Cyprus</option><option label="Czech Republic" value="string:CZ">Czech Republic</option><option label="Denmark" value="string:DK">Denmark</option><option label="Djibouti" value="string:DJ">Djibouti</option><option label="Dominica" value="string:DM">Dominica</option><option label="Dominican Republic" value="string:DO">Dominican Republic</option><option label="Timor-Leste" value="string:TL">Timor-Leste</option><option label="Ecuador" value="string:EC">Ecuador</option><option label="Egypt" value="string:EG">Egypt</option><option label="El Salvador" value="string:SV">El Salvador</option><option label="Equatorial Guinea" value="string:GQ">Equatorial Guinea</option><option label="Eritrea" value="string:ER">Eritrea</option><option label="Estonia" value="string:EE">Estonia</option><option label="Ethiopia" value="string:ET">Ethiopia</option><option label="Falkland Islands (Malvinas)" value="string:FK">Falkland Islands (Malvinas)</option><option label="Faroe Islands" value="string:FO">Faroe Islands</option><option label="Fiji" value="string:FJ">Fiji</option><option label="Finland" value="string:FI">Finland</option><option label="France" value="string:FR">France</option><option label="French Guiana" value="string:GF">French Guiana</option><option label="French Polynesia" value="string:PF">French Polynesia</option><option label="French Southern Territories" value="string:TF">French Southern Territories</option><option label="Gabon" value="string:GA">Gabon</option><option label="Georgia" value="string:GE">Georgia</option><option label="Germany" value="string:DE">Germany</option><option label="Ghana" value="string:GH">Ghana</option><option label="Gibraltar" value="string:GI">Gibraltar</option><option label="Greece" value="string:GR">Greece</option><option label="Greenland" value="string:GL">Greenland</option><option label="Grenada" value="string:GD">Grenada</option><option label="Guadeloupe" value="string:GP">Guadeloupe</option><option label="Guam" value="string:GU">Guam</option><option label="Guatemala" value="string:GT">Guatemala</option><option label="Guinea" value="string:GN">Guinea</option><option label="Guinea-Bissau" value="string:GW">Guinea-Bissau</option><option label="Guyana" value="string:GY">Guyana</option><option label="Haiti" value="string:HT">Haiti</option><option label="Heard Island and McDonald Islands" value="string:HM">Heard Island and McDonald Islands</option><option label="Holy See (Vatican City State)" value="string:VA">Holy See (Vatican City State)</option><option label="Honduras" value="string:HN">Honduras</option><option label="Hong Kong" value="string:HK">Hong Kong</option><option label="Hungary" value="string:HU">Hungary</option><option label="Iceland" value="string:IS">Iceland</option><option label="India" value="string:IN">India</option><option label="Indonesia" value="string:ID">Indonesia</option><option label="Iran, Islamic Republic of" value="string:IR">Iran, Islamic Republic of</option><option label="Iraq" value="string:IQ">Iraq</option><option label="Ireland" value="string:IE">Ireland</option><option label="Israel" value="string:IL">Israel</option><option label="Italy" value="string:IT">Italy</option><option label="Jamaica" value="string:JM">Jamaica</option><option label="Japan" value="string:JP">Japan</option><option label="Jordan" value="string:JO">Jordan</option><option label="Kazakhstan" value="string:KZ">Kazakhstan</option><option label="Kenya" value="string:KE">Kenya</option><option label="Kiribati" value="string:KI">Kiribati</option><option label="Korea, Democratic People's Republic of" value="string:KP">Korea, Democratic People's Republic of</option><option label="Korea, Republic of" value="string:KR">Korea, Republic of</option><option label="Kuwait" value="string:KW">Kuwait</option><option label="Kyrgyzstan" value="string:KG">Kyrgyzstan</option><option label="Lao People's Democratic Republic" value="string:LA">Lao People's Democratic Republic</option><option label="Latvia" value="string:LV">Latvia</option><option label="Lebanon" value="string:LB">Lebanon</option><option label="Lesotho" value="string:LS">Lesotho</option><option label="Liberia" value="string:LR">Liberia</option><option label="Libyan Arab Jamahiriya" value="string:LY">Libyan Arab Jamahiriya</option><option label="Liechtenstein" value="string:LI">Liechtenstein</option><option label="Lithuania" value="string:LT">Lithuania</option><option label="Luxembourg" value="string:LU">Luxembourg</option><option label="Macao" value="string:MO">Macao</option><option label="Macedonia, Republic of" value="string:MK">Macedonia, Republic of</option><option label="Madagascar" value="string:MG">Madagascar</option><option label="Malawi" value="string:MW">Malawi</option><option label="Malaysia" value="string:MY">Malaysia</option><option label="Maldives" value="string:MV">Maldives</option><option label="Mali" value="string:ML">Mali</option><option label="Malta" value="string:MT">Malta</option><option label="Marshall Islands" value="string:MH">Marshall Islands</option><option label="Martinique" value="string:MQ">Martinique</option><option label="Mauritania" value="string:MR">Mauritania</option><option label="Mauritius" value="string:MU">Mauritius</option><option label="Mayotte" value="string:YT">Mayotte</option><option label="Mexico" value="string:MX">Mexico</option><option label="Micronesia, Federated States of" value="string:FM">Micronesia, Federated States of</option><option label="Moldova" value="string:MD">Moldova</option><option label="Monaco" value="string:MC">Monaco</option><option label="Mongolia" value="string:MN">Mongolia</option><option label="Montserrat" value="string:MS">Montserrat</option><option label="Morocco" value="string:MA">Morocco</option><option label="Mozambique" value="string:MZ">Mozambique</option><option label="Namibia" value="string:NA">Namibia</option><option label="Nauru" value="string:NR">Nauru</option><option label="Nepal" value="string:NP">Nepal</option><option label="Netherlands Antilles" value="string:AN">Netherlands Antilles</option><option label="Netherlands" value="string:NL">Netherlands</option><option label="New Caledonia" value="string:NC">New Caledonia</option><option label="New Zealand" value="string:NZ">New Zealand</option><option label="Nicaragua" value="string:NI">Nicaragua</option><option label="Niger" value="string:NE">Niger</option><option label="Nigeria" value="string:NG" selected="selected">Nigeria</option><option label="Niue" value="string:NU">Niue</option><option label="Norfolk Island" value="string:NF">Norfolk Island</option><option label="Northern Mariana Islands" value="string:MP">Northern Mariana Islands</option><option label="Norway" value="string:NO">Norway</option><option label="Oman" value="string:OM">Oman</option><option label="Pakistan" value="string:PK">Pakistan</option><option label="Palau" value="string:PW">Palau</option><option label="Palestinian Territory, Occupied" value="string:PS">Palestinian Territory, Occupied</option><option label="Panama" value="string:PA">Panama</option><option label="Papua New Guinea" value="string:PG">Papua New Guinea</option><option label="Paraguay" value="string:PY">Paraguay</option><option label="Peru" value="string:PE">Peru</option><option label="Philippines" value="string:PH">Philippines</option><option label="Pitcairn" value="string:PN">Pitcairn</option><option label="Poland" value="string:PL">Poland</option><option label="Portugal" value="string:PT">Portugal</option><option label="Puerto Rico" value="string:PR">Puerto Rico</option><option label="Qatar" value="string:QA">Qatar</option><option label="Romania" value="string:RO">Romania</option><option label="Russian Federation" value="string:RU">Russian Federation</option><option label="Rwanda" value="string:RW">Rwanda</option><option label="Reunion" value="string:RE">Reunion</option><option label="Saint Helena" value="string:SH">Saint Helena</option><option label="Saint Kitts and Nevis" value="string:KN">Saint Kitts and Nevis</option><option label="Saint Lucia" value="string:LC">Saint Lucia</option><option label="Saint Pierre and Miquelon" value="string:PM">Saint Pierre and Miquelon</option><option label="Saint Vincent and the Grenadines" value="string:VC">Saint Vincent and the Grenadines</option><option label="Samoa" value="string:WS">Samoa</option><option label="San Marino" value="string:SM">San Marino</option><option label="Saudi Arabia" value="string:SA">Saudi Arabia</option><option label="Senegal" value="string:SN">Senegal</option><option label="Seychelles" value="string:SC">Seychelles</option><option label="Sierra Leone" value="string:SL">Sierra Leone</option><option label="Singapore" value="string:SG">Singapore</option><option label="Slovakia" value="string:SK">Slovakia</option><option label="Slovenia" value="string:SI">Slovenia</option><option label="Solomon Islands" value="string:SB">Solomon Islands</option><option label="Somalia" value="string:SO">Somalia</option><option label="South Africa" value="string:ZA">South Africa</option><option label="South Georgia and the South Sandwich Islands" value="string:GS">South Georgia and the South Sandwich Islands</option><option label="Spain" value="string:ES">Spain</option><option label="Sri Lanka" value="string:LK">Sri Lanka</option><option label="Sudan" value="string:SD">Sudan</option><option label="Suriname" value="string:SR">Suriname</option><option label="Svalbard and Jan Mayen" value="string:SJ">Svalbard and Jan Mayen</option><option label="Swaziland" value="string:SZ">Swaziland</option><option label="Sweden" value="string:SE">Sweden</option><option label="Switzerland" value="string:CH">Switzerland</option><option label="Syrian Arab Republic" value="string:SY">Syrian Arab Republic</option><option label="Sao Tome and Principe" value="string:ST">Sao Tome and Principe</option><option label="Taiwan" value="string:TW">Taiwan</option><option label="Tajikistan" value="string:TJ">Tajikistan</option><option label="Tanzania, United Republic of" value="string:TZ">Tanzania, United Republic of</option><option label="Thailand" value="string:TH">Thailand</option><option label="Bahamas" value="string:BS">Bahamas</option><option label="Gambia" value="string:GM">Gambia</option><option label="Togo" value="string:TG">Togo</option><option label="Tokelau" value="string:TK">Tokelau</option><option label="Tonga" value="string:TO">Tonga</option><option label="Trinidad and Tobago" value="string:TT">Trinidad and Tobago</option><option label="Tunisia" value="string:TN">Tunisia</option><option label="Turkey" value="string:TR">Turkey</option><option label="Turkmenistan" value="string:TM">Turkmenistan</option><option label="Turks and Caicos Islands" value="string:TC">Turks and Caicos Islands</option><option label="Tuvalu" value="string:TV">Tuvalu</option><option label="Uganda" value="string:UG">Uganda</option><option label="Ukraine" value="string:UA">Ukraine</option><option label="United Arab Emirates" value="string:AE">United Arab Emirates</option><option label="United Kingdom" value="string:GB">United Kingdom</option><option label="United States Minor Outlying Islands" value="string:UM">United States Minor Outlying Islands</option><option label="United States" value="string:US">United States</option><option label="Uruguay" value="string:UY">Uruguay</option><option label="Uzbekistan" value="string:UZ">Uzbekistan</option><option label="Vanuatu" value="string:VU">Vanuatu</option><option label="Venezuela" value="string:VE">Venezuela</option><option label="Viet Nam" value="string:VN">Viet Nam</option><option label="Virgin Islands, U.S." value="string:VI">Virgin Islands, U.S.</option><option label="Wallis and Futuna" value="string:WF">Wallis and Futuna</option><option label="Western Sahara" value="string:EH">Western Sahara</option><option label="Yemen" value="string:YE">Yemen</option><option label="Serbia and Montenegro" value="string:CS">Serbia and Montenegro</option><option label="Zambia" value="string:ZM">Zambia</option><option label="Zimbabwe" value="string:ZW">Zimbabwe</option><option label="Åland Islands" value="string:AX">Åland Islands</option><option label="Serbia" value="string:RS">Serbia</option><option label="Montenegro" value="string:ME">Montenegro</option><option label="Jersey" value="string:JE">Jersey</option><option label="Guernsey" value="string:GG">Guernsey</option><option label="Isle of Man" value="string:IM">Isle of Man</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -1388,6 +1310,8 @@
         checkForEdit();
         getOfficers();
         getBranches();
+        getCountries();
+        getStates();
     });
 
     let client_id;
@@ -1415,14 +1339,21 @@
     }
 
     function nextPrev(n) {
-        console.log('here');
         // This function will figure out which tab to display
         var x = document.getElementsByClassName("tab");
         // Exit the function if any field in the current tab is invalid:
-        if (n == 1 && !validateForm()){
-            swal('Fill all required fields');
+
+        if(validateEmail($('#email').val())){
+            if (n == 1 && !validateForm()){
+                swal('Fill all required fields');
+                return false;
+            }
+        }else{
+            swal('Invalid Email');
             return false;
-        } //return false;
+        }
+
+        //return false;
 //        if (n == 1) return false;
         // Hide the current tab:
         x[currentTab].style.display = "none";
@@ -1443,7 +1374,8 @@
         // This function deals with validation of the form fields
         var x, y, i, valid = true;
         x = document.getElementsByClassName("tab");
-        y = x[currentTab].getElementsByTagName("input");
+        y = x[currentTab].getElementsByClassName("imp");
+//        y = x[currentTab].getElementsByTagName("input");
         // A loop that checks every input field in the current tab:
         for (i = 0; i < y.length; i++) {
             // If a field is empty...
@@ -1469,6 +1401,11 @@
         }
         //... and adds the "active" class to the current step:
         x[n].className += " active";
+    }
+
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
     }
 
     $(document).ajaxStart(function(){
@@ -1681,7 +1618,6 @@
         });
     }
 
-
     function openDetailsModal(id) {
         localStorage.setItem("user_id",id);
         let data = ($.grep(results, function(e){ return e.ID === id; }))[0],
@@ -1735,12 +1671,41 @@
         });
     }
 
+    function getCountries(){
+        $.ajax({
+            type: "GET",
+            url: "/user/countries/",
+            data: '{}',
+            success: function (response) {
+                var country = $("[id*=country]");
+                country.empty().append('<option selected="selected" id="0">-- Select Country --</option>');
+                $.each(JSON.parse(response), function (key, val) {
+                    country.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.country_name + '</option>');
+                });
+            }
+        });
+    }
+
+    function getStates(){
+        $.ajax({
+            type: "GET",
+            url: "/user/states/",
+            data: '{}',
+            success: function (response) {
+                var state = $("[id*=state]");
+                state.empty().append('<option selected="selected" id="0">-- Select State --</option>');
+                $.each(JSON.parse(response), function (key, val) {
+                    state.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.state + '</option>');
+                });
+            }
+        });
+    }
+
     function edit(){
         getRoles();
         $.ajax({
-            'url': '/user/user-dets/'+localStorage.getItem("user_id"),
+            'url': '/user/client-dets/'+localStorage.getItem("user_id"),
             'type': 'get',
-            'data': {},
             'success': function (data) {
                 //console.log(data);
                 $('#user-form').slideDown();
@@ -1777,6 +1742,8 @@
                 $('#guarantor_email').val(data[0].guarantor_email);
                 $('#guarantor_address').val(data[0].guarantor_address);
                 $('#gua_country').val(data[0].gua_country);
+                $("#email").prop("readonly", true);
+                $("#phone").prop("readonly", true);
 
                 // var applications = data.message;
                 // results = applications;
@@ -1799,7 +1766,6 @@
             $.ajax({
                 'url': '/user/client-dets/'+client_id,
                 'type': 'get',
-                'data': {},
                 'success': function (data) {
                     //console.log(data);
                     $('#client_name').html(data[0].fullname);
@@ -1837,6 +1803,8 @@
                     $('#guarantor_email').val(data[0].guarantor_email);
                     $('#guarantor_address').val(data[0].guarantor_address);
                     $('#gua_country').val(data[0].gua_country);
+                    $("#email").prop("readonly", true);
+                    $("#phone").prop("readonly", true);
 
                     // var applications = data.message;
                     // results = applications;
@@ -1866,17 +1834,17 @@
         obj.marital_status = $('#marital_status').find('option:selected').attr('value');
         obj.loan_officer = $('#loan_officer').find('option:selected').attr('id');
         obj.branch = $('#branch').find('option:selected').attr('id');
-        obj.client_state = $('#client_state').find('option:selected').text();
+        obj.client_state = $('#client_state').find('option:selected').attr('id');
         obj.postcode = $("#postcode").val();
-        obj.client_country = $('#client_country').find('option:selected').text();
+        obj.client_country = $('#client_country').find('option:selected').attr('id');
         obj.years_add = $("#years_add").val();
         obj.ownership = $('#ownership').find('option:selected').attr('id');
         obj.employer_name = $("#employer_name").val();
         obj.industry = $('#industry').find('option:selected').text();
         obj.job = $("#job").val();
-        obj.job_country = $('#job_country').find('option:selected').text();
+        obj.job_country = $('#job_country').find('option:selected').attr('id');
         obj.off_address = $("#off_address").val();
-        obj.off_state = $('#off_state').find('option:selected').text();
+        obj.off_state = $('#off_state').find('option:selected').attr('id');
         obj.doe = $("#doe").val();
         obj.guarantor_name = $("#guarantor_name").val();
         obj.guarantor_occupation = $("#doe").val();
@@ -1885,7 +1853,7 @@
         obj.guarantor_phone = $("#guarantor_phone").val();
         obj.guarantor_email = $("#guarantor_email").val();
         obj.guarantor_address = $("#guarantor_address").val();
-        obj.gua_country = $('#gua_country').find('option:selected').text();
+        obj.gua_country = $('#gua_country').find('option:selected').attr('id');
 //        obj.user_role = $('#role').find('option:selected').attr('id');
         var test={};
         $.ajax({
@@ -1916,7 +1884,7 @@
             swal('Please Enter Client Email!');
         }
         else {
-            folder_name = name + '_' + $('#email').val();
+            folder_name = $('#phone').val();
         }
         var file; var item;
         if (i === 1){
@@ -1929,7 +1897,6 @@
             file = $('#file-upload-idcard')[0].files[0]
             item = "ID Card";
         }
-        console.log(name);
         if (file === "undefined") {
             swal ("Choose file to upload");
         }else{

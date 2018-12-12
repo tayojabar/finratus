@@ -554,7 +554,7 @@
                     v.fullname,
                     formatter.format(parseFloat(v.loan_amount)),
                     formatter.format(parseFloat(v.balance)),
-                    v.date
+                    formatDate(v.date)
                 ]);
             });
             jQuery.each(dets.without_pay, function(k, v){
@@ -564,7 +564,7 @@
                     v.fullname,
                     formatter.format(parseFloat(v.loan_amount)),
                     formatter.format(parseFloat(v.loan_amount)),
-                    v.date_modified
+                    formatDate(v.date_modified)
                 ]);
             });
             $('#total-disbursements').html(formatter.format(total));
