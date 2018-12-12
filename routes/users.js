@@ -377,6 +377,28 @@ users.get('/branches', function(req, res, next) {
     });
 });
 
+users.get('/states', function(req, res, next) {
+    let query = 'SELECT * from state';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+users.get('/countries', function(req, res, next) {
+    let query = 'SELECT * from country';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
 users.get('/clients-list', function(req, res, next) {
     let query = 'select * from clients where status = 1';
     db.query(query, function (error, results, fields) {

@@ -502,7 +502,7 @@
     function populateCards(data){
 
             let obj = data[0];
-            loadImages(obj.fullname+'_'+obj.email, obj.fullname);
+            loadImages(obj.phone, obj.fullname);
         $('#fullname').html(obj.fullname);
         $('#phone').html(' '+obj.phone);
         $('#email').html(' '+obj.email);
