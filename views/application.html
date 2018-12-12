@@ -1405,6 +1405,8 @@
             let _self = this,
                 $images_preview = $('#images-preview'),
                 $files_preview = $('#files-preview');
+            console.log(this.files)
+            console.log(this.files[0])
             if (this.files[0].type && (this.files[0].type).split('/') && ((this.files[0].type).split('/'))[0]){
                 if (((this.files[0].type).split('/'))[0] !== 'image'){
                     $images_preview.hide();
