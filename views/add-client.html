@@ -892,7 +892,7 @@
             data: '{}',
             success: function (response) {
                 var branch = $("[id=branch]");
-                branch.empty().append('<option selected="selected" id="0">-- Select a Branch --</option>');
+                branch.empty().append('<option id="0">-- Select a Branch --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
                 });
@@ -907,7 +907,7 @@
             data: '{}',
             success: function (response) {
                 var country = $("[id*=country]");
-                country.empty().append('<option selected="selected" id="0">-- Select Country --</option>');
+                country.empty().append('<option id="0">-- Select Country --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     country.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.country_name + '</option>');
                 });
@@ -922,7 +922,7 @@
             data: '{}',
             success: function (response) {
                 var state = $("[id*=state]");
-                state.empty().append('<option selected="selected" id="0">-- Select State --</option>');
+                state.empty().append('<option id="0">-- Select State --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     state.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.state + '</option>');
                 });
