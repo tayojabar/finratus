@@ -1723,12 +1723,12 @@ users.get('/report-cards', function(req, res, next) {
 users.get('/disbursements', function(req, res, next) {
     let query
     query = 'select \n' +
-            '(select userID from staging.applications where ID = applicationID) as user, (select fullname from staging.clients where ID = user) as fullname, \n' +
-            'applicationID, (select loan_amount from staging.applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
-            '((select loan_amount from staging.applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from staging.applications where ID = applicationID) as date\n' +
-            'from staging.schedule_history \n' +
-            'where applicationID in (select applicationID from staging.application_schedules\n' +
-            '\t\t\t\t\t\twhere applicationID in (select ID from staging.applications where status = 2) and status = 1)\n' +
+            '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, \n' +
+            'applicationID, (select loan_amount from applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
+            '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from applications where ID = applicationID) as date\n' +
+            'from schedule_history \n' +
+            'where applicationID in (select applicationID from application_schedules\n' +
+            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n' +
             'group by applicationID';
     let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified ' +
                  'from applications where status = 2 and ID not in (select applicationID from schedule_history)'
@@ -1751,14 +1751,14 @@ users.get('/disbursements', function(req, res, next) {
 users.get('/payments', function(req, res, next) {
     let query
     query = 'select \n' +
-        '(select fullname from staging.clients where ID = (select userID from staging.applications where ID = applicationID)) as fullname,\n' +
-        '(select userID from staging.applications where ID = applicationID) as clientid,\n' +
+        '(select fullname from clients where ID = (select userID from applications where ID = applicationID)) as fullname,\n' +
+        '(select userID from applications where ID = applicationID) as clientid,\n' +
         'applicationID, sum(payment_amount) as paid, max(date_created) as date\n' +
-        'from staging.schedule_history \n' +
-        'where applicationID in (select ID from staging.applications) and status = 1\n' +
+        'from schedule_history \n' +
+        'where applicationID in (select ID from applications) and status = 1\n' +
         'group by applicationID';
-    let query2 = 'select sum(payment_amount) as total from staging.schedule_history \n' +
-        'where applicationID in (select ID from staging.applications)\n' +
+    let query2 = 'select sum(payment_amount) as total from schedule_history \n' +
+        'where applicationID in (select ID from applications)\n' +
         'and status = 1'
     var items = {};
     db.query(query, function (error, results, fields) {
@@ -1778,14 +1778,14 @@ users.get('/payments', function(req, res, next) {
 /* Loans by Branches */
 users.get('/loans-by-branches', function(req, res, next) {
     let query
-    query = 'select (select branch from staging.clients where ID = userID) as branchID, \n' +
-            '(select branch_name from staging.branches br where br.id = branchID) as branch,\n' +
+    query = 'select (select branch from clients where ID = userID) as branchID, \n' +
+            '(select branch_name from branches br where br.id = branchID) as branch,\n' +
             'loan_amount, sum(loan_amount) as disbursed,\n' +
-            '(select sum(payment_amount) from staging.schedule_history sh\n' +
+            '(select sum(payment_amount) from schedule_history sh\n' +
             'where \n' +
-            '(select branch from staging.clients c where c.ID = (select userID from staging.applications b where b.ID = sh.applicationID)) = branchID) as collected\n' +
+            '(select branch from clients c where c.ID = (select userID from applications b where b.ID = sh.applicationID)) = branchID) as collected\n' +
             '\n' +
-            'from staging.applications a\n' +
+            'from applications a\n' +
             'where status = 2\n' +
             'group by branchID'
     var items = {};
