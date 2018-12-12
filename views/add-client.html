@@ -667,7 +667,6 @@
                                     <span class="step"></span>
                                     <span class="step"></span>
                                     <span class="step"></span>
-                                    <span class="step"></span>
                                 </div>
 
                             </div>
@@ -725,10 +724,17 @@
         // This function will figure out which tab to display
         var x = document.getElementsByClassName("tab");
         // Exit the function if any field in the current tab is invalid:
-        if (n == 1 && !validateForm()){
-            swal('Fill all required fields');
+        if(validateEmail($('#email').val())){
+            if (n == 1 && !validateForm()){
+                swal('Fill all required fields');
+                return false;
+            }
+        }else{
+            swal('Invalid Email');
             return false;
-        } //return false;
+        }
+
+        //return false;
 //        if (n == 1) return false;
         // Hide the current tab:
         x[currentTab].style.display = "none";
@@ -846,6 +852,11 @@
         }
     }
 
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
     function confirmPassword(){
         console.log("Here");
         console.log($('#cpassword').val());
@@ -936,7 +947,12 @@
                     test[key] = val;
                 });
                 if(test.message){
-                    swal("Client already exists!");
+                    var clients = [];
+                    for (var i = 0; i < (test.response).length; i++){
+                        clients += ', '+test.response[i]["fullname"];
+                    }
+                    swal({icon: 'info', text: "Information already exists for client(s)"+clients});
+                    window.location.href = "./add-client";
                 }
                 else if(test.status == 500){
                     swal("Please recheck entered values");
