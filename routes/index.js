@@ -1508,33 +1508,29 @@ router.post('/document-upload/:id/:name', function(req, res) {
             res.send({"status": 500, "error": "Application does not exist", "response": null});
         } else {
             fs.stat('files/application-'+application_id+'/', function(err) {
-                if (!err) {
-                    console.log('file or directory exists');
-                } else if (err.code === 'ENOENT') {
+                if (err && (err.code === 'ENOENT'))
                     fs.mkdirSync('files/application-'+application_id+'/');
-                }
-            });
 
-            fs.stat('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function (err) {
-                if (err) {
-                    sampleFile.mv('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function(err) {
-                        if (err) return res.status(500).send(err);
-                        res.send({files:[sampleFile]});
-                    });
-                }
-                else{
-                    fs.unlink('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension,function(err){
-                        if(err){
-                            return console.log(err);
-                        } else{
-                            sampleFile.mv('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function(err) {
-                                if (err)
-                                    return res.status(500).send(err);
-                                res.send({files:[sampleFile]});
-                            });
-                        }
-                    });
-                }
+                fs.stat('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function (err) {
+                    if (err) {
+                        sampleFile.mv('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function(err) {
+                            if (err) return res.status(500).send(err);
+                            res.send({files:[sampleFile]});
+                        });
+                    } else {
+                        fs.unlink('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension,function(err){
+                            if(err){
+                                return console.log(err);
+                            } else {
+                                sampleFile.mv('files/application-'+application_id+'/'+application_id+'_'+name+'.'+extension, function(err) {
+                                    if (err)
+                                        return res.status(500).send(err);
+                                    res.send({files:[sampleFile]});
+                                });
+                            }
+                        });
+                    }
+                });
             });
         }
     });
