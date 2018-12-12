@@ -667,7 +667,6 @@
                                     <span class="step"></span>
                                     <span class="step"></span>
                                     <span class="step"></span>
-                                    <span class="step"></span>
                                 </div>
 
                             </div>
@@ -948,15 +947,20 @@
                     test[key] = val;
                 });
                 if(test.message){
-                    swal("Client already exists!");
+                    var clients = [];
+                    for (var i = 0; i < (test.response).length; i++){
+                        clients += ', '+test.response[i]["fullname"];
+                    }
+                    swal({icon: 'info', text: "Information already exists for client(s)"+clients});
+                    window.location.href = "./add-client";
                 }
                 else if(test.status == 500){
                     swal("Please recheck entered values");
-//                    window.location.href = "./add-client";
+                    window.location.href = "./add-client";
                 }
                 else{
                     swal("Client Information Registered!");
-//                    window.location.href = "./add-client";
+                    window.location.href = "./add-client";
                 }
             }
         });

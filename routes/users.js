@@ -162,22 +162,18 @@ users.post('/new-user', function(req, res, next) {
 
 /* Add New Client */
 users.post('/new-client', function(req, res, next) {
-    let data = [],
-        postData = req.body,
+    let postData = req.body,
         query =  'INSERT INTO clients Set ?',
         query2 = 'select * from clients where username = ? or email = ? or phone = ?';
-    data.username = req.body.username;
-    data.email = req.body.email;
-    data.phone = req.body.phone;
     postData.status = 1;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
 
     db.getConnection(function(err, connection) {
         if (err) throw err;
-
-        connection.query(query2,data, function (error, results, fields) {
-            if (results && results[0])
+        connection.query(query2,[req.body.username, req.body.email, req.body.phone], function (error, results, fields) {
+            if (results && results[0]){
                 return res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Information in use by existing client!"}));
+            }
             connection.query(query,postData, function (error, re, fields) {
                 if(error){
                     console.log(error);
