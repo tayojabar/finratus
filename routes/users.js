@@ -957,18 +957,22 @@ users.get('/applications/filter', function(req, res, next) {
                 break;
             }
             case '2': {
-                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=2 ");
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage<>2  AND w.current_stage<>3 ");
                 break;
             }
             case '3': {
-                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=3 ");
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=2 ");
                 break;
             }
             case '4': {
-                query = query.concat("AND a.status = 2  AND a.close_status = 0 ");
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=3 ");
                 break;
             }
             case '5': {
+                query = query.concat("AND a.status = 2  AND a.close_status = 0 ");
+                break;
+            }
+            case '6': {
                 query = query.concat("AND a.close_status <> 0 ");
                 break;
             }
@@ -1504,6 +1508,7 @@ users.post('/application/edit-schedule/:id/:modifier_id', function(req, res, nex
                             interest_amount: invoice_obj[0].interest_amount,
                             payment_amount: invoice_obj[0].payment_amount,
                             payment_collect_date: invoice_obj[0].payment_collect_date,
+                            interest_collect_date: invoice_obj[0].interest_collect_date,
                             fees_amount: invoice_obj[0].fees_amount,
                             penalty_amount: invoice_obj[0].penalty_amount,
                             date_modified: invoice_obj[0].date_modified,
