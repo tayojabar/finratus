@@ -967,27 +967,22 @@
                         $carousel_inner.append('<h3>No Documents Uploaded Yet!</h3>');
                     } else {
                         let count = 0,
-                            pages = parseInt(files_count/4);
-                        console.log(files_count)
-                        for (let i=0; i<pages; i++){
-                            if (i === 0){
-                                $carousel_inner.append('<div class="item active"><div class="row page-0"></div></div>');
-                                $carousel_indicators.append('<li data-target="#Carousel" data-slide-to="0" class="active"></li>');
+                            pages = parseInt(((files_count).roundTo(4))/4);
+                        for (let i=1; i<=pages; i++){
+                            if (i === 1){
+                                $carousel_inner.append('<div class="item active"><div class="row page-1"></div></div>');
+                                $carousel_indicators.append('<li data-target="#Carousel" data-slide-to="1" class="active"></li>');
                             } else {
                                 $carousel_inner.append('<div class="item"><div class="row page-'+i+'"></div></div>');
                                 $carousel_indicators.append('<li data-target="#Carousel" data-slide-to="'+i+'"></li>');
                             }
-                            console.log(i)
                             for (let j=0; j<4; j++){
                                 if (count < files_count){
                                     let file_name = file_names[count],
                                         file = application.files[file_name];
-                                    console.log(file_name)
-                                    console.log(file_name)
                                     if (isUriImage(file)){
                                         $('.page-'+i).append('<div class="col-md-3"><a class="thumbnail grouped_elements" rel="grouped_elements" data-toggle="tooltip" data-placement="bottom" title="Click to Expand!" href="'+file+'"><img src="'+file+'" alt="'+file_name.replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_name.replace(/_/g, ' ')+'</p></div>');
                                     } else {
-                                        console.log('appended')
                                         $('.page-'+i).append('<div class="col-md-3"><a class="thumbnail" data-target="_blank" data-toggle="tooltip" data-placement="bottom" title="Click to Download!" href="'+file+'" style="padding: 25px 0;"><i class="fa fa-file" style="font-size: 150px; display: block; text-align: center;"></i></a><p style="text-align: center;">'+file_name.replace(/_/g, ' ')+'</p></div>');
                                     }
                                 }
@@ -1008,6 +1003,10 @@
                 }
             });
         }
+
+        Number.prototype.roundTo = function(n) {
+            return Math.ceil(this/n)*n;
+        };
 
         function padWithZeroes(n, width, z) {
             z = z || '0';
