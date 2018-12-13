@@ -249,7 +249,7 @@ router.get('/inspection-images/:number_plate', function(req, res, next) {
 });
 
 /* GET client profile images. */
-router.get('/profile-images/:folder/:user', function(req, res, next) {
+router.get('/profile-images/:folder/', function(req, res, next) {
     var array = [];
     var path = 'files/users/'+req.params.folder+'/';
     if (fs.existsSync(path)){

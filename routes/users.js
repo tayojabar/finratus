@@ -444,7 +444,7 @@ users.get('/user-dets/:id', function(req, res, next) {
 });
 
 users.get('/client-dets/:id', function(req, res, next) {
-    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer from clients where id = ? order by id desc ';
+    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer, (select branch_name from branches b where b.ID = clients.branch) as branchname from clients where id = ? order by id desc ';
     db.query(query, req.params.id, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -1713,6 +1713,8 @@ users.post('/forgot-password', function(req, res) {
 });
 
 /////// REPORTS
+
+
 
 /* GET Report Cards. */
 users.get('/report-cards', function(req, res, next) {

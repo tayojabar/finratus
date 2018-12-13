@@ -731,13 +731,20 @@
         // This function will figure out which tab to display
         var x = document.getElementsByClassName("tab");
         // Exit the function if any field in the current tab is invalid:
-        if(validateEmail($('#email').val())){
-            if (n == 1 && !validateForm()){
-                swal('Fill all required fields');
+        if (!($('#loan_officer').find('option:selected').attr('id') === '0') && !($('#branch').find('option:selected').attr('id') === '0')){
+
+            if(validateEmail($('#email').val())){
+                if (n == 1 && !validateForm()){
+                    swal('Fill all required fields');
+                    return false;
+                }
+            }else{
+                swal('Invalid Email');
                 return false;
             }
+
         }else{
-            swal('Invalid Email');
+            swal ({"icon": "warning", "text": "Choose a valid Loan Officer & Branch" });
             return false;
         }
 

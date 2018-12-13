@@ -474,15 +474,15 @@
                                                 <div class="row setup-content" id="files">
                                                     <div class="col-xs-12">
                                                         <div class="col-md-12 well">
-                                                            <h2 class="text-center" style="margin-bottom: 15px;">Uploaded Documents</h2>
+                                                            <!--<h2 class="text-center" style="margin-bottom: 15px;">Uploaded Images</h2>-->
                                                             <div id="Carousel" class="carousel slide">
                                                                 <ol class="carousel-indicators"></ol>
 
                                                                 <!-- Carousel items -->
-                                                                <div class="carousel-inner"></div>
+                                                                <div class="carousel-inner" style="margin-left: 150px"></div>
 
-                                                                <a data-slide="prev" href="#Carousel" class="left carousel-control">‹</a>
-                                                                <a data-slide="next" href="#Carousel" class="right carousel-control">›</a>
+                                                                <!--<a data-slide="prev" href="#Carousel" class="left carousel-control">‹</a>-->
+                                                                <!--<a data-slide="next" href="#Carousel" class="right carousel-control">›</a>-->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1266,7 +1266,7 @@
                 $('#gua_country').val(data[0].gua_country);
                 $("#email").prop("readonly", true);
                 $("#phone").prop("readonly", true);
-
+                loadImages(data[0].phone);
                 // var applications = data.message;
                 // results = applications;
                 // populateDataTable(applications);
@@ -1328,7 +1328,7 @@
                     $('#gua_country').val(data[0].gua_country);
                     $("#email").prop("readonly", true);
                     $("#phone").prop("readonly", true);
-
+                    loadImages(data[0].phone);
                     // var applications = data.message;
                     // results = applications;
                     // populateDataTable(applications);
@@ -1441,27 +1441,35 @@
         }
     }
 
-    function loadImages(foldername, name){
+    function loadImages(phone){
+        let $carousel_inner = $('.carousel-inner'),
+            $carousel_indicators = $('.carousel-indicators');
         var test = {};
         $.ajax({
-            'url': '/profile-images/'+foldername+'/'+name,
+            'url': '/profile-images/'+phone+'/',
             'type': 'get',
-            'data': {},
             'success': function (data) {
                 // $.each(data[0], function (key, val) {
                 //     test[key] = val;
                 // });
                 let res = JSON.parse(data);
                 if(res.status == 500){
-//                    swal("No Profile Image Uploaded!");
-                    $('#pic').append('<img src="./files/users/default_user_logo.png" width="180" height="170"/>');
+                    swal({"icon": "error", "text": "Error retrieving images!"});
+//                    $('#pic').append('<img src="./files/users/default_user_logo.png" width="180" height="170"/>');
                 }
                 else{
-                    let image =
-                        '<a href="#">'+
-                        '<img src="'+res['response']['Image']+'" alt="Profile Pic ' +name+'" style="max-width:100%;" height = 150 width = 150>'+
-                        '</a>';
-                    $('#pic').append(image);
+                    $.each(res['response'], function (key, value){
+                        let image = '<div class="col-sm-4">'+
+                            '<a href="#">'+
+                            '<img src="'+value+'" alt="Image" style="max-width:100%;" height = 200 width = 200>'+
+                            '</a>'+
+                            '<div style="text-align: center"><strong>'+key+' </strong></div>'+
+                            '</div>';
+                        $carousel_inner.append(image);
+//                        if (count >= 4){
+//                            $('.carousel-inner').append($('<div id="new-row" class="carousel-item"></div>').append(image));
+//                        }
+                    });
                 }
             },
             'error': function (data){
