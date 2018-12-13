@@ -261,23 +261,15 @@
                                                 <div class="row">
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Gender</label>
-                                                        <div style="border-radius: 4px; border-color: #9fcdff">
-                                                            <div class="col-md-4">
-                                                                <div>
-                                                                    <label class="control r control--radio">
-                                                                        <input type="radio" id="male" name="gender" value="Male" required="">&nbsp; Male
-                                                                        <div class="control__indicator"></div>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-5">
-                                                                <div>
-                                                                    <label class="control r control--radio">
-                                                                        <input type="radio" id="female" name="gender" value="Female" >&nbsp; Female
-                                                                        <div class="control__indicator"></div>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
+                                                        <div class="input-group">
+
+                                                            <select class="form-control" id="gender">
+                                                                <option value=""> -- Choose Gender -- </option>
+                                                                <option id="Male" value="Male">Male</option>
+                                                                <option id="Female" value="Female">Female</option>
+                                                            </select>
+
+                                                            <!-- ngIf: idForm.marital_status.$dirty -->
                                                         </div>
                                                     </div>
 
@@ -295,14 +287,14 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Marital Status</label>
                                                         <!--  -->
-                                                        <div class="input-group" ng-init="customer.marital_status = 'single'">
+                                                        <div class="input-group">
 
                                                             <select class="form-control" id="marital_status">
-                                                                <option selected="selected" disabled="disabled" hidden="hidden" value="">Please select a status</option>
-                                                                <option id="1" value="single">Single</option>
-                                                                <option id="2" value="married">Married</option>
-                                                                <option id="3" value="divorced">Divorced</option>
-                                                                <option id="4" value="other">Other</option>
+                                                                <option id="0" value="0">Please select a status</option>
+                                                                <option id="Single" value="single">Single</option>
+                                                                <option id="Married" value="married">Married</option>
+                                                                <option id="Divorced" value="divorced">Divorced</option>
+                                                                <option id="Other" value="other">Other</option>
                                                             </select>
 
                                                             <!-- ngIf: idForm.marital_status.$dirty -->
@@ -477,6 +469,22 @@
                                                             <button class="btn btn-primary pull-right write" onclick="upload(2)">Upload Signature</button>
                                                         </div>
 
+                                                    </div>
+                                                </div>
+                                                <div class="row setup-content" id="files">
+                                                    <div class="col-xs-12">
+                                                        <div class="col-md-12 well">
+                                                            <h2 class="text-center" style="margin-bottom: 15px;">Uploaded Documents</h2>
+                                                            <div id="Carousel" class="carousel slide">
+                                                                <ol class="carousel-indicators"></ol>
+
+                                                                <!-- Carousel items -->
+                                                                <div class="carousel-inner"></div>
+
+                                                                <a data-slide="prev" href="#Carousel" class="left carousel-control">‹</a>
+                                                                <a data-slide="next" href="#Carousel" class="right carousel-control">›</a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <hr>
@@ -850,13 +858,20 @@
         var x = document.getElementsByClassName("tab");
         // Exit the function if any field in the current tab is invalid:
 
-        if(validateEmail($('#email').val())){
-            if (n == 1 && !validateForm()){
-                swal('Fill all required fields');
+        if (!($('#loan_officer').find('option:selected').attr('id') === '0') && !($('#branch').find('option:selected').attr('id') === '0')){
+
+            if(validateEmail($('#email').val())){
+                if (n == 1 && !validateForm()){
+                    swal('Fill all required fields');
+                    return false;
+                }
+            }else{
+                swal('Invalid Email');
                 return false;
             }
+
         }else{
-            swal('Invalid Email');
+            swal ({"icon": "warning", "text": "Choose a valid Loan Officer & Branch" });
             return false;
         }
 
@@ -1337,7 +1352,7 @@
         obj.phone = $('#phone').val();
         obj.address = $('#address').val();
         obj.email = $('#email').val();
-        obj.gender = $('input[name="gender"]:checked').val();
+        obj.gender = $('#gender').find('option:selected').attr('value');
         obj.dob= $("#dob").val();
         obj.marital_status = $('#marital_status').find('option:selected').attr('value');
         obj.loan_officer = $('#loan_officer').find('option:selected').attr('id');
@@ -1424,6 +1439,36 @@
                 }
             });
         }
+    }
+
+    function loadImages(foldername, name){
+        var test = {};
+        $.ajax({
+            'url': '/profile-images/'+foldername+'/'+name,
+            'type': 'get',
+            'data': {},
+            'success': function (data) {
+                // $.each(data[0], function (key, val) {
+                //     test[key] = val;
+                // });
+                let res = JSON.parse(data);
+                if(res.status == 500){
+//                    swal("No Profile Image Uploaded!");
+                    $('#pic').append('<img src="./files/users/default_user_logo.png" width="180" height="170"/>');
+                }
+                else{
+                    let image =
+                        '<a href="#">'+
+                        '<img src="'+res['response']['Image']+'" alt="Profile Pic ' +name+'" style="max-width:100%;" height = 150 width = 150>'+
+                        '</a>';
+                    $('#pic').append(image);
+                }
+            },
+            'error': function (data){
+
+            }
+        });
+
     }
 
 </script>
