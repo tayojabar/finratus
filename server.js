@@ -160,6 +160,10 @@ app.get('/all-applications', requireLogin, function(req, res){
   res.sendFile('all-applications.html', { root: __dirname+'/views' });
 });
 
+app.get('/all-collections', requireLogin, function(req, res){
+    res.sendFile('all-collections.html', { root: __dirname+'/views' });
+});
+
 app.get('/all-owners', requireLogin, function(req, res){
     res.sendFile('all-owners.html', { root: __dirname+'/views' });
   });

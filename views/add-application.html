@@ -414,8 +414,8 @@
                 obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
                 if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
                     return swal('Kindly fill all required fields!');
-                if (loan_amount !== parseInt(obj.loan_amount))
-                    return swal('Loan amount ('+parseInt(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch');
+                if (loan_amount !== parseFloat(obj.loan_amount))
+                    return swal('Loan amount ('+parseFloat(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch');
 
                 $('#wait').show();
                 $.ajax({
