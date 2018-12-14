@@ -223,6 +223,17 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Disbursements</strong>
+                                                            <form id="filter" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="startDate" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="endDate" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
                                                             <span class="pull-right">Total: <span id="total-disbursements"></span></span>
                                                         </div>
                                                         <div class="card-body">
@@ -570,6 +581,32 @@
             $('#total-disbursements').html(formatter.format(total));
         }
     }
+
+    $("#filter").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            type = $("#type-filter").val(),
+            url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadUsers();
+        if (type)
+            url = url.concat('&&type='+type);
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateDataTable(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
 
     function loadPayments(){
         $.ajax({
