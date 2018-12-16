@@ -455,6 +455,7 @@
                                         <div class="col-md-12 well">
                                             <h2 class="text-center">Loan Overview
                                                 <button id="collect-payment-button" class ="btn btn-primary" style="float: right; display: none;" onclick="goToLoanRepayment()">Collect Payment <i class="fa fa-money"></i></button>
+                                                <span id="principal-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
                                             </h2>
                                             <div id="loanSchedule" style="margin-top: 30px;"></div>
                                         </div>
@@ -1160,8 +1161,7 @@
                             ul.appendChild(li);
                             count++;
                             li.innerHTML += '<a><h4 class="list-group-item-heading">Step '+count+'</h4>\n' +
-                                '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p></a>';
-                        }
+                                '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p></a>';}
                     });
 
                     if (stage.stage_name === 'Denied'){
@@ -1665,6 +1665,7 @@
         function initLoanSummary(total_prinicipal) {
             let total_principal = total_prinicipal;
             $('#loan-amount-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $('#principal-total-text').text('Total Principal: ₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             if (!application.payment_history || !application.payment_history[0]){
                 total_due_amount = total_prinicipal;
                 $('#total-due-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
