@@ -223,7 +223,7 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Disbursements</strong>
-                                                            <form id="filter" class="form-inline" style="float: right;">
+                                                            <form id="filterdisbursements" class="form-inline" style="float: right;">
                                                                 <div class="form-group">
                                                                     <label class="" for="startDate">Start date</label>
                                                                     <input type="date" class="form-control" id="startDate" placeholder="Start date">
@@ -256,6 +256,17 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Payments</strong>
+                                                            <form id="filterpayments" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="paystart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="payend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
                                                             <span class="pull-right">Total: <span id="total-payments" ></span></span>
                                                         </div>
                                                         <div class="card-body">
@@ -264,7 +275,7 @@
                                                                 <tr>
                                                                     <th>Client ID</th>
                                                                     <th>Name</th>
-                                                                    <th>Paid</th>
+                                                                    <th>Paid (+ Interest)</th>
                                                                     <th>Last Payment</th>
                                                                 </tr>
                                                                 </thead>
@@ -279,6 +290,17 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Loans by Branch</strong>&nbsp;&nbsp;&nbsp;
+                                                            <form id="filterbybranch" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="filterbranchstart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="filterbranchend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
                                                             <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
                                                             <!--</select>-->
                                                             <span class="pull-right">Total GLP: <span id="total-loans-by-branch"></span></span>
@@ -541,11 +563,16 @@
     }
 
     function loadDisbursed(){
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
+
         $.ajax({
-            'url': 'user/disbursements/',
+            'url': url,
             'type': 'get',
             'success': function (data) {
-                (data.status === 200) ? populateDisbursed(data.response) : swal('Database Error')
+                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -554,6 +581,8 @@
     }
 
     function populateDisbursed(dets){
+        $("#disbursed-table").dataTable().fnClearTable();
+        console.log(dets.length);
         if (dets.length === 0){
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
@@ -582,7 +611,7 @@
         }
     }
 
-    $("#filter").submit(function (e) {
+    $("#filterdisbursements").submit(function (e) {
         e.preventDefault();
 
         let start = $("#startDate").val(),
@@ -590,9 +619,7 @@
             type = $("#type-filter").val(),
             url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
         if (!start || !end)
-            return loadUsers();
-        if (type)
-            url = url.concat('&&type='+type);
+            return loadDisbursed();
 
         $.ajax({
             'url': url,
@@ -600,7 +627,7 @@
             'success': function (data) {
                 let applications = data.response;
                 results = applications;
-                populateDataTable(applications);
+                populateDisbursed(applications);
             },
             'error': function (err) {
                 console.log(err);
@@ -609,11 +636,15 @@
     });
 
     function loadPayments(){
+        let start = $("#paystart").val(),
+            end = $("#payend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/payments/' : 'user/payments?start='+formatDate(start)+'&&end='+formatDate(end)
         $.ajax({
-            'url': 'user/payments/',
+            'url': url,
             'type': 'get',
             'success': function (data) {
-                (data.status === 200) ? populatePayments(data.response) : swal('Database Error')
+                (data.status === 200) ? populatePayments(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -622,6 +653,7 @@
     }
 
     function populatePayments(dets){
+        $("#payments-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#payments-table").dataTable().fnClearTable();
         }else{
@@ -630,7 +662,7 @@
                 $("#payments-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.clientid),6),
                     v.fullname,
-                    formatter.format(parseFloat(v.paid)),
+                    formatter.format(parseFloat(v.paid + v.interest)),
                     v.date
                 ]);
             });
@@ -639,12 +671,39 @@
         }
     }
 
-    function loadLoansByBranch(){
+    $("#filterpayments").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#paystart").val(),
+            end = $("#payend").val(),
+            url = '/user/payments/?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadPayments();
+
         $.ajax({
-            'url': 'user/loans-by-branches/',
+            'url': url,
             'type': 'get',
             'success': function (data) {
-                (data.status === 200) ? populateLoanByBranch(data.response) : swal('Database Error')
+                let applications = data.response;
+                results = applications;
+                populatePayments(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    function loadLoansByBranch(){
+        let start = $("#filterbranchstart").val(),
+            end = $("#filterbranchend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/loans-by-branches/' : 'user/loans-by-branches?start='+formatDate(start)+'&&end='+formatDate(end)
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                (data.status === 200) ? populateLoanByBranch(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -653,6 +712,7 @@
     }
 
     function populateLoanByBranch(dets){
+        $("#loan-by-branch-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#loan-by-branch-table").dataTable().fnClearTable();
         }else{
@@ -670,6 +730,29 @@
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
+
+    $("#filterbybranch").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#filterbranchstart").val(),
+            end = $("#filterbranchend").val(),
+            url = '/user/loans-by-branches?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadLoansByBranch();
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateLoanByBranch(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
 
     function loadProjectedInterest(){
         $.ajax({

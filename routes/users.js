@@ -1745,26 +1745,41 @@ users.get('/report-cards', function(req, res, next) {
 });
 
 /* Disbursements  */
-users.get('/disbursements', function(req, res, next) {
-    let query
-    query = 'select \n' +
+users.get('/disbursements/filter', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        query,
+        group
+    queryPart = 'select \n' +
             '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, \n' +
             'applicationID, (select loan_amount from applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
-            '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from applications where ID = applicationID) as date\n' +
+            '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from applications where ID = applicationID) as date, \n' +
+            '(select date_created from applications ap where ap.ID = applicationID) as created_date '+
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
-            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n' +
-            'group by applicationID';
-    let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified ' +
-                 'from applications where status = 2 and ID not in (select applicationID from schedule_history)'
+            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
+            ;
+    group = 'group by applicationID';
+    query = queryPart.concat(group);
+
+    let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified, date_created ' +
+                 'from applications where status = 2 and ID not in (select applicationID from schedule_history) '
     var items = {};
+    if (start  && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query2 = query2.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
+    }
     db.query(query, function (error, results, fields) {
-        items.with_payments = results
+        items.with_payments = results;
         db.query(query2, function (error, results, fields) {
             if(error){
                 res.send({"status": 500, "error": error, "response": null});
             } else {
-                items.without_pay = results
+                items.without_pay = results;
                 res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
             }
         });
@@ -1774,18 +1789,30 @@ users.get('/disbursements', function(req, res, next) {
 
 /* Payments */
 users.get('/payments', function(req, res, next) {
-    let query
-    query = 'select \n' +
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        query,
+        group
+    queryPart = 'select \n' +
         '(select fullname from clients where ID = (select userID from applications where ID = applicationID)) as fullname,\n' +
         '(select userID from applications where ID = applicationID) as clientid,\n' +
-        'applicationID, sum(payment_amount) as paid, max(date_created) as date\n' +
+        'applicationID, sum(payment_amount) as paid, sum(interest_amount) as interest, max(date_created) as date\n' +
         'from schedule_history \n' +
-        'where applicationID in (select ID from applications) and status = 1\n' +
-        'group by applicationID';
-    let query2 = 'select sum(payment_amount) as total from schedule_history \n' +
+        'where applicationID in (select ID from applications) and status = 1\n ';
+    group = 'group by applicationID';
+    query = queryPart.concat(group);
+    let query2 = 'select sum(payment_amount + interest_amount) as total from schedule_history \n' +
         'where applicationID in (select ID from applications)\n' +
-        'and status = 1'
+        'and status = 1 '
     var items = {};
+    if (start  && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query2 = query2.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
+    }
     db.query(query, function (error, results, fields) {
         items.payment = results;
         db.query(query2, function (error, results, fields) {
@@ -1802,8 +1829,13 @@ users.get('/payments', function(req, res, next) {
 
 /* Loans by Branches */
 users.get('/loans-by-branches', function(req, res, next) {
-    let query
-    query = 'select (select branch from clients where ID = userID) as branchID, \n' +
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        query,
+        group
+    queryPart = 'select (select branch from clients where ID = userID) as branchID, \n' +
             '(select branch_name from branches br where br.id = branchID) as branch,\n' +
             'loan_amount, sum(loan_amount) as disbursed,\n' +
             '(select sum(payment_amount) from schedule_history sh\n' +
@@ -1811,9 +1843,15 @@ users.get('/loans-by-branches', function(req, res, next) {
             '(select branch from clients c where c.ID = (select userID from applications b where b.ID = sh.applicationID)) = branchID) as collected\n' +
             '\n' +
             'from applications a\n' +
-            'where status = 2\n' +
-            'group by branchID'
+            'where status = 2\n ';
+    group = 'group by branchID';
+    query = queryPart.concat(group);
     var items = {};
+    if (start  && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+    }
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
