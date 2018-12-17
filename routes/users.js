@@ -1862,7 +1862,7 @@ users.get('/users-list-full', function(req, res, next) {
 });
 
 users.get('/branches', function(req, res, next) {
-    let query = 'SELECT * from branches where status = 1';
+    let query = 'SELECT * from branches';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -2084,6 +2084,22 @@ users.post('/del-branch/:id', function(req, res, next) {
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
             res.send(JSON.stringify({"status": 200, "error": null, "response": "Branch Disabled!"}));
+        }
+    });
+});
+
+/* Reactivate Branch */
+users.post('/en-branch/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update branches SET status = 1, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Branch Re-enabled!"}));
         }
     });
 });
@@ -3354,6 +3370,48 @@ users.get('/loans-by-branches', function(req, res, next) {
             res.send({"status": 200, "error": null, "response": results, "message": "All Payments pulled!"});
         }
     });
+});
+
+/* Projected Interests */
+users.get('/projected-interests', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        queryPart2,
+        query,
+        group
+    queryPart = 'select applicationID, sum(interest_amount) as interest_due,\n' +
+        '(select userID from applications a where a.ID = applicationID) as clientID,\n' +
+        '(select fullname from clients c where c.ID = (select userID from applications a where a.ID = applicationID)) as client\n' +
+        'from application_schedules \n' +
+        'where applicationID in (select ID from applications)\n ';
+    group = 'group by applicationID order by applicationID asc ';
+    query = queryPart.concat(group);
+    queryPart2 = 'select sum(interest_amount) as interest_paid\n' +
+        'from schedule_history\n' +
+        'where status = 1\n' +
+        'and applicationID in (select ID from applications) '
+    query2= queryPart2.concat(group);
+    var items = {};
+    if (start && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query2 = (queryPart2.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ')).concat(group);
+    }
+    db.query(query, function (error, results, fields) {
+        items.due = results;
+        db.query(query2, function (error, results, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                items.paid = results;
+                res.send({"status": 200, "error": null, "response": items, "message": "All Payments pulled!"});
+            }
+        });
+    });
+    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 module.exports = users;

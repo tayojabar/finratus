@@ -325,6 +325,17 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Projected Interest</strong>
+                                                            <form id="filterprojectedinterest" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="filterprointstart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="filterprointend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
                                                             <span class="pull-right">Total: <span id="total-interests"></span></span>
                                                         </div>
                                                         <div class="card-body">
@@ -391,6 +402,7 @@
         loadDisbursed();
         loadPayments();
         loadLoansByBranch();
+        loadProjectedInterests();
     });
 
     const formatter = new Intl.NumberFormat('en-US', {
@@ -582,7 +594,6 @@
 
     function populateDisbursed(dets){
         $("#disbursed-table").dataTable().fnClearTable();
-        console.log(dets.length);
         if (dets.length === 0){
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
@@ -754,12 +765,16 @@
         });
     });
 
-    function loadProjectedInterest(){
+    function loadProjectedInterests(){
+        let start = $("#filterprointstart").val(),
+            end = $("#filterprointend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/projected-interests/' : 'user/projected-interests?start='+formatDate(start)+'&&end='+formatDate(end)
         $.ajax({
-            'url': 'user/projected-interest/',
+            'url': 'user/projected-interests/',
             'type': 'get',
             'success': function (data) {
-                populateProjectedInterest(data);
+                populateProjectedInterests(data);
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -767,15 +782,56 @@
         });
     }
 
-    function populateProjectedInterest(dets){
+    function populateProjectedInterests(dets){
+        $("#projected-interests-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#projected-interests-table").dataTable().fnClearTable();
         }else{
-            jQuery.each(dets, function(k, v){
-                $("#projected-interests-table").dataTable().fnAddData([]);
+            let full = [],
+                paid = [],
+                total = 0;
+            console.log(dets);
+            jQuery.each(dets.response.due, function(k, v){
+                full.push(v);
             });
+            jQuery.each(dets.response.paid, function(k, v){
+                paid.push(v);
+            });
+            for (let i = 0; i < full.length; i++){
+                full[i]["paid"] = paid[i]["interest_paid"]
+            }
+            $.each(full, function(k,v){
+                total+= parseFloat(v.interest_due - v.paid);
+                $("#projected-interests-table").dataTable().fnAddData([
+                    padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - v.paid))
+                ]);
+            });
+            $('#total-interests').html(formatter.format(total));
         }
     }
+
+    $("#filterprojectedinterest").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#filterprointstart").val(),
+            end = $("#filterprointend").val(),
+            url = '/user/projected-interests?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadProjectedInterests();
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateProjectedInterests(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
 
     function formatDate(date) {
         let separator;
