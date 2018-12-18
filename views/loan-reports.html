@@ -275,7 +275,7 @@
                                                                 <tr>
                                                                     <th>Client ID</th>
                                                                     <th>Name</th>
-                                                                    <th>Paid (+ Interest)</th>
+                                                                    <th>Paid (Principal + Interest)</th>
                                                                     <th>Last Payment</th>
                                                                 </tr>
                                                                 </thead>
@@ -797,14 +797,22 @@
             jQuery.each(dets.response.paid, function(k, v){
                 paid.push(v);
             });
-            for (let i = 0; i < full.length; i++){
+            for (let i = 0; i < paid.length; i++){
                 full[i]["paid"] = paid[i]["interest_paid"]
             }
+            console.log(full);
             $.each(full, function(k,v){
-                total+= parseFloat(v.interest_due - v.paid);
-                $("#projected-interests-table").dataTable().fnAddData([
-                    padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - v.paid))
-                ]);
+                if (v.paid){
+                    total+= parseFloat(v.interest_due - v.paid);
+                    $("#projected-interests-table").dataTable().fnAddData([
+                        padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - v.paid))
+                    ]);
+                }else{
+                    total += parseFloat(v.interest_due - 0)
+                    $("#projected-interests-table").dataTable().fnAddData([
+                        padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - 0))
+                    ]);
+                }
             });
             $('#total-interests').html(formatter.format(total));
         }
