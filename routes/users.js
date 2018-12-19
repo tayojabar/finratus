@@ -3307,7 +3307,8 @@ users.get('/report-cards', function(req, res, next) {
 /* Disbursements  */
 users.get('/disbursements/filter', function(req, res, next) {
     let start = req.query.start,
-        end = req.query.end
+        end = req.query.end,
+        loan_officer = req.query.officer
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
@@ -3328,15 +3329,21 @@ users.get('/disbursements/filter', function(req, res, next) {
     let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified, date_created ' +
                  'from applications where status = 2 and ID not in (select applicationID from schedule_history) '
     var items = {};
+    if (loan_officer){
+        queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
+        query = queryPart.concat(group);
+
+        query2 = query2.concat('and (select loan_officer from clients where clients.ID = userID) = ?');
+    }
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
         query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query2 = query2.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
-    db.query(query, function (error, results, fields) {
+    db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
-        db.query(query2, function (error, results, fields) {
+        db.query(query2, [loan_officer],  function (error, results, fields) {
             if(error){
                 res.send({"status": 500, "error": error, "response": null});
             } else {
@@ -3346,6 +3353,98 @@ users.get('/disbursements/filter', function(req, res, next) {
         });
     });
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
+});
+
+/* Interest Received  */
+users.get('/interests/', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        query,
+        group
+    queryPart = 'select \n' +
+        '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, \n' +
+        'applicationID, sum(interest_amount) as paid, \n' +
+        '(select date_modified from applications where ID = applicationID) as date\n' +
+        'from schedule_history \n' +
+        'where applicationID in (select applicationID from application_schedules\n' +
+        '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n' +
+        'and status = 1\n';
+    group = 'group by applicationID';
+    query = queryPart.concat(group);
+    var items = {};
+    if (start  && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+    }
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "All Interests Received pulled!"});
+        }
+    });
+});
+
+/* Bad Loans  */
+users.get('/bad-loans/', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        query,
+        group
+    query = '\n' +
+        'select ID, \n' +
+        '(select fullname from clients where clients.ID = userID) as client, \n' +
+        'loan_amount, date_created\n' +
+        'from applications \n' +
+        'where status = 2\n' +
+        'and ID not in (select applicationID from schedule_history where status = 1)';
+    if (start  && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+    }
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "All Bad Loans pulled!"});
+        }
+    });
+});
+
+/* Overdue Loans  */
+users.get('/overdues/', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        query,
+        group
+    queryPart = 'select ID, applicationID, \n' +
+        'min(STR_TO_DATE(payment_collect_date, \'%d-%m-%Y\')) as duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
+        '(select loan_amount from applications where applications.ID = applicationID) as principal,\n' +
+        'sum(payment_amount) as amount_due, sum(interest_amount) as interest_due\n' +
+        'from application_schedules\n' +
+        'where payment_status = 0 and applicationID in (select a.ID from applications a where a.status = 2)\n';
+    group = 'group by applicationID';
+    query = queryPart.concat(group);
+    if (start  && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP(payment_collect_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+    }
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "All Overdue Loans pulled!"});
+        }
+    });
 });
 
 /* Payments */
@@ -3438,7 +3537,7 @@ users.get('/projected-interests', function(req, res, next) {
         'where applicationID in (select ID from applications)\n ';
     group = 'group by applicationID order by applicationID asc ';
     query = queryPart.concat(group);
-    queryPart2 = 'select sum(interest_amount) as interest_paid\n' +
+    queryPart2 = 'select applicationID, sum(interest_amount) as interest_paid\n' +
         'from schedule_history\n' +
         'where status = 1\n' +
         'and applicationID in (select ID from applications) '

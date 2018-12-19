@@ -156,22 +156,22 @@
                         <div class="col-sm-12">
                             <div class="card" style="border-color: transparent">
                                 <div class="row">
-                                    <div class="col-sm-3">
-                                        <div class="card text-white bg-flat-color-1">
-                                            <div class="card-body pb-0" style="text-align: center">
-                                                <h3 id="branch" class="mb-0"></h3>
-                                                <p class="text-light">Branches</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="card text-white bg-flat-color-1">
-                                            <div class="card-body pb-0" style="text-align: center">
-                                                <h3 id="loan-officers" class="mb-0"></h3>
-                                                <p class="text-light">Loan Officers</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <!--<div class="col-sm-2">-->
+                                        <!--<div class="card text-white bg-flat-color-1">-->
+                                            <!--<div class="card-body pb-0" style="text-align: center">-->
+                                                <!--<h3 id="branch" class="mb-0"></h3>-->
+                                                <!--<p class="text-light">Branches</p>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="col-sm-2">-->
+                                        <!--<div class="card text-white bg-flat-color-1">-->
+                                            <!--<div class="card-body pb-0" style="text-align: center">-->
+                                                <!--<h3 id="loan-officers" class="mb-0"></h3>-->
+                                                <!--<p class="text-light">Loan Officers</p>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
                                     <div class="col-sm-3">
                                         <div class="card text-white bg-flat-color-1">
                                             <div class="card-body pb-0" style="text-align: center">
@@ -188,28 +188,41 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-3">
+                                        <div class="card text-white bg-flat-color-1">
+                                            <div class="card-body pb-0" style="text-align: center">
+                                                <h3 id="avg-loan-balance" class="mb-0"></h3>
+                                                <p class="text-light">Average Loan Balance</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="card text-white bg-flat-color-1">
+                                            <div class="card-body pb-0" style="text-align: center">
+                                                <h3 id="avg-loan-disbursed" class="mb-0"></h3>
+                                                <p class="text-light">Average Loans Disbursed</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="#intelliboard" role="tab" data-toggle="tab">IntelliBoard</a>
+                                    <a class="nav-link active" href="#intelliboard" role="tab" data-toggle="tab">Disbursed Loans Report</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#org-reports" role="tab" data-toggle="tab">Organizational Reports</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#perf-reports" role="tab" data-toggle="tab">Performance Reports</a>
+                                    <a class="nav-link" href="#org-reports" role="tab" data-toggle="tab">Interest Reports</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#risk-reports" role="tab" data-toggle="tab">Risk Reports</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#fin-reports" role="tab" data-toggle="tab">Financial Reports</a>
+                                    <a class="nav-link" href="#fin-reports" role="tab" data-toggle="tab">Payments</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#cust-reports" role="tab" data-toggle="tab">Custom Reports</a>
+                                <!--<li class="nav-item">-->
+                                    <!--<a class="nav-link" href="#cust-reports" role="tab" data-toggle="tab">Custom Reports</a>-->
                                 </li>
                             </ul>
 
@@ -218,8 +231,16 @@
                                 <div role="tabpanel" class="tab-pane fade active show in" id="intelliboard">
                                     <div class="card">
                                         <div class="card-body">
-                                            <div class="row">
+                                            <div class="row" style="padding: 20px">
                                                 <div class="col-sm-6">
+                                                    <button id="disburse-button" class="btn col-sm-12">Disbursements</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button id="loan-branch-button" class="btn btn-block col-sm-12">Loans By Branch</button>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div id="disbursement-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Disbursements</strong>
@@ -252,41 +273,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <strong>Payments</strong>
-                                                            <form id="filterpayments" class="form-inline" style="float: right;">
-                                                                <div class="form-group">
-                                                                    <label class="" for="startDate">Start date</label>
-                                                                    <input type="date" class="form-control" id="paystart" placeholder="Start date">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label class="" for="endDate">End date</label>
-                                                                    <input type="date" class="form-control" id="payend" placeholder="End date">
-                                                                </div>
-                                                                <button type="submit" class="btn btn-success">Filter</button>
-                                                            </form>
-                                                            <span class="pull-right">Total: <span id="total-payments" ></span></span>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <table id="payments-table" class="table table-striped table-bordered">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>Client ID</th>
-                                                                    <th>Name</th>
-                                                                    <th>Paid (Principal + Interest)</th>
-                                                                    <th>Last Payment</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody></tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-6">
+                                                <div id="loan-by-branch-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Loans by Branch</strong>&nbsp;&nbsp;&nbsp;
@@ -303,7 +290,7 @@
                                                             </form>
                                                             <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
                                                             <!--</select>-->
-                                                            <span class="pull-right">Total GLP: <span id="total-loans-by-branch"></span></span>
+                                                            <span class="pull-right">Total: <span id="total-loans-by-branch"></span></span>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="loan-by-branch-table" class="table table-striped table-bordered">
@@ -321,6 +308,183 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!--<div class="col-sm-6">-->
+                                                    <!--<div class="card">-->
+                                                        <!--<div class="card-header">-->
+                                                            <!--<strong>Payments</strong>-->
+                                                            <!--<form id="filterpayments" class="form-inline" style="float: right;">-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="startDate">Start date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="paystart" placeholder="Start date">-->
+                                                                <!--</div>-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="endDate">End date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="payend" placeholder="End date">-->
+                                                                <!--</div>-->
+                                                                <!--<button type="submit" class="btn btn-success">Filter</button>-->
+                                                            <!--</form>-->
+                                                            <!--<span class="pull-right">Total: <span id="total-payments" ></span></span>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="card-body">-->
+                                                            <!--<table id="payments-table" class="table table-striped table-bordered">-->
+                                                                <!--<thead>-->
+                                                                <!--<tr>-->
+                                                                    <!--<th>Client ID</th>-->
+                                                                    <!--<th>Name</th>-->
+                                                                    <!--<th>Paid (Principal + Interest)</th>-->
+                                                                    <!--<th>Last Payment</th>-->
+                                                                <!--</tr>-->
+                                                                <!--</thead>-->
+                                                                <!--<tbody></tbody>-->
+                                                            <!--</table>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                            <!--<div class="row">-->
+                                                <!--<div class="col-sm-6">-->
+                                                    <!--<div class="card">-->
+                                                        <!--<div class="card-header">-->
+                                                            <!--<strong>Projected Interest</strong>-->
+                                                            <!--<form id="filterprojectedinterest" class="form-inline" style="float: right;">-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="startDate">Start date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterprointstart" placeholder="Start date">-->
+                                                                <!--</div>-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="endDate">End date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterprointend" placeholder="End date">-->
+                                                                <!--</div>-->
+                                                                <!--<button type="submit" class="btn btn-success">Filter</button>-->
+                                                            <!--</form>-->
+                                                            <!--<span class="pull-right">Total: <span id="total-interests"></span></span>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="card-body">-->
+                                                            <!--<table id="projected-interests-table" class="table table-striped table-bordered">-->
+                                                                <!--<thead>-->
+                                                                <!--<tr>-->
+                                                                    <!--<th>Client ID</th>-->
+                                                                    <!--<th>Name</th>-->
+                                                                    <!--<th>Projected Interest</th>-->
+                                                                <!--</tr>-->
+                                                                <!--</thead>-->
+                                                                <!--<tbody></tbody>-->
+                                                            <!--</table>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                            <!--<div class="row">-->
+                                                <!--<div class="col-sm-6">-->
+                                                    <!--<div class="card">-->
+                                                        <!--<div class="card-header">-->
+                                                            <!--<strong>Interests Received</strong>&nbsp;&nbsp;&nbsp;-->
+                                                            <!--<form id="filterinterests" class="form-inline" style="float: right;">-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="startDate">Start date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterintereststart" placeholder="Start date">-->
+                                                                <!--</div>-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="endDate">End date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterinterestend" placeholder="End date">-->
+                                                                <!--</div>-->
+                                                                <!--<button type="submit" class="btn btn-success">Filter</button>-->
+                                                            <!--</form>-->
+                                                            <!--&lt;!&ndash;<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">&ndash;&gt;-->
+                                                            <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                                                            <!--<span class="pull-right">Total: <span id="total-interests-earned"></span></span>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="card-body">-->
+                                                            <!--<table id="interests-table" class="table table-striped table-bordered">-->
+                                                                <!--<thead>-->
+                                                                <!--<tr>-->
+                                                                    <!--<th>Loan ID</th>-->
+                                                                    <!--<th>Client Name</th>-->
+                                                                    <!--<th>Interest Received</th>-->
+                                                                <!--</tr>-->
+                                                                <!--</thead>-->
+                                                                <!--<tbody></tbody>-->
+                                                            <!--</table>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<div class="col-sm-6">-->
+                                                    <!--<div class="card">-->
+                                                        <!--<div class="card-header">-->
+                                                            <!--<strong>Bad Loans</strong>-->
+                                                            <!--<form id="filterbadloans" class="form-inline" style="float: right;">-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="startDate">Start date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterbadloanstart" placeholder="Start date">-->
+                                                                <!--</div>-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="endDate">End date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterbadloanend" placeholder="End date">-->
+                                                                <!--</div>-->
+                                                                <!--<button type="submit" class="btn btn-success">Filter</button>-->
+                                                            <!--</form>-->
+                                                            <!--<span class="pull-right">Total: <span id="total-badloans"></span></span>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="card-body">-->
+                                                            <!--<table id="bad-loans-table" class="table table-striped table-bordered">-->
+                                                                <!--<thead>-->
+                                                                <!--<tr>-->
+                                                                    <!--<th>Loan ID</th>-->
+                                                                    <!--<th>Name</th>-->
+                                                                    <!--<th>Principal </th>-->
+                                                                    <!--<th>Date Created</th>-->
+                                                                <!--</tr>-->
+                                                                <!--</thead>-->
+                                                                <!--<tbody></tbody>-->
+                                                            <!--</table>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                            <!--<div class="row">-->
+                                                <!--<div class="col-sm-6">-->
+                                                    <!--<div class="card">-->
+                                                        <!--<div class="card-header">-->
+                                                            <!--<strong>Overdue Loans</strong>&nbsp;&nbsp;&nbsp;-->
+                                                            <!--<form id="filteroverdueloans" class="form-inline" style="float: right;">-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="startDate">Start date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filteroverduestart" placeholder="Start date">-->
+                                                                <!--</div>-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="endDate">End date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filteroverdueend" placeholder="End date">-->
+                                                                <!--</div>-->
+                                                                <!--<button type="submit" class="btn btn-success">Filter</button>-->
+                                                            <!--</form>-->
+                                                            <!--&lt;!&ndash;<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">&ndash;&gt;-->
+                                                            <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                                                            <!--<span class="pull-right">Total: <span id="total-overdue"></span></span>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="card-body">-->
+                                                            <!--<table id="overdues-table" class="table table-striped table-bordered">-->
+                                                                <!--<thead>-->
+                                                                <!--<tr>-->
+                                                                    <!--<th>Loan ID</th>-->
+                                                                    <!--<th>Client Name</th>-->
+                                                                    <!--<th>Principal</th>-->
+                                                                    <!--<th>Principal Due</th>-->
+                                                                    <!--<th>Interest Due</th>-->
+                                                                <!--</tr>-->
+                                                                <!--</thead>-->
+                                                                <!--<tbody></tbody>-->
+                                                            <!--</table>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="org-reports">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
@@ -352,14 +516,158 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-sm-6">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong>Interests Received</strong>&nbsp;&nbsp;&nbsp;
+                                                            <form id="filterinterests" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="filterintereststart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="filterinterestend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
+                                                            <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
+                                                            <!--</select>-->
+                                                            <span class="pull-right">Total: <span id="total-interests-earned"></span></span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="interests-table" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Loan ID</th>
+                                                                    <th>Client Name</th>
+                                                                    <th>Interest Received</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="org-reports">bbb</div>
-                                <div role="tabpanel" class="tab-pane fade" id="perf-reports">ccc</div>
-                                <div role="tabpanel" class="tab-pane fade" id="risk-reports">...</div>
-                                <div role="tabpanel" class="tab-pane fade" id="fin-reports">bbb</div>
+                                <div role="tabpanel" class="tab-pane fade" id="risk-reports">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong>Bad Loans</strong>
+                                                            <form id="filterbadloans" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="filterbadloanstart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="filterbadloanend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
+                                                            <span class="pull-right">Total: <span id="total-badloans"></span></span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="bad-loans-table" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Loan ID</th>
+                                                                    <th>Name</th>
+                                                                    <th>Principal </th>
+                                                                    <th>Date Created</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong>Overdue Loans</strong>&nbsp;&nbsp;&nbsp;
+                                                            <form id="filteroverdueloans" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="filteroverduestart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="filteroverdueend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
+                                                            <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
+                                                            <!--</select>-->
+                                                            <span class="pull-right">Total: <span id="total-overdue"></span></span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="overdues-table" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Loan ID</th>
+                                                                    <th>Client Name</th>
+                                                                    <th>Principal</th>
+                                                                    <th>Principal Due</th>
+                                                                    <th>Interest Due</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="fin-reports">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <strong>Payments</strong>
+                                                            <form id="filterpayments" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="paystart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="payend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
+                                                            <span style="float: inherit">Total: <span id="total-payments" ></span></span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="payments-table" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Client ID</th>
+                                                                    <th>Name</th>
+                                                                    <th>Paid (Principal + Interest)</th>
+                                                                    <th>Last Payment</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div role="tabpanel" class="tab-pane fade" id="cust-reports">ccc</div>
                             </div>
                         </div>
@@ -403,6 +711,9 @@
         loadPayments();
         loadLoansByBranch();
         loadProjectedInterests();
+        loadInterestReceived();
+        loadBadLoans();
+        loadOverdues();
     });
 
     const formatter = new Intl.NumberFormat('en-US', {
@@ -478,12 +789,82 @@
             "paging": true
         });
 
+    var myTable5 = $('#interests-table')
+        .DataTable({
+            bAutoWidth: true,
+            "aoColumns": [
+                { "bSortable": false },
+                { "bSortable": true }, { "bSortable": true }
+                // , null, { "bSortable": false },
+            ],
+            "aaSorting": [],
+//            "bFilter": true,
+//            "bSearchable": false,
+            // "bInfo" : false,
+            select: {
+                style: 'multi'
+            },
+            "paging": true
+        });
+
+    var myTable6 = $('#bad-loans-table')
+        .DataTable({
+            bAutoWidth: true,
+            "aoColumns": [
+                { "bSortable": false },
+                null, { "bSortable": true }, null
+                // , null, { "bSortable": false },
+            ],
+            "aaSorting": [],
+//            "bFilter": true,
+//            "bSearchable": false,
+            // "bInfo" : false,
+            select: {
+                style: 'multi'
+            },
+            "paging": true
+        });
+
+    var myTable7 = $('#overdues-table')
+        .DataTable({
+            bAutoWidth: true,
+            "aoColumns": [
+                { "bSortable": false },
+                null, { "bSortable": true }, null, null
+                // , null, { "bSortable": false },
+            ],
+            "aaSorting": [],
+//            "bFilter": true,
+//            "bSearchable": false,
+            // "bInfo" : false,
+            select: {
+                style: 'multi'
+            },
+            "paging": true
+        });
+
     $(document).ajaxStart(function(){
         $("#wait").css("display", "block");
     });
 
     $(document).ajaxComplete(function(){
         $("#wait").css("display", "none");
+    });
+
+    $(document).on("click", "#disburse-button", function (e) {
+        $("#loan-by-branch-div").hide();
+        $("#disbursement-div").attr('class', 'col-sm-12');
+        $("#disbursement-div").show();
+        $("#disburse-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#loan-branch-button").attr('class', 'btn col-sm-12');
+    });
+
+    $(document).on("click", "#loan-branch-button", function (e) {
+        $("#loan-by-branch-div").show();
+        $("#loan-by-branch-div").attr('class', 'col-sm-12');
+        $("#disbursement-div").hide();
+        $("#loan-branch-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#disburse-button").attr('class', 'btn col-sm-12');
     });
 
     function check(){
@@ -597,9 +978,12 @@
         if (dets.length === 0){
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
-            var total = 0;
+            var total = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0;
             jQuery.each(dets.with_payments, function(k, v){
+                num_all++;
+                num_paid++;
                 total+= parseFloat(v.loan_amount);
+                totalbalance+= parseFloat(v.balance);
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.applicationID),6),
                     v.fullname,
@@ -610,6 +994,7 @@
             });
             jQuery.each(dets.without_pay, function(k, v){
                 total+= parseFloat(v.loan_amount);
+                num_all++;
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.ID),6),
                     v.fullname,
@@ -617,8 +1002,11 @@
                     formatter.format(parseFloat(v.loan_amount)),
                     formatDate(v.date_modified)
                 ]);
-            });
+            });console.log(totalbalance);
+            console.log(num_paid);
             $('#total-disbursements').html(formatter.format(total));
+            $('#avg-loan-balance').html(formatter.format(totalbalance/num_paid));
+            $('#avg-loan-disbursed').html(formatter.format(total/num_all));
         }
     }
 
@@ -735,7 +1123,7 @@
                     v.branch,
                     formatter.format(v.disbursed),
                     formatter.format(v.collected),
-                    formatter.format(v.disbursed)
+                    formatter.format(v.disbursed - v.collected)
                 ]);
             });
             $('#total-loans-by-branch').html(formatter.format(total));
@@ -788,22 +1176,19 @@
             $("#projected-interests-table").dataTable().fnClearTable();
         }else{
             let full = [],
-                paid = [],
                 total = 0;
-            jQuery.each(dets.response.due, function(k, v){
-                full.push(v);
+
+            dets.response.due.forEach(function (applications) {
+                let payments = $.grep(dets.response.paid, function (e) {return e.applicationID === applications.applicationID});
+                if (payments && payments[0])
+                    applications.payments = payments[0]['interest_paid'];
+                full.push(applications);
             });
-            jQuery.each(dets.response.paid, function(k, v){
-                paid.push(v);
-            });
-            for (let i = 0; i < paid.length; i++){
-                full[i]["paid"] = paid[i]["interest_paid"]
-            }
             $.each(full, function(k,v){
-                if (v.paid){
-                    total+= parseFloat(v.interest_due - v.paid);
+                if (v.payments){
+                    total+= parseFloat(v.interest_due - v.payments);
                     $("#projected-interests-table").dataTable().fnAddData([
-                        padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - v.paid))
+                        padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - v.payments))
                     ]);
                 }else{
                     total += parseFloat(v.interest_due - 0)
@@ -832,6 +1217,195 @@
                 let applications = data.response;
                 results = applications;
                 populateProjectedInterests(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    function loadInterestReceived(){
+        let start = $("#filterintereststart").val(),
+            end = $("#filterinterestend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/interests' : 'user/interests?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                (data.status === 200) ? populateInterestReceived(data.response) : swal({"icon": "error", "text": 'Database Error'})
+            },
+            'error': function (err) {
+                swal('Error in Connection!')
+            }
+        });
+    }
+
+    function populateInterestReceived(dets){
+        $("#interests-table").dataTable().fnClearTable();
+        if (dets.length === 0){
+            $("#interests-table").dataTable().fnClearTable();
+        }else{
+            var total = 0;
+            jQuery.each(dets, function(k, v){
+                total+= parseFloat(v.paid);
+                $("#interests-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.applicationID),6),
+                    v.fullname,
+                    formatter.format(parseFloat(v.paid))
+                ]);
+            });
+            $('#total-interests-earned').html(formatter.format(total));
+        }
+    }
+
+    $("#filterinterests").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            type = $("#type-filter").val(),
+            url = '/user/interests?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadInterestReceived();
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateInterestReceived(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    function loadBadLoans(){
+        let start = $("#filterbadloanstart").val(),
+            end = $("#filterbadloanend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/bad-loans' : 'user/bad-loans?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                (data.status === 200) ? populateBadLoans(data.response) : swal({"icon": "error", "text": 'Database Error'})
+            },
+            'error': function (err) {
+                swal('Error in Connection!')
+            }
+        });
+    }
+
+    function populateBadLoans(dets){
+        $("#bad-loans-table").dataTable().fnClearTable();
+        if (dets.length === 0){
+            $("#bad-loans-table").dataTable().fnClearTable();
+        }else{
+            var total = 0;
+            jQuery.each(dets, function(k, v){
+                total+= parseFloat(v.loan_amount);
+                $("#bad-loans-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.ID),6),
+                    v.client,
+                    formatter.format(parseFloat(v.loan_amount)),
+                    v.date_created
+                ]);
+            });
+            $('#total-badloans').html(formatter.format(total));
+        }
+    }
+
+    $("#filterbadloans").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#filterbadloanstart").val(),
+            end = $("#filterbadloanend").val(),
+            url = '/user/bad-loans?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadBadLoans();
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateBadLoans(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    function loadOverdues(){
+        let start = $("#filteroverduestart").val(),
+            end = $("#filteroverdueend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/overdues' : 'user/overdues?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                (data.status === 200) ? populateOverdues(data.response) : swal({"icon": "error", "text": 'Database Error'})
+            },
+            'error': function (err) {
+                swal('Error in Connection!')
+            }
+        });
+    }
+
+    function populateOverdues(dets){
+        $("#overdues-table").dataTable().fnClearTable();
+        if (dets.length === 0){
+            $("#overdues-table").dataTable().fnClearTable();
+        }else{
+            var total = 0;
+            var today = new Date();
+            console.log(today);
+            var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+            var now = yyyy+'-'+mm+'-'+dd;
+            jQuery.each(dets, function(k, v){
+                if (v.duedate < now){
+                    total+= parseFloat(v.amount_due);
+                    $("#overdues-table").dataTable().fnAddData([
+                        padWithZeroes(parseInt(v.applicationID),6),
+                        v.client,
+                        formatter.format(parseFloat(v.principal)),
+                        formatter.format(parseFloat(v.amount_due)),
+                        formatter.format(parseFloat(v.interest_due))
+                    ]);
+                }
+            });
+            $('#total-overdue').html(formatter.format(total));
+        }
+    }
+
+    $("#filteroverdueloans").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#filteroverduestart").val(),
+            end = $("#filteroverdueend").val(),
+            url = '/user/overdues?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadOverdues();
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateOverdues(applications);
             },
             'error': function (err) {
                 console.log(err);
