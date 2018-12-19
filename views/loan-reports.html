@@ -790,7 +790,6 @@
             let full = [],
                 paid = [],
                 total = 0;
-            console.log(dets);
             jQuery.each(dets.response.due, function(k, v){
                 full.push(v);
             });
@@ -800,7 +799,6 @@
             for (let i = 0; i < paid.length; i++){
                 full[i]["paid"] = paid[i]["interest_paid"]
             }
-            console.log(full);
             $.each(full, function(k,v){
                 if (v.paid){
                     total+= parseFloat(v.interest_due - v.paid);

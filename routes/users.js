@@ -3270,7 +3270,8 @@ users.get('/disbursements/filter', function(req, res, next) {
             '(select date_created from applications ap where ap.ID = applicationID) as created_date '+
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
-            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
+            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n' +
+            'and status = 1 '
             ;
     group = 'group by applicationID';
     query = queryPart.concat(group);
