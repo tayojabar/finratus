@@ -212,7 +212,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Applications</h1>
+                        <h1>All Collections</h1>
                     </div>
                 </div>
             </div>
@@ -222,7 +222,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active"><a href="/all-applications">All Applications</a></li>
+                            <li class="active"><a href="/all-applications">All Collections</a></li>
                         </ol>
                     </div>
                 </div>
@@ -235,41 +235,39 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <strong class="card-title" style="float: left;">All Applications</strong>
+                            <strong class="card-title" style="float: left;">All Collections</strong>
                             <form id="filter" class="form-inline" style="float: right;">
                                 <div class="form-group">
-                                    <label class="" for="startDate">Start date</label>
-                                    <input type="date" class="form-control" id="startDate" placeholder="Start date">
+                                    <label for="type-filter">Type</label>
+                                    <select id="type-filter" class="form-control" style="width:200px; margin: 0 5px;">
+                                        <option value="overdue" selected="selected">Overdue Payments</option>
+                                        <option value="due">Due Payments</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label class="" for="endDate">End date</label>
-                                    <input type="date" class="form-control" id="endDate" placeholder="End date">
+                                    <label for="range-filter">Range</label>
+                                    <select id="range-filter" class="form-control" style="width:150px; margin: 0 5px;">
+                                        <option selected="selected">All</option>
+                                        <option value="7">7 days</option>
+                                        <option value="14">14 days</option>
+                                        <option value="30">30 days</option>
+                                        <option value="60">60 days</option>
+                                    </select>
                                 </div>
                                 <button type="submit" class="btn btn-success">Filter</button>
                             </form>
-                            <select id="type-filter" onchange="filterType(this)" class="form-control" style="float: right; width:200px; margin: 0 5px;">
-                                <option value="1" selected="selected">All</option>
-                                <option value="2">Started</option>
-                                <option value="3">Pending Approval</option>
-                                <option value="4">Pending Disbursal</option>
-                                <option value="5">Active</option>
-                                <option value="6">Closed</option>
-                            </select>
                         </div>
                         <div class="card-body">
                             <table id="bootstrap-data-table" class="table table-striped table-bordered">
                                 <thead>
                                   <tr>
                                       <th>Loan ID</th>
-                                      <th>Full Name</th>
-                                      <th>Phone Number</th>
-                                      <th>Loan Amount</th>
-                                      <th>Date Created</th>
-                                      <th>Loan Status</th>
+                                      <th>Amount Due</th>
+                                      <th>Date Due</th>
                                       <th>Action</th>
                                   </tr>
                                 </thead>
-                                <tbody id="applications">
+                                <tbody id="collections">
                                 </tbody>
                             </table>
                         </div>
@@ -285,105 +283,6 @@
     </div><!-- /#right-panel -->
 
     <!-- Right Panel -->
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Application</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-striped table-bordered">
-                        <tbody id="application"></tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="archive()">Archive</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="addCommentModalLabel">Post Comment</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class=" form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-comment"></i></div>
-                                <textarea id="comment" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
-                            </div>
-                            <small class="form-text text-muted">Maximum of 250 characters</small>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="comment()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="viewCommentModal" tabindex="-1" role="dialog" aria-labelledby="viewCommentModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="viewCommentModalLabel">View Comment</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-striped table-bordered">
-                        <tbody id="view_comment"></tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="addWorkflowModal" tabindex="-1" role="dialog" aria-labelledby="addWorkflowModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="addWorkflowModalLabel">Assign Workflow</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class=" form-control-label">Select Workflow</label><strong style="color:red"> *</strong><span id="workflow-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-chain"></i></div>
-                                <select id="workflows" class="form-control" required="required">
-                                    <option selected="selected">-- Choose Workflow Process --</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="comment()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
@@ -407,8 +306,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
           $('#bootstrap-data-table-export').DataTable();
-          getWorkflows();
-          loadUsers();
+          loadCollections();
           read_write();
         });
 
@@ -480,32 +378,16 @@
             }
         }
 
-        let results;
-
-        function loadUsers(){
+        function loadCollections(){
             $.ajax({
-                'url': '/user/applications',
+                'url': '/user/collections/filter?type=overdue',
                 'type': 'get',
                 'success': function (data) {
-                    var applications = data.response;
-                    results = applications;
-                    populateDataTable(applications);
+                    let collections = data.response;
+                    populateDataTable(collections);
                 },
                 'error': function (err) {
                     console.log('Error');
-                }
-            });
-        }
-
-        function getWorkflows(){
-            $.ajax({
-                type: "GET",
-                url: "/workflows",
-                success: function (response) {
-                    localStorage.setItem("workflows",JSON.stringify(response.response));
-                    $.each(response.response, function (key, val) {
-                        $("#workflows").append('<option class="deptSp" value = "'+val.ID+'"">'+val.name+'</option>');
-                    });
                 }
             });
         }
@@ -515,58 +397,13 @@
             $("#bootstrap-data-table").dataTable().fnClearTable();
             $.each(data, function(k, v){
                 let table = [
-                    padWithZeroes(v.ID,9),
-                    v.fullname,
-                    v.phone,
-                    v.loan_amount,
-                    v.date_created,
-                    v.current_stage,
-                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View Client</button>'
+                    padWithZeroes(v.applicationID,9),
+                    v.payment_amount,
+                    v.payment_collect_date,
+                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="goToApplication('+v.applicationID+')"><i class="fa fa-eye"></i> View Loan</button>'
                 ];
-                if (v.close_status === 0) {
-                    if (v.status === 1){
-                        switch (v.current_stage){
-                            case 2: {
-                                table[5] = '<span class="badge badge-info">Pending Approval</span>';
-                                break;
-                            }
-                            case 3: {
-                                table[5] = '<span class="badge badge-info">Pending Disbursal</span>';
-                                break;
-                            }
-                            default: {
-                                table[5] = '<span class="badge badge-primary">Started</span>';
-                            }
-                        }
-                    } else if (v.status === 2){
-                        table[5] = '<span class="badge badge-success">Active</span>';
-                    } else {
-                        table[5] = '<span class="badge badge-danger">Not Active</span>';
-                    }
-                } else{
-                    table[5] = '<span class="badge badge-warning">Closed</span>';
-                }
-                if (v.comment){
-                    let view_comment_button = ' <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#viewCommentModal" onclick="openViewCommentModal('+v.ID+')"><i class="fa fa-eye"></i> View Comment</button>';
-                    table[table.length-1] = table[table.length-1].concat(view_comment_button);
-                } else {
-                    let add_comment_button = ' <button type="button" class="btn btn-success write" data-toggle="modal" data-target="#addCommentModal" onclick="openAddCommentModal('+v.ID+')"><i class="fa fa-plus"></i> Add Comment</button>';
-                    table[table.length-1] = table[table.length-1].concat(add_comment_button);
-                }
-                if (v.workflowID){
-                    let view_workflow_button;
-                    if (v.status === 2){
-                        view_workflow_button = ' <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#viewWorkflowModal" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Loan</button>';
-                    } else {
-                        view_workflow_button = ' <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#viewWorkflowModal" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Application</button>';
-                    }
-                    table[table.length-1] = table[table.length-1].concat(view_workflow_button);
-                } else {
-                    let add_workflow_button = ' <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addWorkflowModal" onclick="openAddWorkflowModal('+v.ID+')"><i class="fa fa-plus"></i> Assign Loan Process</button>';
-                    table[table.length-1] = table[table.length-1].concat(add_workflow_button);
-                }
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
-                $('#bootstrap-data-table').dataTable().fnSort([[4,'desc']]);
+                $('#bootstrap-data-table').dataTable().fnSort([[2,'desc']]);
             });
         }
 
@@ -576,118 +413,27 @@
             return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
         }
 
-        function openModal(id) {
-            localStorage.setItem("application_id",id);
-            let data = ($.grep(results, function(e){ return e.ID === id; }))[0],
-                tbody = $("#application"),
-                tr = "";
-            tbody.empty();
-            if (data.fullname)
-                tr += "<tr><td>Fullname</td><td>"+data.fullname+"</td></tr>";
-            if (data.phone)
-                tr += "<tr><td>Phone Number</td><td>"+data.phone+"</td></tr>";
-            if (data.email)
-                tr += "<tr><td>Email</td><td>"+data.email+"</td></tr>";
-            if (data.loan_amount)
-                tr += "<tr><td>Loan Amount</td><td>"+data.loan_amount+"</td></tr>";
-            if (data.collateral)
-                tr += "<tr><td>Collateral</td><td>"+data.collateral+"</td></tr>";
-            if (data.jewelry)
-                tr += "<tr><td>Jewelry</td><td>"+data.jewelry+"</td></tr>";
-            if (data.brand)
-                tr += "<tr><td>Brand</td><td>"+data.brand+"</td></tr>";
-            if (data.model)
-                tr += "<tr><td>Model</td><td>"+data.model+"</td></tr>";
-            if (data.year)
-                tr += "<tr><td>Year</td><td>"+data.year+"</td></tr>";
-            if (data.date_created)
-                tr += "<tr><td>Date Created</td><td>"+formatDate(data.date_created)+"</td></tr>";
-            tbody.html(tr);
-        }
-
-        function openViewCommentModal(id) {
-            localStorage.setItem("application_id",id);
-            let data = ($.grep(results, function(e){ return e.ID === id; }))[0],
-                tbody = $("#view_comment"),
-                tr = "";
-            tbody.empty();
-            if (data.comment)
-                tr += "<tr><td>Comment</td></tr><tr><td>"+data.comment+"</td></tr>";
-            tbody.html(tr);
-        }
-
-        function openAddCommentModal(id) {
-            localStorage.setItem("application_id",id);
-        }
-
-        function openViewWorkflowModal(id) {
+        function goToApplication(id) {
             window.location.href = "/application?id="+id;
-        }
-
-        function openAddWorkflowModal(id) {
-            localStorage.setItem("application_id",id);
-        }
-
-        function archive(){
-            $.ajax({
-                'url': '/user/applications/delete/'+localStorage.getItem("application_id"),
-                'type': 'get',
-                'success': function (data) {
-                    let applications = data.response;
-                    results = applications;
-                    populateDataTable(applications);
-                    swal('Application archived successfully');
-                },
-                'error': function (err) {
-                    swal('Oops! An error occurred during archiving');
-                }
-            });
-        }
-
-        function comment(){
-            let $comment = $("#comment"),
-                comment = $comment.val();
-            if (!comment || comment === ""){
-                $comment.val("");
-                return swal('Kindly type a brief comment');
-            }
-            $.ajax({
-                'url': '/user/applications/comment/'+localStorage.getItem("application_id"),
-                'type': 'post',
-                'data': {comment: comment},
-                'success': function (data) {
-                    let applications = data.response;
-                    results = applications;
-                    populateDataTable(applications);
-                    $comment.val("");
-                    swal('Comment saved successfully');
-                },
-                'error': function (err) {
-                    $comment.val("");
-                    swal('Oops! An error occurred while saving comment');
-                }
-            });
         }
 
         $("#filter").submit(function (e) {
             e.preventDefault();
 
-            let start = $("#startDate").val(),
-                end = $("#endDate").val(),
-                type = $("#type-filter").val(),
-                url = '/user/applications/filter?start='+formatDate(start)+'&&end='+formatDate(end);
-            if (!start || !end)
-                return loadUsers();
+            let type = $("#type-filter").val(),
+                range = $("#range-filter").val(),
+                url = '/user/collections/filter?';
             if (type)
                 url = url.concat('&&type='+type);
+            if (range)
+                url = url.concat('&&range='+range);
 
             $.ajax({
                 'url': url,
                 'type': 'get',
                 'success': function (data) {
-                    let applications = data.response;
-                    results = applications;
-                    populateDataTable(applications);
+                    let collections = data.response;
+                    populateDataTable(collections);
                 },
                 'error': function (err) {
                     console.log(err);
@@ -695,43 +441,7 @@
             });
         });
 
-        function filterType(type) {
-            let start = $("#startDate").val(),
-                end = $("#endDate").val(),
-                url = '/user/applications/filter?';
-            if (start && end)
-                url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
-            url = url.concat('type='+type.value);
-
-            $.ajax({
-                'url': url,
-                'type': 'get',
-                'success': function (data) {
-                    let applications = data.response;
-                    results = applications;
-                    populateDataTable(applications);
-                },
-                'error': function (err) {
-                    console.log(err);
-                }
-            });
-        }
-
-        function formatDate(date) {
-            let separator;
-            if (date.indexOf('-') > -1){
-                separator = '-';
-            } else if (date.indexOf('/') > -1){
-                separator = '/';
-            } else {
-                return date;
-            }
-            let date_array = date.split(separator);
-            return date_array[0]+'-'+date_array[1]+'-'+date_array[2];
-        }
-
     </script>
-
 
 </body>
 </html>
