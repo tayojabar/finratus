@@ -468,24 +468,6 @@
         }
     }
 
-    function loadUsers(){
-
-        $.ajax({
-            'url': '/user/clients-list',
-            'type': 'get',
-            'success': function (data) {
-                var users = JSON.parse(data);
-                results = users;
-                populateDataTable(users);
-            },
-            'error': function (err) {
-                //alert ('Error');
-                console.log('Error');
-            }
-        });
-
-    }
-
     function read_write(){
         let w;
         var perms = JSON.parse(localStorage.getItem("permissions"));
@@ -602,6 +584,23 @@
             });
     }
 
+    function confirmEnable(id) {
+        // approveInspection(status, "Passed");
+        swal({
+            title: "Reactivate this branch?",
+            text: "Click OK to continue",
+            //icon: "input",
+            //content: "input",
+            buttons: true,
+            closeModal: false
+        }).then(
+            function(isConfirm) {
+                if (isConfirm){
+                    enableBranch(id);
+                }
+            });
+    }
+
     function disableBranch(id){
         var test = {};
         $.ajax({
@@ -609,13 +608,35 @@
             'type': 'post',
             'data': {},
             'success': function (data) {
-                test = JSON.parse(data); console.log(test.status);
+                test = JSON.parse(data);
                 if(test.status == 500){
                     swal("Please Retry Action!");
                 }
                 else{
                     swal("Branch Disabled Successfully!");
-                    loadUsers();
+                    getBranches();
+                }
+            },
+            'error': function(e){
+                swal('Internet Connection Error!');
+            }
+        });
+    }
+
+    function enableBranch(id){
+        var test = {};
+        $.ajax({
+            'url': '/user/en-branch/'+id,
+            'type': 'post',
+            'data': {},
+            'success': function (data) {
+                test = JSON.parse(data);
+                if(test.status == 500){
+                    swal("Please Retry Action!");
+                }
+                else{
+                    swal("Branch Re - enabled Successfully!");
+                    getBranches();
                 }
             },
             'error': function(e){
@@ -633,9 +654,17 @@
                 glob = JSON.parse(response);
                 $("#bootstrap-data-table").dataTable().fnClearTable();
                 $.each(JSON.parse(response), function (key, val) {
-                    var disable = '<button id="'+val.id+'" name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Branch</button>'
+                    let actions;
+                    if (val.status === "1"){
+//                actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
+                        actions = '<button onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Branch</button>'
+                    }
+                    else {
+                        actions = '<button id="'+val.id+'" name="'+val.id+'" onclick="confirmEnable('+val.id+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable Branch</button>';
+                    }
+//                    var disable = '<button id="'+val.id+'" name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Branch</button>'
                     $('#bootstrap-data-table').dataTable().fnAddData( [
-                        val.branch_name, formatdate(val.date_created), disable
+                        val.branch_name, formatdate(val.date_created), actions
                         // "Make",
                         // "Make",
                         // action

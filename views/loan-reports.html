@@ -223,7 +223,7 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Disbursements</strong>
-                                                            <form id="filter" class="form-inline" style="float: right;">
+                                                            <form id="filterdisbursements" class="form-inline" style="float: right;">
                                                                 <div class="form-group">
                                                                     <label class="" for="startDate">Start date</label>
                                                                     <input type="date" class="form-control" id="startDate" placeholder="Start date">
@@ -256,6 +256,17 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Payments</strong>
+                                                            <form id="filterpayments" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="paystart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="payend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
                                                             <span class="pull-right">Total: <span id="total-payments" ></span></span>
                                                         </div>
                                                         <div class="card-body">
@@ -264,7 +275,7 @@
                                                                 <tr>
                                                                     <th>Client ID</th>
                                                                     <th>Name</th>
-                                                                    <th>Paid</th>
+                                                                    <th>Paid (Principal + Interest)</th>
                                                                     <th>Last Payment</th>
                                                                 </tr>
                                                                 </thead>
@@ -279,6 +290,17 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Loans by Branch</strong>&nbsp;&nbsp;&nbsp;
+                                                            <form id="filterbybranch" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="filterbranchstart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="filterbranchend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
                                                             <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
                                                             <!--</select>-->
                                                             <span class="pull-right">Total GLP: <span id="total-loans-by-branch"></span></span>
@@ -303,6 +325,17 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Projected Interest</strong>
+                                                            <form id="filterprojectedinterest" class="form-inline" style="float: right;">
+                                                                <div class="form-group">
+                                                                    <label class="" for="startDate">Start date</label>
+                                                                    <input type="date" class="form-control" id="filterprointstart" placeholder="Start date">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="" for="endDate">End date</label>
+                                                                    <input type="date" class="form-control" id="filterprointend" placeholder="End date">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-success">Filter</button>
+                                                            </form>
                                                             <span class="pull-right">Total: <span id="total-interests"></span></span>
                                                         </div>
                                                         <div class="card-body">
@@ -369,6 +402,7 @@
         loadDisbursed();
         loadPayments();
         loadLoansByBranch();
+        loadProjectedInterests();
     });
 
     const formatter = new Intl.NumberFormat('en-US', {
@@ -541,11 +575,16 @@
     }
 
     function loadDisbursed(){
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
+
         $.ajax({
-            'url': 'user/disbursements/',
+            'url': url,
             'type': 'get',
             'success': function (data) {
-                (data.status === 200) ? populateDisbursed(data.response) : swal('Database Error')
+                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -554,6 +593,7 @@
     }
 
     function populateDisbursed(dets){
+        $("#disbursed-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
@@ -582,7 +622,7 @@
         }
     }
 
-    $("#filter").submit(function (e) {
+    $("#filterdisbursements").submit(function (e) {
         e.preventDefault();
 
         let start = $("#startDate").val(),
@@ -590,9 +630,7 @@
             type = $("#type-filter").val(),
             url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
         if (!start || !end)
-            return loadUsers();
-        if (type)
-            url = url.concat('&&type='+type);
+            return loadDisbursed();
 
         $.ajax({
             'url': url,
@@ -600,7 +638,7 @@
             'success': function (data) {
                 let applications = data.response;
                 results = applications;
-                populateDataTable(applications);
+                populateDisbursed(applications);
             },
             'error': function (err) {
                 console.log(err);
@@ -609,11 +647,15 @@
     });
 
     function loadPayments(){
+        let start = $("#paystart").val(),
+            end = $("#payend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/payments/' : 'user/payments?start='+formatDate(start)+'&&end='+formatDate(end)
         $.ajax({
-            'url': 'user/payments/',
+            'url': url,
             'type': 'get',
             'success': function (data) {
-                (data.status === 200) ? populatePayments(data.response) : swal('Database Error')
+                (data.status === 200) ? populatePayments(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -622,6 +664,7 @@
     }
 
     function populatePayments(dets){
+        $("#payments-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#payments-table").dataTable().fnClearTable();
         }else{
@@ -630,7 +673,7 @@
                 $("#payments-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.clientid),6),
                     v.fullname,
-                    formatter.format(parseFloat(v.paid)),
+                    formatter.format(parseFloat(v.paid + v.interest)),
                     v.date
                 ]);
             });
@@ -639,12 +682,39 @@
         }
     }
 
-    function loadLoansByBranch(){
+    $("#filterpayments").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#paystart").val(),
+            end = $("#payend").val(),
+            url = '/user/payments/?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadPayments();
+
         $.ajax({
-            'url': 'user/loans-by-branches/',
+            'url': url,
             'type': 'get',
             'success': function (data) {
-                (data.status === 200) ? populateLoanByBranch(data.response) : swal('Database Error')
+                let applications = data.response;
+                results = applications;
+                populatePayments(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    function loadLoansByBranch(){
+        let start = $("#filterbranchstart").val(),
+            end = $("#filterbranchend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/loans-by-branches/' : 'user/loans-by-branches?start='+formatDate(start)+'&&end='+formatDate(end)
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                (data.status === 200) ? populateLoanByBranch(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -653,6 +723,7 @@
     }
 
     function populateLoanByBranch(dets){
+        $("#loan-by-branch-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#loan-by-branch-table").dataTable().fnClearTable();
         }else{
@@ -671,12 +742,39 @@
         }
     }
 
-    function loadProjectedInterest(){
+    $("#filterbybranch").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#filterbranchstart").val(),
+            end = $("#filterbranchend").val(),
+            url = '/user/loans-by-branches?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadLoansByBranch();
+
         $.ajax({
-            'url': 'user/projected-interest/',
+            'url': url,
             'type': 'get',
             'success': function (data) {
-                populateProjectedInterest(data);
+                let applications = data.response;
+                results = applications;
+                populateLoanByBranch(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    function loadProjectedInterests(){
+        let start = $("#filterprointstart").val(),
+            end = $("#filterprointend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/projected-interests/' : 'user/projected-interests?start='+formatDate(start)+'&&end='+formatDate(end)
+        $.ajax({
+            'url': 'user/projected-interests/',
+            'type': 'get',
+            'success': function (data) {
+                populateProjectedInterests(data);
             },
             'error': function (err) {
                 swal('Error in Connection!')
@@ -684,15 +782,64 @@
         });
     }
 
-    function populateProjectedInterest(dets){
+    function populateProjectedInterests(dets){
+        $("#projected-interests-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#projected-interests-table").dataTable().fnClearTable();
         }else{
-            jQuery.each(dets, function(k, v){
-                $("#projected-interests-table").dataTable().fnAddData([]);
+            let full = [],
+                paid = [],
+                total = 0;
+            console.log(dets);
+            jQuery.each(dets.response.due, function(k, v){
+                full.push(v);
             });
+            jQuery.each(dets.response.paid, function(k, v){
+                paid.push(v);
+            });
+            for (let i = 0; i < paid.length; i++){
+                full[i]["paid"] = paid[i]["interest_paid"]
+            }
+            console.log(full);
+            $.each(full, function(k,v){
+                if (v.paid){
+                    total+= parseFloat(v.interest_due - v.paid);
+                    $("#projected-interests-table").dataTable().fnAddData([
+                        padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - v.paid))
+                    ]);
+                }else{
+                    total += parseFloat(v.interest_due - 0)
+                    $("#projected-interests-table").dataTable().fnAddData([
+                        padWithZeroes(v.clientID, 6), v.client, formatter.format(parseFloat(v.interest_due - 0))
+                    ]);
+                }
+            });
+            $('#total-interests').html(formatter.format(total));
         }
     }
+
+    $("#filterprojectedinterest").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#filterprointstart").val(),
+            end = $("#filterprointend").val(),
+            url = '/user/projected-interests?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end)
+            return loadProjectedInterests();
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateProjectedInterests(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
 
     function formatDate(date) {
         let separator;
