@@ -149,6 +149,9 @@
         .pb-0{
             text-align: center;
         }
+        input.invalid, span.invalid {
+            border: 2px dashed red;
+        }
     </style>
 </head>
 <body>
@@ -1536,6 +1539,7 @@
                 $csvLoader = $("#csvLoader");
 
             $uploadCSV.bind("click", function () {
+                schedule = [];
                 let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
                 if (regex.test($csvUpload.val().toLowerCase())) {
                     if (typeof (FileReader) !== "undefined") {
@@ -1558,7 +1562,17 @@
                                         if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
                                             cell = $("<td colspan='3' />");
                                     }
-                                    cell.html(cells[j]);
+                                    if (cells[j]){
+                                        if (i > 1){
+                                            if (j === 0 || j === 1 || j === 3 || j === 4){
+                                                cell.html('<input id="invoice-'+i+'-'+j+'" type="date" value="'+cells[j]+'" />');
+                                            } else {
+                                                cell.html('<span id="invoice-'+i+'-'+j+'">'+cells[j]+'</span>');
+                                            }
+                                        } else {
+                                            cell.html(cells[j]);
+                                        }
+                                    }
                                     row.append(cell);
                                     switch (j){
                                         case 0:{ invoice.payment_create_date = cells[j]; break; }
@@ -1590,21 +1604,29 @@
                 if (!schedule[0])
                     return swal('Please upload a valid CSV file.');
 
-                $csvLoader.show();
-                $.ajax({
-                    'url': '/user/application/schedule/'+application_id,
-                    'type': 'post',
-                    'data': {schedule:schedule},
-                    'success': function (data) {
-                        $csvLoader.hide();
-                        $csvUpload.val('');
-                        swal('Schedule saved successfully');
-                        window.location.reload();
-                    },
-                    'error': function (err) {
-                        $csvLoader.hide();
-                        $csvUpload.val('');
-                        swal('Oops! An error occurred while saving schedule');
+                validateSchedule(schedule, function (validation) {
+                    if (validation.status){
+                        let schedule = validation.data;
+                        $csvLoader.show();
+                        $.ajax({
+                            'url': '/user/application/schedule/'+application_id,
+                            'type': 'post',
+                            'data': {schedule:schedule},
+                            'success': function (data) {
+                                $csvLoader.hide();
+                                $csvUpload.val('');
+                                swal('Schedule saved successfully');
+                                window.location.reload();
+                            },
+                            'error': function (err) {
+                                $csvLoader.hide();
+                                $csvUpload.val('');
+                                swal('Oops! An error occurred while saving schedule');
+                            }
+                        });
+                    } else {
+                        console.log(validation.data);
+                        swal('There are error(s) in the uploaded schedule!');
                     }
                 });
             });
@@ -1722,22 +1744,7 @@
             }
             let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
             if (next_payment_date && next_payment_date[0]){
-                let date = ((next_payment_date[0]['payment_create_date']).split(' '))[0];
-                if ((date.indexOf('-') > -1) || (date.indexOf('/') > -1)){
-                    let date_array;
-                    if(date.indexOf('-') > -1){
-                        date_array = date.split('-');
-                    } else if (date.indexOf('/') > -1){
-                        date_array = date.split('/');
-                    }
-                    if (date_array[2].length !== 2){
-                        $('#next-payment-date-text').text(date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
-                    } else {
-                        $('#next-payment-date-text').text('20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0]);
-                    }
-                } else {
-                    $('#next-payment-date-text').text(next_payment_date[0]);
-                }
+                $('#next-payment-date-text').text(next_payment_date[0]['payment_collect_date']);
             } else {
                 $('#next-payment-date-text').text('N/A');
             }
@@ -1777,6 +1784,7 @@
                 $approveCSV = $("#approveCSV2");
 
             $uploadCSV.bind("click", function () {
+                schedule = [];
                 let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
                 if (regex.test($csvUpload.val().toLowerCase())) {
                     if (typeof (FileReader) !== "undefined") {
@@ -1799,7 +1807,17 @@
                                         if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
                                             cell = $("<td colspan='3' />");
                                     }
-                                    cell.html(cells[j]);
+                                    if (cells[j]){
+                                        if (i > 1){
+                                            if (j === 0 || j === 1 || j === 3 || j === 4){
+                                                cell.html('<input id="invoice-'+i+'-'+j+'" type="date" value="'+cells[j]+'" />');
+                                            } else {
+                                                cell.html('<span id="invoice-'+i+'-'+j+'">'+cells[j]+'</span>');
+                                            }
+                                        } else {
+                                            cell.html(cells[j]);
+                                        }
+                                    }
                                     row.append(cell);
                                     switch (j){
                                         case 0:{ invoice.payment_create_date = cells[j]; break; }
@@ -1836,24 +1854,32 @@
                 if (!schedule[0])
                     return swal('Please preview the schedule to be uploaded.');
 
-                if (loan_amount < total_due_amount)
-                    return swal('Total principal on the new schedule must include previous (carried-over) balance');
+                validateSchedule(schedule, function (validation) {
+                    if (validation.status){
+                        if (loan_amount < total_due_amount)
+                            return swal('Total principal on the new schedule must include previous (carried-over) balance');
 
-                $csvLoader.show();
-                $.ajax({
-                    'url': '/user/application/add-schedule/'+application_id,
-                    'type': 'post',
-                    'data': {schedule:schedule},
-                    'success': function (data) {
-                        $csvLoader.hide();
-                        $csvUpload.val('');
-                        swal('Reschedule added successfully');
-                        window.location.reload();
-                    },
-                    'error': function (err) {
-                        $csvLoader.hide();
-                        $csvUpload.val('');
-                        swal('Oops! An error occurred while adding reschedule');
+                        let schedule = validation.data;
+                        $csvLoader.show();
+                        $.ajax({
+                            'url': '/user/application/add-schedule/'+application_id,
+                            'type': 'post',
+                            'data': {schedule:schedule},
+                            'success': function (data) {
+                                $csvLoader.hide();
+                                $csvUpload.val('');
+                                swal('Reschedule added successfully');
+                                window.location.reload();
+                            },
+                            'error': function (err) {
+                                $csvLoader.hide();
+                                $csvUpload.val('');
+                                swal('Oops! An error occurred while adding reschedule');
+                            }
+                        });
+                    } else {
+                        console.log(validation.data);
+                        swal('There are error(s) in the uploaded schedule!');
                     }
                 });
             });
@@ -1940,6 +1966,99 @@
                     }
                 });
             });
+        }
+
+        function validateSchedule(schedule, callback) {
+            let errors = [],
+                validated_schedule = [];
+            console.log(schedule)
+            for (let i=0; i<schedule.length; i++){
+                let invoice = {},
+                    $col0 = $('#invoice-'+(i+2)+'-0'),
+                    $col1 = $('#invoice-'+(i+2)+'-1'),
+                    $col2 = $('#invoice-'+(i+2)+'-2'),
+                    $col3 = $('#invoice-'+(i+2)+'-3'),
+                    $col4 = $('#invoice-'+(i+2)+'-4'),
+                    $col5 = $('#invoice-'+(i+2)+'-5'),
+                    $col6 = $('#invoice-'+(i+2)+'-6'),
+                    a = $col0.val(),
+                    b = $col1.val(),
+                    c = schedule[i]['payment_amount'],
+                    d = $col3.val(),
+                    e = $col4.val(),
+                    f = schedule[i]['interest_amount'],
+                    g = schedule[i]['balance'];
+                if (isValidDate(a)){
+                    $col0.removeClass('invalid');
+                    invoice.payment_create_date = a;
+                } else {
+                    $col0.addClass('invalid');
+                    errors.push(a+' is not a valid date');
+                }
+                if (isValidDate(b)){
+                    $col1.removeClass('invalid');
+                    invoice.payment_collect_date = b;
+                } else {
+                    $col1.addClass('invalid');
+                    errors.push(b+' is not a valid date');
+                }
+                if (!isNaN(c)){
+                    $col2.removeClass('invalid');
+                    invoice.payment_amount = c;
+                } else {
+                    $col2.addClass('invalid');
+                    errors.push(c+' is not a valid number');
+                }
+                if (isValidDate(d)){
+                    $col3.removeClass('invalid');
+                    invoice.interest_create_date = d;
+                } else {
+                    $col3.addClass('invalid');
+                    errors.push(d+' is not a valid date');
+                }
+                if (isValidDate(e)){
+                    $col4.removeClass('invalid');
+                    invoice.interest_collect_date = e;
+                } else {
+                    $col4.addClass('invalid');
+                    errors.push(e+' is not a valid date');
+                }
+                if (!isNaN(f)){
+                    $col5.removeClass('invalid');
+                    invoice.interest_amount = f;
+                } else {
+                    $col5.addClass('invalid');
+                    errors.push(f+' is not a valid number');
+                }
+                if (!isNaN(g)){
+                    $col6.removeClass('invalid');
+                    invoice.balance = g;
+                } else {
+                    $col6.addClass('invalid');
+                    errors.push(g+' is not a valid number');
+                }
+                validated_schedule.push(invoice);
+                console.log(a)
+                console.log(b)
+                console.log(c)
+                console.log(d)
+                console.log(e)
+                console.log(f)
+                console.log(g)
+            }
+            if (errors[0]){
+                callback({status: false, data: errors});
+            } else {
+                callback({status: true, data: validated_schedule});
+            }
+        }
+
+        function isValidDate(dateString) {
+            let regEx = /^\d{4}-\d{2}-\d{2}$/;
+            if(!dateString || !dateString.match(regEx)) return false;
+            let d = new Date(dateString);
+            if(Number.isNaN(d.getTime())) return false;
+            return d.toISOString().slice(0,10) === dateString;
         }
 
         function openPayOffModal() {

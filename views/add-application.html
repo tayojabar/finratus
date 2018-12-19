@@ -339,6 +339,7 @@
                 $uploadCSV = $("#uploadCSV2");
 
             $uploadCSV.bind("click", function () {
+                schedule = [];
                 let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
                 if (regex.test($csvUpload.val().toLowerCase())) {
                     if (typeof (FileReader) !== "undefined") {
