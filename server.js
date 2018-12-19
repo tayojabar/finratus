@@ -208,6 +208,10 @@ app.get('/application/:id?', requireLogin, function(req, res) {
     res.sendFile('application.html', {root: __dirname + '/views'});
 });
 
+app.get('/edit-workflow/:id?', requireLogin, function(req, res) {
+    res.sendFile('edit-workflow.html', {root: __dirname + '/views'});
+});
+
 app.get('/manage-permissions', requireLogin, function(req, res){
     res.sendFile('manage-permissions.html', { root: __dirname+'/views' });
 });

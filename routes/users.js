@@ -2501,6 +2501,55 @@ users.get('/applications/filter', function(req, res, next) {
     });
 });
 
+users.get('/collections/filter', function(req, res, next) {
+    let type = req.query.type,
+        range = (req.query.range)? parseInt(req.query.range) : false,
+        today = moment().utcOffset('+0100').format('YYYY-MM-DD');
+
+    // let query = "SELECT ID, applicationID, status, payment_amount, payment_collect_date, payment_status " +
+    //     "FROM application_schedules WHERE status = 1 AND payment_status = 0 ",
+    //     date = "CONCAT(SUBSTRING_INDEX(SUBSTRING_INDEX(payment_collect_date,'/',3),'/',-1),'-'," +
+    //     "SUBSTRING_INDEX(SUBSTRING_INDEX(payment_collect_date,'/',2),'/',-1),'-'," +
+    //     "SUBSTRING_INDEX(SUBSTRING_INDEX(payment_collect_date,'/',1),'/',-1))";
+    let query = "SELECT * FROM application_schedules WHERE status = 1 AND payment_status = 0 ";
+    switch (type){
+        case 'due': {
+            if (range){
+                query = query.concat(collectionDueRangeQuery(today, range));
+            } else {
+                query = query.concat('AND TIMESTAMP(payment_collect_date) = TIMESTAMP("'+today+'") ');
+            }
+            break;
+        }
+        case 'overdue': {
+            if (range){
+                query = query.concat(collectionOverdueRangeQuery(today, range));
+            } else {
+                query = query.concat('AND TIMESTAMP(payment_collect_date) < TIMESTAMP("'+today+'") ');
+            }
+            break;
+        }
+    }
+    query = query.concat("ORDER BY ID desc");
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Collections fetched successfully!", "response": results});
+        }
+    });
+});
+
+function collectionDueRangeQuery(today, range){
+    return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+today+'") ' +
+        'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add((range+1), "days").format("YYYY-MM-DD")+'") ';
+}
+
+function collectionOverdueRangeQuery(today, range){
+    return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).add(1, "days").format("YYYY-MM-DD")+'") ' +
+        'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add((range+1), "days").format("YYYY-MM-DD")+'") ';
+}
+
 users.get('/requests/filter/:start/:end', function(req, res, next) {
     let start = req.params.start,
         end = req.params.end;
