@@ -2506,12 +2506,10 @@ users.get('/collections/filter', function(req, res, next) {
         range = (req.query.range)? parseInt(req.query.range) : false,
         today = moment().utcOffset('+0100').format('YYYY-MM-DD');
 
-    // let query = "SELECT ID, applicationID, status, payment_amount, payment_collect_date, payment_status " +
-    //     "FROM application_schedules WHERE status = 1 AND payment_status = 0 ",
-    //     date = "CONCAT(SUBSTRING_INDEX(SUBSTRING_INDEX(payment_collect_date,'/',3),'/',-1),'-'," +
-    //     "SUBSTRING_INDEX(SUBSTRING_INDEX(payment_collect_date,'/',2),'/',-1),'-'," +
-    //     "SUBSTRING_INDEX(SUBSTRING_INDEX(payment_collect_date,'/',1),'/',-1))";
-    let query = "SELECT * FROM application_schedules WHERE status = 1 AND payment_status = 0 ";
+    let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
+        "s.applicationID, s.status, s.payment_amount, s.payment_collect_date, s.payment_status FROM application_schedules AS s " +
+        "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
+        "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ";
     switch (type){
         case 'due': {
             if (range){
@@ -3224,6 +3222,18 @@ users.post('/application/write-off/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Application write off successful!"});
+        }
+    });
+});
+
+users.get('/application/cancel/:id', function(req, res, next) {
+    let data = {};
+    data.status = 0;
+    db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Application cancellation successful!"});
         }
     });
 });

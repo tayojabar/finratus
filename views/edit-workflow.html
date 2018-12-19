@@ -90,7 +90,6 @@
             border: 1px solid #ced4da;
             border-radius: .25rem;
         }
-        .multiselect-all
     </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -276,7 +275,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Loan Processes</h1>
+                        <h1>Loan Workflow</h1>
                     </div>
                 </div>
             </div>
@@ -286,7 +285,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active">All Loan Processes</li>
+                            <li class="active">Loan Workflow</li>
                         </ol>
                     </div>
                 </div>
@@ -299,7 +298,7 @@
                     <div id="user-form" class="col-xs-12 col-sm-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Add Loan Process</strong> <small> Workflow Information</small>
+                                <strong>Edit Loan Process</strong> <small> Workflow Information</small>
                             </div>
                             <div class="card-body card-block">
                                 <div class="form-group row">
@@ -332,7 +331,7 @@
                                     </div>
                                 </div>
                                 <div class = "form-group">
-                                    <input type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Add New Workflow" onclick="addProcess()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                    <input type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="Edit Workflow" onclick="addProcess()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
@@ -365,13 +364,6 @@
                             </div>
                             <small class="form-text text-muted">Maximum of 50 characters</small>
                         </div>
-                        <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Transition Description</label><span id="stage-description-error" style="padding-left:50px; text-align: center"></span>-->
-                            <!--<div class="input-group">-->
-                                <!--<textarea id="stage-description" class="form-control" placeholder="Transition Description" maxlength="250"></textarea>-->
-                            <!--</div>-->
-                            <!--<small class="form-text text-muted">Maximum of 250 characters</small>-->
-                        <!--</div>-->
                         <div class="form-group">
                             <label class=" form-control-label">Start Stage</label><strong style="color:red"> *</strong>
                             <div class="input-group">
@@ -427,26 +419,6 @@
                                 $(element).parent().remove();
                             }
                         </script>
-                        <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Triggers</label>-->
-                            <!--<div class="input-group">-->
-                                <!--<label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<script type="text/javascript">-->
-                            <!--$('#document-upload').change(function () {-->
-                                <!--$('#document-upload-div').toggle();-->
-                            <!--});-->
-                            <!--let status = false;-->
-                            <!--$('#trigger-1').change(function () {-->
-                                <!--status = !status;-->
-                                <!--if (status){-->
-                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "Denied"; }).val());-->
-                                <!--} else {-->
-                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "&#45;&#45; Choose Action &#45;&#45;"; }).val())-->
-                                <!--}-->
-                            <!--});-->
-                        <!--</script>-->
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -483,6 +455,7 @@
             loadProcesses();
             getStages();
             getRoles();
+            init();
         });
 
         $(document).ajaxStart(function(){
@@ -554,6 +527,31 @@
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
+        }
+
+        function init(){
+            $.ajax({
+                'url': '/workflows/'+workflow_id,
+                'type': 'get',
+                'success': function (data) {
+                    let workflow = data.response;
+                    $('#process-name').val(workflow.name);
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
+            $.ajax({
+                'url': '/workflow-stages/'+workflow_id,
+                'type': 'get',
+                'success': function (data) {
+                    let stages = data.response;
+                    console.log(stages)
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
         }
 
         let results;

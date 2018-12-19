@@ -1376,6 +1376,17 @@ router.get('/workflows', function(req, res, next) {
     });
 });
 
+router.get('/workflows/:workflow_id', function(req, res, next) {
+    let query = 'SELECT * FROM workflows AS w WHERE w.status <> 0 AND w.ID = '+req.params.workflow_id;
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Workflows fetched successfully!", "response": results[0]});
+        }
+    });
+});
+
 router.get('/workflow-stages', function(req, res, next) {
     let query = 'SELECT w.ID, w.document, w.actions, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.stageID=s.ID ORDER BY w.ID asc';
     db.query(query, function (error, results, fields) {

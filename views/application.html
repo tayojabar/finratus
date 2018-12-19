@@ -272,6 +272,7 @@
                                 </div>
                                 <button id="current_stage" class ="btn btn-warning btn-lg" style="float: right;" disabled="disabled"></button>
                                 <button class ="previous btn btn-danger btn-lg" style="float: right;"><i class="fa fa-backward"></i></button>
+                                <button class ="cancel btn btn-danger btn-lg" style="float: right; margin-right: 5px;"><i class="fa fa-times"></i></button>
                                 <span style="float: right; margin: 15px;">
                                     <a href="#" class="pull-right transitions-toggle">Show Transitions <i class="fa fa-chevron-down"></i></a>
                                     <a href="#" class="pull-right transitions-toggle" style="display: none;">Hide Transitions <i class="fa fa-chevron-up"></i></a>
@@ -1181,6 +1182,14 @@
                             '<p class="list-group-item-text">'+stage.name+'<br> ('+stage.stage_name+')</p></a>';
                     }
 
+                    if (application.status === 0){
+                        $("#next-actions").hide();
+                        $('.previous').hide();
+                        $('.cancel').hide();
+                        $(".next").hide();
+                        $("#current_stage").html('<span>CANCELLED</span>');
+                    }
+
                     if (stage.stage_name === 'Disbursal'){
                         if (application.status === 2){
                             $('#collect-payment-button').show();
@@ -1190,6 +1199,7 @@
                             $("#current_stage").hide();
                             $("#next-actions").hide();
                             $(".previous").hide();
+                            $(".cancel").hide();
                             $(".next").hide();
 
                             if (application.close_status === 0){
@@ -1217,6 +1227,22 @@
                 }
             });
         }
+
+        $('.cancel').on('click', function(e) {
+            $.ajax({
+                'url': '/user/application/cancel/'+application_id,
+                'type': 'get',
+                'success': function (data) {
+                    swal('Loan cancelled successfully');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection');
+                }
+            });
+        });
+
 
         function loadWorkflowState() {
             $.ajax({
