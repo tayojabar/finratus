@@ -400,7 +400,7 @@
                 let table = [
                     padWithZeroes(v.applicationID,9),
                     v.client,
-                    v.payment_amount,
+                    '₦'+(parseFloat(v.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
                     v.payment_collect_date,
                     '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="goToApplication('+v.applicationID+')"><i class="fa fa-eye"></i> View Loan</button>'
                 ];

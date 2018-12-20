@@ -3075,6 +3075,10 @@ users.post('/application/edit-schedule/:id/:modifier_id', function(req, res, nex
                             date_modified: invoice_obj[0].date_modified,
                             modifierID: invoice_obj[0].modifierID
                         };
+                        if (invoice_obj[0]['interest_invoice_no'])
+                            invoice['interest_invoice_no'] = invoice_obj[0]['interest_invoice_no'];
+                        if (invoice_obj[0]['payment_invoice_no'])
+                            invoice['payment_invoice_no'] = invoice_obj[0]['payment_invoice_no'];
                         connection.query('INSERT INTO edit_schedule_history SET ? ', invoice, function (error, response, fields) {
                             connection.release();
                             if(error){

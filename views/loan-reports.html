@@ -968,7 +968,7 @@
                 (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
-                swal('Error in Connection!')
+                swal('Error in Connection!','','error')
             }
         });
     }
@@ -1046,7 +1046,7 @@
                 (data.status === 200) ? populatePayments(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
-                swal('Error in Connection!')
+                swal('Error in Connection!','','error')
             }
         });
     }
@@ -1105,7 +1105,7 @@
                 (data.status === 200) ? populateLoanByBranch(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
-                swal('Error in Connection!')
+                swal('Error in Connection!','','error')
             }
         });
     }
@@ -1166,7 +1166,7 @@
                 populateProjectedInterests(data);
             },
             'error': function (err) {
-                swal('Error in Connection!')
+                swal('Error in Connection!','','error')
             }
         });
     }
@@ -1238,7 +1238,7 @@
                 (data.status === 200) ? populateInterestReceived(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
-                swal('Error in Connection!')
+                swal('Error in Connection!','','error')
             }
         });
     }
@@ -1298,7 +1298,7 @@
                 (data.status === 200) ? populateBadLoans(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
-                swal('Error in Connection!')
+                swal('Error in Connection!','','error')
             }
         });
     }
@@ -1358,7 +1358,7 @@
                 (data.status === 200) ? populateOverdues(data.response) : swal({"icon": "error", "text": 'Database Error'})
             },
             'error': function (err) {
-                swal('Error in Connection!')
+                swal('Error in Connection!','','error')
             }
         });
     }

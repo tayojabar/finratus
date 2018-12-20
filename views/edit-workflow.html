@@ -139,7 +139,7 @@
                     stage.description = $('#stage-description').val();
                     stage.approverID = $('#process-rights').val();
                     if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || !actions || !actions[0])
-                        return swal('Kindly fill all required fields!');
+                        return swal('Kindly fill all required fields!','','warning');
                     stage.approverID = stage.approverID.join(',');
                     if (documents && documents[0])
                         stage.document = documents.join(',');
@@ -162,7 +162,7 @@
                         });
                     }
                 }else{
-                    swal('Kindly fill all required fields!');
+                    swal('Kindly fill all required fields!','','warning');
                 }
             });
 
@@ -668,19 +668,19 @@
         function addNewStage() {
             let $name = $('#new-stage-name');
             if (!$name)
-                return swal('Kindly input a stage name');
+                return swal('Kindly input a stage name','','warning');
             $.ajax({
                 'url': '/stages',
                 'type': 'post',
                 'data': {name:$name.val()},
                 'success': function (data) {
                     $name.val('');
-                    swal('Stage saved successfully');
+                    swal('Stage saved successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
                     $name.val('');
-                    swal('Oops! An error occurred while saving stage');
+                    swal('Oops! An error occurred while saving stage','','error');
                 }
             });
         }
@@ -719,7 +719,7 @@
             }).get();
 
             if (!workflow.name || !stages[0])
-                return swal('Kindly fill all required fields!');
+                return swal('Kindly fill all required fields!','','warning');
             data.workflow = workflow;
             data.stages = stages;
             if (($.grep(data.stages,function(e){return e.stage_name==='Application Start'})).length > 1)

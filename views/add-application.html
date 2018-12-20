@@ -401,16 +401,16 @@
                         };
                         reader.readAsText($csvUpload[0].files[0]);
                     } else {
-                        return swal('This browser does not support HTML5.');
+                        return swal('This browser does not support HTML5.','','warning');
                     }
                 } else {
-                    return swal('Please select a valid CSV file.');
+                    return swal('Please select a valid CSV file.','','warning');
                 }
             });
 
             $("#addApplication").click(function () {
                 if (!schedule[0])
-                    return swal('Please upload a valid CSV file.');
+                    return swal('Please upload a valid CSV file.','','warning');
 
                 validateSchedule(schedule, function (validation) {
                     if (validation.status){
@@ -430,9 +430,9 @@
                         obj.repayment_date = $('#repayment-date').val();
                         obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
                         if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
-                            return swal('Kindly fill all required fields!');
+                            return swal('Kindly fill all required fields!','','warning');
                         if (loan_amount !== parseFloat(obj.loan_amount))
-                            return swal('Loan amount ('+parseFloat(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch');
+                            return swal('Loan amount ('+parseFloat(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch','','warning');
 
                         $('#wait').show();
                         $.ajax({
@@ -457,7 +457,7 @@
                         });
                     } else {
                         console.log(validation.data);
-                        swal('There are error(s) in the uploaded schedule!');
+                        swal('There are error(s) in the uploaded schedule!','','warning');
                     }
                 });
             });
@@ -470,12 +470,12 @@
                 'data': {schedule:schedule},
                 'success': function (data) {
                     $('#wait').hide();
-                    swal('Loan Application created successfully!');
+                    swal('Loan Application created successfully!','','success');
                     window.location.href = '/application?id='+application_id;
                 },
                 'error': function (err) {
                     $('#wait').hide();
-                    swal('Oops! An error occurred while saving schedule');
+                    swal('Oops! An error occurred while saving schedule','','error');
                 }
             });
         }
