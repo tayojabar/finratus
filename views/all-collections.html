@@ -262,6 +262,7 @@
                                 <thead>
                                   <tr>
                                       <th>Loan ID</th>
+                                      <th>Client</th>
                                       <th>Amount Due</th>
                                       <th>Date Due</th>
                                       <th>Action</th>
@@ -398,6 +399,7 @@
             $.each(data, function(k, v){
                 let table = [
                     padWithZeroes(v.applicationID,9),
+                    v.client,
                     v.payment_amount,
                     v.payment_collect_date,
                     '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="goToApplication('+v.applicationID+')"><i class="fa fa-eye"></i> View Loan</button>'

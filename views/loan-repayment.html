@@ -93,6 +93,16 @@
         .badge-warning {
             background-color: #f0ad4e;
         }
+        #message{
+            font-weight: bold;
+            font-style: italic;
+        }
+        #message.success{
+            color: #28a745;
+        }
+        #message.error{
+            color: #dc3545;
+        }
     </style>
 </head>
 <body class="open">
@@ -262,19 +272,29 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <span id="message"></span>
+                        <div class="form-group">
+                            <label class=" form-control-label">Actual Payment</label><strong style="color:red"> *</strong><span id="payment-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="payment" type="number" class="form-control validate" placeholder="0" required="required">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class=" form-control-label">Principal</label><strong style="color:red"> *</strong><span id="principal-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
-                                <input id="principal" type="number" class="form-control" placeholder="0" required="required">
+                                <input id="principal" type="number" class="form-control validate" placeholder="0" required="required">
                             </div>
+                            <small class="form-text text-muted">Total Principal Payable is <span id="principal-payable"></span></small>
                         </div>
                         <div class="form-group">
                             <label class=" form-control-label">Interest</label><strong style="color:red"> *</strong><span id="interest-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
-                                <input id="interest" type="number" class="form-control" placeholder="0" required="required">
+                                <input id="interest" type="number" class="form-control validate" placeholder="0" required="required">
                             </div>
+                            <small class="form-text text-muted">Total Interest Payable is <span id="interest-payable"></span></small>
                         </div>
                         <div class="form-group">
                             <label class=" form-control-label">Fees</label><strong style="color:red"> *</strong><span id="fees-error" style="padding-left:50px; text-align: center"></span>
@@ -338,17 +358,31 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Payment Date</label><strong style="color:red"> *</strong><span id="edit-payment-date-error" style="padding-left:50px; text-align: center"></span>
+                            <label class=" form-control-label">Principal Payment Date</label><strong style="color:red"> *</strong><span id="edit-principal-payment-date-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                <input id="edit-payment-date" type="date" class="form-control" required="required">
+                                <input id="edit-principal-payment-date" type="date" class="form-control" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Interest Date</label><strong style="color:red"> *</strong><span id="edit-interest-date-error" style="padding-left:50px; text-align: center"></span>
+                            <label class=" form-control-label">Principal Invoice Date</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-date-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                <input id="edit-interest-date" type="date" class="form-control" required="required">
+                                <input id="edit-principal-invoice-date" type="date" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Interest Payment Date</label><strong style="color:red"> *</strong><span id="edit-interest-payment-date-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                <input id="edit-interest-payment-date" type="date" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Interest Invoice Date</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-date-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                <input id="edit-interest-invoice-date" type="date" class="form-control" required="required">
                             </div>
                         </div>
                     </form>
@@ -898,21 +932,43 @@
                 invoice.interest_amount -= parseFloat(payment_history[k]['interest_amount']);
             }
             expected_invoice = invoice;
-            $('#principal').val(invoice.payment_amount);
-            $('#interest').val(invoice.interest_amount);
+            $('#payment').val(0);
+            $('#principal').val(0);
+            $('#interest').val(0);
             $('#fees').val(0);
             $('#penalty').val(0);
-            $('#principal').attr({max:invoice.payment_amount});
-            $('#interest').attr({max:invoice.interest_amount});
+            $('#principal-payable').text('₦'+(parseFloat(invoice.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $('#interest-payable').text('₦'+(parseFloat(invoice.interest_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+//            $('#principal').attr({max:invoice.payment_amount});
+//            $('#interest').attr({max:invoice.interest_amount});
         }
+
+        $('.validate').change(function () {
+            let $message = $('#message'),
+                payment = parseFloat($('#payment').val()),
+                principal = parseFloat($('#principal').val()),
+                interest = parseFloat($('#interest').val());
+            if (payment !== (principal + interest)){
+                $message.addClass('error');
+                $message.removeClass('success');
+                $message.text('Actual Payment must be the sum of Principal and Interest');
+            } else {
+                $message.addClass('success');
+                $message.removeClass('error');
+                $message.text('Actual Payment, Principal and Interest are valid');
+            }
+        });
 
         function confirmPayment() {
             let invoice = {},
+                payment = parseFloat($('#payment').val()),
                 invoice_index = application.schedule.map(function(e) { return parseInt(e.ID); }).indexOf(parseInt(invoice_id));
             invoice.actual_payment_amount = $('#principal').val();
             invoice.actual_interest_amount = $('#interest').val();
             invoice.actual_fees_amount = $('#fees').val();
             invoice.actual_penalty_amount = $('#penalty').val();
+            if (payment !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)))
+                return swal('Actual Payment must be the sum of Principal and Interest');
             if (parseFloat(invoice.actual_payment_amount) > parseFloat(expected_invoice.payment_amount)){
                 if (!application.schedule[invoice_index+1])
                     return swal('Overpayment is not allowed on this invoice');
@@ -965,8 +1021,10 @@
             $('#edit-interest').val(invoice.interest_amount);
             $('#edit-fees').val(invoice.fees_amount);
             $('#edit-penalty').val(invoice.penalty_amount);
-            $('#edit-payment-date').val(processPaymentDate(invoice.payment_collect_date,2));
-            $('#edit-interest-date').val(processPaymentDate(invoice.interest_collect_date,2));
+            $('#edit-principal-payment-date').val(processPaymentDate(invoice.payment_collect_date,2));
+            $('#edit-principal-invoice-date').val(processPaymentDate(invoice.payment_create_date,2));
+            $('#edit-interest-payment-date').val(processPaymentDate(invoice.interest_collect_date,2));
+            $('#edit-interest-invoice-date').val(processPaymentDate(invoice.interest_create_date,2));
         }
 
         function editSchedule() {
@@ -975,15 +1033,17 @@
             invoice.interest_amount = $('#edit-interest').val();
             invoice.fees_amount = $('#edit-fees').val();
             invoice.penalty_amount = $('#edit-penalty').val();
-            invoice.payment_collect_date = processPaymentDate($('#edit-payment-date').val(),1);
-            invoice.interest_collect_date = processPaymentDate($('#edit-interest-date').val(),1);
+            invoice.payment_collect_date = processPaymentDate($('#edit-principal-payment-date').val(),1);
+            invoice.payment_create_date = processPaymentDate($('#edit-principal-invoice-date').val(),1);
+            invoice.interest_collect_date = processPaymentDate($('#edit-interest-payment-date').val(),1);
+            invoice.interest_create_date = processPaymentDate($('#edit-interest-invoice-date').val(),1);
             $.ajax({
                 'url': '/user/application/edit-schedule/'+edit_invoice_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                 'type': 'post',
                 'data': invoice,
                 'success': function (data) {
                     swal('Schedule updated successfully');
-                    window.location.reload();
+//                    window.location.reload();
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred while confirming payment');
@@ -1085,16 +1145,17 @@
         }
         
         function processPaymentDate(date,type) {
-            let date_array = date.split('-');
-            switch (type){
-                case 1: {
-                    return date_array[2]+'-'+date_array[1]+'-'+date_array[0].substr(2,2);
-                }
-                case 2: {
-                    date_array[1] = (date_array[1].length === 1)? '0'+date_array[1] : date_array[1];
-                    return '20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0];
-                }
-            }
+            return date;
+//            let date_array = date.split('-');
+//            switch (type){
+//                case 1: {
+//                    return date_array[2]+'-'+date_array[1]+'-'+date_array[0].substr(2,2);
+//                }
+//                case 2: {
+//                    date_array[1] = (date_array[1].length === 1)? '0'+date_array[1] : date_array[1];
+//                    return '20'+date_array[2]+'-'+date_array[1]+'-'+date_array[0];
+//                }
+//            }
         }
     </script>
 </body>
