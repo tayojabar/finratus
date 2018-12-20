@@ -2329,8 +2329,6 @@ users.post('/sendmail', function(req, res) {
     };
 
     transporter.sendMail(mailOptions, function(error, info){
-        console.log(error)
-        console.log(info)
         if(error)
             return res.send("Error");
         return res.send("OK");
