@@ -329,6 +329,20 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <div id="edit-principal-invoice-div" class="form-group">
+                            <label class=" form-control-label">Principal Invoice No</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-no-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
+                                <input id="edit-principal-invoice-no" type="number" class="form-control" placeholder="0" required="required">
+                            </div>
+                        </div>
+                        <div id="edit-interest-invoice-div" class="form-group">
+                            <label class=" form-control-label">Interest Invoice No</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-no-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
+                                <input id="edit-interest-invoice-no" type="number" class="form-control" placeholder="0" required="required">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class=" form-control-label">Principal</label><strong style="color:red"> *</strong><span id="edit-principal-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
@@ -705,24 +719,13 @@
                     results = comments;
                     loadComments(comments);
                     $comment.val("");
-                    swal('Comment saved successfully');
+                    swal('Comment saved successfully','','success');
                 },
                 'error': function (err) {
                     $comment.val("");
-                    swal('Oops! An error occurred while saving comment');
+                    swal('Oops! An error occurred while saving comment','','error');
                 }
             });
-        }
-
-        function formatMoney(n, c, d, t) {
-            var c = isNaN(c = Math.abs(c)) ? 2 : c,
-                d = d == undefined ? "." : d,
-                t = t == undefined ? "," : t,
-                s = n < 0 ? "-" : "",
-                i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
-                j = (j = i.length) > 3 ? j % 3 : 0;
-
-            return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
         }
 
         function initRepaymentSchedule(application) {
@@ -805,18 +808,18 @@
                             total[17] += parseFloat(cells[17]);
                         }
                     }
-//                    let id = (i > 0 && application.schedule[i - 2])? application.schedule[i - 2]['ID']: '';
-                    let interest_invoice_no = application.schedule[i - 2]['interest_invoice_no'] || 'N/A',
-                        principal_invoice_no = application.schedule[i - 2]['principal_invoice_no'] || 'N/A';
+                    let interest_invoice_no = (i > 0 && application.schedule[i - 2])? application.schedule[i - 2]['interest_invoice_no'] : '',
+                        principal_invoice_no = (i > 0 && application.schedule[i - 2])? application.schedule[i - 2]['principal_invoice_no'] : '';
                     cells.push(principal_invoice_no);
                     cells.push(interest_invoice_no);
-                    for (let j = -2; j < cells.length-1; j++) {
+                    for (let j = -2; j < cells.length-2; j++) {
                         let cell = $("<td />");
                         if (i === 0){
                             if (j === -2){
                                 cell = $("<td colspan='2' />");
                                 cell.html('INVOICE NO');
                             } else if (j === -1){
+                                cell = '';
                             } else {
                                 cells[j] = cells[j] || "";
                                 if (cells[j] !== ""){
@@ -834,9 +837,9 @@
                             }
                         } else {
                             if (j === -2 && i>1){
-                                cell.html(cells[18]);
+                                cell.html(cells[18] || 'N/A');
                             } else if (j === -1 && i>1){
-                                cell.html(cells[19]);
+                                cell.html(cells[19] || 'N/A');
                             } else if (j === 0 && i>1){
                                 cell.html(cells[j]);
                             } else if (j === 1 && i>1){
@@ -981,10 +984,10 @@
             invoice.actual_fees_amount = $('#fees').val();
             invoice.actual_penalty_amount = $('#penalty').val();
             if (payment !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)))
-                return swal('Actual Payment must be the sum of Principal and Interest');
+                return swal('Actual Payment must be the sum of Principal and Interest','','warning');
             if (parseFloat(invoice.actual_payment_amount) > parseFloat(expected_invoice.payment_amount)){
                 if (!application.schedule[invoice_index+1])
-                    return swal('Overpayment is not allowed on this invoice');
+                    return swal('Overpayment is not allowed on this invoice','','warning');
                 let overpayment = parseFloat(invoice.actual_payment_amount) - parseFloat(expected_invoice.payment_amount);
                 invoice.actual_payment_amount = expected_invoice.payment_amount;
                 $.ajax({
@@ -997,16 +1000,16 @@
                             'type': 'post',
                             'data': {actual_payment_amount:overpayment,actual_interest_amount:0,actual_fees_amount:0,actual_penalty_amount:0},
                             'success': function (data) {
-                                swal('Payment confirmed successfully');
+                                swal('Payment confirmed successfully','','success');
                                 window.location.reload();
                             },
                             'error': function (err) {
-                                swal('Oops! An error occurred while confirming payment');
+                                swal('Oops! An error occurred while confirming payment','','error');
                             }
                         });
                     },
                     'error': function (err) {
-                        swal('Oops! An error occurred while confirming payment');
+                        swal('Oops! An error occurred while confirming payment','','error');
                     }
                 });
             } else {
@@ -1015,11 +1018,11 @@
                     'type': 'post',
                     'data': invoice,
                     'success': function (data) {
-                        swal('Payment confirmed successfully');
+                        swal('Payment confirmed successfully','','success');
                         window.location.reload();
                     },
                     'error': function (err) {
-                        swal('Oops! An error occurred while confirming payment');
+                        swal('Oops! An error occurred while confirming payment','','error');
                     }
                 });
             }
@@ -1029,7 +1032,19 @@
 
         function editScheduleModal(id) {
             edit_invoice_id = id;
-            let invoice = ($.grep(application.schedule, function (e) { return parseInt(e.ID) === parseInt(edit_invoice_id) }))[0];
+            let $interest_invoice_div = $('#edit-interest-invoice-div'),
+                $principal_invoice_div = $('#edit-principal-invoice-div'),
+                invoice = ($.grep(application.schedule, function (e) { return parseInt(e.ID) === parseInt(edit_invoice_id) }))[0];
+            if (invoice.principal_invoice_no){
+                $principal_invoice_div.hide();
+            } else {
+                $principal_invoice_div.show();
+            }
+            if (invoice.interest_invoice_no){
+                $interest_invoice_div.hide();
+            } else {
+                $interest_invoice_div.show();
+            }
             $('#edit-principal').val(invoice.payment_amount);
             $('#edit-interest').val(invoice.interest_amount);
             $('#edit-fees').val(invoice.fees_amount);
@@ -1041,7 +1056,13 @@
         }
 
         function editSchedule() {
-            let invoice = {};
+            let invoice = {},
+                $interest_invoice_no = $('#edit-interest-invoice-no'),
+                $principal_invoice_no = $('#edit-principal-invoice-no');
+            if ($interest_invoice_no.val())
+                invoice.interest_invoice_no = $interest_invoice_no.val();
+            if ($principal_invoice_no.val())
+                invoice.principal_invoice_no = $principal_invoice_no.val();
             invoice.payment_amount = $('#edit-principal').val();
             invoice.interest_amount = $('#edit-interest').val();
             invoice.fees_amount = $('#edit-fees').val();
@@ -1055,11 +1076,11 @@
                 'type': 'post',
                 'data': invoice,
                 'success': function (data) {
-                    swal('Schedule updated successfully');
-//                    window.location.reload();
+                    swal('Schedule updated successfully','','success');
+                    window.location.reload();
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred while confirming payment');
+                    swal('Oops! An error occurred while confirming payment','','error');
                 }
             });
         }
@@ -1126,7 +1147,7 @@
                 'url': '/user/application/payment-reversal/'+payment_id+'/'+invoice_id,
                 'type': 'get',
                 'success': function (data) {
-                    swal('Payment reversed successfully');
+                    swal('Payment reversed successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
@@ -1141,14 +1162,14 @@
             payment.interest_collect_date = $('#payment-date').val();
             payment.comment = $('#payment-notes').val();
             if (!payment.actual_interest_amount || !payment.interest_collect_date)
-                return swal('Kindly fill all required fields!');
+                return swal('Kindly fill all required fields!','','warning');
             payment.interest_collect_date = processPaymentDate(payment.interest_collect_date,1);
             $.ajax({
                 'url': '/user/application/add-payment/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                 'type': 'post',
                 'data': payment,
                 'success': function (data) {
-                    swal('Payment added successfully');
+                    swal('Payment added successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
