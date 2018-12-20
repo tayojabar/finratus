@@ -204,10 +204,11 @@
                             <div class="card-header">
                                 <div style="float: left; margin: 0 15px;">
                                     <strong id="workflow-div-title" class="card-title">Workflow</strong>
-                                    <p>Client ID#: <span id="client-id"></span> | LOAN ID#: <span id="application-id"></span></p>
+                                    <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span></p>
                                 </div>
                                 <button class="btn btn-primary" onclick="goToLoanOverview()" style="float: right;">Loan Overview <i class="fa fa-forward"></i></button>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal" style="float: right;">Add Additional Interest</button>
+                                <span style="float: right; margin: 8px;">Escrow Balance: ₦<span id="escrow-balance">0</span></span>
                             </div>
                             <div class="card-body">
                                 <div id="loanCollectionSchedule" style="margin-top: 30px; overflow-x: scroll; max-width: 1200px"></div>
@@ -639,6 +640,8 @@
                     application = data;
                     $('#client-id').text(padWithZeroes(application.userID,6));
                     $('#application-id').text(padWithZeroes(application.ID,9));
+                    if (application.escrow)
+                        $('#escrow-balance').text(parseFloat(application.escrow).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     initRepaymentSchedule(application);
                     $("#workflow-div-title").text(fullname.toUpperCase());
                 },
@@ -646,6 +649,10 @@
                     console.log('Error');
                 }
             });
+        }
+
+        function goToClientProfile() {
+            window.location.href = '/client-info?id='+application.userID;
         }
 
         function padWithZeroes(n, width, z) {
@@ -986,8 +993,6 @@
             if (payment !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)))
                 return swal('Actual Payment must be the sum of Principal and Interest','','warning');
             if (parseFloat(invoice.actual_payment_amount) > parseFloat(expected_invoice.payment_amount)){
-                if (!application.schedule[invoice_index+1])
-                    return swal('Overpayment is not allowed on this invoice','','warning');
                 let overpayment = parseFloat(invoice.actual_payment_amount) - parseFloat(expected_invoice.payment_amount);
                 invoice.actual_payment_amount = expected_invoice.payment_amount;
                 $.ajax({
@@ -995,6 +1000,8 @@
                     'type': 'post',
                     'data': invoice,
                     'success': function (data) {
+                        if (!application.schedule[invoice_index+1])
+                            return escrow(overpayment);
                         $.ajax({
                             'url': '/user/application/confirm-payment/'+application.schedule[invoice_index+1]['ID']+'/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                             'type': 'post',
@@ -1026,6 +1033,21 @@
                     }
                 });
             }
+        }
+
+        function escrow(amount) {
+            $.ajax({
+                'url': '/user/application/escrow',
+                'type': 'post',
+                'data': {clientID:application.userID,amount:amount},
+                'success': function (data) {
+                    swal('Payment confirmed successfully','Overpayment of ₦'+(parseFloat(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+' has been credited to escrow','success');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    swal('Oops! An error occurred while processing overpayment','','error');
+                }
+            });
         }
 
         let edit_invoice_id;

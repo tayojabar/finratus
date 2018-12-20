@@ -253,7 +253,7 @@
                             <div class="card-header">
                                 <div style="float: left; margin: 0 15px;">
                                     <strong id="workflow-div-title" class="card-title">Workflow</strong>
-                                    <p>Client ID#: <span id="client-id"></span> | LOAN ID#: <span id="application-id"></span> | <span id="loancirrus-id" style="display: none;"></span><span id="loancirrus-id-form" style="display: none;"><input id="loancirrus-id-input" type="text" style="width: 100px;" placeholder="L-CIRRUS ID" /><button class="btn btn-success" style="padding:4px 10px;" onclick="saveLoanCirrusID()"><i class="fa fa-check"></i></button></span></p>
+                                    <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span> | <span id="loancirrus-id" style="display: none;"></span><span id="loancirrus-id-form" style="display: none;"><input id="loancirrus-id-input" type="text" style="width: 100px;" placeholder="L-CIRRUS ID" /><button class="btn btn-success" style="padding:4px 10px;" onclick="saveLoanCirrusID()"><i class="fa fa-check"></i></button></span></p>
                                 </div>
                                 <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
                                 <div id="close-loan" class="btn-group" style="float: right; display: none;margin-top: 5px;">
@@ -1007,6 +1007,10 @@
                     console.log('Error');
                 }
             });
+        }
+
+        function goToClientProfile() {
+            window.location.href = '/client-info?id='+application.userID;
         }
 
         Number.prototype.roundTo = function(n) {
