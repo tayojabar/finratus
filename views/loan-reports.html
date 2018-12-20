@@ -176,7 +176,7 @@
                                         <div class="card text-white bg-flat-color-1">
                                             <div class="card-body pb-0" style="text-align: center">
                                                 <h3 id="loans-active" class="mb-0"></h3>
-                                                <p class="text-light">Loans Active</p>
+                                                <p class="text-light">Loan(s) Active</p>
                                             </div>
                                         </div>
                                     </div>
@@ -243,11 +243,11 @@
                                                 <div id="disbursement-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <div class="col-sm-3">
+                                                            <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
                                                                 <strong>Disbursements</strong>
                                                                 <span style="float: right">Total: <span id="total-disbursements"></span></span>
                                                             </div>
-                                                            <div class="col-sm-9">
+                                                            <div class="col-sm-6 card" style="background-color: transparent; border-color: transparent">
                                                                 <form id="filterdisbursements" class="form-inline" style="float: right;">
                                                                     <div class="form-group">
                                                                         <label class="" for="startDate">Start date</label>
@@ -259,7 +259,11 @@
                                                                     </div>
                                                                     <button type="submit" class="btn btn-success">Filter</button>
                                                                 </form>
-                                                                <select id="filter-officers" onchange="filterOfficer(this.attr('id'))" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                            </div>
+                                                            <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
+                                                                <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="filter-officers" onchange="filterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
                                                                     <!--<option value="1" selected="selected">All</option>-->
                                                                     <!--<option value="2">Started</option>-->
                                                                     <!--<option value="3">Pending Approval</option>-->
@@ -267,6 +271,8 @@
                                                                     <!--<option value="5">Active</option>-->
                                                                     <!--<option value="6">Closed</option>-->
                                                                 </select>
+                                                                </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="card-body">
@@ -1011,6 +1017,7 @@
             });
             jQuery.each(dets.without_pay, function(k, v){
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.ID),6),
@@ -1022,7 +1029,7 @@
             });
 
             $('#total-disbursements').html(formatter.format(total));
-            $('#avg-loan-balance').html(formatter.format((num_paid === 0) ? 0: totalbalance/num_paid));
+            $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
             $('#avg-loan-disbursed').html(formatter.format((num_all === 0) ? 0: total/num_all));
         }
     }
@@ -1232,7 +1239,7 @@
             'url': url,
             'type': 'get',
             'success': function (data) {
-                let applications = data.response;
+                let applications = data;
                 results = applications;
                 populateProjectedInterests(applications);
             },
@@ -1451,7 +1458,7 @@
             data: '{}',
             success: function (response) {
                 var role = $("[id=filter-officers]");
-                role.empty().append('<option id="0">All</option>');
+                role.empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#filter-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                 });
@@ -1462,13 +1469,13 @@
     function filterOfficer(officer) {
         let start = $("#startDate").val(),
             end = $("#endDate").val(),
-            url = '/user/disburements/filter?';
+            url = '/user/disbursements/filter?';
         if (start && end)
             url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
-        if (officer == 0){
+        if (officer.value == 0){
             return loadDisbursed();
         }
-        url = url.concat('officer='+type.value);
+        url = url.concat('officer='+officer.value);
 
         $.ajax({
             'url': url,
