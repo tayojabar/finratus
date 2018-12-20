@@ -1112,12 +1112,12 @@
 
     function populateLoanByBranch(dets){
         $("#loan-by-branch-table").dataTable().fnClearTable();
+        var total = 0;
         if (dets.length === 0){
             $("#loan-by-branch-table").dataTable().fnClearTable();
         }else{
-            var total = 0;
             jQuery.each(dets, function(k, v){
-                total += v.disbursed;
+                total += (v.disbursed) ? v.disbursed : 0;
                 $("#loan-by-branch-table").dataTable().fnAddData([
                     padWithZeroes(v.branchID, 6),
                     v.branch,
@@ -1126,6 +1126,7 @@
                     formatter.format(v.disbursed - v.collected)
                 ]);
             });
+            console.log(total);
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
