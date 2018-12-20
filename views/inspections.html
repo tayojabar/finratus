@@ -1425,10 +1425,10 @@
                         test[key] = val;
                     });
                     if(test.status == 500){
-                        swal("Please recheck entered values!");
+                        swal("Please recheck entered values!","","error");
                     }
                     else
-                        swal("Vehicle Valuation Details Added!");
+                        swal("Vehicle Valuation Details Added!","","success");
                         $("#saved_frc_val").html(obj.Admin_FirstSale_Value);
                         $("#saved_mkt_val").html(obj.Admin_Market_Valuation);
                         $("#frc_val").empty();
@@ -1452,10 +1452,10 @@
                         test[key] = val;
                     });
                     if(test.status == 500){
-                        swal("Please Retry Action!");
+                        swal("Please Retry Action!","","error");
                     }
                     else
-                        swal("Vehicle Inspection Approval Info Updated!");
+                        swal("Vehicle Inspection Approval Info Updated!","","success");
                         $("#frc_val").hide();
                         $("#mkt_val").hide();
                         $("#saveValuation").hide();
@@ -1484,7 +1484,7 @@
                     // });
                     let res = JSON.parse(data);
                     if(res.status == 500){
-                        swal("No Images Uploaded!");
+                        swal("No Images Uploaded!","","warning");
                     }
                     else{
                         let response = {}; //console.log(res['response']);

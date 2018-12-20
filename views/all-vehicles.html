@@ -608,7 +608,7 @@
                 $('#make').val() == "" || $('#make').val() == null ||
                 $('#model').val() == "" || $('#model').val() == null )
             {
-                swal('Please make sure all compulsory fields are filled!')
+                swal('Please make sure all compulsory fields are filled!','','warning')
             }
             else
             {
@@ -669,10 +669,10 @@
                     });
                     console.log(test);
                     if(test.status == 500){
-                        swal("Please recheck entered values");
+                        swal("Please recheck entered values","","error");
                     }
                     else
-                        swal("Vehicle Details Updated!");
+                        swal("Vehicle Details Updated!","","success");
                 }
             });
         }

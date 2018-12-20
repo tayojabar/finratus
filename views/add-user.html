@@ -531,13 +531,13 @@
                         test[key] = val;
                     });
                     if(test.message){
-                        swal("Username already exists!");
+                        swal("Username already exists!","","error");
                     }
                     else if(test.status == 500){
-                        swal("Please recheck entered values");
+                        swal("Please recheck entered values","","error");
                     }
                     else
-                        swal("User Registered!");
+                        swal("User Registered!","","success");
                 }
             });
 
@@ -568,14 +568,14 @@
                     });
                     if(test.message){
                         $('#role').val("");
-                        swal("Role already exists!");
+                        swal("Role already exists!","","error");
                     }
                     else if(test.status == 500){
                         $('#role').val("");
-                        swal("Please recheck entered values!");
+                        swal("Please recheck entered values!","","error");
                     }
                     else
-                    {$('#role').val(""); swal("New Role Registered!"); getRoles();}
+                    {$('#role').val(""); swal("New Role Registered!","","success"); getRoles();}
                 }
             });
         }
