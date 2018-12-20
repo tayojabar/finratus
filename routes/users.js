@@ -2314,12 +2314,8 @@ users.post('/contact', function(req, res) {
 
 users.post('/sendmail', function(req, res) {
     let data = req.body;
-    if (data['solution[]'])
-        data.solution = data['solution[]'];
-    if (!data.name || !data.email || !data.company || !data.phone || !data.solution || !data.description)
-        return res.send("Error");
-    if (data.solution.constructor === [].constructor)
-        data.solution = data.solution.join(',');
+    if (!data.name || !data.email || !data.company || !data.phone || !data.title || !data.location || !data.description || !data.lead)
+        return res.send("Required Parameters not sent!");
     data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     let mailOptions = {
         from: 'ATB Cisco <applications@loan35.com>',
@@ -2331,8 +2327,6 @@ users.post('/sendmail', function(req, res) {
     };
 
     transporter.sendMail(mailOptions, function(error, info){
-        console.log(error)
-        console.log(info)
         if(error)
             return res.send("Error");
         return res.send("OK");
@@ -2394,7 +2388,8 @@ users.get('/application-id/:id', function(req, res, next) {
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
         query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.workflowID, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
+            'a.workflowID, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT amount FROM escrow WHERE clientID=u.ID) AS escrow ' +
+            'FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
 
@@ -3130,6 +3125,35 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
                     res.send({"status": 200, "message": "Invoice Payment confirmed successfully!"});
                 }
             });
+        }
+    });
+});
+
+users.post('/application/escrow', function(req, res, next) {
+    let data = req.body,
+        date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    data.date_created = date;
+    db.query('SELECT * FROM escrow WHERE clientID = '+data.clientID, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            if (result && result[0]){
+                db.query('UPDATE escrow SET ? WHERE clientID = '+data.clientID, {amount:(parseFloat(data.amount)+parseFloat(result[0]['amount'])),date_modified:date}, function (error, result, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        res.send({"status": 200, "message": "Escrow credited successfully!"});
+                    }
+                });
+            } else {
+                db.query('INSERT INTO escrow SET ?', data, function (error, result, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        res.send({"status": 200, "message": "Escrow credited successfully!"});
+                    }
+                });
+            }
         }
     });
 });
