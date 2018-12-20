@@ -1006,7 +1006,7 @@
                 num_all++;
                 num_paid++;
                 total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
-                totalbalance += (v.balance) ? parseFloat(v.balance) : 0
+                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.applicationID),6),
                     v.fullname,
@@ -1136,10 +1136,11 @@
 
     function populateLoanByBranch(dets){
         $("#loan-by-branch-table").dataTable().fnClearTable();
-        var total = 0;
         if (dets.length === 0){
             $("#loan-by-branch-table").dataTable().fnClearTable();
+            $('#total-loans-by-branch').html(formatter.format(0));
         }else{
+            var total = 0;
             jQuery.each(dets, function(k, v){
                 total += (v.disbursed) ? v.disbursed : 0;
                 $("#loan-by-branch-table").dataTable().fnAddData([
@@ -1150,7 +1151,6 @@
                     formatter.format(v.disbursed - v.collected)
                 ]);
             });
-            console.log(total);
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
@@ -1271,6 +1271,7 @@
         $("#interests-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#interests-table").dataTable().fnClearTable();
+            $('#total-interests-earned').html(formatter.format(0));
         }else{
             var total = 0;
             jQuery.each(dets, function(k, v){
@@ -1331,6 +1332,7 @@
         $("#bad-loans-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#bad-loans-table").dataTable().fnClearTable();
+            $('#total-badloans').html(formatter.format(0));
         }else{
             var total = 0;
             jQuery.each(dets, function(k, v){
@@ -1391,10 +1393,10 @@
         $("#overdues-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#overdues-table").dataTable().fnClearTable();
+            $('#total-overdue').html(formatter.format(0));
         }else{
             var total = 0;
             var today = new Date();
-            console.log(today);
             var dd = today.getDate();
             var mm = today.getMonth()+1;
             var yyyy = today.getFullYear();

@@ -3433,7 +3433,7 @@ users.get('/bad-loans/', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = (query.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) '));
     }
     db.query(query, function (error, results, fields) {
         if(error){

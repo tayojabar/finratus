@@ -911,20 +911,6 @@
             });
         }
 
-        function read_write(){
-            let w;
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-                if (k.module_name === page){
-                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-                }
-            });
-            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
-                $(".write").hide();
-            }
-        }
-
         function isUriImage(uri) {
             uri = uri.split('?')[0];
             let parts = uri.split('.'),
@@ -2145,6 +2131,20 @@
                     swal('Oops! An error occurred while updating loan cirrus id','','error');
                 }
             });
+        }
+
+        function read_write(){
+            let w;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k,v){
+                if (k.module_name === page){
+                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+                }
+            });
+            if (w && w[0] && (parseInt(w[0]['editable']) != 1)){
+                $(".write").hide();
+            }
         }
     </script>
 </body>
