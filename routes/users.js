@@ -3346,6 +3346,8 @@ users.get('/disbursements/filter', function(req, res, next) {
 
     let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified, date_created ' +
                  'from applications where status = 2 and ID not in (select applicationID from schedule_history) '
+
+    let query3 =
     var items = {};
     if (loan_officer){
         queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
