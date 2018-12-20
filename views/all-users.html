@@ -649,10 +649,10 @@
                     // var applications = data.message;
                     // results = applications;
                     // populateDataTable(applications);
-                    swal('User password updated successful!');
+                    swal('User password updated successful!','','success');
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred. Try Again.');
+                    swal('Oops! An error occurred. Try Again.','','error');
                 }
             });
         }
@@ -693,10 +693,10 @@
                     // var applications = data.message;
                     // results = applications;
                     // populateDataTable(applications);
-                    // swal('Application archived successfully');
+                    // swal('Application archived successfully','','success');
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred while retrieving details.');
+                    swal('Oops! An error occurred while retrieving details.','','error');
                 }
             });
         }
@@ -722,13 +722,13 @@
                     });
                     console.log(test);
                     if(test.response == null){
-                        swal("Communication Error! Please try again");
+                        swal("Communication Error! Please try again","","error");
                     }
                     else
-                        swal("User Details Updated!");
+                        swal("User Details Updated!","","success");
                 },
                 'error': function (err) {
-                    swal('Connection Error. Please try again.');
+                    swal('Connection Error. Please try again.','','error');
                 }
             });
         }
@@ -742,15 +742,15 @@
                 'success': function (data) {
                     test = JSON.parse(data);
                     if(test.status === 500){
-                        swal("Please Retry Action!");
+                        swal("Please Retry Action!","","error");
                     }
                     else{
-                        swal("User Disabled Successfully!");
+                        swal("User Disabled Successfully!","","success");
                         loadUsers();
                     }
                 },
                 'error': function(e){
-                    swal('Internet Connection Error!');
+                    swal('Internet Connection Error!','','error');
                 }
             });
         }
@@ -764,15 +764,15 @@
                 'success': function (data) {
                     test = JSON.parse(data);
                     if(test.status === 500){
-                        swal("Please try again!");
+                        swal("Please try again!","","error");
                     }
                     else{
-                        swal("User Reactivated Successfully!");
+                        swal("User Reactivated Successfully!","","success");
                         loadUsers();
                     }
                 },
                 'error': function(e){
-                    swal('Internet Connection Error!');
+                    swal('Internet Connection Error!','','error');
                 }
             });
         }

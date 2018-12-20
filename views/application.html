@@ -1075,7 +1075,7 @@
                     },
                     'error': function (err) {
                         console.log('Error');
-                        swal('No internet connection');
+                        swal('No internet connection','','error');
                     }
                 });
             }
@@ -1226,22 +1226,33 @@
                 },
                 'error': function (err) {
                     console.log('Error');
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
 
         $('.cancel').on('click', function(e) {
-            $.ajax({
-                'url': '/user/application/cancel/'+application_id,
-                'type': 'get',
-                'success': function (data) {
-                    swal('Loan cancelled successfully');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    console.log('Error');
-                    swal('No internet connection');
+            swal({
+                title: "Are you sure?",
+                text: "Once cancelled, this process is not reversible!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((yes) => {
+                if (yes) {
+                    $.ajax({
+                        'url': '/user/application/cancel/'+application_id,
+                        'type': 'get',
+                        'success': function (data) {
+                            swal('Loan cancelled successfully','','success');
+                            window.location.reload();
+                        },
+                        'error': function (err) {
+                            console.log('Error');
+                            swal('No internet connection','','error');
+                        }
+                    });
                 }
             });
         });
@@ -1268,7 +1279,7 @@
                 },
                 'error': function (err) {
                     console.log('Error');
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
@@ -1297,7 +1308,7 @@
                 },
                 'error': function (err) {
                     console.log('Error');
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
@@ -1311,11 +1322,11 @@
             if (stage_documents[0]){
                 for (let i=0; i<stage_documents.length; i++){
                     if (!(stage_documents[i].replace(/ /g, '_') in application.files))
-                        return swal('Kindly upload required document ('+stage_documents+')');
+                        return swal('Kindly upload required document ('+stage_documents+')','','warning');
                 }
             }
             if (!application.schedule || (application.schedule && !application.schedule[0]))
-                return swal('Kindly upload loan schedule to proceed!');
+                return swal('Kindly upload loan schedule to proceed!','','warning');
             $.ajax({
                 'url': '/user/workflow_process/'+application_id+'/'+state.workflowID,
                 'type': 'post',
@@ -1324,19 +1335,19 @@
                     if (data.status === 200){
                         $('#document-upload').hide();
                         $('#document-upload-text').text('');
-                        swal('Workflow updated successfully!');
+                        swal('Workflow updated successfully!','','success');
                         window.location.reload();
                     } else {
                         if (data.message){
-                            swal(data.message);
+                            swal(data.message,'','info');
                         } else {
-                            swal('No internet connection');
+                            swal('No internet connection','','error');
                         }
                     }
                 },
                 'error': function (err) {
                     console.log('Error');
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
@@ -1349,19 +1360,19 @@
                     if (data.status === 200){
                         $('#document-upload').hide();
                         $('#document-upload-text').text('');
-                        swal('Workflow updated successfully!');
+                        swal('Workflow updated successfully!','','success');
                         window.location.reload();
                     } else {
                         if (data.message){
-                            swal(data.message);
+                            swal(data.message,'','info');
                         } else {
-                            swal('No internet connection');
+                            swal('No internet connection','','error');
                         }
                     }
                 },
                 'error': function (err) {
                     console.log('Error');
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
@@ -1371,7 +1382,7 @@
                 comment = $comment.val();
             if (!comment || comment === ""){
                 $comment.val("");
-                return swal('Kindly type a brief comment');
+                return swal('Kindly type a brief comment','','error');
             }
             $.ajax({
                 'url': '/user/application/comments/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
@@ -1382,11 +1393,11 @@
                     results = comments;
                     loadComments(comments);
                     $comment.val("");
-                    swal('Comment saved successfully');
+                    swal('Comment saved successfully','','success');
                 },
                 'error': function (err) {
                     $comment.val("");
-                    swal('Oops! An error occurred while saving comment');
+                    swal('Oops! An error occurred while saving comment','','error');
                 }
             });
         }
@@ -1398,16 +1409,16 @@
                 $others = $('#stage-documents-others');
 
             if (!document || (document === '-- Choose Document --'))
-                return swal('Ensure you choose documents to be uploaded from the list');
+                return swal('Ensure you choose documents to be uploaded from the list','','warning');
 
             if ((document === 'others') && !$others.val())
-                return swal('Ensure you input the document title');
+                return swal('Ensure you input the document title','','warning');
         });
         
         function setDocumentTitle() {
             let $title = $('#others-document-title');
             if (!$title.val())
-                return swal('Document title cannot be empty');
+                return swal('Document title cannot be empty','','warning');
             $('#stage-documents-others').val($title.val());
             fileUpload($title.val());
         }
@@ -1475,11 +1486,11 @@
                             processData: false,
                             contentType: false,
                             success: function(response) {
-                                swal("File uploaded successfully!");
+                                swal("File uploaded successfully!","","success");
                                 window.location.reload();
                             },
                             error: function() {
-                                swal("Error! Please Try Again");
+                                swal("Error! Please Try Again","","error");
                             }
                         });
                     });
@@ -1495,7 +1506,7 @@
                     $images_preview.find('tbody').html('');
                 }
             } else {
-                return swal('Kindly upload a valid file format');
+                return swal('Kindly upload a valid file format','','warning');
             }
         });
 
@@ -1593,16 +1604,16 @@
                         };
                         reader.readAsText($csvUpload[0].files[0]);
                     } else {
-                        return swal('This browser does not support HTML5.');
+                        return swal('This browser does not support HTML5.','','warning');
                     }
                 } else {
-                    return swal('Please select a valid CSV file.');
+                    return swal('Please select a valid CSV file.','','warning');
                 }
             });
 
             $saveCSV.bind("click", function () {
                 if (!schedule[0])
-                    return swal('Please upload a valid CSV file.');
+                    return swal('Please upload a valid CSV file.','','warning');
 
                 validateSchedule(schedule, function (validation) {
                     if (validation.status){
@@ -1615,18 +1626,18 @@
                             'success': function (data) {
                                 $csvLoader.hide();
                                 $csvUpload.val('');
-                                swal('Schedule saved successfully');
+                                swal('Schedule saved successfully','','success');
                                 window.location.reload();
                             },
                             'error': function (err) {
                                 $csvLoader.hide();
                                 $csvUpload.val('');
-                                swal('Oops! An error occurred while saving schedule');
+                                swal('Oops! An error occurred while saving schedule','','error');
                             }
                         });
                     } else {
                         console.log(validation.data);
-                        swal('There are error(s) in the uploaded schedule!');
+                        swal('There are error(s) in the uploaded schedule!','','error');
                     }
                 });
             });
@@ -1749,25 +1760,24 @@
                 $('#next-payment-date-text').text('N/A');
             }
         }
-
         function disburse() {
             let disbursal = {};
             disbursal.funding_source = $('#funding').val();
             disbursal.disbursement_channel = $('#channel').val();
             disbursal.disbursement_date = $('#disbursement-date').val();
             if (!disbursal.funding_source || !disbursal.disbursement_channel || !disbursal.disbursement_date)
-                return swal('Kindly fill all required fields!');
+                return swal('Kindly fill all required fields!','','warning');
 
             $.ajax({
                 'url': '/user/application/disburse/'+application_id,
                 'type': 'post',
                 'data': disbursal,
                 'success': function (data) {
-                    swal('Loan disbursed successfully');
+                    swal('Loan disbursed successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred while disbursing loan');
+                    swal('Oops! An error occurred while disbursing loan','','error');
                 }
             });
         }
@@ -1843,21 +1853,21 @@
                         };
                         reader.readAsText($csvUpload[0].files[0]);
                     } else {
-                        return swal('This browser does not support HTML5.');
+                        return swal('This browser does not support HTML5.','','warning');
                     }
                 } else {
-                    return swal('Please select a valid CSV file.');
+                    return swal('Please select a valid CSV file.','','warning');
                 }
             });
 
             $saveCSV.bind("click", function () {
                 if (!schedule[0])
-                    return swal('Please preview the schedule to be uploaded.');
+                    return swal('Please preview the schedule to be uploaded.','','warning');
 
                 validateSchedule(schedule, function (validation) {
                     if (validation.status){
                         if (loan_amount < total_due_amount)
-                            return swal('Total principal on the new schedule must include previous (carried-over) balance');
+                            return swal('Total principal on the new schedule must include previous (carried-over) balance','','warning');
 
                         let schedule = validation.data;
                         $csvLoader.show();
@@ -1868,18 +1878,18 @@
                             'success': function (data) {
                                 $csvLoader.hide();
                                 $csvUpload.val('');
-                                swal('Reschedule added successfully');
+                                swal('Reschedule added successfully','','success');
                                 window.location.reload();
                             },
                             'error': function (err) {
                                 $csvLoader.hide();
                                 $csvUpload.val('');
-                                swal('Oops! An error occurred while adding reschedule');
+                                swal('Oops! An error occurred while adding reschedule','','error');
                             }
                         });
                     } else {
                         console.log(validation.data);
-                        swal('There are error(s) in the uploaded schedule!');
+                        swal('There are error(s) in the uploaded schedule!','','warning');
                     }
                 });
             });
@@ -1929,7 +1939,7 @@
 
             $approveCSV.bind("click", function () {
                 if (!new_reschedule || !new_reschedule[0])
-                    return swal('There is no reschedule available for approval!');
+                    return swal('There is no reschedule available for approval!','','error');
 
                 $csvLoader.show();
                 $.ajax({
@@ -1937,19 +1947,19 @@
                     'type': 'get',
                     'success': function (data) {
                         $csvLoader.hide();
-                        swal('Reschedule approved successfully');
+                        swal('Reschedule approved successfully','','success');
                         window.location.reload();
                     },
                     'error': function (err) {
                         $csvLoader.hide();
-                        swal('Oops! An error occurred while approving reschedule');
+                        swal('Oops! An error occurred while approving reschedule','','error');
                     }
                 });
             });
 
             $rejectCSV.bind("click", function () {
                 if (!new_reschedule || !new_reschedule[0])
-                    return swal('There is no reschedule available to delete!');
+                    return swal('There is no reschedule available to delete!','','error');
 
                 $csvLoader.show();
                 $.ajax({
@@ -1957,12 +1967,12 @@
                     'type': 'get',
                     'success': function (data) {
                         $csvLoader.hide();
-                        swal('Reschedule deleted successfully');
+                        swal('Reschedule deleted successfully','','success');
                         window.location.reload();
                     },
                     'error': function (err) {
                         $csvLoader.hide();
-                        swal('Oops! An error occurred while deleting reschedule');
+                        swal('Oops! An error occurred while deleting reschedule','','error');
                     }
                 });
             });
@@ -2086,11 +2096,11 @@
                 'type': 'post',
                 'data': {close_comment:$('#writeoff-notes').val()},
                 'success': function (data) {
-                    swal('Loan closed successfully');
+                    swal('Loan closed successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred while closing loan');
+                    swal('Oops! An error occurred while closing loan','','error');
                 }
             });
         }
@@ -2104,17 +2114,17 @@
             if ($('input[name=payoff-include-interest]:checked').val())
                 payoff.close_include_interest = $('input[name=payoff-include-interest]:checked').val();
             if (!payoff.close_interest || !payoff.close_date || !payoff.close_channel)
-                return swal('Kindly fill all required inputs to close loan');
+                return swal('Kindly fill all required inputs to close loan','','warning');
             $.ajax({
                 'url': '/user/application/pay-off/'+application_id,
                 'type': 'post',
                 'data': payoff,
                 'success': function (data) {
-                    swal('Loan closed successfully');
+                    swal('Loan closed successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred while closing loan');
+                    swal('Oops! An error occurred while closing loan','','error');
                 }
             });
         }
@@ -2122,17 +2132,17 @@
         function saveLoanCirrusID() {
             let id = $('#loancirrus-id-input').val();
             if (!id)
-                return swal('Kindly input loan cirrus id');
+                return swal('Kindly input loan cirrus id','','warning');
             $.ajax({
                 'url': '/user/application/loancirrus-id/'+application_id,
                 'type': 'post',
                 'data': {id:id},
                 'success': function (data) {
-                    swal('Loan cirrus id updated successfully');
+                    swal('Loan cirrus id updated successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred while updating loan cirrus id');
+                    swal('Oops! An error occurred while updating loan cirrus id','','error');
                 }
             });
         }

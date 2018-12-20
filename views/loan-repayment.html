@@ -683,7 +683,7 @@
                     },
                     'error': function (err) {
                         console.log('Error');
-                        swal('No internet connection');
+                        swal('No internet connection','','error');
                     }
                 });
             }
@@ -694,7 +694,7 @@
                 comment = $comment.val();
             if (!comment || comment === ""){
                 $comment.val("");
-                return swal('Kindly type a brief comment');
+                return swal('Kindly type a brief comment','','warning');
             }
             $.ajax({
                 'url': '/user/application/comments/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
@@ -732,7 +732,7 @@
                     total = ['TOTAL',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
                 for (let i = 0; i < application.schedule.length+2; i++) {
                     let row,
-                        cells = []
+                        cells = [];
                     if (i <= 1){
                         row = $('<tr style="font-weight: bold;" />');
                     } else {
@@ -805,25 +805,38 @@
                             total[17] += parseFloat(cells[17]);
                         }
                     }
-                    let id = (i > 0 && application.schedule[i - 2])? application.schedule[i - 2]['ID']: '';
-                    cells.push(id);
-                    for (let j = -1; j < cells.length-1; j++) {
+//                    let id = (i > 0 && application.schedule[i - 2])? application.schedule[i - 2]['ID']: '';
+                    let interest_invoice_no = application.schedule[i - 2]['interest_invoice_no'] || 'N/A',
+                        principal_invoice_no = application.schedule[i - 2]['principal_invoice_no'] || 'N/A';
+                    cells.push(principal_invoice_no);
+                    cells.push(interest_invoice_no);
+                    for (let j = -2; j < cells.length-1; j++) {
                         let cell = $("<td />");
                         if (i === 0){
-                            cells[j] = cells[j] || "";
-                            if (cells[j] !== ""){
-                                cell = $("<td colspan='5' />");
-                                cell.html(cells[j]);
+                            if (j === -2){
+                                cell = $("<td colspan='2' />");
+                                cell.html('INVOICE NO');
+                            } else if (j === -1){
+                            } else {
+                                cells[j] = cells[j] || "";
+                                if (cells[j] !== ""){
+                                    cell = $("<td colspan='5' />");
+                                    cell.html(cells[j]);
+                                }
                             }
                         } else if (i === 1){
-                            if (j === -1){
-                                cell.html('INVOICE NO');
+                            if (j === -2){
+                                cell.html('PRINCIPAL');
+                            } else if (j === -1){
+                                cell.html('INTEREST');
                             } else {
                                 cell.html(cells[j]);
                             }
                         } else {
-                            if (j === -1 && i>1){
-                                cell.html(padWithZeroes(cells[18],6));
+                            if (j === -2 && i>1){
+                                cell.html(cells[18]);
+                            } else if (j === -1 && i>1){
+                                cell.html(cells[19]);
                             } else if (j === 0 && i>1){
                                 cell.html(cells[j]);
                             } else if (j === 1 && i>1){
@@ -897,7 +910,7 @@
                 for (let i = 0; i<total.length; i++){
                     let cell = $("<td />");
                     if (i === 0){
-                        cell = $("<td colspan='4' />");
+                        cell = $("<td colspan='5' />");
                         cell.html(total[i]);
                         row.append(cell);
                     } else if (i > 2){
@@ -1077,7 +1090,7 @@
                     });
                 },
                 'error': function (err) {
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
@@ -1103,7 +1116,7 @@
                     });
                 },
                 'error': function (err) {
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
@@ -1117,7 +1130,7 @@
                     window.location.reload();
                 },
                 'error': function (err) {
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }
@@ -1139,7 +1152,7 @@
                     window.location.reload();
                 },
                 'error': function (err) {
-                    swal('No internet connection');
+                    swal('No internet connection','','error');
                 }
             });
         }

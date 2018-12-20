@@ -505,10 +505,10 @@
                     let applications = data.response;
                     results = applications;
                     populateDataTable(applications);
-                    swal('Application archived successfully');
+                    swal('Application archived successfully','','success');
                 },
                 'error': function (err) {
-                    swal('Oops! An error occurred during archiving');
+                    swal('Oops! An error occurred during archiving','','error');
                 }
             });
         }
@@ -518,7 +518,7 @@
                 comment = $comment.val();
             if (!comment || comment === ""){
                 $comment.val("");
-                return swal('Kindly type a brief comment');
+                return swal('Kindly type a brief comment','','warning');
             }
             $.ajax({
                 'url': '/user/requests/comment/'+localStorage.getItem("application_id"),
@@ -529,11 +529,11 @@
                     results = applications;
                     populateDataTable(applications);
                     $comment.val("");
-                    swal('Comment saved successfully');
+                    swal('Comment saved successfully','','success');
                 },
                 'error': function (err) {
                     $comment.val("");
-                    swal('Oops! An error occurred while saving comment');
+                    swal('Oops! An error occurred while saving comment','','error');
                 }
             });
         }
@@ -542,7 +542,7 @@
             let workflow_id = $("#workflows").val();
             console.log(workflow_id)
             if (workflow_id === "-- Choose Workflow Process --")
-                return swal('Kindly select a workflow for assignment');
+                return swal('Kindly select a workflow for assignment','','warning');
             $.ajax({
                 'url': '/user/request/assign_workflow/'+localStorage.getItem("application_id")+'/'+workflow_id,
                 'type': 'get',
@@ -551,11 +551,11 @@
                     results = applications;
                     populateDataTable(applications);
                     $("#workflows").val("");
-                    swal('Workflow assigned successfully');
+                    swal('Workflow assigned successfully','','success');
                 },
                 'error': function (err) {
                     $("#workflows").val("");
-                    swal('Oops! An error occurred while assigning workflow');
+                    swal('Oops! An error occurred while assigning workflow','','error');
                 }
             });
         }

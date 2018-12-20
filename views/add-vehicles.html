@@ -529,10 +529,10 @@
                         test[key] = val;
                     });
                     if(test.status == 500){
-                        swal("Please recheck entered values");
+                        swal("Please recheck entered values","","error");
                     }
                     else
-                        swal("Vehicle Registered!");
+                        swal("Vehicle Registered!","","success");
                 }
             });
         }
