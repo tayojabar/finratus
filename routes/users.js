@@ -3439,7 +3439,7 @@ users.get('/overdues/', function(req, res, next) {
         query,
         group
     queryPart = 'select ID, applicationID, \n' +
-        'min(STR_TO_DATE(payment_collect_date, \'%d-%m-%Y\')) as duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
+        'min(payment_collect_date) as duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
         '(select loan_amount from applications where applications.ID = applicationID) as principal,\n' +
         'sum(payment_amount) as amount_due, sum(interest_amount) as interest_due\n' +
         'from application_schedules\n' +

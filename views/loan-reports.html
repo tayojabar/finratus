@@ -982,8 +982,8 @@
             jQuery.each(dets.with_payments, function(k, v){
                 num_all++;
                 num_paid++;
-                total+= parseFloat(v.loan_amount);
-                totalbalance+= parseFloat(v.balance);
+                total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                totalbalance += (v.balance) ? parseFloat(v.balance) : 0
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.applicationID),6),
                     v.fullname,
@@ -993,7 +993,7 @@
                 ]);
             });
             jQuery.each(dets.without_pay, function(k, v){
-                total+= parseFloat(v.loan_amount);
+                total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.ID),6),
@@ -1002,11 +1002,11 @@
                     formatter.format(parseFloat(v.loan_amount)),
                     formatDate(v.date_modified)
                 ]);
-            });console.log(totalbalance);
-            console.log(num_paid);
+            });
+
             $('#total-disbursements').html(formatter.format(total));
-            $('#avg-loan-balance').html(formatter.format(totalbalance/num_paid));
-            $('#avg-loan-disbursed').html(formatter.format(total/num_all));
+            $('#avg-loan-balance').html(formatter.format((num_paid === 0) ? 0: totalbalance/num_paid));
+            $('#avg-loan-disbursed').html(formatter.format((num_all === 0) ? 0: total/num_all));
         }
     }
 
@@ -1112,12 +1112,12 @@
 
     function populateLoanByBranch(dets){
         $("#loan-by-branch-table").dataTable().fnClearTable();
+        var total = 0;
         if (dets.length === 0){
             $("#loan-by-branch-table").dataTable().fnClearTable();
         }else{
-            var total = 0;
             jQuery.each(dets, function(k, v){
-                total += v.disbursed;
+                total += (v.disbursed) ? v.disbursed : 0;
                 $("#loan-by-branch-table").dataTable().fnAddData([
                     padWithZeroes(v.branchID, 6),
                     v.branch,
@@ -1126,6 +1126,7 @@
                     formatter.format(v.disbursed - v.collected)
                 ]);
             });
+            console.log(total);
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
