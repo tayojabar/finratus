@@ -3350,8 +3350,8 @@ users.get('/disbursements/filter', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query2 = query2.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
+        query = (queryPart.concat('AND (TIMESTAMP((select date_modified from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query2 = query2.concat('AND (TIMESTAMP(date_modified) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
     db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
