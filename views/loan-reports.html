@@ -1011,7 +1011,7 @@
                     padWithZeroes(parseInt(v.applicationID),6),
                     v.fullname,
                     formatter.format(parseFloat(v.loan_amount)),
-                    formatter.format(parseFloat(v.balance)),
+                    formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
                     formatDate(v.date)
                 ]);
             });
