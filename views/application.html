@@ -462,6 +462,7 @@
                                                 <span id="principal-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
                                             </h2>
                                             <div id="loanSchedule" style="margin-top: 30px;"></div>
+                                            <p id="reschedule-info" style="display: none;"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -942,6 +943,12 @@
 
                     $('#client-id').text(padWithZeroes(application.userID,6));
                     $('#application-id').text(padWithZeroes(application.ID,9));
+                    console.log(application.reschedule_amount)
+                    if (application.reschedule_amount){
+                        $('#reschedule-info').show();
+                        $('#reschedule-info').text('Reschedule Add-on amount is ₦'+(parseFloat(application.reschedule_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+
+                            ' last updated on '+application.date_modified);
+                    }
                     if (application.loanCirrusID){
                         $('#loancirrus-id').show();
                         $('#loancirrus-id').text('L-CIRRUS ID#: '+application.loanCirrusID);
@@ -1904,10 +1911,10 @@
                 });
             });
 
-            let new_reschedule = $.grep(application.schedule,function(e){return e.status===2});
+            let total_new_schedule = 0,
+                new_reschedule = $.grep(application.schedule,function(e){return e.status===2});
             if (new_reschedule && new_reschedule[0]){
-                let total_new_schedule = 0,
-                    table = $("<table border='1' style='text-align: center;'/>");
+                let table = $("<table border='1' style='text-align: center;'/>");
                 for (let i = 0; i < new_reschedule.length+2; i++) {
                     let row,
                         cells = [];
@@ -1967,9 +1974,11 @@
                     .then((yes) => {
                         if (yes) {
                             $csvLoader.show();
+                            let loan_amount_update = (parseFloat(application.loan_amount)+(total_new_schedule-total_due_amount)).round(2);
                             $.ajax({
                                 'url': '/user/application/approve-schedule/'+application_id,
-                                'type': 'get',
+                                'type': 'post',
+                                'data': {loan_amount_update:loan_amount_update},
                                 'success': function (data) {
                                     $csvLoader.hide();
                                     swal('Reschedule approved successfully','','success');

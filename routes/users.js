@@ -2396,7 +2396,7 @@ users.get('/application-id/:id', function(req, res, next) {
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
         query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-            'a.workflowID, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT amount FROM escrow WHERE clientID=u.ID) AS escrow ' +
+            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT amount FROM escrow WHERE clientID=u.ID) AS escrow ' +
             'FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
@@ -2961,36 +2961,43 @@ users.post('/application/schedule/:id', function(req, res, next) {
     });
 });
 
-users.get('/application/approve-schedule/:id', function(req, res, next) {
+users.post('/application/approve-schedule/:id', function(req, res, next) {
     db.getConnection(function(err, connection) {
         if (err) throw err;
-
-        connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1', [req.params.id], function (error, invoices, fields) {
+        let loan_amount_update = req.body.loan_amount_update,
+            date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+        connection.query('UPDATE applications SET loan_amount = ?, reschedule_amount = ?, date_modified = ? WHERE ID = ?', [loan_amount_update,loan_amount_update,date_modified,req.params.id], function (error, invoice, fields) {
             if(error){
                 res.send({"status": 500, "error": error, "response": null});
             } else {
-                async.forEach(invoices, function (invoice, callback) {
-                    connection.query('UPDATE application_schedules SET status=0 WHERE ID = ?', [invoice.ID], function (error, response, fields) {
-                        callback();
-                    });
-                }, function (data) {
-                    connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 2', [req.params.id], function (error, new_schedule, fields) {
-                        if (error) {
-                            res.send({"status": 500, "error": error, "response": null});
-                        } else {
-                            let count = 0;
-                            async.forEach(new_schedule, function (obj, callback2) {
-                                connection.query('UPDATE application_schedules SET status=1, date_modified=? WHERE ID = ?', [moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'),obj.ID], function (error, response, fields) {
-                                    if(!error)
-                                        count++;
-                                    callback2();
-                                });
-                            }, function (data) {
-                                connection.release();
-                                res.send({"status": 200, "message": "Application schedule approved with "+count+" invoices successfully!", "response": null});
+                connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 1', [req.params.id], function (error, invoices, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        async.forEach(invoices, function (invoice, callback) {
+                            connection.query('UPDATE application_schedules SET status=0 WHERE ID = ?', [invoice.ID], function (error, response, fields) {
+                                callback();
                             });
-                        }
-                    });
+                        }, function (data) {
+                            connection.query('SELECT * FROM application_schedules WHERE applicationID = ? AND status = 2', [req.params.id], function (error, new_schedule, fields) {
+                                if (error) {
+                                    res.send({"status": 500, "error": error, "response": null});
+                                } else {
+                                    let count = 0;
+                                    async.forEach(new_schedule, function (obj, callback2) {
+                                        connection.query('UPDATE application_schedules SET status=1, date_modified=? WHERE ID = ?', [date_modified,obj.ID], function (error, response, fields) {
+                                            if(!error)
+                                                count++;
+                                            callback2();
+                                        });
+                                    }, function (data) {
+                                        connection.release();
+                                        res.send({"status": 200, "message": "Application schedule approved with "+count+" invoices successfully!", "response": null});
+                                    });
+                                }
+                            });
+                        });
+                    }
                 });
             }
         });
