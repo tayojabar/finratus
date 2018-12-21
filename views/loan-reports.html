@@ -283,7 +283,7 @@
                                                                     <th>Name</th>
                                                                     <th>Principal</th>
                                                                     <th>Balance</th>
-                                                                    <th>Date</th>
+                                                                    <th>Date Created</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody></tbody>
@@ -506,23 +506,35 @@
                                 <div role="tabpanel" class="tab-pane fade" id="org-reports">
                                     <div class="card">
                                         <div class="card-body">
-                                            <div class="row">
+                                            <div class="row" style="padding: 20px">
                                                 <div class="col-sm-6">
+                                                    <button id="projected-interest-button" class="btn col-sm-12">Projected Interest</button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button id="interests-received-button" class="btn btn-block col-sm-12">Interests Received</button>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div id="projected-interests-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong>Projected Interest</strong>
-                                                            <form id="filterprojectedinterest" class="form-inline" style="float: right;">
-                                                                <div class="form-group">
-                                                                    <label class="" for="startDate">Start date</label>
-                                                                    <input type="date" class="form-control" id="filterprointstart" placeholder="Start date">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label class="" for="endDate">End date</label>
-                                                                    <input type="date" class="form-control" id="filterprointend" placeholder="End date">
-                                                                </div>
-                                                                <button type="submit" class="btn btn-success">Filter</button>
-                                                            </form>
-                                                            <span class="pull-right">Total: <span id="total-interests"></span></span>
+                                                            <div class="col-sm-5">
+                                                                <strong>Projected Interest</strong>
+                                                                <span >Total: <span id="total-interests"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-7">
+                                                                <form id="filterprojectedinterest" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="filterprointstart" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="filterprointend" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="projected-interests-table" class="table table-striped table-bordered">
@@ -538,24 +550,26 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div id="interests-received-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong>Interests Received</strong>&nbsp;&nbsp;&nbsp;
-                                                            <form id="filterinterests" class="form-inline" style="float: right;">
-                                                                <div class="form-group">
-                                                                    <label class="" for="startDate">Start date</label>
-                                                                    <input type="date" class="form-control" id="filterintereststart" placeholder="Start date">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label class="" for="endDate">End date</label>
-                                                                    <input type="date" class="form-control" id="filterinterestend" placeholder="End date">
-                                                                </div>
-                                                                <button type="submit" class="btn btn-success">Filter</button>
-                                                            </form>
-                                                            <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
-                                                            <!--</select>-->
-                                                            <span class="pull-right">Total: <span id="total-interests-earned"></span></span>
+                                                            <div class="col-sm-5">
+                                                                <strong>Interests Received</strong>
+                                                                <span>Total: <span id="total-interests-earned"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-7">
+                                                                <form id="filterinterests" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="filterintereststart" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="filterinterestend" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="interests-table" class="table table-striped table-bordered">
@@ -578,23 +592,42 @@
                                 <div role="tabpanel" class="tab-pane fade" id="risk-reports">
                                     <div class="card">
                                         <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-sm-6">
+                                            <div class="col-sm-12" style="padding: 20px">
+                                                <div class="row" style="padding-bottom: 10px">
+                                                    <div class="col-sm-6">
+                                                        <button id="overdue-loans-button" class="btn col-sm-12">Overdue Loans</button>
+                                                        </div>
+                                                    <div class="col-sm-6">
+                                                            <button id="bad-loans-button" class="btn btn-block col-sm-12">Bad Loans </button>
+                                                        </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <button id="glp-button" class="btn btn-block col-sm-12">Gross Loan Portfolio</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div id="bad-loans-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong>Bad Loans</strong>
-                                                            <form id="filterbadloans" class="form-inline" style="float: right;">
-                                                                <div class="form-group">
-                                                                    <label class="" for="startDate">Start date</label>
-                                                                    <input type="date" class="form-control" id="filterbadloanstart" placeholder="Start date">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label class="" for="endDate">End date</label>
-                                                                    <input type="date" class="form-control" id="filterbadloanend" placeholder="End date">
-                                                                </div>
-                                                                <button type="submit" class="btn btn-success">Filter</button>
-                                                            </form>
-                                                            <span class="pull-right">Total: <span id="total-badloans"></span></span>
+                                                            <div class="col-sm-5">
+                                                                <strong>Bad Loans</strong>
+                                                                <span >Total: <span id="total-badloans"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-7">
+                                                                <form id="filterbadloans" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="filterbadloanstart" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="filterbadloanend" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="bad-loans-table" class="table table-striped table-bordered">
@@ -612,24 +645,26 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div id="overdue-loans-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <strong>Overdue Loans</strong>&nbsp;&nbsp;&nbsp;
-                                                            <form id="filteroverdueloans" class="form-inline" style="float: right;">
-                                                                <div class="form-group">
-                                                                    <label class="" for="startDate">Start date</label>
-                                                                    <input type="date" class="form-control" id="filteroverduestart" placeholder="Start date">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label class="" for="endDate">End date</label>
-                                                                    <input type="date" class="form-control" id="filteroverdueend" placeholder="End date">
-                                                                </div>
-                                                                <button type="submit" class="btn btn-success">Filter</button>
-                                                            </form>
-                                                            <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
-                                                            <!--</select>-->
-                                                            <span class="pull-right">Total: <span id="total-overdue"></span></span>
+                                                            <div class="col-sm-5">
+                                                                <strong>Overdue Loans</strong>
+                                                                <span >Total: <span id="total-overdue"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-7">
+                                                                <form id="filteroverdueloans" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="filteroverduestart" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="filteroverdueend" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                         <div class="card-body">
                                                             <table id="overdues-table" class="table table-striped table-bordered">
@@ -640,6 +675,45 @@
                                                                     <th>Principal</th>
                                                                     <th>Principal Due</th>
                                                                     <th>Interest Due</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div id="glp-div" style="display: none" class="col-sm-6">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <div class="col-sm-5" style="background-color: transparent; border-color: transparent">
+                                                                <strong>Gross Loan Portfolio</strong>
+                                                                <span>Total: <span id="glp"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-7" style="background-color: transparent; border-color: transparent">
+                                                                <form id="filterglp" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="startDate" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="endDate" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="glp-table" class="table table-striped table-bordered" width="100%">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Loan ID</th>
+                                                                    <th>Name</th>
+                                                                    <th>Principal</th>
+                                                                    <th>Balance</th>
+                                                                    <th>Date Created</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody></tbody>
@@ -867,6 +941,20 @@
             "paging": true
         });
 
+    var myTable8 = $('#glp-table')
+        .DataTable({
+            bAutoWidth: false,
+            "aoColumns": [
+                { "bSortable": false }, { "bSortable": true },
+                null, null, { "bSortable": true },
+            ],
+            "aaSorting": [],
+//            "bSearchable": false,
+            select: {
+                style: 'multi'
+            }
+        });
+
     $(document).ajaxStart(function(){
         $("#wait").css("display", "block");
     });
@@ -889,6 +977,52 @@
         $("#disbursement-div").hide();
         $("#loan-branch-button").attr('class', 'btn btn-primary col-sm-12');
         $("#disburse-button").attr('class', 'btn col-sm-12');
+    });
+
+    $(document).on("click", "#projected-interest-button", function (e) {
+        $("#projected-interests-div").show();
+        $("#projected-interests-div").attr('class', 'col-sm-12');
+        $("#interests-received-div").hide();
+        $("#projected-interest-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#interests-received-button").attr('class', 'btn col-sm-12');
+    });
+
+    $(document).on("click", "#interests-received-button", function (e) {
+        $("#interests-received-div").show();
+        $("#interests-received-div").attr('class', 'col-sm-12');
+        $("#projected-interests-div").hide();
+        $("#interests-received-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#projected-interest-button").attr('class', 'btn col-sm-12');
+    });
+
+    $(document).on("click", "#overdue-loans-button", function (e) {
+        $("#overdue-loans-div").show();
+        $("#overdue-loans-div").attr('class', 'col-sm-12');
+        $("#bad-loans-div").hide();
+        $("#glp-div").hide();
+        $("#overdue-loans-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#bad-loans-button").attr('class', 'btn col-sm-12');
+        $("#glp-button").attr('class', 'btn col-sm-12');
+    });
+
+    $(document).on("click", "#bad-loans-button", function (e) {
+        $("#bad-loans-div").show();
+        $("#bad-loans-div").attr('class', 'col-sm-12');
+        $("#overdue-loans-div").hide();
+        $("#glp-div").hide();
+        $("#bad-loans-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#overdue-loans-button").attr('class', 'btn col-sm-12');
+        $("#glp-button").attr('class', 'btn col-sm-12');
+    });
+
+    $(document).on("click", "#glp-button", function (e) {
+        $("#glp-div").show();
+        $("#glp-div").attr('class', 'col-sm-12');
+        $("#overdue-loans-div").hide();
+        $("#bad-loans-div").hide();
+        $("#glp-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#overdue-loans-button").attr('class', 'btn col-sm-12');
+        $("#bad-loans-button").attr('class', 'btn col-sm-12');
     });
 
     function check(){
@@ -1002,7 +1136,7 @@
         if (dets.length === 0){
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
-            var total = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0;
+            var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0;
             jQuery.each(dets.with_payments, function(k, v){
                 num_all++;
                 num_paid++;
@@ -1015,9 +1149,20 @@
                     formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
                     formatDate(v.date)
                 ]);
+                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) === 0)){
+                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) : 0
+                    $("#glp-table").dataTable().fnAddData([
+                        padWithZeroes(parseInt(v.applicationID),6),
+                        v.fullname,
+                        formatter.format(parseFloat(v.loan_amount)),
+                        formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
+                        formatDate(v.date)
+                    ]);
+                }
             });
             jQuery.each(dets.without_pay, function(k, v){
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
                 $("#disbursed-table").dataTable().fnAddData([
@@ -1027,9 +1172,17 @@
                     formatter.format(parseFloat(v.loan_amount)),
                     formatDate(v.date_modified)
                 ]);
+                $("#glp-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.ID),6),
+                    v.fullname,
+                    formatter.format(parseFloat(v.loan_amount)),
+                    formatter.format(parseFloat(v.loan_amount)),
+                    formatDate(v.date_modified)
+                ]);
             });
 
             $('#total-disbursements').html(formatter.format(total));
+            $('#glp').html(formatter.format(totalglp));
             $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
             $('#avg-loan-disbursed').html(formatter.format((num_all === 0) ? 0: total/num_all));
         }
