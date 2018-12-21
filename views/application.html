@@ -462,6 +462,7 @@
                                                 <span id="principal-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
                                             </h2>
                                             <div id="loanSchedule" style="margin-top: 30px;"></div>
+                                            <p id="reschedule-info" style="display: none;"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -942,6 +943,12 @@
 
                     $('#client-id').text(padWithZeroes(application.userID,6));
                     $('#application-id').text(padWithZeroes(application.ID,9));
+                    console.log(application.reschedule_amount)
+                    if (application.reschedule_amount){
+                        $('#reschedule-info').show();
+                        $('#reschedule-info').text('Reschedule Add-on amount is ₦'+(parseFloat(application.reschedule_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+
+                            ' last updated on '+application.date_modified);
+                    }
                     if (application.loanCirrusID){
                         $('#loancirrus-id').show();
                         $('#loancirrus-id').text('L-CIRRUS ID#: '+application.loanCirrusID);
@@ -1975,7 +1982,7 @@
                                 'success': function (data) {
                                     $csvLoader.hide();
                                     swal('Reschedule approved successfully','','success');
-//                                    window.location.reload();
+                                    window.location.reload();
                                 },
                                 'error': function (err) {
                                     $csvLoader.hide();
