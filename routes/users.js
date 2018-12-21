@@ -2319,8 +2319,7 @@ users.post('/sendmail', function(req, res) {
     data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     let mailOptions = {
         from: 'ATB Cisco <applications@loan35.com>',
-        to: 'mimara@atbtechsoft.com',
-        // to: 'abiodun@atbtechsoft.com',
+        to: 'abiodun@atbtechsoft.com',
         subject: 'ATB Cisco Application: '+data.name,
         template: 'mail',
         context: data
