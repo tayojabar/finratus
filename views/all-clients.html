@@ -195,9 +195,24 @@
                 <div id="user-table" class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <strong class="card-title">All Users</strong>
+                            <div class="col-sm-9">
+                            <strong class="card-title">All Clients</strong>
+                            <form id="filterclients" class="form-inline" style="float: right;">
+                                <div class="form-group">
+                                    <label class="" for="startDate">Start date</label>
+                                    <input type="date" class="form-control" id="startDate" placeholder="Start date">
+                                </div>
+                                <div class="form-group">
+                                    <label class="" for="endDate">End date</label>
+                                    <input type="date" class="form-control" id="endDate" placeholder="End date">
+                                </div>
+                                <button type="submit" class="btn btn-success">Filter By Date Created</button>
+                            </form>
+                            </div>
+                            <div class="col-sm-3">
                             <div class="pull-right">
                                 <a href="/add-client" class="btn btn-primary"><i class="fa fa-plus"></i> New Client</a>
+                            </div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -206,6 +221,7 @@
                                 <tr>
                                     <th>Username</th>
                                     <th>Full Name</th>
+                                    <th>Date Created</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -968,9 +984,13 @@
     }
 
     function loadUsers(){
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/clients-list-full' : 'user/clients-list-full?start='+start+'&&end='+end
 
         $.ajax({
-            'url': '/user/clients-list-full',
+            'url': url,
             'type': 'get',
             'success': function (data) {
                 var users = JSON.parse(data);
@@ -1033,6 +1053,28 @@
         });
     }
 
+    $("#filterclients").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            type = $("#type-filter").val(),
+            url = '/user/clients-list-full?start='+start+'&&end='+end;
+        if (!start || !end)
+            return loadUsers();
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                populateDataTable(JSON.parse(data));
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
     function formatDate(timestamp) {
         timestamp = parseInt(timestamp);
         let date =  new Date(timestamp);
@@ -1042,7 +1084,6 @@
     function populateDataTable(data) {
         // clear the table before populating it with more data
         $("#bootstrap-data-table").DataTable().clear();
-        var length = data.length;
         //var action = '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>';
         $.each(data, function(k, v){
             let actions;
@@ -1057,6 +1098,7 @@
             $('#bootstrap-data-table').dataTable().fnAddData( [
                 v.username,
                 v.fullname,
+                v.date_created,
                 actions
             ]);
         });

@@ -1906,7 +1906,16 @@ users.get('/clients-list', function(req, res, next) {
 });
 
 users.get('/clients-list-full', function(req, res, next) {
-    let query = 'select * from clients';
+    let start = req.query.start,
+        end = req.query.end,
+        loan_officer = req.query.officer
+    let query = 'select * from clients ';
+    if (start && end){
+        console.log("Here");
+        start = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'"
+        end = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'"
+        query = query.concat('where TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')')
+    }
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -3668,6 +3677,33 @@ users.get('/projected-interests', function(req, res, next) {
                 res.send({"status": 200, "error": null, "response": items, "message": "All Payments pulled!"});
             }
         });
+    });
+    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
+});
+
+/* Aggregate Projected Interests */
+users.get('/agg-projected-interests', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let query,
+        group
+    query = 'select sum(interest_amount) as total \n' +
+        'from application_schedules\n' +
+        'where applicationID in (select ID from applications)\n' +
+        'and status = 1 and payment_status = 0 '
+
+    if (start && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = query.concat('and timestamp(interest_collect_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')');
+    }
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "Success!"});
+        }
     });
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
