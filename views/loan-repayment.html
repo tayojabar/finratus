@@ -973,8 +973,6 @@
             $('#penalty').val(0);
             $('#principal-payable').text('₦'+(parseFloat(invoice.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $('#interest-payable').text('₦'+(parseFloat(invoice.interest_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-//            $('#principal').attr({max:invoice.payment_amount});
-//            $('#interest').attr({max:invoice.interest_amount});
         }
 
         $('.validate').change(function () {
@@ -1041,7 +1039,7 @@
                         'data': invoice,
                         'success': function (data) {
                             swal('Payment confirmed successfully','','success');
-//                            window.location.reload();
+                            window.location.reload();
                         },
                         'error': function (err) {
                             swal('Oops! An error occurred while confirming payment','','error');
