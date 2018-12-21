@@ -973,8 +973,6 @@
             $('#penalty').val(0);
             $('#principal-payable').text('₦'+(parseFloat(invoice.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $('#interest-payable').text('₦'+(parseFloat(invoice.interest_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-//            $('#principal').attr({max:invoice.payment_amount});
-//            $('#interest').attr({max:invoice.interest_amount});
         }
 
         $('.validate').change(function () {
@@ -982,7 +980,7 @@
                 payment = parseFloat($('#payment').val()),
                 principal = parseFloat($('#principal').val()),
                 interest = parseFloat($('#interest').val());
-            if (payment !== (principal + interest)){
+            if (payment.round(2) !== (principal + interest).round(2)){
                 $message.addClass('error');
                 $message.removeClass('success');
                 $message.text('Actual Payment must be the sum of Principal and Interest');
@@ -1002,7 +1000,7 @@
             invoice.actual_fees_amount = $('#fees').val();
             invoice.actual_penalty_amount = $('#penalty').val();
             invoice.payment_source = $('#source').val();
-            if (payment !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)))
+            if (payment.round(2) !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)).round(2))
                 return swal('Actual Payment must be the sum of Principal and Interest','','warning');
             if (invoice.payment_source === 'escrow' && (!application.escrow || (payment > parseFloat(application.escrow))))
                 return swal('Actual Payment ('+payment+') must be less than or equal to escrow balance ('+application.escrow+')','','warning');
@@ -1041,7 +1039,7 @@
                         'data': invoice,
                         'success': function (data) {
                             swal('Payment confirmed successfully','','success');
-//                            window.location.reload();
+                            window.location.reload();
                         },
                         'error': function (err) {
                             swal('Oops! An error occurred while confirming payment','','error');
