@@ -1904,10 +1904,10 @@
                 });
             });
 
-            let new_reschedule = $.grep(application.schedule,function(e){return e.status===2});
+            let total_new_schedule = 0,
+                new_reschedule = $.grep(application.schedule,function(e){return e.status===2});
             if (new_reschedule && new_reschedule[0]){
-                let total_new_schedule = 0,
-                    table = $("<table border='1' style='text-align: center;'/>");
+                let table = $("<table border='1' style='text-align: center;'/>");
                 for (let i = 0; i < new_reschedule.length+2; i++) {
                     let row,
                         cells = [];
@@ -1967,13 +1967,15 @@
                     .then((yes) => {
                         if (yes) {
                             $csvLoader.show();
+                            let loan_amount_update = (parseFloat(application.loan_amount)+(total_new_schedule-total_due_amount)).round(2);
                             $.ajax({
                                 'url': '/user/application/approve-schedule/'+application_id,
-                                'type': 'get',
+                                'type': 'post',
+                                'data': {loan_amount_update:loan_amount_update},
                                 'success': function (data) {
                                     $csvLoader.hide();
                                     swal('Reschedule approved successfully','','success');
-                                    window.location.reload();
+//                                    window.location.reload();
                                 },
                                 'error': function (err) {
                                     $csvLoader.hide();
