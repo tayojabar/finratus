@@ -2518,7 +2518,7 @@ users.get('/collections/filter', function(req, res, next) {
             break;
         }
     }
-    query = query.concat("ORDER BY ID desc");
+    query = query.concat(" ORDER BY ID desc");
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
