@@ -497,7 +497,9 @@
                                 <div class="row setup-content" id="generate-schedule-v2" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
-                                            <h2 class="text-center" style="margin-bottom: 15px;">Loan Reschedule</h2>
+                                            <h2 class="text-center" style="margin-bottom: 15px;">Loan Reschedule
+                                                <span id="reschedule-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
+                                            </h2>
                                             <div class="row">
                                                 <div class="col-sm-3">
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
@@ -1001,6 +1003,11 @@
 
         Number.prototype.roundTo = function(n) {
             return Math.ceil(this/n)*n;
+        };
+
+        Number.prototype.round = function(p) {
+            p = p || 10;
+            return parseFloat( this.toFixed(p) );
         };
 
         function padWithZeroes(n, width, z) {
@@ -1836,7 +1843,7 @@
                                         case 1:{ invoice.payment_collect_date = cells[j]; break; }
                                         case 2:{
                                             if (i > 1)
-                                                loan_amount += parseFloat(cells[j]);
+                                                loan_amount = (loan_amount + parseFloat(cells[j])).round(2);
                                             invoice.payment_amount = cells[j];
                                             break;
                                         }
@@ -1898,7 +1905,8 @@
 
             let new_reschedule = $.grep(application.schedule,function(e){return e.status===2});
             if (new_reschedule && new_reschedule[0]){
-                let table = $("<table border='1' style='text-align: center;'/>");
+                let total_new_schedule = 0,
+                    table = $("<table border='1' style='text-align: center;'/>");
                 for (let i = 0; i < new_reschedule.length+2; i++) {
                     let row,
                         cells = [];
@@ -1931,12 +1939,17 @@
                         } else {
                             cell.html('--');
                         }
+                        if (j === 2){
+                            if (i > 1)
+                                total_new_schedule = (total_new_schedule + parseFloat(cells[j])).round(2);
+                        }
                         row.append(cell);
                     }
                     table.append(row);
                 }
                 $dvCSV.html('');
                 $dvCSV.append(table);
+                $('#reschedule-total-text').text('Total Principal: ₦'+total_new_schedule.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             }
 
             $approveCSV.bind("click", function () {
