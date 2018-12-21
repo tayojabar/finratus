@@ -3103,9 +3103,11 @@ users.get('/application/edit-schedule-history/:id', function(req, res, next) {
 });
 
 users.post('/application/confirm-payment/:id/:application_id/:agent_id', function(req, res, next) {
-    let data = req.body;
-    data.payment_status = 1;
-    db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, data, function (error, invoice, fields) {
+    let data = req.body,
+        postData = Object.assign({},req.body);
+    postData.payment_status = 1;
+    delete postData.payment_source;
+    db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, postData, function (error, invoice, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
@@ -3117,6 +3119,7 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
             invoice.interest_amount = data.actual_interest_amount;
             invoice.fees_amount = data.actual_fees_amount;
             invoice.penalty_amount = data.actual_penalty_amount;
+            invoice.payment_source = data.payment_source;
             invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
             db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
                 if(error){
@@ -3138,7 +3141,7 @@ users.post('/application/escrow', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             if (result && result[0]){
-                db.query('UPDATE escrow SET ? WHERE clientID = '+data.clientID, {amount:(parseFloat(data.amount)+parseFloat(result[0]['amount'])),date_modified:date}, function (error, result, fields) {
+                db.query('UPDATE escrow SET ? WHERE clientID = '+data.clientID, {amount:((parseFloat(data.amount)+parseFloat(result[0]['amount'])).round(2)),date_modified:date}, function (error, result, fields) {
                     if(error){
                         res.send({"status": 500, "error": error, "response": null});
                     } else {
@@ -3157,6 +3160,23 @@ users.post('/application/escrow', function(req, res, next) {
         }
     });
 });
+
+users.post('/application/escrow/update/:clientID', function(req, res, next) {
+    let data = req.body;
+    data.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE escrow SET ? WHERE clientID = '+req.params.clientID, data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Escrow updated successfully!"});
+        }
+    });
+});
+
+Number.prototype.round = function(p) {
+    p = p || 10;
+    return parseFloat( this.toFixed(p) );
+};
 
 users.post('/application/disburse/:id', function(req, res, next) {
     let data = req.body;

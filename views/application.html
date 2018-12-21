@@ -1207,6 +1207,7 @@
                                     $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
                                 }
                             }
+                            checkTotalDue();
                         }
                         $('#disbursement-amount').val((parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                         $('#stage-actions').append('<a href="#" id="stage-action-0" class="dropdown-item" data-toggle="modal" data-target="#disburseModal">Disburse Loan</a>');
@@ -1750,6 +1751,17 @@
                 $('#next-payment-date-text').text('N/A');
             }
         }
+
+        function checkTotalDue() {
+            if (total_due_amount === 0){
+                $('#close-loan').hide();
+                $('#loan_closed').show();
+                $('#collect-payment-button').hide();
+                $('#generate-schedule-v2').hide();
+                $('#loan_closed').html('<strong>CLOSED </strong>');
+            }
+        }
+
         function disburse() {
             let disbursal = {};
             disbursal.funding_source = $('#funding').val();
