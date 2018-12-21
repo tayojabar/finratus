@@ -3585,13 +3585,13 @@ users.get('/projected-interests', function(req, res, next) {
         '(select userID from applications a where a.ID = applicationID) as clientID,\n' +
         '(select fullname from clients c where c.ID = (select userID from applications a where a.ID = applicationID)) as client\n' +
         'from application_schedules \n' +
-        'where applicationID in (select ID from applications)\n ';
+        'where applicationID in (select a.ID from applications a where a.status = 2 )\n ';
     group = 'group by applicationID order by applicationID asc ';
     query = queryPart.concat(group);
     queryPart2 = 'select applicationID, sum(interest_amount) as interest_paid\n' +
         'from schedule_history\n' +
         'where status = 1\n' +
-        'and applicationID in (select ID from applications) '
+        'and applicationID in (select a.ID from applications a where a.status = 2) '
     query2= queryPart2.concat(group);
     var items = {};
     if (start && end){
