@@ -2501,7 +2501,7 @@ users.get('/applications/filter', function(req, res, next) {
 
 users.get('/collections/filter', function(req, res, next) {
     let type = req.query.type,
-        range = (req.query.range)? parseInt(req.query.range) : false,
+        range = parseInt(req.query.range),
         today = moment().utcOffset('+0100').format('YYYY-MM-DD');
 
     let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
@@ -2510,19 +2510,11 @@ users.get('/collections/filter', function(req, res, next) {
         "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ";
     switch (type){
         case 'due': {
-            if (range){
-                query = query.concat(collectionDueRangeQuery(today, range));
-            } else {
-                query = query.concat('AND TIMESTAMP(payment_collect_date) = TIMESTAMP("'+today+'") ');
-            }
+            query = query.concat(collectionDueRangeQuery(today, range));
             break;
         }
         case 'overdue': {
-            if (range){
-                query = query.concat(collectionOverdueRangeQuery(today, range));
-            } else {
-                query = query.concat('AND TIMESTAMP(payment_collect_date) < TIMESTAMP("'+today+'") ');
-            }
+            query = query.concat(collectionOverdueRangeQuery(today, range));
             break;
         }
     }
@@ -2537,13 +2529,60 @@ users.get('/collections/filter', function(req, res, next) {
 });
 
 function collectionDueRangeQuery(today, range){
-    return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+today+'") ' +
-        'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add((range+1), "days").format("YYYY-MM-DD")+'") ';
+    switch (range){
+        case 0: {
+            return 'AND TIMESTAMP(payment_collect_date) = TIMESTAMP("'+today+'") ';
+        }
+        case 1: {
+            return 'AND TIMESTAMP(payment_collect_date) = TIMESTAMP("'+moment(today).add(1, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 7: {
+            return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).add(2, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add(7, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 14: {
+            return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).add(8, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add(14, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 30: {
+            return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).add(15, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add(30, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 60: {
+            return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).add(31, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add(60, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 61: {
+            return 'AND TIMESTAMP(payment_collect_date) > TIMESTAMP("'+moment(today).add(60, "days").format("YYYY-MM-DD")+'") ';
+        }
+    }
 }
 
 function collectionOverdueRangeQuery(today, range){
-    return 'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).add(1, "days").format("YYYY-MM-DD")+'") ' +
-        'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).add((range+1), "days").format("YYYY-MM-DD")+'") ';
+    switch (range){
+        case 1: {
+            return 'AND TIMESTAMP(payment_collect_date) = TIMESTAMP("'+moment(today).subtract(1, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 7: {
+            return 'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).subtract(2, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).subtract(7, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 14: {
+            return 'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).subtract(8, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).subtract(14, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 30: {
+            return 'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).subtract(15, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).subtract(30, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 60: {
+            return 'AND TIMESTAMP(payment_collect_date) <= TIMESTAMP("'+moment(today).subtract(31, "days").format("YYYY-MM-DD")+'") ' +
+                'AND TIMESTAMP(payment_collect_date) >= TIMESTAMP("'+moment(today).subtract(60, "days").format("YYYY-MM-DD")+'") ';
+        }
+        case 61: {
+            return 'AND TIMESTAMP(payment_collect_date) < TIMESTAMP("'+moment(today).subtract(60, "days").format("YYYY-MM-DD")+'") ';
+        }
+    }
 }
 
 users.get('/requests/filter/:start/:end', function(req, res, next) {
