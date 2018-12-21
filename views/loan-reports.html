@@ -1347,7 +1347,7 @@
             jQuery.each(dets, function(k, v){
                 var duedate = new Date(v.duedate);
                 if ((Math.round(Math.abs((now.getTime() - duedate.getTime())/(oneDay)))) > 90){
-                    total+= parseFloat(v.loan_amount);
+                    total+= parseFloat(v.amount_due);
                     $("#bad-loans-table").dataTable().fnAddData([
                         padWithZeroes(parseInt(v.applicationID),6),
                         v.client,
