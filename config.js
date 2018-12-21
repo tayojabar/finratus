@@ -18,6 +18,15 @@ config.staging = {
     insecureAuth: true
 };
 
+config.live = {
+    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
+    port     : '3306',
+    user     : 'loan35dbadmin@atobz-mysqldbserver',
+    password : 'Loan35Pass@word2018',
+    database : 'loan35',
+    insecureAuth: true
+};
+
 config.production = {
     host     : '140.86.3.244',
     port     : '3306',
