@@ -299,7 +299,7 @@
                                         <div class="card text-white bg-flat-color-1">
                                             <div class="card-body pb-0">
                                                 <h3 id="loan-amount-text" class="mb-0"></h3>
-                                                <p class="text-light">Loan Balance</p>
+                                                <p class="text-light">Disbursed Amount</p>
                                             </div>
                                         </div>
                                     </div>
@@ -307,7 +307,7 @@
                                         <div class="card text-white bg-flat-color-1">
                                             <div class="card-body pb-0">
                                                 <h3 id="total-due-text" class="mb-0"></h3>
-                                                <p class="text-light">Total Due Now</p>
+                                                <p class="text-light">Principal Balance</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1722,7 +1722,7 @@
         function initLoanSummary(total_prinicipal) {
             let total_principal = total_prinicipal;
             $('#loan-amount-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-            $('#principal-total-text').text('Total Principal: ₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $('#principal-total-text').text('Disbursed Amount: ₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             if (!application.payment_history || !application.payment_history[0]){
                 total_due_amount = total_prinicipal;
                 $('#total-due-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
@@ -1767,6 +1767,12 @@
                 $('#generate-schedule-v2').hide();
                 $('#loan_closed').html('<strong>CLOSED </strong>');
             }
+            if (application.schedule && application.schedule[0]){
+                $("#generate-schedule").hide();
+                $("#schedule").show();
+            } else {
+                $("#generate-schedule").show();
+            }
         }
 
         function disburse() {
@@ -1804,6 +1810,7 @@
 
             $uploadCSV.bind("click", function () {
                 schedule = [];
+                loan_amount = 0;
                 let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
                 if (regex.test($csvUpload.val().toLowerCase())) {
                     if (typeof (FileReader) !== "undefined") {
@@ -1949,7 +1956,7 @@
                 }
                 $dvCSV.html('');
                 $dvCSV.append(table);
-                $('#reschedule-total-text').text('Total Principal: ₦'+total_new_schedule.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                $('#reschedule-total-text').text('Disbursed Amount: ₦'+total_new_schedule.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             }
 
             $approveCSV.bind("click", function () {
@@ -2007,7 +2014,6 @@
         function validateSchedule(schedule, callback) {
             let errors = [],
                 validated_schedule = [];
-            console.log(schedule)
             for (let i=0; i<schedule.length; i++){
                 let invoice = {},
                     $col0 = $('#invoice-'+(i+2)+'-0'),
