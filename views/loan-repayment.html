@@ -322,6 +322,13 @@
                                 <input id="penalty" type="number" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Payment date</label><strong style="color:red"> *</strong><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                <input id="repayment-date" type="date" class="form-control" required="required">
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -345,14 +352,14 @@
                             <label class=" form-control-label">Principal Invoice No</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-no-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
-                                <input id="edit-principal-invoice-no" type="number" class="form-control" placeholder="0" required="required">
+                                <input id="edit-principal-invoice-no" type="text" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div id="edit-interest-invoice-div" class="form-group">
                             <label class=" form-control-label">Interest Invoice No</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-no-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
-                                <input id="edit-interest-invoice-no" type="number" class="form-control" placeholder="0" required="required">
+                                <input id="edit-interest-invoice-no" type="text" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
@@ -806,8 +813,13 @@
                         cells[15] = (parseFloat(cells[5])-parseFloat(cells[10]) > 0)?(parseFloat(cells[5])-parseFloat(cells[10])).toString():'0';
                         cells[16] = (parseFloat(cells[6])-parseFloat(cells[11]) > 0)?(parseFloat(cells[6])-parseFloat(cells[11])).toString():'0';
                         cells[17] = (parseFloat(cells[13])+parseFloat(cells[14])+parseFloat(cells[15])+parseFloat(cells[16])).toString();
-                        if (parseFloat(cells[8]) > 0 && parseFloat(cells[13]) > 0)
+                        if (parseFloat(cells[8]) <= 0){
+                            cells[1] = cells[2] = 0;
+                        } else if (parseFloat(cells[13]) <= 0){
+                            cells[1] = cells[2] = 1;
+                        } else if (parseFloat(cells[8]) > 0 && parseFloat(cells[13]) > 0) {
                             cells[1] = cells[2] = 2;
+                        }
                         if (application.schedule[i - 2]['status'] === 1){
                             total[3] += parseFloat(cells[3]);
                             total[4] += parseFloat(cells[4]);
@@ -971,6 +983,7 @@
             $('#interest').val(0);
             $('#fees').val(0);
             $('#penalty').val(0);
+            $('#repayment-date').val(new Date().toDateInputValue());
             $('#principal-payable').text('₦'+(parseFloat(invoice.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $('#interest-payable').text('₦'+(parseFloat(invoice.interest_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         }
@@ -991,6 +1004,12 @@
             }
         });
 
+        Date.prototype.toDateInputValue = (function() {
+            var local = new Date(this);
+            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+            return local.toJSON().slice(0,10);
+        });
+
         function confirmPayment() {
             let invoice = {},
                 payment = parseFloat($('#payment').val()),
@@ -1000,6 +1019,7 @@
             invoice.actual_fees_amount = $('#fees').val();
             invoice.actual_penalty_amount = $('#penalty').val();
             invoice.payment_source = $('#source').val();
+            invoice.payment_date = $('#repayment-date').val();
             if (payment.round(2) !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)).round(2))
                 return swal('Actual Payment must be the sum of Principal and Interest','','warning');
             if (invoice.payment_source === 'escrow' && (!application.escrow || (payment > parseFloat(application.escrow))))
@@ -1013,20 +1033,7 @@
                         'type': 'post',
                         'data': invoice,
                         'success': function (data) {
-                            if (!application.schedule[invoice_index+1])
-                                return escrow(overpayment);
-                            $.ajax({
-                                'url': '/user/application/confirm-payment/'+application.schedule[invoice_index+1]['ID']+'/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
-                                'type': 'post',
-                                'data': {actual_payment_amount:overpayment,actual_interest_amount:0,actual_fees_amount:0,actual_penalty_amount:0},
-                                'success': function (data) {
-                                    swal('Payment confirmed successfully','','success');
-                                    window.location.reload();
-                                },
-                                'error': function (err) {
-                                    swal('Oops! An error occurred while confirming payment','','error');
-                                }
-                            });
+                            return escrow(overpayment);
                         },
                         'error': function (err) {
                             swal('Oops! An error occurred while confirming payment','','error');

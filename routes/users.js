@@ -3161,6 +3161,7 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
         postData = Object.assign({},req.body);
     postData.payment_status = 1;
     delete postData.payment_source;
+    delete postData.payment_date;
     db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, postData, function (error, invoice, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -3174,6 +3175,7 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
             invoice.fees_amount = data.actual_fees_amount;
             invoice.penalty_amount = data.actual_penalty_amount;
             invoice.payment_source = data.payment_source;
+            invoice.payment_date = data.payment_date;
             invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
             db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
                 if(error){
