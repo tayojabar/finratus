@@ -208,7 +208,7 @@
                                 </div>
                                 <button class="btn btn-primary" onclick="goToLoanOverview()" style="float: right;">Loan Overview <i class="fa fa-forward"></i></button>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal" style="float: right;">Add Additional Interest</button>
-                                <span style="float: right; margin: 8px;">Escrow Balance: ₦<span class="escrow-balance">0</span></span>
+                                <a href="#" style="float: right; margin: 8px; text-decoration: underline;" data-toggle="modal" data-target="#escrowHistory" onclick="escrowHistory()">Escrow Balance: ₦<span class="escrow-balance">0</span></a>
                             </div>
                             <div class="card-body">
                                 <div id="loanCollectionSchedule" style="margin-top: 30px; overflow-x: scroll; max-width: 1200px"></div>
@@ -452,6 +452,34 @@
                         </tr>
                         </thead>
                         <tbody id="history">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="escrowHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="escrowHistoryLabel">Escrow History</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <table id="escrow-history" class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="escrow_history">
                         </tbody>
                     </table>
                 </div>
@@ -1057,15 +1085,16 @@
             invoice.actual_penalty_amount = $('#penalty').val();
             invoice.payment_source = $('#source').val();
             invoice.payment_date = $('#repayment-date').val();
+            let total_payment = (parseFloat(invoice.actual_payment_amount)+parseFloat(invoice.actual_interest_amount)+parseFloat(invoice.actual_fees_amount)+parseFloat(invoice.actual_penalty_amount)).round(2);
             if (!invoice.payment_date)
                 return swal('Kindly specify a payment date to proceed','','warning');
             if (invoice.payment_source === '0')
                 return swal('Kindly select a payment source to proceed','','warning');
             if (invoice.payment_source !== 'escrow' && (payment.round(2) !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)).round(2)))
                 return swal('Actual Payment must be the sum of Principal and Interest','','warning');
-            if (invoice.payment_source === 'escrow' && (!application.escrow || (payment > parseFloat(application.escrow))))
-                return swal('Actual Payment ('+payment+') must be less than or equal to escrow balance ('+application.escrow+')','','warning');
-            updateEscrow(invoice.payment_source, ((parseFloat(application.escrow) - payment).round(2)), function () {
+            if (invoice.payment_source === 'escrow' && (!application.escrow || (total_payment > parseFloat(application.escrow))))
+                return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+application.escrow+')','','warning');
+            updateEscrow(invoice.payment_source, total_payment, function () {
                 let overpayment = 0,
                     overpayment_principal = (parseFloat(invoice.actual_payment_amount) - parseFloat(expected_invoice.payment_amount)).round(2),
                     overpayment_interest = (parseFloat(invoice.actual_interest_amount) - parseFloat(expected_invoice.interest_amount)).round(2);
@@ -1120,9 +1149,9 @@
         function updateEscrow(source, amount, callback) {
             if (source === 'escrow'){
                 $.ajax({
-                    'url': '/user/application/escrow/update/'+application.userID,
+                    'url': '/user/application/escrow',
                     'type': 'post',
-                    'data': {amount:amount},
+                    'data': {clientID:application.userID,amount:amount*-1,type:'debit'},
                     'success': function (data) {
                         callback();
                     },
@@ -1238,6 +1267,33 @@
             });
         }
 
+        function escrowHistory() {
+            $.ajax({
+                'url': '/user/application/escrow-history/'+application.userID,
+                'type': 'get',
+                'success': function (data) {
+                    $("#escrow-history").dataTable().fnClearTable();
+                    $.each(data.response, function(k, v){
+                        let table = [
+                            v.amount,
+                            v.type,
+                            v.date_created
+                        ];
+                        if (v.status === 0){
+                            table.push('Payment Reversed');
+                        } else if (v.status === 1){
+                            table.push('<button class="btn btn-danger" onclick="reverseEscrowPayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                        }
+                        $('#escrow-history').dataTable().fnAddData(table);
+                        $('#escrow-history').dataTable().fnSort([[2,'desc']]);
+                    });
+                },
+                'error': function (err) {
+                    swal('No internet connection','','error');
+                }
+            });
+        }
+
         function editHistory(invoice_id) {
             $.ajax({
                 'url': '/user/application/edit-schedule-history/'+invoice_id,
@@ -1292,6 +1348,20 @@
         function reversePayment(payment_id,invoice_id) {
             $.ajax({
                 'url': '/user/application/payment-reversal/'+payment_id+'/'+invoice_id,
+                'type': 'get',
+                'success': function (data) {
+                    swal('Payment reversed successfully','','success');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    swal('No internet connection','','error');
+                }
+            });
+        }
+
+        function reverseEscrowPayment(payment_id) {
+            $.ajax({
+                'url': '/user/application/escrow-payment-reversal/'+payment_id,
                 'type': 'get',
                 'success': function (data) {
                     swal('Payment reversed successfully','','success');

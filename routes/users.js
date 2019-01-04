@@ -2396,7 +2396,7 @@ users.get('/application-id/:id', function(req, res, next) {
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
         query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT amount FROM escrow WHERE clientID=u.ID) AS escrow ' +
+            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT SUM(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow ' +
             'FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
@@ -3065,7 +3065,7 @@ users.post('/application/add-payment/:id/:agent_id', function(req, res, next) {
     data.payment_status = 1;
     data.payment_collect_date = data.interest_collect_date;
     db.query('INSERT INTO application_schedules SET ?', data, function (error, response, fields) {
-        if(error){
+        if(error){z
             res.send({"status": 500, "error": error, "response": null});
         } else {
             return res.send({"status": 200, "message": "Payment added successfully!"});
@@ -3199,31 +3199,43 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
     });
 });
 
+// users.post('/application/escrow', function(req, res, next) {
+//     let data = req.body,
+//         date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+//     data.date_created = date;
+//     db.query('SELECT * FROM escrow WHERE clientID = '+data.clientID, function (error, result, fields) {
+//         if(error){
+//             res.send({"status": 500, "error": error, "response": null});
+//         } else {
+//             if (result && result[0]){
+//                 db.query('UPDATE escrow SET ? WHERE clientID = '+data.clientID, {amount:((parseFloat(data.amount)+parseFloat(result[0]['amount'])).round(2)),date_modified:date}, function (error, result, fields) {
+//                     if(error){
+//                         res.send({"status": 500, "error": error, "response": null});
+//                     } else {
+//                         res.send({"status": 200, "message": "Escrow credited successfully!"});
+//                     }
+//                 });
+//             } else {
+//                 db.query('INSERT INTO escrow SET ?', data, function (error, result, fields) {
+//                     if(error){
+//                         res.send({"status": 500, "error": error, "response": null});
+//                     } else {
+//                         res.send({"status": 200, "message": "Escrow credited successfully!"});
+//                     }
+//                 });
+//             }
+//         }
+//     });
+// });
+
 users.post('/application/escrow', function(req, res, next) {
-    let data = req.body,
-        date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    data.date_created = date;
-    db.query('SELECT * FROM escrow WHERE clientID = '+data.clientID, function (error, result, fields) {
+    let data = req.body;
+    data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('INSERT INTO escrow SET ?', data, function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            if (result && result[0]){
-                db.query('UPDATE escrow SET ? WHERE clientID = '+data.clientID, {amount:((parseFloat(data.amount)+parseFloat(result[0]['amount'])).round(2)),date_modified:date}, function (error, result, fields) {
-                    if(error){
-                        res.send({"status": 500, "error": error, "response": null});
-                    } else {
-                        res.send({"status": 200, "message": "Escrow credited successfully!"});
-                    }
-                });
-            } else {
-                db.query('INSERT INTO escrow SET ?', data, function (error, result, fields) {
-                    if(error){
-                        res.send({"status": 500, "error": error, "response": null});
-                    } else {
-                        res.send({"status": 200, "message": "Escrow credited successfully!"});
-                    }
-                });
-            }
+            res.send({"status": 200, "message": "Escrow saved successfully!"});
         }
     });
 });
@@ -3236,6 +3248,16 @@ users.post('/application/escrow/update/:clientID', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Escrow updated successfully!"});
+        }
+    });
+});
+
+users.get('/application/escrow-history/:clientID', function(req, res, next) {
+    db.query('SELECT * FROM escrow WHERE clientID = '+req.params.clientID, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Escrow fetched successfully!", response: result});
         }
     });
 });
@@ -3284,6 +3306,17 @@ users.get('/application/payment-reversal/:id/:invoice_id', function(req, res, ne
         }
     });
 });
+
+users.get('/application/escrow-payment-reversal/:id', function(req, res, next) {
+    db.query('UPDATE escrow SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Payment reversed successfully!"});
+        }
+    });
+});
+
 
 users.post('/application/loancirrus-id/:application_id', function(req, res, next) {
     db.query('UPDATE applications SET loanCirrusID=? WHERE ID=?', [req.body.id,req.params.application_id], function (error, result, fields) {
