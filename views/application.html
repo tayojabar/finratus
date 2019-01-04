@@ -943,7 +943,6 @@
 
                     $('#client-id').text(padWithZeroes(application.userID,6));
                     $('#application-id').text(padWithZeroes(application.ID,9));
-                    console.log(application.reschedule_amount)
                     if (application.reschedule_amount){
                         $('#reschedule-info').show();
                         $('#reschedule-info').text('Reschedule Add-on amount is ₦'+(parseFloat(application.reschedule_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+
@@ -1677,14 +1676,24 @@
                         cells[6] = application.schedule[i - 2]['balance'];
                         cells[7] = application.schedule[i - 2]['payment_status'];
                         let amount_paid = 0,
+                            interest_paid = 0,
                             payment_history = $.grep(application.payment_history,function(e) {return (e.invoiceID===application.schedule[i - 2]['ID'] && e.status===1)});
                         for (let k = 0; k < payment_history.length; k++){
                             amount_paid += parseFloat(payment_history[k]['payment_amount']);
+                            interest_paid += parseFloat(payment_history[k]['interest_amount']);
                         }
                         let amount_owed = parseFloat(cells[2]) - amount_paid;
-                        if (amount_paid > 0 && amount_owed > 0)
+                        let interest_owed = parseFloat(cells[5]) - interest_paid;
+                        if (amount_paid <= 0 && interest_paid <= 0){
+                            cells[7] = 0;
+                        } else if (amount_owed <= 0 && interest_owed <= 0){
+                            cells[7] = 1;
+                        } else if ((amount_paid + interest_paid) > 0 && (amount_owed + interest_owed) > 0){
                             cells[7] = 2;
-                        if (application.schedule[i - 2]['status'])
+                        }
+                        if (application.schedule[i - 2]['payment_status'] === 2)
+                            cells[7] = 1;
+                        if (application.schedule[i - 2]['status'] && cells[2])
                             total_principal += parseFloat(cells[2]);
                     }
                     for (let j = 0; j < cells.length; j++) {
@@ -1773,6 +1782,31 @@
                 $('#collect-payment-button').hide();
                 $('#generate-schedule-v2').hide();
                 $('#loan_closed').html('<strong>CLOSED</strong>');
+                if (application.close_status === 0){
+                    swal({
+                        title: "Would you like to close this loan?",
+                        text: "All repayments for this loan application has been made",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                        .then((yes) => {
+                            if (yes) {
+                                $.ajax({
+                                    'url': '/user/application/close/'+application_id,
+                                    'type': 'post',
+                                    'data': {close_comment:'closed'},
+                                    'success': function (data) {
+                                        swal('Loan closed successfully','','success');
+                                        window.location.reload();
+                                    },
+                                    'error': function (err) {
+                                        swal('Oops! An error occurred while closing loan','','error');
+                                    }
+                                });
+                            }
+                        });
+                }
             }
         }
 
