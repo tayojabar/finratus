@@ -1670,7 +1670,10 @@
             var yyyy = today.getFullYear();
             var now = yyyy+'-'+mm+'-'+dd;
             jQuery.each(dets, function(k, v){
-                if (v.duedate < now){
+                var ddate = new Date(v.duedate);
+                now = new Date(now);
+                var adate = new Date('2019-02-01');
+                if (ddate < now){
                     total+= parseFloat(v.amount_due);
                     $("#overdues-table").dataTable().fnAddData([
                         padWithZeroes(parseInt(v.applicationID),6),
