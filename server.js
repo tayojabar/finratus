@@ -40,6 +40,7 @@ let app = express(),
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/views'));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(fileUpload());
 app.use(cors());
 
@@ -120,7 +121,7 @@ app.use(function(req, res, next) {
 });
 
 function requireLogin (req, res, next) {
-    if (!req.headers.cookie) {
+    if (!req.cookies.timeout) {
       res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
       next();

@@ -112,8 +112,12 @@
 
 </body>
 <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-<script src="assets/js/cookie.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script type="text/javascript">
+    (function () {
+        for (var it in $.cookie()) $.removeCookie(it);
+    })();
+
     $(document).on("click", "#submit", function (e) {
         var obj = {}; test = {};
         obj.username = $('#username').val();
@@ -131,7 +135,10 @@
                     swal(test["response"]);
                 }
                 else if (test["status"] === 200){
-                    Cookies.set('session', test["response"]["ID"], { expires: Infinity });
+                    let minutes = 24 * 60,
+                        date = new Date();
+                    date.setTime(date.getTime() + (minutes * 60 * 1000));
+                    $.cookie('timeout', test["response"]["ID"], { expires: date });
                     if (test["response"]["fullname"])
                         localStorage.setItem("name", test["response"]["fullname"]);
                     if (test["response"]["role"])
