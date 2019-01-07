@@ -131,7 +131,7 @@
                     swal(test["response"]);
                 }
                 else if (test["status"] === 200){
-                    Cookies.set('session', test["response"]["ID"]);
+                    Cookies.set('session', test["response"]["ID"], { expires: Infinity });
                     if (test["response"]["fullname"])
                         localStorage.setItem("name", test["response"]["fullname"]);
                     if (test["response"]["role"])
