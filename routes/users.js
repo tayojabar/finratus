@@ -3697,7 +3697,7 @@ users.get('/agg-projected-interests', function(req, res, next) {
         group
     query = 'select sum(interest_amount) as total \n' +
         'from application_schedules\n' +
-        'where applicationID in (select ID from applications)\n' +
+        'where applicationID in (select ID from applications where status = 2)\n' +
         'and status = 1 and payment_status = 0 '
 
     if (start && end){
