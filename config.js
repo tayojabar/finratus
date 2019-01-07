@@ -1,6 +1,6 @@
 let config = {};
 
-config.development = {
+config.test = {
     host     : 'atobz-mysqldbserver.mysql.database.azure.com',
     port     : '3306',
     user     : 'loan35dbadmin@atobz-mysqldbserver',
