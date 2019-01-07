@@ -269,3 +269,4 @@ let server = http.createServer(app);
 server.listen(process.env.port || process.env.PORT || 4000, function () {
     console.log('server running on %s [%s]', process.env.PORT, process.env.STATUS);
 });
+server.timeout = 0; //Server timeout set to never

@@ -2396,7 +2396,7 @@ users.get('/application-id/:id', function(req, res, next) {
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
         query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT amount FROM escrow WHERE clientID=u.ID) AS escrow ' +
+            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT SUM(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow ' +
             'FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
@@ -3065,24 +3065,25 @@ users.post('/application/add-payment/:id/:agent_id', function(req, res, next) {
     data.payment_status = 1;
     data.payment_collect_date = data.interest_collect_date;
     db.query('INSERT INTO application_schedules SET ?', data, function (error, response, fields) {
-        if(error){
+        if(error){z
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            db.query('SELECT MAX(ID) AS ID from application_schedules', function(err, invoice_obj, fields) {
-                let invoice = {};
-                invoice.agentID = req.params.agent_id;
-                invoice.applicationID = req.params.id;
-                invoice.invoiceID = invoice_obj[0]['ID'];
-                invoice.interest_amount = data.actual_interest_amount;
-                invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-                db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
-                    if(error){
-                        res.send({"status": 500, "error": error, "response": null});
-                    } else {
-                        res.send({"status": 200, "message": "Payment added successfully!"});
-                    }
-                });
-            });
+            return res.send({"status": 200, "message": "Payment added successfully!"});
+            // db.query('SELECT MAX(ID) AS ID from application_schedules', function(err, invoice_obj, fields) {
+            //     let invoice = {};
+            //     invoice.agentID = req.params.agent_id;
+            //     invoice.applicationID = req.params.id;
+            //     invoice.invoiceID = invoice_obj[0]['ID'];
+            //     invoice.interest_amount = data.actual_interest_amount;
+            //     invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            //     db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
+            //         if(error){
+            //             res.send({"status": 500, "error": error, "response": null});
+            //         } else {
+            //             res.send({"status": 200, "message": "Payment added successfully!"});
+            //         }
+            //     });
+            // });
         }
     });
 });
@@ -3156,11 +3157,22 @@ users.get('/application/edit-schedule-history/:id', function(req, res, next) {
     });
 });
 
+users.get('/application/schedule-history/write-off/:id', function(req, res, next) {
+    db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, {payment_status:2,date_modified:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Schedule write off successful!"});
+        }
+    });
+});
+
 users.post('/application/confirm-payment/:id/:application_id/:agent_id', function(req, res, next) {
     let data = req.body,
         postData = Object.assign({},req.body);
     postData.payment_status = 1;
     delete postData.payment_source;
+    delete postData.payment_date;
     db.query('UPDATE application_schedules SET ? WHERE ID = '+req.params.id, postData, function (error, invoice, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -3174,6 +3186,7 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
             invoice.fees_amount = data.actual_fees_amount;
             invoice.penalty_amount = data.actual_penalty_amount;
             invoice.payment_source = data.payment_source;
+            invoice.payment_date = data.payment_date;
             invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
             db.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
                 if(error){
@@ -3186,31 +3199,43 @@ users.post('/application/confirm-payment/:id/:application_id/:agent_id', functio
     });
 });
 
+// users.post('/application/escrow', function(req, res, next) {
+//     let data = req.body,
+//         date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+//     data.date_created = date;
+//     db.query('SELECT * FROM escrow WHERE clientID = '+data.clientID, function (error, result, fields) {
+//         if(error){
+//             res.send({"status": 500, "error": error, "response": null});
+//         } else {
+//             if (result && result[0]){
+//                 db.query('UPDATE escrow SET ? WHERE clientID = '+data.clientID, {amount:((parseFloat(data.amount)+parseFloat(result[0]['amount'])).round(2)),date_modified:date}, function (error, result, fields) {
+//                     if(error){
+//                         res.send({"status": 500, "error": error, "response": null});
+//                     } else {
+//                         res.send({"status": 200, "message": "Escrow credited successfully!"});
+//                     }
+//                 });
+//             } else {
+//                 db.query('INSERT INTO escrow SET ?', data, function (error, result, fields) {
+//                     if(error){
+//                         res.send({"status": 500, "error": error, "response": null});
+//                     } else {
+//                         res.send({"status": 200, "message": "Escrow credited successfully!"});
+//                     }
+//                 });
+//             }
+//         }
+//     });
+// });
+
 users.post('/application/escrow', function(req, res, next) {
-    let data = req.body,
-        date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    data.date_created = date;
-    db.query('SELECT * FROM escrow WHERE clientID = '+data.clientID, function (error, result, fields) {
+    let data = req.body;
+    data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('INSERT INTO escrow SET ?', data, function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            if (result && result[0]){
-                db.query('UPDATE escrow SET ? WHERE clientID = '+data.clientID, {amount:((parseFloat(data.amount)+parseFloat(result[0]['amount'])).round(2)),date_modified:date}, function (error, result, fields) {
-                    if(error){
-                        res.send({"status": 500, "error": error, "response": null});
-                    } else {
-                        res.send({"status": 200, "message": "Escrow credited successfully!"});
-                    }
-                });
-            } else {
-                db.query('INSERT INTO escrow SET ?', data, function (error, result, fields) {
-                    if(error){
-                        res.send({"status": 500, "error": error, "response": null});
-                    } else {
-                        res.send({"status": 200, "message": "Escrow credited successfully!"});
-                    }
-                });
-            }
+            res.send({"status": 200, "message": "Escrow saved successfully!"});
         }
     });
 });
@@ -3223,6 +3248,16 @@ users.post('/application/escrow/update/:clientID', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Escrow updated successfully!"});
+        }
+    });
+});
+
+users.get('/application/escrow-history/:clientID', function(req, res, next) {
+    db.query('SELECT * FROM escrow WHERE clientID = '+req.params.clientID, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Escrow fetched successfully!", response: result});
         }
     });
 });
@@ -3271,6 +3306,17 @@ users.get('/application/payment-reversal/:id/:invoice_id', function(req, res, ne
         }
     });
 });
+
+users.get('/application/escrow-payment-reversal/:id', function(req, res, next) {
+    db.query('UPDATE escrow SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Payment reversed successfully!"});
+        }
+    });
+});
+
 
 users.post('/application/loancirrus-id/:application_id', function(req, res, next) {
     db.query('UPDATE applications SET loanCirrusID=? WHERE ID=?', [req.body.id,req.params.application_id], function (error, result, fields) {
@@ -3329,6 +3375,19 @@ users.post('/application/write-off/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Application write off successful!"});
+        }
+    });
+});
+
+users.post('/application/close/:id', function(req, res, next) {
+    let data = req.body;
+    data.close_status = 3;
+    data.close_date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Application closed successful!"});
         }
     });
 });
