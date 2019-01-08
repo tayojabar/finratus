@@ -3,7 +3,7 @@ require('dotenv').config();
 
 let mysql = require('mysql'),
     config = require('./config'),
-    status = process.env.STATUS || 'development',
+    status = process.env.STATUS || 'test',
     mysqlConfig = config[status];
 
 mysqlConfig.connectionLimit = 1000;
