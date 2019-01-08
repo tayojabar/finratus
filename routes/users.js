@@ -3681,7 +3681,7 @@ users.get('/loans-by-branches', function(req, res, next) {
             '(select branch_name from branches br where br.id = branchID) as branch,\n' +
             'loan_amount, sum(loan_amount) as disbursed,\n' +
             '(select sum(payment_amount) from schedule_history sh\n' +
-            'where \n' +
+            'where sh.status = 1 and \n' +
             '(select branch from clients c where c.ID = (select userID from applications b where b.ID = sh.applicationID)) = branchID) as collected\n' +
             '\n' +
             'from applications a\n' +
