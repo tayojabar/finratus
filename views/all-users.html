@@ -438,9 +438,6 @@
         var table = $('#bootstrap-data-table-export').DataTable();
 
         function confirmPassword(){
-            console.log("Here");
-            console.log($('#cpassword').val());
-            console.log($('#new-password').val());
             if ($('#cpassword').val() == "" || $('#cpassword').val() != $('#new-password').val()){
                 $('#cpassword').css('border-color', 'red');
                 $('#cpassword-error').html("Passwords don't match");
@@ -645,10 +642,6 @@
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
-                    // console.log(data);
-                    // var applications = data.message;
-                    // results = applications;
-                    // populateDataTable(applications);
                     swal('User password updated successful!','','success');
                 },
                 'error': function (err) {
