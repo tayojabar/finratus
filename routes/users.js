@@ -2211,11 +2211,9 @@ users.post('/en-client/:id', function(req, res, next) {
 
 /* Change User Password */
 users.post('/changePassword/:id', function(req, res, next) {
-    let postData = req.body,
-        date_modified = Date.now();
-    let payload = [postData.username, postData.name, postData.password, postData.id],
+    let date_modified = Date.now(),
         query = 'Update users SET password = ?, date_modified = ?  where id=?';
-    db.query(query, [req.body.password, date_modified, req.params.id], function (error, results, fields) {                   ;
+    db.query(query, [bcrypt.hashSync(req.body.password, parseInt(process.env.SALT_ROUNDS)), date_modified, req.params.id], function (error, results, fields) {                   ;
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
 	  	} else {

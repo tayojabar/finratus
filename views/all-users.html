@@ -438,9 +438,6 @@
         var table = $('#bootstrap-data-table-export').DataTable();
 
         function confirmPassword(){
-            console.log("Here");
-            console.log($('#cpassword').val());
-            console.log($('#new-password').val());
             if ($('#cpassword').val() == "" || $('#cpassword').val() != $('#new-password').val()){
                 $('#cpassword').css('border-color', 'red');
                 $('#cpassword-error').html("Passwords don't match");
@@ -505,7 +502,7 @@
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
-            });console.log(parseInt(w[0]['editable']));console.log('Here');
+            });console.log(parseInt(w[0]['editable']));
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
@@ -645,10 +642,6 @@
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
-                    // console.log(data);
-                    // var applications = data.message;
-                    // results = applications;
-                    // populateDataTable(applications);
                     swal('User password updated successful!','','success');
                 },
                 'error': function (err) {

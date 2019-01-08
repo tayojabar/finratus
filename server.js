@@ -140,7 +140,7 @@ function checkPermission(req, res, next){
 app.get('/logout', function(req, res) {
     req.session.reset();
     res.redirect('/logon');
-  });
+});
 
 app.use('/', index);
 app.use('/user', user);
