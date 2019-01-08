@@ -120,12 +120,21 @@ app.use(function(req, res, next) {
     }
 });
 
+app.use(function(req, res, next) {
+    console.log(req.session);
+    next();
+});
+
 function requireLogin (req, res, next) {
     if (!req.cookies.timeout) {
       res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
       next();
     }
+}
+
+function checkPermission(req, res, next){
+
 }
 
 app.get('/logout', function(req, res) {
