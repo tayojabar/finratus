@@ -502,7 +502,7 @@
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
-            });console.log(parseInt(w[0]['editable']));console.log('Here');
+            });console.log(parseInt(w[0]['editable']));
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
