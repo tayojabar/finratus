@@ -1657,6 +1657,36 @@
         });
     }
 
+//    function populateOverdues(dets){
+//        $("#overdues-table").dataTable().fnClearTable();
+//        if (dets.length === 0){
+//            $("#overdues-table").dataTable().fnClearTable();
+//            $('#total-overdue').html(formatter.format(0));
+//        }else{
+//            var total = 0;
+//            var today = new Date();
+//            var dd = today.getDate();
+//            var mm = today.getMonth()+1;
+//            var yyyy = today.getFullYear();
+//            var now = yyyy+'-'+mm+'-'+dd;
+//            jQuery.each(dets, function(k, v){
+//                var ddate = new Date(v.duedate);
+//                now = new Date(now);
+//                if (ddate < now){
+//                    total+= parseFloat(v.amount_due);
+//                    $("#overdues-table").dataTable().fnAddData([
+//                        padWithZeroes(parseInt(v.applicationID),6),
+//                        v.client,
+//                        formatter.format(parseFloat(v.principal)),
+//                        formatter.format(parseFloat(v.amount_due)),
+//                        formatter.format(parseFloat(v.interest_due))
+//                    ]);
+//                }
+//            });
+//            $('#total-overdue').html(formatter.format(total));
+//        }
+//    }
+
     function populateOverdues(dets){
         $("#overdues-table").dataTable().fnClearTable();
         if (dets.length === 0){
@@ -1670,19 +1700,14 @@
             var yyyy = today.getFullYear();
             var now = yyyy+'-'+mm+'-'+dd;
             jQuery.each(dets, function(k, v){
-                var ddate = new Date(v.duedate);
-                now = new Date(now);
-                var adate = new Date('2019-02-01');
-                if (ddate < now){
-                    total+= parseFloat(v.amount_due);
-                    $("#overdues-table").dataTable().fnAddData([
-                        padWithZeroes(parseInt(v.applicationID),6),
-                        v.client,
-                        formatter.format(parseFloat(v.principal)),
-                        formatter.format(parseFloat(v.amount_due)),
-                        formatter.format(parseFloat(v.interest_due))
-                    ]);
-                }
+                total+= parseFloat(v.amount_due);
+                $("#overdues-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.applicationID),6),
+                    v.client,
+                    formatter.format(parseFloat(v.principal)),
+                    formatter.format(parseFloat(v.amount_due)),
+                    formatter.format(parseFloat(v.interest_due))
+                ]);
             });
             $('#total-overdue').html(formatter.format(total));
         }
