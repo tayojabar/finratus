@@ -103,6 +103,9 @@
         #message.error{
             color: #dc3545;
         }
+        input.error {
+            border-color: #dc3545;
+        }
     </style>
 </head>
 <body class="open">
@@ -276,13 +279,6 @@
                         <h4 id="overpayment-message" style="color: #f0ad4e;"></h4>
                         <span id="message"></span>
                         <div class="form-group">
-                            <label class=" form-control-label">Actual Payment</label><strong style="color:red"> *</strong><span id="payment-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <div class="input-group-addon">₦</div>
-                                <input id="payment" type="number" class="form-control validate" placeholder="0" required="required">
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label class=" form-control-label">Payment Source</label><strong style="color:red"> *</strong><span id="source-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-link"></i></div>
@@ -295,12 +291,19 @@
                             <small class="form-text text-muted">Escrow Balance available is ₦<span class="escrow-balance">0</span></small>
                         </div>
                         <div class="form-group">
+                            <label class=" form-control-label">Actual Payment</label><strong style="color:red"> *</strong><span id="payment-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="payment" type="number" class="form-control validate" placeholder="0" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class=" form-control-label">Principal</label><strong style="color:red"> *</strong><span id="principal-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="principal" type="number" class="form-control validate" placeholder="0" required="required">
                             </div>
-                            <small class="form-text text-muted">Total Principal Payable is <span id="principal-payable"></span></small>
+                            <small class="form-text text-muted">Maximum Principal Payable is <span id="principal-payable"></span></small>
                         </div>
                         <div class="form-group">
                             <label class=" form-control-label">Interest</label><strong style="color:red"> *</strong><span id="interest-error" style="padding-left:50px; text-align: center"></span>
@@ -308,7 +311,7 @@
                                 <div class="input-group-addon">₦</div>
                                 <input id="interest" type="number" class="form-control validate" placeholder="0" required="required">
                             </div>
-                            <small class="form-text text-muted">Total Interest Payable is <span id="interest-payable"></span></small>
+                            <small class="form-text text-muted">Maximum Interest Payable is <span id="interest-payable"></span></small>
                         </div>
                         <div class="form-group">
                             <label class=" form-control-label">Fees</label><strong style="color:red"> *</strong><span id="fees-error" style="padding-left:50px; text-align: center"></span>
@@ -335,7 +338,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="confirmPayment()">Save</button>
+                    <button id="confirm-payment-button" type="button" class="btn btn-primary" data-dismiss="modal" onclick="confirmPayment()">Save</button>
                 </div>
             </div>
         </div>
@@ -838,16 +841,16 @@
                         cells[10] = (cells[10]).toString();
                         cells[11] = (cells[11]).toString();
                         cells[12] = totalActualPayment({actual_payment_amount:cells[8],actual_interest_amount:cells[9],actual_fees_amount:cells[10],actual_penalty_amount:cells[11]});
-                        cells[13] = (parseFloat(cells[3])-parseFloat(cells[8])).toString();
-                        cells[14] = (parseFloat(cells[4])-parseFloat(cells[9])).toString();
-                        cells[15] = (parseFloat(cells[5])-parseFloat(cells[10]) > 0)?(parseFloat(cells[5])-parseFloat(cells[10])).toString():'0';
-                        cells[16] = (parseFloat(cells[6])-parseFloat(cells[11]) > 0)?(parseFloat(cells[6])-parseFloat(cells[11])).toString():'0';
-                        cells[17] = (parseFloat(cells[13])+parseFloat(cells[14])+parseFloat(cells[15])+parseFloat(cells[16])).toString();
+                        cells[13] = ((parseFloat(cells[3])-parseFloat(cells[8])).round(2)).toString();
+                        cells[14] = ((parseFloat(cells[4])-parseFloat(cells[9])).round(2)).toString();
+                        cells[15] = (parseFloat(cells[5])-parseFloat(cells[10]) > 0)?((parseFloat(cells[5])-parseFloat(cells[10])).round(2)).toString():'0';
+                        cells[16] = (parseFloat(cells[6])-parseFloat(cells[11]) > 0)?((parseFloat(cells[6])-parseFloat(cells[11])).round(2)).toString():'0';
+                        cells[17] = ((parseFloat(cells[13])+parseFloat(cells[14])+parseFloat(cells[15])+parseFloat(cells[16])).round(2)).toString();
                         if ((parseFloat(cells[8]) <= 0) && (parseFloat(cells[9]) <= 0)){
                             cells[1] = cells[2] = 0;
                         } else if ((parseFloat(cells[13]) <= 0) && (parseFloat(cells[14]) <= 0)){
                             cells[1] = cells[2] = 1;
-                        } else if ((parseFloat(cells[8]) + parseFloat(cells[9])) > 0 && (parseFloat(cells[13]) + parseFloat(cells[14])) > 0) {
+                        } else if ((parseFloat(cells[8]) + parseFloat(cells[9])).round(2) > 0 && (parseFloat(cells[13]) + parseFloat(cells[14])).round(2) > 0) {
                             cells[1] = cells[2] = 2;
                         }
                         if (application.schedule[i - 2]['payment_status'] === 2)
@@ -961,7 +964,7 @@
                                         '</div>');
                                 }
                             } else {
-                                if (cells[j] !== "0"){
+                                if (cells[j] !== "0" && cells[j] !== "0.00" && cells[j] !== 0 && cells[j] !== 0.00){
                                     cell = $("<td style='font-size: 14px;' />");
                                     cell.html('₦'+(parseFloat(cells[j])).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                                 } else {
@@ -992,11 +995,11 @@
         }
 
         function totalPayment(a){
-            return (parseFloat(a.payment_amount)+parseFloat(a.interest_amount)+parseFloat(a.fees_amount)+parseFloat(a.penalty_amount)).toString();
+            return ((parseFloat(a.payment_amount)+parseFloat(a.interest_amount)+parseFloat(a.fees_amount)+parseFloat(a.penalty_amount)).round(2)).toString();
         }
 
         function totalActualPayment(a){
-            return (parseFloat(a.actual_payment_amount)+parseFloat(a.actual_interest_amount)+parseFloat(a.actual_fees_amount)+parseFloat(a.actual_penalty_amount)).toString();
+            return ((parseFloat(a.actual_payment_amount)+parseFloat(a.actual_interest_amount)+parseFloat(a.actual_fees_amount)+parseFloat(a.actual_penalty_amount)).round(2)).toString();
         }
 
         let invoice_id,
@@ -1012,12 +1015,17 @@
                 invoice.interest_amount -= parseFloat(payment_history[k]['interest_amount']);
             }
             expected_invoice = invoice;
+            $('#source').val(0);
             $('#payment').val(0);
             $('#principal').val(0);
             $('#interest').val(0);
             $('#fees').val(0);
             $('#penalty').val(0);
+            $('#message').text('');
+            $('#overpayment-message').text('');
 //            $('#repayment-date').val(new Date().toDateInputValue());
+            $('#principal').attr({max:invoice.payment_amount});
+            $('#interest').attr({max:invoice.interest_amount});
             $('#principal-payable').text('₦'+(parseFloat(invoice.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $('#interest-payable').text('₦'+(parseFloat(invoice.interest_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         }
@@ -1038,31 +1046,36 @@
         $('.validate').change(function () {
             let invoice = {},
                 $message = $('#message'),
+                $interest = $('#interest'),
+                $principal = $('#principal'),
                 $message2 = $('#overpayment-message'),
+                $button = $('#confirm-payment-button'),
                 payment = parseFloat($('#payment').val()),
                 principal = parseFloat($('#principal').val()),
                 interest = parseFloat($('#interest').val());
-            invoice.actual_payment_amount = $('#principal').val();
-            invoice.actual_interest_amount = $('#interest').val();
-            if (payment.round(2) !== (principal + interest).round(2)){
+            invoice.actual_payment_amount = principal;
+            invoice.actual_interest_amount = interest;
+
+            if (invoice.actual_payment_amount > (parseFloat(expected_invoice.payment_amount)).round(2)){
+                $message.text('Principal cannot be greater than '+expected_invoice.payment_amount);
+                $button.prop('disabled', true);
+                $interest.removeClass('error');
+                $principal.addClass('error');
                 $message.addClass('error');
-                $message.removeClass('success');
-                $message.text('Actual Payment must be the sum of Principal and Interest');
+            } else if (invoice.actual_interest_amount > (parseFloat(expected_invoice.interest_amount)).round(2)){
+                $message.text('Interest cannot be greater than '+expected_invoice.interest_amount);
+                $button.prop('disabled', true);
+                $principal.removeClass('error');
+                $interest.addClass('error');
+                $message.addClass('error');
             } else {
-                $message.addClass('success');
-                $message.removeClass('error');
-                $message.text('Actual Payment, Principal and Interest are valid');
+                $button.prop('disabled', false);
+                $principal.removeClass('error');
+                $interest.removeClass('error');
+                $message.text('');
             }
 
-            let overpayment = 0,
-                overpayment_principal = (parseFloat(invoice.actual_payment_amount) - parseFloat(expected_invoice.payment_amount)).round(2),
-                overpayment_interest = (parseFloat(invoice.actual_interest_amount) - parseFloat(expected_invoice.interest_amount)).round(2);
-            if ((overpayment_principal > 0) || (overpayment_interest > 0)) {
-                if (overpayment_principal > 0)
-                    overpayment += overpayment_principal;
-                if (overpayment_interest > 0)
-                    overpayment += overpayment_interest;
-            }
+            let overpayment = (payment - (invoice.actual_payment_amount + invoice.actual_interest_amount)).round(2);
             if (overpayment > 0){
                 $message2.text('Overpayment = ₦'+(parseFloat(overpayment).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
             } else {
@@ -1090,23 +1103,11 @@
                 return swal('Kindly specify a payment date to proceed','','warning');
             if (invoice.payment_source === '0')
                 return swal('Kindly select a payment source to proceed','','warning');
-            if (invoice.payment_source !== 'escrow' && (payment.round(2) !== (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount)).round(2)))
-                return swal('Actual Payment must be the sum of Principal and Interest','','warning');
-            if (invoice.payment_source === 'escrow' && (!application.escrow || (total_payment > parseFloat(application.escrow))))
-                return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+application.escrow+')','','warning');
+            if (invoice.payment_source === 'escrow' && (!application.escrow || (total_payment > (parseFloat(application.escrow)).round(2))))
+                return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+application.escrow.round(2)+')','','warning');
             updateEscrow(invoice.payment_source, total_payment, function () {
-                let overpayment = 0,
-                    overpayment_principal = (parseFloat(invoice.actual_payment_amount) - parseFloat(expected_invoice.payment_amount)).round(2),
-                    overpayment_interest = (parseFloat(invoice.actual_interest_amount) - parseFloat(expected_invoice.interest_amount)).round(2);
-                if ((overpayment_principal > 0) || (overpayment_interest > 0)){
-                    if (overpayment_principal > 0){
-                        overpayment += overpayment_principal;
-                        invoice.actual_payment_amount = expected_invoice.payment_amount;
-                    }
-                    if (overpayment_interest > 0){
-                        overpayment += overpayment_interest;
-                        invoice.actual_interest_amount = expected_invoice.interest_amount;
-                    }
+                let overpayment = (payment - (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount))).round(2);
+                if (overpayment > 0){
                     swal({
                         title: "Are you sure?",
                         text: "Overpayment of ₦"+(parseFloat(overpayment).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+" would be saved to escrow",
