@@ -71,8 +71,9 @@ app.post('/login', function(req, res) {
             return res.send({"status": 500, "response": "User Disabled!"});
 
         if (bcrypt.compareSync(password,rows[0].password)) {
-          user = rows[0];
-          db.query('SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
+            req.session.user = rows[0]['user_role'];
+            user = rows[0];
+            db.query('SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? and date in (select max(date) from permissions where role_id = ?) group by module_id', [user.user_role, user.user_role], function (error, perm, fields) {
               if (!error) {
                   user.permissions = perm;
                   let modules = [],
@@ -96,36 +97,106 @@ app.post('/login', function(req, res) {
               } else {
                   res.send({"status": 500, "response": "No permissions set for this user"})
               }
-          });
+            });
       } else {
           res.send({"status": 500, "response": "Password is incorrect!"});
       }
     });
 });
 
+// app.use(function(req, res, next) {
+//     let url = req.headers.referer;
+//     if (url){
+//         var page = url.split('/')[3];
+//         let name = 'Others'
+//         let role = parseInt(req.session.user);
+//         let query = 'SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? ' +
+//             'and ((select menu_name from modules m where m.id = module_id) <> ?) and date in (select max(date) from permissions where role_id = ?) group by module_id'
+//         db.query(query, [role, name, role], function(error, result, fields){
+//             if (!error){
+//                 let status = true;
+//                 for (let i=0; i < result.length; i++){
+//                     console.log(i)
+//                     if (result[i].module_name === page){
+//                         console.log(result[i])
+//                         if(!(result[i].read_only === '1'))
+//                             status = false;
+//                     }
+//                     if (i === result.length-1){
+//                         if (status){
+//                             next();
+//                         } else {
+//                             console.log('here')
+//                             return res.redirect('/logon');
+//                         }
+//                     }
+//                 }
+//             } else {
+//                 next()
+//             }
+//         });
+//     } else {
+//         next();
+//     }
+// });
 
-app.use(function(req, res, next) {
-    if (req.session && req.session.user) {
-        db.query('SELECT * FROM users WHERE email = ?', req.session.user.email, function(err, rows, fields) {
-            if (!err) {
-                req.user = rows[0];
-                delete rows[0].password;
-                req.session.user = rows[0];
-                res.locals.user = rows[0];
-            }
-            next();
-        });
-    } else {
-        next();
-    }
-});
+// app.use(function(req, res, next) {
+//     if (req.session && req.session.user) {
+//         db.query('SELECT * FROM users WHERE email = ?', req.session.user.email, function(err, rows, fields) {
+//             if (!err) {
+//                 req.user = rows[0];
+//                 delete rows[0].password;
+//                 req.session.user = rows[0];
+//                 res.locals.user = rows[0];
+//             }
+//             next();
+//         });
+//     } else {
+//         next();
+//     }
+// });
 
 function requireLogin (req, res, next) {
     if (!req.cookies.timeout) {
       res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
-      next();
+        let url = req.originalUrl;
+        if (url){
+            var page = url.split('/')[1];
+            let name = 'Others'
+            let role = parseInt(req.session.user);
+            let query = 'SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? ' +
+                'and ((select menu_name from modules m where m.id = module_id) <> ?) and date in (select max(date) from permissions where role_id = ?) group by module_id'
+            db.query(query, [role, name, role], function(error, result, fields){
+                if (!error){
+                    let status = true;
+                    for (let i=0; i < result.length; i++){
+                        if (result[i].module_name === page){
+                            if(!(result[i].read_only === '1'))
+                                status = false;
+                        }
+                        if (i === result.length-1){
+                            if (status){
+                                next();
+                            } else {
+                                // return res.redirect('/logon');
+                                res.sendFile('index.html', { root: __dirname+'/views' });
+                            }
+                        }
+                    }
+                } else {
+                    next()
+                }
+            });
+        }
+        else {
+            next();
+        }
     }
+}
+
+function checkPermission(req, res, next){
+
 }
 
 app.get('/logout', function(req, res) {

@@ -2117,7 +2117,7 @@ users.get('/overdues/', function(req, res, next) {
     queryPart = 'select ID, applicationID, \n' +
         'min(payment_collect_date) as duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
         '(select loan_amount from applications where applications.ID = applicationID) as principal,\n' +
-        'sum(payment_amount) as amount_due, sum(interest_amount) as interest_due\n' +
+        '(sum(payment_amount) - payment_amount) as amount_due, (sum(interest_amount) - interest_amount) as interest_due\n' +
         'from application_schedules\n' +
         'where payment_status = 0 and status = 1 and applicationID in (select a.ID from applications a where a.status = 2)\n';
     group = 'group by applicationID';
@@ -2256,7 +2256,7 @@ users.get('/projected-interests', function(req, res, next) {
 users.get('/agg-projected-interests', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let query,
         group
     query = 'select sum(interest_amount) as total \n' +
