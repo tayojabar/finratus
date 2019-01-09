@@ -104,63 +104,94 @@ app.post('/login', function(req, res) {
     });
 });
 
-app.use(function(req, res, next) {
-    let url = req.headers.referer;
-    if (url){
-        var page = url.split('/')[3];
-        let name = 'Others'
-        let role = parseInt(req.session.user);
-        let query = 'SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? ' +
-            'and ((select menu_name from modules m where m.id = module_id) <> ?) and date in (select max(date) from permissions where role_id = ?) group by module_id'
-        db.query(query, [role, name, role], function(error, result, fields){
-            if (!error){
-                let status = true;
-                for (let i=0; i < result.length; i++){
-                    console.log(i)
-                    if (result[i].module_name === page){
-                        console.log(result[i])
-                        if(!(result[i].read_only === '1'))
-                            status = false;
-                    }
-                    if (i === result.length-1){
-                        if (status){
-                            next();
-                        } else {
-                            console.log('here')
-                            return res.redirect('/logon');
-                        }
-                    }
-                }
-            } else {
-                next()
-            }
-        });
-    } else {
-        next();
-    }
-});
+// app.use(function(req, res, next) {
+//     let url = req.headers.referer;
+//     if (url){
+//         var page = url.split('/')[3];
+//         let name = 'Others'
+//         let role = parseInt(req.session.user);
+//         let query = 'SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? ' +
+//             'and ((select menu_name from modules m where m.id = module_id) <> ?) and date in (select max(date) from permissions where role_id = ?) group by module_id'
+//         db.query(query, [role, name, role], function(error, result, fields){
+//             if (!error){
+//                 let status = true;
+//                 for (let i=0; i < result.length; i++){
+//                     console.log(i)
+//                     if (result[i].module_name === page){
+//                         console.log(result[i])
+//                         if(!(result[i].read_only === '1'))
+//                             status = false;
+//                     }
+//                     if (i === result.length-1){
+//                         if (status){
+//                             next();
+//                         } else {
+//                             console.log('here')
+//                             return res.redirect('/logon');
+//                         }
+//                     }
+//                 }
+//             } else {
+//                 next()
+//             }
+//         });
+//     } else {
+//         next();
+//     }
+// });
 
-app.use(function(req, res, next) {
-    if (req.session && req.session.user) {
-        db.query('SELECT * FROM users WHERE email = ?', req.session.user.email, function(err, rows, fields) {
-            if (!err) {
-                req.user = rows[0];
-                delete rows[0].password;
-                req.session.user = rows[0];
-                res.locals.user = rows[0];
-            }
-            next();
-        });
-    } else {
-        next();
-    }
-});
+// app.use(function(req, res, next) {
+//     if (req.session && req.session.user) {
+//         db.query('SELECT * FROM users WHERE email = ?', req.session.user.email, function(err, rows, fields) {
+//             if (!err) {
+//                 req.user = rows[0];
+//                 delete rows[0].password;
+//                 req.session.user = rows[0];
+//                 res.locals.user = rows[0];
+//             }
+//             next();
+//         });
+//     } else {
+//         next();
+//     }
+// });
 
 function requireLogin (req, res, next) {
     if (!req.cookies.timeout) {
       res.sendFile('index.html', { root: __dirname+'/views' });
     } else {
-      next();
+        let url = req.originalUrl;
+        if (url){
+            var page = url.split('/')[1];
+            let name = 'Others'
+            let role = parseInt(req.session.user);
+            let query = 'SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? ' +
+                'and ((select menu_name from modules m where m.id = module_id) <> ?) and date in (select max(date) from permissions where role_id = ?) group by module_id'
+            db.query(query, [role, name, role], function(error, result, fields){
+                if (!error){
+                    let status = true;
+                    for (let i=0; i < result.length; i++){
+                        if (result[i].module_name === page){
+                            if(!(result[i].read_only === '1'))
+                                status = false;
+                        }
+                        if (i === result.length-1){
+                            if (status){
+                                next();
+                            } else {
+                                // return res.redirect('/logon');
+                                res.sendFile('index.html', { root: __dirname+'/views' });
+                            }
+                        }
+                    }
+                } else {
+                    next()
+                }
+            });
+        }
+        else {
+            next();
+        }
     }
 }
 
