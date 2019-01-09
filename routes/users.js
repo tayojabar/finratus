@@ -2080,7 +2080,7 @@ users.get('/interests/', function(req, res, next) {
     });
 });
 
-/* Bad Loans  */
+/* Bad Loans - DeCommissioned  */
 users.get('/bad-loans/', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
@@ -2111,6 +2111,37 @@ users.get('/bad-loans/', function(req, res, next) {
 
 /* Overdue Loans  */
 users.get('/overdues/', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let queryPart,
+        query,
+        group
+    queryPart = 'select ID, applicationID,\n' +
+        'payment_collect_date, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
+        '(select loan_amount from applications where applications.ID = applicationID) as principal,\n' +
+        'sum(payment_amount) as amount_due, sum(interest_amount) as interest_due\n' +
+        'from application_schedules\n' +
+        'where payment_status = 0 and status = 1 and applicationID in (select a.ID from applications a where a.status = 2)\n' +
+        'and payment_collect_date < (select curdate()) ';
+    group = 'group by applicationID';
+    query = queryPart.concat(group);
+    if (start  && end){
+        start = "'"+start+"'"
+        end = "'"+end+"'"
+        query = (queryPart.concat('AND (TIMESTAMP(payment_collect_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+    }
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "All Overdue Loans pulled!"});
+        }
+    });
+});
+
+/* Bad Loans  */
+users.get('/badloans/', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
