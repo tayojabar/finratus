@@ -1056,13 +1056,13 @@
             invoice.actual_payment_amount = principal;
             invoice.actual_interest_amount = interest;
 
-            if (invoice.actual_payment_amount > parseFloat(expected_invoice.payment_amount)){
+            if (invoice.actual_payment_amount > (parseFloat(expected_invoice.payment_amount)).round(2)){
                 $message.text('Principal cannot be greater than '+expected_invoice.payment_amount);
                 $button.prop('disabled', true);
                 $interest.removeClass('error');
                 $principal.addClass('error');
                 $message.addClass('error');
-            } else if (invoice.actual_interest_amount > parseFloat(expected_invoice.interest_amount)){
+            } else if (invoice.actual_interest_amount > (parseFloat(expected_invoice.interest_amount)).round(2)){
                 $message.text('Interest cannot be greater than '+expected_invoice.interest_amount);
                 $button.prop('disabled', true);
                 $principal.removeClass('error');
