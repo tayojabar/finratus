@@ -3483,7 +3483,7 @@ users.get('/disbursements/filter', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
         loan_officer = req.query.officer
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         query3,
@@ -3541,7 +3541,7 @@ users.get('/disbursements/filter', function(req, res, next) {
 users.get('/interests/', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         group
@@ -3574,7 +3574,7 @@ users.get('/interests/', function(req, res, next) {
 users.get('/bad-loans/', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         group
@@ -3603,7 +3603,7 @@ users.get('/bad-loans/', function(req, res, next) {
 users.get('/overdues/', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         group
@@ -3633,7 +3633,7 @@ users.get('/overdues/', function(req, res, next) {
 users.get('/payments', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         group
@@ -3673,7 +3673,7 @@ users.get('/payments', function(req, res, next) {
 users.get('/loans-by-branches', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         group
@@ -3749,7 +3749,7 @@ users.get('/projected-interests', function(req, res, next) {
 users.get('/agg-projected-interests', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let query,
         group
     query = 'select sum(interest_amount) as total \n' +
