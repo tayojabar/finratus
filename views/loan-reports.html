@@ -522,38 +522,38 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div id="projected-interests-div" style="display: none" class="col-sm-6">
+                                                <div id="agg-prj-int-div" style="display: none">
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <div class="col-sm-5">
-                                                                <strong>Projected Interest</strong>
-                                                                <span >Total: <span id="total-interests"></span></span>
+                                                                <strong>Projected Interests: </strong>
+                                                                <span id="agg-interests"></span>
                                                             </div>
                                                             <div class="col-sm-7">
-                                                                <form id="filterprojectedinterest" class="form-inline" style="float: right;">
+                                                                <form id="filteraggprojectedinterest" class="form-inline" style="float: right;">
                                                                     <div class="form-group">
                                                                         <label class="" for="startDate">Start date</label>
-                                                                        <input type="date" class="form-control" id="filterprointstart" placeholder="Start date">
+                                                                        <input type="date" class="form-control" id="filteraggprointstart" placeholder="Start date">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label class="" for="endDate">End date</label>
-                                                                        <input type="date" class="form-control" id="filterprointend" placeholder="End date">
+                                                                        <input type="date" class="form-control" id="filteraggprointend" placeholder="End date">
                                                                     </div>
                                                                     <button type="submit" class="btn btn-success">Filter</button>
                                                                 </form>
                                                             </div>
                                                         </div>
                                                         <div class="card-body">
-                                                            <table id="projected-interests-table" class="table table-striped table-bordered">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>Client ID</th>
-                                                                    <th>Name</th>
-                                                                    <th>Projected Interest</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody></tbody>
-                                                            </table>
+                                                            <div class="col-sm-3"></div>
+                                                            <div class="col-sm-6">
+                                                                <div class="card text-white bg-flat-color-4">
+                                                                    <div class="card-body pb-0" style="text-align: center">
+                                                                        <h3 id="total-projected-interest" class="mb-0"></h3>
+                                                                        <p class="text-light"></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -593,43 +593,43 @@
                                                         </div>
                                                     </div>
                                             </div>
-                                            <div class="col-sm-12">
-                                                <div id="agg-prj-int-div" style="display: none">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <div class="col-sm-5">
-                                                                <strong>Aggregate Projected Interests: </strong>
-                                                                <span id="agg-interests"></span>
-                                                            </div>
-                                                            <div class="col-sm-7">
-                                                                <form id="filteraggprojectedinterest" class="form-inline" style="float: right;">
-                                                                    <div class="form-group">
-                                                                        <label class="" for="startDate">Start date</label>
-                                                                        <input type="date" class="form-control" id="filteraggprointstart" placeholder="Start date">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="" for="endDate">End date</label>
-                                                                        <input type="date" class="form-control" id="filteraggprointend" placeholder="End date">
-                                                                    </div>
-                                                                    <button type="submit" class="btn btn-success">Filter</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <div class="col-sm-3"></div>
-                                                            <div class="col-sm-6">
-                                                                <div class="card text-white bg-flat-color-4">
-                                                                    <div class="card-body pb-0" style="text-align: center">
-                                                                        <h3 id="total-projected-interest" class="mb-0"></h3>
-                                                                        <p class="text-light"></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-sm-3"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <!--<div class="col-sm-12">-->
+                                                <!--<div id="projected-interests-div" style="display: none" class="col-sm-6">-->
+                                                    <!--<div class="card">-->
+                                                        <!--<div class="card-header">-->
+                                                            <!--<div class="col-sm-5">-->
+                                                                <!--<strong>Projected Interest</strong>-->
+                                                                <!--<span >Total: <span id="total-interests"></span></span>-->
+                                                            <!--</div>-->
+                                                            <!--<div class="col-sm-7">-->
+                                                                <!--<form id="filterprojectedinterest" class="form-inline" style="float: right;">-->
+                                                                    <!--<div class="form-group">-->
+                                                                        <!--<label class="" for="startDate">Start date</label>-->
+                                                                        <!--<input type="date" class="form-control" id="filterprointstart" placeholder="Start date">-->
+                                                                    <!--</div>-->
+                                                                    <!--<div class="form-group">-->
+                                                                        <!--<label class="" for="endDate">End date</label>-->
+                                                                        <!--<input type="date" class="form-control" id="filterprointend" placeholder="End date">-->
+                                                                    <!--</div>-->
+                                                                    <!--<button type="submit" class="btn btn-success">Filter</button>-->
+                                                                <!--</form>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="card-body">-->
+                                                            <!--<table id="projected-interests-table" class="table table-striped table-bordered">-->
+                                                                <!--<thead>-->
+                                                                <!--<tr>-->
+                                                                    <!--<th>Client ID</th>-->
+                                                                    <!--<th>Name</th>-->
+                                                                    <!--<th>Projected Interest</th>-->
+                                                                <!--</tr>-->
+                                                                <!--</thead>-->
+                                                                <!--<tbody></tbody>-->
+                                                            <!--</table>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
                                         </div>
                                     </div>
                                 </div>
@@ -852,7 +852,7 @@
         loadDisbursed();
         loadPayments();
         loadLoansByBranch();
-        loadProjectedInterests();
+//        loadProjectedInterests();
         loadInterestReceived();
         loadBadLoans();
         loadOverdues();
