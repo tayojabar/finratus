@@ -86,6 +86,17 @@
     .step.finish {
         background-color: #4CAF50;
     }
+    div.dataTables_wrapper div.dataTables_filter{
+        float: left;
+    }
+    .dt-buttons.btn-group{
+        float: right;
+    }
+    .btn-default{
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #666e76;
+    }
 </style>
 
 <aside id="left-panel" class="left-panel">
@@ -825,7 +836,7 @@
 
 <script src="assets/js/lib/data-table/datatables.min.js"></script>
 <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
-<script src=g"assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+<script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
 <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
 <script src="assets/js/lib/data-table/jszip.min.js"></script>
 <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
@@ -1086,6 +1097,7 @@
         // clear the table before populating it with more data
         $("#bootstrap-data-table").DataTable().clear();
         //var action = '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>';
+        let processed_data = [];
         $.each(data, function(k, v){
             let actions;
             if (v.status === "1"){
@@ -1096,13 +1108,23 @@
             else {
                 actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable Client</button>';
             }
-            $('#bootstrap-data-table').dataTable().fnAddData( [
-                v.ID,
-                v.username,
-                v.fullname,
-                v.date_created,
-                actions
-            ]);
+            v.actions = actions;
+            processed_data.push(v);
+        });
+        $('#bootstrap-data-table').DataTable({
+            dom: 'Bfrtip',
+            bDestroy: true,
+            data: processed_data,
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ],
+            columns: [
+                { data: "ID" },
+                { data: "username" },
+                { data: "fullname" },
+                { data: "date_created" },
+                { data: "actions" }
+            ]
         });
     }
 

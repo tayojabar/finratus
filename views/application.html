@@ -253,7 +253,7 @@
                             <div class="card-header">
                                 <div style="float: left; margin: 0 15px;">
                                     <strong id="workflow-div-title" class="card-title">Workflow</strong>
-                                    <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span> | <span id="loancirrus-id" style="display: none;"></span><span id="loancirrus-id-form" style="display: none;"><input id="loancirrus-id-input" type="text" style="width: 100px;" placeholder="L-CIRRUS ID" /><button class="btn btn-success" style="padding:4px 10px;" onclick="saveLoanCirrusID()"><i class="fa fa-check"></i></button></span></p>
+                                    <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span></p>
                                 </div>
                                 <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
                                 <div id="close_loan" class="btn-group write" style="float: right; display: none; margin-top: 5px;">
@@ -948,12 +948,6 @@
                         $('#reschedule-info').text('Reschedule Add-on amount is ₦'+(parseFloat(application.reschedule_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+
                             ' last updated on '+application.date_modified);
                     }
-                    if (application.loanCirrusID){
-                        $('#loancirrus-id').show();
-                        $('#loancirrus-id').text('L-CIRRUS ID#: '+application.loanCirrusID);
-                    } else {
-                        $('#loancirrus-id-form').show();
-                    }
 
                     if (application.schedule && application.schedule[0]){
                         $("#generate-schedule").hide();
@@ -1005,21 +999,6 @@
 
         function goToClientProfile() {
             window.location.href = '/client-info?id='+application.userID;
-        }
-
-        Number.prototype.roundTo = function(n) {
-            return Math.ceil(this/n)*n;
-        };
-
-        Number.prototype.round = function(p) {
-            p = p || 10;
-            return parseFloat( this.toFixed(p) );
-        };
-
-        function padWithZeroes(n, width, z) {
-            z = z || '0';
-            n = n + '';
-            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
         }
 
         function getWorkflows(data){
@@ -1688,7 +1667,7 @@
                             cells[7] = 0;
                         } else if (amount_owed <= 0 && interest_owed <= 0){
                             cells[7] = 1;
-                        } else if ((amount_paid + interest_paid) > 0 && (amount_owed + interest_owed) > 0){
+                        } else if ((amount_paid + interest_paid).round(2) > 0 && (amount_owed + interest_owed).round(2) > 0){
                             cells[7] = 2;
                         }
                         if (application.schedule[i - 2]['payment_status'] === 2)
@@ -1755,7 +1734,7 @@
                 if (payment_history[0]){
                     payment_history.forEach(function (payment) {
                         count++;
-                        amount = amount - parseFloat(payment.payment_amount);
+                        amount = (amount - parseFloat(payment.payment_amount)).round(2);
                         if (count === payment_history.length){
                             total_due_amount = amount;
                             $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
@@ -1917,8 +1896,8 @@
 
                 validateSchedule(schedule, function (validation) {
                     if (validation.status){
-                        if (loan_amount < total_due_amount)
-                            return swal('Total principal on the new schedule must include previous (carried-over) balance','','warning');
+                        if (loan_amount.round(2) < total_due_amount.round(2))
+                            return swal('Total principal on the new schedule must be greater than Principal balance','','warning');
 
                         let schedule = validation.data;
                         $csvLoader.show();
@@ -2228,6 +2207,21 @@
             if (w && w[0] && (parseInt(w[0]['editable']) != 1)){
                 $(".write").hide();
             }
+        }
+
+        Number.prototype.roundTo = function(n) {
+            return Math.ceil(this/n)*n;
+        };
+
+        Number.prototype.round = function(p) {
+            p = p || 10;
+            return parseFloat( this.toFixed(p) );
+        };
+
+        function padWithZeroes(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
         }
     </script>
 </body>
