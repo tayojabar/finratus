@@ -1465,8 +1465,8 @@
     });
 
     function loadAggProjectedInterests(){
-        let start = $("#filterprointstart").val(),
-            end = $("#filterprointend").val(),
+        let start = $("#filteraggprointstart").val(),
+            end = $("#filteraggprointend").val(),
             url;
         url = (start === "" || start === null || end === "" || end === null ) ? 'user/agg-projected-interests/' : 'user/agg-projected-interests?start='+formatDate(start)+'&&end='+formatDate(end)
         $.ajax({
