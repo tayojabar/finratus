@@ -465,7 +465,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="escrowHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
+    <div class="modal fade" id="escrowHistory" tabindex="-1" role="dialog" aria-labelledby="escrowHistoryLabel">
         <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1031,14 +1031,11 @@
         }
 
         $('#source').change(function () {
-            let $payment = $('#payment'),
-                $message = $('#message');
+            let $payment = $('#payment');
             if (this.value === 'escrow'){
                 $payment.val(0);
-                $message.hide();
                 $payment.prop('disabled',true);
             } else {
-                $message.show();
                 $payment.prop('disabled',false);
             }
         });
@@ -1050,13 +1047,12 @@
                 $principal = $('#principal'),
                 $message2 = $('#overpayment-message'),
                 $button = $('#confirm-payment-button'),
-                payment = parseFloat($('#payment').val()),
-                principal = parseFloat($('#principal').val()),
-                interest = parseFloat($('#interest').val());
-            invoice.actual_payment_amount = principal;
-            invoice.actual_interest_amount = interest;
+                payment = parseFloat($('#payment').val());
+            invoice.actual_payment_amount = parseFloat($('#principal').val());
+            invoice.actual_interest_amount = parseFloat($('#interest').val());
 
             if (invoice.actual_payment_amount > (parseFloat(expected_invoice.payment_amount)).round(2)){
+                console.log('here')
                 $message.text('Principal cannot be greater than '+expected_invoice.payment_amount);
                 $button.prop('disabled', true);
                 $interest.removeClass('error');

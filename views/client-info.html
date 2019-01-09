@@ -165,12 +165,13 @@
                                     <div id="pic" class="col-sm-2" style="padding-right: 0px">
 
                                     </div>
-                                    <div class="col-sm-8" style="padding-top: 40px; padding-left: 0px">
+                                    <div class="col-sm-8" style="padding: 15px 0 0 15px;">
                                         <strong id="fullname"></strong><br/>
                                         <strong>Client ID#: </strong><span id="client_id"></span><br/>
                                         <i class="fa fa-phone"></i><span id="phone"></span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span id="email"></span><br/>
                                         <strong>Loan Officer: </strong><span id="loan_officer"></span><br/>
                                         <strong>Branch: </strong><span id="branch"></span><br/>
+                                        <a href="#" style="text-decoration: underline;" data-toggle="modal" data-target="#escrowHistory" onclick="escrowHistory()">Escrow Balance: ₦<span class="escrow-balance"></span></a>
                                     </div>
                                     <div class="col-sm-2" style="padding-top: 70px">
                                         <button onclick="newApplication()" class="btn btn-success"><i class="fa fa-plus"></i> New Application</button><br/><br/>
@@ -282,7 +283,33 @@
         <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 
-
+    <div class="modal fade" id="escrowHistory" tabindex="-1" role="dialog" aria-labelledby="escrowHistoryLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="escrowHistoryLabel">Escrow History</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <table id="escrow-history" class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="escrow_history">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div><!-- /#right-panel -->
 
 <!-- Right Panel -->
@@ -508,6 +535,8 @@
     function populateCards(data){
 
         let obj = data[0];
+        if (obj.escrow)
+            $('.escrow-balance').text(parseFloat(obj.escrow).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         loadImages(obj.phone, obj.fullname);
         $('#fullname').html(obj.fullname);
         $('#phone').html(' '+obj.phone);
@@ -650,6 +679,32 @@
         return date_array[0]+'-'+date_array[1]+'-'+date_array[2];
     }
 
+    function escrowHistory() {
+        $.ajax({
+            'url': '/user/application/escrow-history/'+application_id,
+            'type': 'get',
+            'success': function (data) {
+                $("#escrow-history").dataTable().fnClearTable();
+                $.each(data.response, function(k, v){
+                    let table = [
+                        v.amount,
+                        v.type,
+                        v.date_created
+                    ];
+                    if (v.status === 0){
+                        table.push('Payment Reversed');
+                    } else if (v.status === 1){
+                        table.push('<button class="btn btn-danger" onclick="reverseEscrowPayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                    }
+                    $('#escrow-history').dataTable().fnAddData(table);
+                    $('#escrow-history').dataTable().fnSort([[2,'desc']]);
+                });
+            },
+            'error': function (err) {
+                swal('No internet connection','','error');
+            }
+        });
+    }
 </script>
 
 </body>
