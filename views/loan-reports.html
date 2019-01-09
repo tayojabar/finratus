@@ -1573,7 +1573,7 @@
 //        url = (start === "" || start === null || end === "" || end === null ) ? 'user/overdues' : 'user/overdues?start='+formatDate(start)+'&&end='+formatDate(end)
 
         $.ajax({
-            'url': 'user/overdues',
+            'url': 'user/badloans',
             'type': 'get',
             'success': function (data) {
                 (data.status === 200) ? populateBadLoans(data.response) : swal({"icon": "error", "text": 'Database Error'})
