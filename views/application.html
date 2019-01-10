@@ -1191,7 +1191,9 @@
                                 $('#close_loan').show();
                             } else {
                                 $('#loan_closed').show();
-                                $('#collect-payment-button').hide();
+                                $('#collect-payment-button').text('View Collection');
+                                $('#collect-payment-button').addClass('btn-secondary');
+                                $('#collect-payment-button').removeClass('btn-primary');
                                 $('#generate-schedule-v2').hide();
                                 if (application.close_status === 1){
                                     $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
@@ -1758,7 +1760,9 @@
             if (total_due_amount === 0){
                 $('#close_loan').hide();
                 $('#loan_closed').show();
-                $('#collect-payment-button').hide();
+                $('#collect-payment-button').text('View Collection');
+                $('#collect-payment-button').addClass('btn-secondary');
+                $('#collect-payment-button').removeClass('btn-primary');
                 $('#generate-schedule-v2').hide();
                 $('#loan_closed').html('<strong>CLOSED</strong>');
                 if (application.close_status === 0){

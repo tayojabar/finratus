@@ -1,27 +1,27 @@
 let config = {};
 
 config.test = {
-    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
+    host     : '40.68.3.130',
     port     : '3306',
-    user     : 'loan35dbadmin@atobz-mysqldbserver',
+    user     : 'loan35dbadmin',
     password : 'Loan35Pass@word2018',
     database : 'test',
     insecureAuth: true
 };
 
 config.staging = {
-    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
+    host     : '40.68.3.130',
     port     : '3306',
-    user     : 'loan35dbadmin@atobz-mysqldbserver',
+    user     : 'loan35dbadmin',
     password : 'Loan35Pass@word2018',
     database : 'staging',
     insecureAuth: true
 };
 
 config.live = {
-    host     : 'atobz-mysqldbserver.mysql.database.azure.com',
+    host     : '40.68.3.130',
     port     : '3306',
-    user     : 'loan35dbadmin@atobz-mysqldbserver',
+    user     : 'loan35dbadmin',
     password : 'Loan35Pass@word2018',
     database : 'loan35',
     insecureAuth: true
