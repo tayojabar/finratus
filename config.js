@@ -1,7 +1,7 @@
 let config = {};
 
 config.test = {
-    host     : '40.68.3.130',
+    host     : '51.144.72.67',
     port     : '3306',
     user     : 'loan35dbadmin',
     password : 'Loan35Pass@word2018',
@@ -10,7 +10,7 @@ config.test = {
 };
 
 config.staging = {
-    host     : '40.68.3.130',
+    host     : '51.144.72.67',
     port     : '3306',
     user     : 'loan35dbadmin',
     password : 'Loan35Pass@word2018',
@@ -19,7 +19,7 @@ config.staging = {
 };
 
 config.live = {
-    host     : '40.68.3.130',
+    host     : '51.144.72.67',
     port     : '3306',
     user     : 'loan35dbadmin',
     password : 'Loan35Pass@word2018',
