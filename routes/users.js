@@ -101,7 +101,7 @@ users.post('/login', function(req, res) {
             } else {
                 user = rows[0];
                 if (rows.length > 0) {
-                    if (user.password === password) {
+                    if (bcrypt.compareSync(password,user.password)) {
                         let token = jwt.sign({data:user}, process.env.SECRET_KEY, {
                             expiresIn: 1440
                         });
