@@ -274,7 +274,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="comment()">Save</button>
+                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="assignWorkflow()">Save</button>
                 </div>
             </div>
         </div>
@@ -426,13 +426,13 @@
                     let add_comment_button = ' <button type="button" class="btn btn-success write" data-toggle="modal" data-target="#addCommentModal" onclick="openAddCommentModal('+v.ID+')"><i class="fa fa-plus"></i> Add Comment</button>';
                     table[table.length-1] = table[table.length-1].concat(add_comment_button);
                 }
-                if (v.workflowID){
-                    let view_workflow_button = ' <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#viewWorkflowModal" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Application</button>';
-                    table[table.length-1] = table[table.length-1].concat(view_workflow_button);
-                } else {
-                    let add_workflow_button = ' <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addWorkflowModal" onclick="openAddWorkflowModal('+v.ID+')"><i class="fa fa-plus"></i> Assign Loan Process</button>';
-                    table[table.length-1] = table[table.length-1].concat(add_workflow_button);
-                }
+//                if (v.workflowID){
+//                    let view_workflow_button = ' <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#viewWorkflowModal" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Application</button>';
+//                    table[table.length-1] = table[table.length-1].concat(view_workflow_button);
+//                } else {
+//                    let add_workflow_button = ' <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addWorkflowModal" onclick="openAddWorkflowModal('+v.ID+')"><i class="fa fa-plus"></i> Assign Loan Process</button>';
+//                    table[table.length-1] = table[table.length-1].concat(add_workflow_button);
+//                }
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
                 $('#bootstrap-data-table').dataTable().fnSort([[4,'desc']]);
             });
