@@ -1024,9 +1024,29 @@ users.get('/collections/filter', function(req, res, next) {
         today = moment().utcOffset('+0100').format('YYYY-MM-DD');
 
     let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
-        "s.applicationID, s.status, s.payment_amount, s.payment_collect_date, s.payment_status FROM application_schedules AS s " +
+        "s.applicationID, s.status, s.payment_amount, s.payment_collect_date, s.payment_status, 'Principal' AS 'type' FROM application_schedules AS s " +
         "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
         "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ";
+
+    collectionsQueryMiddleware(query, type, range, today, function (response) {
+        if (response.status !== 200)
+            return res.send(response);
+        let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
+            "s.applicationID, s.status, s.interest_amount as payment_amount, s.interest_collect_date as payment_collect_date, s.payment_status, 'Interest' AS 'type' FROM application_schedules AS s " +
+            "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
+            "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ",
+            results_principal = response.response;
+        collectionsQueryMiddleware(query, type, range, today, function (response) {
+            if (response.status !== 200)
+                return res.send(response);
+            let results_interest = response.response,
+                results = results_principal.concat(results_interest);
+            return res.send({"status": 200, "message": "Collections fetched successfully!", "response": results});
+        });
+    });
+});
+
+function collectionsQueryMiddleware(query, type, range, today, callback) {
     switch (type){
         case 'due': {
             query = query.concat(collectionDueRangeQuery(today, range));
@@ -1040,12 +1060,12 @@ users.get('/collections/filter', function(req, res, next) {
     query = query.concat(" ORDER BY ID desc");
     db.query(query, function (error, results, fields) {
         if(error){
-            res.send({"status": 500, "error": error, "response": null});
+            callback({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "message": "Collections fetched successfully!", "response": results});
+            callback({"status": 200, "response": results});
         }
     });
-});
+}
 
 function collectionDueRangeQuery(today, range){
     switch (range){

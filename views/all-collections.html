@@ -48,6 +48,10 @@
             background-color: #007bff;
         }
         div.dataTables_wrapper div.dataTables_filter{
+            float: right;
+            margin-right: 15px;
+        }
+        div.dataTables_length{
             float: left;
         }
         .dt-buttons.btn-group{
@@ -437,14 +441,14 @@
                 let table = {
                     a:padWithZeroes(v.applicationID, 9),
                     b:v.client,
-                    c:'₦' + (parseFloat(v.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    c:'₦' + (parseFloat(v.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+' ('+v.type+')',
                     d:v.payment_collect_date,
                     e:'<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="goToApplication(' + v.applicationID + ')"><i class="fa fa-eye"></i> View Loan</button>'
                 };
                 processed_data.push(table);
             });
             $('#bootstrap-data-table').DataTable({
-                dom: 'Bfrtip',
+                dom: 'Blfrtip',
                 bDestroy: true,
                 data: processed_data,
                 order: [[ 3, "asc" ]],

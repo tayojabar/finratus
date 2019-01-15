@@ -87,6 +87,10 @@
         background-color: #4CAF50;
     }
     div.dataTables_wrapper div.dataTables_filter{
+        float: right;
+        margin-right: 15px;
+    }
+    div.dataTables_length{
         float: left;
     }
     .dt-buttons.btn-group{
@@ -1112,7 +1116,7 @@
             processed_data.push(v);
         });
         $('#bootstrap-data-table').DataTable({
-            dom: 'Bfrtip',
+            dom: 'Blfrtip',
             bDestroy: true,
             data: processed_data,
             buttons: [
