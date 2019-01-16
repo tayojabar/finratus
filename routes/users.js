@@ -2038,7 +2038,7 @@ users.get('/disbursements/filter', function(req, res, next) {
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
             '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
-            // 'and status = 1 '
+             'and status = 1 '
             ;
     group = 'group by applicationID';
     query = queryPart.concat(group);
@@ -2249,7 +2249,8 @@ users.get('/loans-by-branches', function(req, res, next) {
             'loan_amount, sum(loan_amount) as disbursed,\n' +
             '(select sum(payment_amount) from schedule_history sh\n' +
             'where sh.status = 1 and \n' +
-            '(select branch from clients c where c.ID = (select userID from applications b where b.ID = sh.applicationID)) = branchID) as collected\n' +
+            '(select branch from clients c where c.ID = (select userID from applications b where b.ID = sh.applicationID)) = branchID ' +
+            'and sh.applicationID in (select ap.ID from applications ap where ap.status = 2)) as collected\n' +
             '\n' +
             'from applications a\n' +
             'where status = 2\n ';

@@ -290,7 +290,7 @@
                                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                         <select id="role" class="form-control" required="required">
                                             <option selected="selected" id="0">-- Choose User Role --</option>
-                                        </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New Role"/>
+                                        </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#roleModal" value="New Role"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -320,7 +320,7 @@
                                 <!--</div>-->
                                 <!--</div>-->
                                 <div class = "form-group">
-                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Submit" onclick="submitDetails()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Submit" onclick="validate()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
@@ -353,6 +353,31 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <div class="write"><button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Add New Role</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <strong><label class=" form-control-label">Role Name</label></strong><strong style="color:red"> *</strong><span id="role-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                            <input id="new-role" type="text" class="form-control" required="required">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="submit-role-error" style="padding-left:50px; text-align: center"></span><button type="button" class="btn btn-primary pull-right" onclick="validateRole()"><i class="fa fa-save"></i> Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <!--<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button>-->
                 </div>
             </div>
         </div>
@@ -391,7 +416,7 @@
                 <div class="modal-footer">
                     <span id="pass-error" style="padding-left:0; text-align: left" class="pull-left"></span>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <a type="button" class="btn btn-primary write" onclick="validate()"><i class="fa fa-save"></i> Save</a>
+                    <a type="button" class="btn btn-primary write" onclick="validatePassword()"><i class="fa fa-save"></i> Save</a>
                 </div>
             </div>
         </div>
@@ -450,7 +475,7 @@
             }
         }
 
-        function validate(){
+        function validatePassword(){
             if ($('#new-password').val() == "" || $('#new-password').val() == null){
                 $('#password-error').html("Enter password");
                 $('#password-error').css("color", "red");
@@ -642,7 +667,7 @@
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
-                    swal('User password updated successful!','','success');
+                    swal('User password updated successfully!','','success');
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred. Try Again.','','error');
@@ -717,8 +742,11 @@
                     if(test.response == null){
                         swal("Communication Error! Please try again","","error");
                     }
-                    else
+                    else{
                         swal("User Details Updated!","","success");
+                        window.location.href = "./all-users";
+                    }
+
                 },
                 'error': function (err) {
                     swal('Connection Error. Please try again.','','error');
@@ -783,6 +811,47 @@
                     });
                 }
             });
+        }
+
+        function validate(){
+            if ($('#fullname').val() == "" || $('#fullname').val() == null){
+                $('#fullname-error').html("Enter user's full name");
+                $('#fullname-error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else if ($('#role').find('option:selected').attr('id') == 0){
+                $('#role_error').html("Choose a role for this user");
+                $('#role_error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else if ($('#email').val() == "" || $('#email').val() == null){
+                $('#email-error').html("Enter user's email address");
+                $('#email-error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else if ($('#branch').find('option:selected').attr('id') == 0){
+                $('#branch_error').html("Choose a branch for this user");
+                $('#branch_error').css("color", "red");
+                $('#submit-error').css("color", "red");
+                $('#submit-error').html("Unable to submit. Check information entered.");
+            }
+            else{
+                submitDetails();
+            }
+        }
+
+        function validateRole(){
+            if ($('#new-role').val() == "" || $('#new-role').val() == null){
+                $('#role-error').html("Enter a valid role name");
+                $('#role-error').css("color", "red");
+                $('#submit-role-error').css("color", "red");
+                $('#submit-role-error').html("Unable to submit. Check information entered.");
+            }else{
+                saveNewRole();
+            }
         }
 
     </script>
