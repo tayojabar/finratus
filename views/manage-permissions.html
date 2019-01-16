@@ -232,6 +232,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                                 <input id="role" type="text" class="form-control" required="required">
+                                                <span id="role-error" style="padding-left:50px; text-align: center"></span>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -617,7 +618,7 @@
     function enableRole(id){
         var test = {};
         $.ajax({
-            'url': '/user/del-role/'+id,
+            'url': '/user/en-role/'+id,
             'type': 'post',
             'data': {},
             'success': function (data) {
@@ -626,7 +627,7 @@
                     swal("Please Retry Action!");
                 }
                 else{
-                    swal("Role Disabled Successfully!");
+                    swal("Role Enabled Successfully!");
                     getRoles();
                 }
             },

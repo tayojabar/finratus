@@ -2029,12 +2029,12 @@ users.get('/disbursements/filter', function(req, res, next) {
             'applicationID, (select loan_amount from applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
             '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from applications where ID = applicationID) as date, \n' +
             '(select date_created from applications ap where ap.ID = applicationID) as created_date, ' +
-            // 'CASE\n' +
-            // '    WHEN status = 0 THEN (payment_amount)\n' +
-            // 'END as invalid_payment,\n' +
-            // 'CASE\n' +
-            // '    WHEN status = 1 THEN sum(payment_amount)\n' +
-            // 'END as valid_payment '+
+            'CASE\n' +
+            '    WHEN status = 0 THEN (payment_amount)\n' +
+            'END as invalid_payment,\n' +
+            'CASE\n' +
+            '    WHEN status = 1 THEN sum(payment_amount)\n' +
+            'END as valid_payment '+
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
             '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
