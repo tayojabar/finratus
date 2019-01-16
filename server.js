@@ -62,7 +62,7 @@ app.post('/login', function(req, res) {
 
     db.query('SELECT *, (select role_name from user_roles r where r.id = user_role) as role FROM users WHERE username = ?', username, function(err, rows, fields) {
         if (err)
-            return res.send({"status": 500, "response": "Connection Error!"});
+            return res.send({"status": 500, "error": err, "response": "Connection Error!"});
 
         if (rows.length === 0)
             return res.send({"status": 500, "response": "Incorrect Username/Password!"});

@@ -1195,33 +1195,49 @@
         if (dets.length === 0){
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
-            var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0;
+            var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
             jQuery.each(dets.with_payments, function(k, v){
+                loa += v.loan_amount;
                 num_all++;
                 num_paid++;
                 total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                pay+=v.valid_payment;
                 totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0
                 $("#disbursed-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.applicationID),6),
                     v.fullname,
                     formatter.format(parseFloat(v.loan_amount)),
-                    formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
+//                    formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
+                    formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
                     formatDate(v.date)
                 ]);
-                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) === 0)){
-                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) : 0
+//                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) === 0)){
+//                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid)) === 0))){
+//                if (!(parseFloat(v.loan_amount - v.valid_payment) === 0)){
+                if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
+//                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) : 0
+                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
+                    pay+=v.valid_payment;
+//                    console.log((v.loan_amount - v.valid_payment) + ' -> ' +totalglp);
                     $("#glp-table").dataTable().fnAddData([
                         padWithZeroes(parseInt(v.applicationID),6),
                         v.fullname,
                         formatter.format(parseFloat(v.loan_amount)),
-                        formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
+//                        formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
+                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
                         formatDate(v.date)
                     ]);
                 }
             });
+            console.log(totalglp);
+            console.log(pay);
+            var totalhere = 0;
             jQuery.each(dets.without_pay, function(k, v){
+//                loans+=v.loan_amount;
+                totalhere += parseFloat(v.loan_amount);
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                console.log(v.loan_amount + ' -> ' + totalglp);
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
                 $("#disbursed-table").dataTable().fnAddData([
@@ -1239,7 +1255,8 @@
                     formatDate(v.date_modified)
                 ]);
             });
-
+            console.log(totalhere);
+            console.log(total);
             $('#total-disbursements').html(formatter.format(total));
             $('#glp').html(formatter.format(totalglp));
             $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
@@ -1353,7 +1370,7 @@
             $("#loan-by-branch-table").dataTable().fnClearTable();
             $('#total-loans-by-branch').html(formatter.format(0));
         }else{
-            var total = 0;
+            var total = 0; var collected = 0;
             jQuery.each(dets, function(k, v){
                 total += (v.disbursed) ? v.disbursed : 0;
                 $("#loan-by-branch-table").dataTable().fnAddData([
@@ -1363,7 +1380,9 @@
                     formatter.format(v.collected),
                     formatter.format(v.disbursed - v.collected)
                 ]);
+                collected = v.collected;
             });
+            console.log(collected);
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
