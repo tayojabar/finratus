@@ -34,7 +34,11 @@ let clients = [],
         if (err) throw err;
         async.forEach(clients, function (client, callback) {
             client.status = 1;
-            client.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            delete client.ID;
+            delete client.user_role;
+            delete client.comment;
+            delete client.date_modified;
+            delete client.address;
             console.log(client.fullname);
             connection.query('INSERT INTO clients SET ?', client, function (err, result, fields) {
                 if (err) {
@@ -101,7 +105,7 @@ users.post('/login', function(req, res) {
             } else {
                 user = rows[0];
                 if (rows.length > 0) {
-                    if (user.password === password) {
+                    if (bcrypt.compareSync(password,user.password)) {
                         let token = jwt.sign({data:user}, process.env.SECRET_KEY, {
                             expiresIn: 1440
                         });
@@ -501,7 +505,7 @@ users.get('/usersCount', function(req, res, next) {
 
 /* GET All Requests count. */
 users.get('/all-requests', function(req, res, next) {
-    let query = 'select count(*) as requests from applications where interest_rate = 0';
+    let query = 'select count(*) as requests from requests';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -765,6 +769,8 @@ users.post('/apply', function(req, res) {
         workflow_id = req.body.workflowID,
         postData = Object.assign({},req.body),
         query =  'INSERT INTO applications Set ?';
+    if (!workflow_id)
+        query =  'INSERT INTO requests Set ?';
     delete postData.email;
     delete postData.username;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
@@ -849,7 +855,7 @@ users.post('/sendmail', function(req, res) {
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 ' +
+        'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w WHERE u.ID=a.userID AND a.status <> 0 ' +
         'AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ORDER BY a.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
@@ -862,7 +868,7 @@ users.get('/applications', function(req, res, next) {
 
 users.get('/requests', function(req, res, next) {
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate = 0 ORDER BY a.ID desc';
+        'a.loan_amount, a.date_modified, a.comment FROM clients AS u, requests AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -971,7 +977,7 @@ users.get('/applications/filter', function(req, res, next) {
 
 	let query = "SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, " +
         "a.loan_amount, a.date_modified, a.comment, a.close_status, a.workflowID, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w " +
-        "WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ";
+        "WHERE u.ID=a.userID AND a.status <> 0 AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ";
     if (type){
 	    switch (type){
             case '1': {
@@ -1018,9 +1024,29 @@ users.get('/collections/filter', function(req, res, next) {
         today = moment().utcOffset('+0100').format('YYYY-MM-DD');
 
     let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
-        "s.applicationID, s.status, s.payment_amount, s.payment_collect_date, s.payment_status FROM application_schedules AS s " +
+        "s.applicationID, s.status, s.payment_amount, s.payment_collect_date, s.payment_status, 'Principal' AS 'type' FROM application_schedules AS s " +
         "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
         "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ";
+
+    collectionsQueryMiddleware(query, type, range, today, function (response) {
+        if (response.status !== 200)
+            return res.send(response);
+        let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
+            "s.applicationID, s.status, s.interest_amount as payment_amount, s.interest_collect_date as payment_collect_date, s.payment_status, 'Interest' AS 'type' FROM application_schedules AS s " +
+            "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
+            "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ",
+            results_principal = response.response;
+        collectionsQueryMiddleware(query, type, range, today, function (response) {
+            if (response.status !== 200)
+                return res.send(response);
+            let results_interest = response.response,
+                results = results_principal.concat(results_interest);
+            return res.send({"status": 200, "message": "Collections fetched successfully!", "response": results});
+        });
+    });
+});
+
+function collectionsQueryMiddleware(query, type, range, today, callback) {
     switch (type){
         case 'due': {
             query = query.concat(collectionDueRangeQuery(today, range));
@@ -1034,12 +1060,12 @@ users.get('/collections/filter', function(req, res, next) {
     query = query.concat(" ORDER BY ID desc");
     db.query(query, function (error, results, fields) {
         if(error){
-            res.send({"status": 500, "error": error, "response": null});
+            callback({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "message": "Collections fetched successfully!", "response": results});
+            callback({"status": 200, "response": results});
         }
     });
-});
+}
 
 function collectionDueRangeQuery(today, range){
     switch (range){
@@ -1106,7 +1132,7 @@ users.get('/requests/filter/:start/:end', function(req, res, next) {
         end = req.params.end;
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let query = "SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, " +
-        "a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate = 0 " +
+        "a.loan_amount, a.date_modified, a.comment FROM clients AS u, requests AS a WHERE u.ID=a.userID AND a.status <> 0 " +
         "AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ORDER BY a.ID desc";
     db.query(query, function (error, results, fields) {
         if(error){
@@ -1126,7 +1152,7 @@ users.get('/applications/delete/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 ORDER BY a.ID desc';
+                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
             db.query(query, function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
@@ -1141,13 +1167,13 @@ users.get('/applications/delete/:id', function(req, res, next) {
 users.get('/requests/delete/:id', function(req, res, next) {
     let id = req.params.id,
         date_modified = Date.now(),
-        query =  'UPDATE applications SET status=0, date_modified=? where ID=?';
+        query =  'UPDATE requests SET status=0, date_modified=? where ID=?';
     db.query(query,[date_modified, id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate = 0 ORDER BY a.ID desc';
+                'a.loan_amount, a.date_modified, a.comment FROM clients AS u, requests AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
             db.query(query, function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
@@ -1169,7 +1195,7 @@ users.post('/applications/comment/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 ORDER BY a.ID desc';
+                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
             db.query(query, function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
@@ -1185,13 +1211,13 @@ users.post('/requests/comment/:id', function(req, res, next) {
     let id = req.params.id,
         comment = req.body.comment,
         date_modified = Date.now(),
-        query =  'UPDATE applications SET comment=?, date_modified=? where ID=?';
+        query =  'UPDATE requests SET comment=?, date_modified=? where ID=?';
     db.query(query,[comment, date_modified, id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate = 0 ORDER BY a.ID desc';
+                'a.loan_amount, a.date_modified, a.comment FROM clients AS u, requests AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
             db.query(query, function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
@@ -1223,7 +1249,7 @@ users.get('/application/assign_workflow/:id/:workflow_id/:agent_id', function(re
                         res.send({"status": 500, "error": error, "response": null});
                     } else {
                         let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                            'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate <> 0 ORDER BY a.ID desc';
+                            'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
                         db.query(query, function (error, results, fields) {
                             if(error){
                                 res.send({"status": 500, "error": error, "response": null});
@@ -1238,38 +1264,38 @@ users.get('/application/assign_workflow/:id/:workflow_id/:agent_id', function(re
     });
 });
 
-users.get('/request/assign_workflow/:id/:workflow_id', function(req, res, next) {
-    let id = req.params.id,
-        workflow_id = req.params.workflow_id,
-        date_modified = Date.now(),
-        query =  'UPDATE applications SET workflowID=?, date_modified=? where ID=?';
-    db.query(query,[workflow_id, date_modified, id], function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            getNextWorkflowProcess(false,workflow_id,false, function (process) {
-                process.workflowID = workflow_id;
-                process.applicationID = id;
-                process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-                db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
-                    if(error){
-                        res.send({"status": 500, "error": error, "response": null});
-                    } else {
-                        let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                            'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 AND a.interest_rate = 0 ORDER BY a.ID desc';
-                        db.query(query, function (error, results, fields) {
-                            if(error){
-                                res.send({"status": 500, "error": error, "response": null});
-                            } else {
-                                res.send({"status": 200, "message": "Workflow assigned successfully!", "response": results});
-                            }
-                        });
-                    }
-                });
-            });
-        }
-    });
-});
+// users.get('/request/assign_workflow/:id/:workflow_id', function(req, res, next) {
+//     let id = req.params.id,
+//         workflow_id = req.params.workflow_id,
+//         date_modified = Date.now(),
+//         query =  'UPDATE requests SET workflowID=?, date_modified=? where ID=?';
+//     db.query(query,[workflow_id, date_modified, id], function (error, results, fields) {
+//         if(error){
+//             res.send({"status": 500, "error": error, "response": null});
+//         } else {
+//             getNextWorkflowProcess(false,workflow_id,false, function (process) {
+//                 process.workflowID = workflow_id;
+//                 process.applicationID = id;
+//                 process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+//                 db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
+//                     if(error){
+//                         res.send({"status": 500, "error": error, "response": null});
+//                     } else {
+//                         let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
+//                             'a.loan_amount, a.date_modified, a.comment FROM clients AS u, requests AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
+//                         db.query(query, function (error, results, fields) {
+//                             if(error){
+//                                 res.send({"status": 500, "error": error, "response": null});
+//                             } else {
+//                                 res.send({"status": 200, "message": "Workflow assigned successfully!", "response": results});
+//                             }
+//                         });
+//                     }
+//                 });
+//             });
+//         }
+//     });
+// });
 
 users.post('/workflow_process/:application_id/:workflow_id', function(req, res, next) {
     let stage = req.body.stage,
