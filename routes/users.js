@@ -505,7 +505,7 @@ users.get('/usersCount', function(req, res, next) {
 
 /* GET All Requests count. */
 users.get('/all-requests', function(req, res, next) {
-    let query = 'select count(*) as requests from requests';
+    let query = 'select count(*) as requests from requests where status = 1';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -517,7 +517,7 @@ users.get('/all-requests', function(req, res, next) {
 
 /* GET All Applications count. */
 users.get('/all-applications', function(req, res, next) {
-    let query = 'select count(*) as applications from applications where interest_rate != 0';
+    let query = 'select count(*) as applications from applications where interest_rate != 0 and status = 1';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
