@@ -86,7 +86,37 @@ users.get('/bulk-update-clients', function(req, res) {
         }, function (data) {
             connection.release();
             res.json({count: count, errors: errors})
-        })
+        });
+    });
+});
+
+users.get('/update-request-client', function(req, res) {
+    let users = [],
+        count=0,
+        errors = [];
+    db.getConnection(function(err, connection) {
+        async.forEach(users, function (user, callback) {
+            console.log(user.fullname);
+            connection.query('SELECT * FROM clients WHERE username = ?', [user.username], function (err, client, field) {
+                if (client && client[0]){
+                    connection.query('UPDATE requests SET userID = ? WHERE userID = ?', [client[0]['ID'],user['ID']], function (err, result, fields) {
+                        if (err) {
+                            console.log(err);
+                            errors.push(user);
+                        } else {
+                            count++;
+                        }
+                        callback();
+                    })
+                } else {
+                    console.log('No Client found for '+user.fullname);
+                    callback();
+                }
+            });
+        }, function (data) {
+            connection.release();
+            res.json({count: count, errors: errors})
+        });
     });
 });
 
@@ -1498,9 +1528,10 @@ users.post('/application/schedule/:id', function(req, res, next) {
 users.post('/application/approve-schedule/:id', function(req, res, next) {
     db.getConnection(function(err, connection) {
         if (err) throw err;
-        let loan_amount_update = req.body.loan_amount_update,
+        let reschedule_amount = req.body.reschedule_amount,
+            loan_amount_update = req.body.loan_amount_update,
             date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-        connection.query('UPDATE applications SET loan_amount = ?, reschedule_amount = ?, date_modified = ? WHERE ID = ?', [loan_amount_update,loan_amount_update,date_modified,req.params.id], function (error, invoice, fields) {
+        connection.query('UPDATE applications SET loan_amount = ?, reschedule_amount = ?, date_modified = ? WHERE ID = ?', [loan_amount_update,reschedule_amount,date_modified,req.params.id], function (error, invoice, fields) {
             if(error){
                 res.send({"status": 500, "error": error, "response": null});
             } else {

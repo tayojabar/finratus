@@ -1850,7 +1850,7 @@
         let total_due_amount;
         function initLoanSummary(total_prinicipal) {
             let total_principal = total_prinicipal;
-            $('#loan-amount-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $('#loan-amount-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $('#principal-total-text').text('Disbursed Amount: ₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             if (!application.payment_history || !application.payment_history[0]){
                 total_due_amount = total_prinicipal;
@@ -2123,11 +2123,12 @@
                     .then((yes) => {
                         if (yes) {
                             $csvLoader.show();
-                            let loan_amount_update = (parseFloat(application.loan_amount)+(total_new_schedule-total_due_amount)).round(2);
+                            let reschedule_amount = (total_new_schedule-total_due_amount).round(2),
+                                loan_amount_update = (parseFloat(application.loan_amount)+reschedule_amount).round(2);
                             $.ajax({
                                 'url': '/user/application/approve-schedule/'+application_id,
                                 'type': 'post',
-                                'data': {loan_amount_update:loan_amount_update},
+                                'data': {reschedule_amount:reschedule_amount,loan_amount_update:loan_amount_update},
                                 'success': function (data) {
                                     $csvLoader.hide();
                                     swal('Reschedule approved successfully','','success');
