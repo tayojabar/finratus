@@ -2030,14 +2030,14 @@ users.get('/disbursements/filter', function(req, res, next) {
             '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from applications where ID = applicationID) as date, \n' +
             '(select date_created from applications ap where ap.ID = applicationID) as created_date, ' +
             'CASE\n' +
-            '    WHEN status = 0 THEN (payment_amount)\n' +
+            '    WHEN status = 0 THEN sum(payment_amount)\n' +
             'END as invalid_payment,\n' +
             'CASE\n' +
             '    WHEN status = 1 THEN sum(payment_amount)\n' +
             'END as valid_payment '+
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
-            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
+            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
              'and status = 1 '
             ;
     group = 'group by applicationID';
@@ -2066,6 +2066,7 @@ users.get('/disbursements/filter', function(req, res, next) {
                 res.send({"status": 500, "error": error, "response": null});
             } else {
                 items.without_pay = results;
+                console.log(query);
                 res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
             }
         });
