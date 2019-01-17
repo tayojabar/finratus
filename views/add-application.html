@@ -357,44 +357,48 @@
                                 } else if (i === 1) {
                                     cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
                                 }
-                                for (let j = 0; j < cells.length; j++) {
-                                    let cell = $("<td />");
-                                    if (i === 0){
-                                        if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
-                                            cell = $("<td colspan='3' />");
-                                    }
-                                    if (cells[j]){
-                                        if (i > 1){
-                                            if (j === 0 || j === 1 || j === 3 || j === 4){
-                                                cell.html('<input id="invoice-'+i+'-'+j+'" type="date" value="'+cells[j]+'" />');
-                                            } else {
-                                                cell.html('<span id="invoice-'+i+'-'+j+'">'+cells[j]+'</span>');
-                                            }
-                                        } else {
-                                            cell.html(cells[j]);
+                                if (cells.join(' ').length > 20){
+                                    for (let j = 0; j < cells.length; j++) {
+                                        let cell = $("<td />");
+                                        if (i === 0){
+                                            if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
+                                                cell = $("<td colspan='3' />");
                                         }
-                                    }
-                                    row.append(cell);
-                                    switch (j){
-                                        case 0:{ invoice.payment_create_date = cells[j]; break; }
-                                        case 1:{ invoice.payment_collect_date = cells[j]; break; }
-                                        case 2:{
+                                        if (cells[j]){
                                             if (i > 1){
-                                                console.log('cells '+parseFloat(cells[j]));
-                                                loan_amount = (loan_amount + parseFloat(cells[j])).round(2);
-                                                console.log('loan amount '+loan_amount);
+                                                if (j === 0 || j === 1 || j === 3 || j === 4){
+                                                    cell.html('<input id="invoice-'+i+'-'+j+'" type="date" value="'+cells[j]+'" />');
+                                                } else {
+                                                    cell.html('<span id="invoice-'+i+'-'+j+'">'+cells[j]+'</span>');
+                                                }
+                                            } else {
+                                                cell.html(cells[j]);
                                             }
-                                            invoice.payment_amount = cells[j];
-                                            break;
                                         }
-                                        case 3:{ invoice.interest_create_date = cells[j]; break; }
-                                        case 4:{ invoice.interest_collect_date = cells[j]; break; }
-                                        case 5:{ invoice.interest_amount = cells[j]; break; }
-                                        case 6:{ invoice.balance = cells[j]; break; }
+                                        row.append(cell);
+                                        switch (j){
+                                            case 0:{ invoice.payment_create_date = cells[j]; break; }
+                                            case 1:{ invoice.payment_collect_date = cells[j]; break; }
+                                            case 2:{
+                                                if (i > 1){
+                                                    console.log('cells '+parseFloat(cells[j]));
+                                                    loan_amount = (loan_amount + parseFloat(cells[j])).round(2);
+                                                    console.log('loan amount '+loan_amount);
+                                                }
+                                                invoice.payment_amount = cells[j];
+                                                break;
+                                            }
+                                            case 3:{ invoice.interest_create_date = cells[j]; break; }
+                                            case 4:{ invoice.interest_collect_date = cells[j]; break; }
+                                            case 5:{ invoice.interest_amount = cells[j]; break; }
+                                            case 6:{ invoice.balance = cells[j]; break; }
+                                        }
                                     }
                                 }
-                                if (i>1 && cells.length === 7)
-                                    schedule.push(invoice);
+                                if (i>1 && cells.length === 7){
+                                    if (Object.keys(invoice).length > 0)
+                                        schedule.push(invoice);
+                                }
                                 table.append(row);
                             }
                             $dvCSV.html('');
@@ -418,7 +422,7 @@
                         let obj = {},
                             schedule = validation.data,
                             $user_list = $('#user-list'),
-                            user = ($user_list.val() !== '-- Choose User --')? JSON.parse(decodeURIComponent($user_list.val())) : false;
+                            user = ($user_list.val() !== '-- Choose Client --')? JSON.parse(decodeURIComponent($user_list.val())) : false;
 
                         obj.userID = user.ID;
                         obj.email = user.email;
