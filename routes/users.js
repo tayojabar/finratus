@@ -2066,7 +2066,6 @@ users.get('/disbursements/filter', function(req, res, next) {
                 res.send({"status": 500, "error": error, "response": null});
             } else {
                 items.without_pay = results;
-                console.log(query);
                 res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
             }
         });
