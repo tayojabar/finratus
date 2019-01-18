@@ -1101,7 +1101,7 @@
                 return swal('Kindly select a payment source to proceed','','warning');
             application.escrow = application.escrow || "0";
             if (invoice.payment_source === 'escrow' && (total_payment > (parseFloat(application.escrow)).round(2)))
-                return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+application.escrow.round(2)+')','','warning');
+                return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+parseFloat(application.escrow).round(2)+')','','warning');
             updateEscrow(invoice.payment_source, total_payment, function () {
                 let overpayment = (payment - (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount))).round(2);
                 if (overpayment > 0){
