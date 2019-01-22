@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loan35 Admin</title>
-    <meta name="description" content="Loan35 Admin">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
@@ -172,7 +172,7 @@
                                             <div class="input-group-addon"><i class="fa fa-plus"></i></div>
                                             <input type="number" id="interest-rate" class="form-control" required="required" value="4" min="3" max="10">
                                         </div>
-                                        <small class="form-text text-muted">Min: 3.0000%  Max: 10.0000% </small>
+                                        <small class="form-text text-muted">Min: 3%  Max: 10% </small>
                                     </div>
                                     <div class="col-sm-6 form-group">
                                         <label class=" form-control-label">Tenor (monthly)</label><strong style="color:red"> *</strong><span id="term-error" style="padding-left:50px; text-align: center"></span>
@@ -442,6 +442,12 @@
                         obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
                         if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
                             return swal('Kindly fill all required fields!','','warning');
+                        if (parseFloat(obj.duration) < 1)
+                            return swal('Minimum tenor is 1 (month)','','warning');
+                        if (parseFloat(obj.interest_rate) < 3)
+                            return swal('Minimum interest rate is 3%','','warning');
+                        if (parseFloat(obj.loan_amount) < 25000)
+                            return swal('Minimum loan amount is ₦25,000','','warning');
                         if (loan_amount !== parseFloat(obj.loan_amount))
                             return swal('Loan amount ('+parseFloat(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch','','warning');
 

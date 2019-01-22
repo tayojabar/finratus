@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loan35 Admin</title>
-    <meta name="description" content="Loan35 Admin">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
@@ -375,6 +375,8 @@
             let $name = $('#new-stage-name');
             if (!$name.val())
                 return swal('Kindly input a stage name','','warning');
+            if (($name.val()).length > 50)
+                return swal('Stage name cannot be more than 50 characters','','warning');
             $.ajax({
                 'url': '/stages',
                 'type': 'post',
@@ -382,7 +384,7 @@
                 'success': function (data) {
                     $name.val('');
                     swal('Stage saved successfully','','success');
-                    window.location.reload();
+//                    window.location.reload();
                 },
                 'error': function (err) {
                     $name.val('');
@@ -399,8 +401,8 @@
                     v.ID,
                     v.name,
                     v.date_created,
-                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#viewProcess" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i>View Stages</button> ' +
-                    '<button type="button" class="btn btn-primary" onclick="goToEditWorkflow('+v.ID+')"><i class="fa fa-edit"></i>Edit Workflow</button>'
+                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#viewProcess" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i>View Stages</button> '
+//                    '<button type="button" class="btn btn-primary" onclick="goToEditWorkflow('+v.ID+')"><i class="fa fa-edit"></i>Edit Workflow</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
             });
