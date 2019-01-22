@@ -130,7 +130,13 @@
                     </a>
 
                     <div class="user-menu dropdown-menu">
-                        <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                        <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                        <script type="text/javascript">
+                            function logout() {
+                                localStorage.login = "0";
+                                window.location.href = "/logout";
+                            }
+                        </script>
                     </div>
                 </div>
             </div>

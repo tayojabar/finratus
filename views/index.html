@@ -54,7 +54,7 @@
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"> Remember Me
+                                <input id="remember" type="checkbox"> Remember Me
                             </label>
                             <label class="pull-right">
                                 <a href="#" data-toggle="modal" data-target="#forgetPasswordModal">Forgotten Password?</a>
@@ -118,8 +118,21 @@
         for (var it in $.cookie()) $.removeCookie(it);
     })();
 
+    if (localStorage.remember === '1')
+        $('#remember').prop('checked', true);
+
+    $(document).on("click", "#remember", function (e) {
+        if ($('#remember').is(':checked'))
+            return localStorage.remember = '1';
+        return localStorage.remember = '0';
+    });
+
+    if (localStorage.remember === '1' && localStorage.login === '1' && localStorage.user_obj)
+        initLogin(JSON.parse(localStorage.user_obj));
+
     $(document).on("click", "#submit", function (e) {
-        var obj = {}; test = {};
+        let obj = {},
+            test = {};
         obj.username = $('#username').val();
         obj.password = $('#password').val();
         $.ajax({
@@ -130,37 +143,42 @@
                 $.each(data, function (key, val) {
                     test[key] = val;
                 });
-                localStorage.setItem("user_obj",JSON.stringify(test["response"]));
+                localStorage.user_obj = JSON.stringify(test["response"]);
                 if (test["status"] === 500){
                     swal(test["response"]);
                 }
                 else if (test["status"] === 200){
-                    let minutes = 24 * 60,
-                        date = new Date();
-                    date.setTime(date.getTime() + (minutes * 60 * 1000));
-                    $.cookie('timeout', test["response"]["ID"], { expires: date });
-                    if (test["response"]["fullname"])
-                        localStorage.setItem("name", test["response"]["fullname"]);
-                    if (test["response"]["role"])
-                        localStorage.setItem("user", test["response"]["role"]);
-                    if (test["response"]["permissions"])
-                        localStorage.setItem("permissions", JSON.stringify(test["response"]["permissions"]));
-                    if (test["response"]["user_role"])
-                        localStorage.setItem("role", test["response"]["user_role"]);
-                    if (test["response"]["status"])
-                        localStorage.setItem("status", test["response"]["status"]);
-                    if (test["response"]["modules"])
-                        localStorage.setItem("modules", JSON.stringify(test["response"]["modules"]));
-                    if (test["response"]["permissions"] !== ""){
-                        window.location.href="./dashboard";
-                    } else {
-                        swal("Login Successful! However, No Views Set For This User");
-                    }
+                    initLogin(test["response"]);
                 }
             }
         });
 
     });
+
+    function initLogin(user) {
+        let minutes = 24 * 60,
+            date = new Date();
+        date.setTime(date.getTime() + (minutes * 60 * 1000));
+        localStorage.login = '1';
+        $.cookie('timeout', user["ID"], { expires: date });
+        if (user["fullname"])
+            localStorage.setItem("name", user["fullname"]);
+        if (user["role"])
+            localStorage.setItem("user", user["role"]);
+        if (user["permissions"])
+            localStorage.setItem("permissions", JSON.stringify(user["permissions"]));
+        if (user["user_role"])
+            localStorage.setItem("role", user["user_role"]);
+        if (user["status"])
+            localStorage.setItem("status", user["status"]);
+        if (user["modules"])
+            localStorage.setItem("modules", JSON.stringify(user["modules"]));
+        if (user["permissions"] !== ""){
+            window.location.href="./dashboard";
+        } else {
+            swal("Login Successful! However, No Views Set For This User");
+        }
+    }
 
     function forgotPassword() {
         $('#wait').show();

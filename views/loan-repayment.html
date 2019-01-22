@@ -168,7 +168,13 @@
 
                                 <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
 
-                                <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                            <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                            <script type="text/javascript">
+                                function logout() {
+                                    localStorage.login = "0";
+                                    window.location.href = "/logout";
+                                }
+                            </script>
                         </div>
                     </div>
 
@@ -1016,11 +1022,6 @@
             }
             expected_invoice = invoice;
             $('#source').val(0);
-            $('#payment').val(0);
-            $('#principal').val(0);
-            $('#interest').val(0);
-            $('#fees').val(0);
-            $('#penalty').val(0);
             $('#message').text('');
             $('#overpayment-message').text('');
 //            $('#repayment-date').val(new Date().toDateInputValue());
@@ -1052,7 +1053,6 @@
             invoice.actual_interest_amount = parseFloat($('#interest').val());
 
             if (invoice.actual_payment_amount > (parseFloat(expected_invoice.payment_amount)).round(2)){
-                console.log('here')
                 $message.text('Principal cannot be greater than '+expected_invoice.payment_amount);
                 $button.prop('disabled', true);
                 $interest.removeClass('error');
@@ -1080,18 +1080,18 @@
         });
 
         Date.prototype.toDateInputValue = (function() {
-            var local = new Date(this);
+            let local = new Date(this);
             local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
             return local.toJSON().slice(0,10);
         });
 
         function confirmPayment() {
             let invoice = {},
-                payment = parseFloat($('#payment').val());
-            invoice.actual_payment_amount = $('#principal').val();
-            invoice.actual_interest_amount = $('#interest').val();
-            invoice.actual_fees_amount = $('#fees').val();
-            invoice.actual_penalty_amount = $('#penalty').val();
+                payment = parseFloat($('#payment').val() || '0');
+            invoice.actual_payment_amount = $('#principal').val() || '0';
+            invoice.actual_interest_amount = $('#interest').val() || '0';
+            invoice.actual_fees_amount = $('#fees').val() || '0';
+            invoice.actual_penalty_amount = $('#penalty').val() || '0';
             invoice.payment_source = $('#source').val();
             invoice.payment_date = $('#repayment-date').val();
             let total_payment = (parseFloat(invoice.actual_payment_amount)+parseFloat(invoice.actual_interest_amount)+parseFloat(invoice.actual_fees_amount)+parseFloat(invoice.actual_penalty_amount)).round(2);
