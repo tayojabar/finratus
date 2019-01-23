@@ -123,6 +123,7 @@
             //create todo
             $('#add-stage').click(function (e) {
                 e.preventDefault;
+                console.log($('.add-todo').val())
                 if($('.add-todo').val() !== ''){
                     let stage = {},
                         action_ids = [],
@@ -138,6 +139,9 @@
                     stage.name = $('#stage-name').val();
                     stage.description = $('#stage-description').val();
                     stage.approverID = $('#process-rights').val();
+                    console.log(stage)
+                    console.log(stage_template)
+                    console.log(actions)
                     if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || !actions || !actions[0])
                         return swal('Kindly fill all required fields!');
                     stage.approverID = stage.approverID.join(',');
