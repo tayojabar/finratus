@@ -114,8 +114,6 @@
         (function () {
             for (var it in $.cookie()) $.removeCookie(it);
         })();
-        if (localStorage.remember === '1')
-            $('#remember').prop('checked', true);
 
         $(document).on("click", "#remember", function (e) {
             if ($('#remember').is(':checked'))
