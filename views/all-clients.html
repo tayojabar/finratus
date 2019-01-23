@@ -770,7 +770,7 @@
 
             </div>
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 
 
@@ -793,17 +793,17 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <div class="write"><button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
+                <div class="write"><button type="button" class="btn btn-primary write" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Change Password</h4>
+                <h4 class="modal-title" id="myModalLabel1">Change Password</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -1300,15 +1300,16 @@
 
     function edit(){
         getRoles();
+        $('#wait').show();
+        $('#myModal').modal('hide');
         $.ajax({
             'url': '/user/client-dets/'+localStorage.getItem("user_id"),
             'type': 'get',
             'success': function (data) {
-                //console.log(data);
+                $('#wait').hide();
                 $('#user-form').slideDown();
                 $('#user-table').slideToggle();
-                //console.log(data[0]);
-                var fullname = data[0].fullname;
+                let fullname = data[0].fullname;
                 $('#first_name').val(fullname.split(' ')[0]);
                 $('#middle_name').val(fullname.split(' ')[1]);
                 $('#last_name').val(fullname.split(' ')[2]);
@@ -1343,12 +1344,9 @@
                 $("#email").prop("readonly", true);
                 $("#phone").prop("readonly", true);
                 loadImages(data[0].phone);
-                // var applications = data.message;
-                // results = applications;
-                // populateDataTable(applications);
-                // swal('Application archived successfully');
             },
             'error': function (err) {
+                $('#wait').hide();
                 swal('Oops! An error occurred while retrieving details.');
             }
         });
@@ -1525,13 +1523,9 @@
             'url': '/profile-images/'+phone+'/',
             'type': 'get',
             'success': function (data) {
-                // $.each(data[0], function (key, val) {
-                //     test[key] = val;
-                // });
                 let res = JSON.parse(data);
                 if(res.status == 500){
                     swal({"icon": "info", "text": "No Image Uploaded!"});
-//                    $('#pic').append('<img src="./files/users/default_user_logo.png" width="180" height="170"/>');
                 }
                 else{
                     $.each(res['response'], function (key, value){
@@ -1542,9 +1536,6 @@
                             '<div style="text-align: center"><strong>'+key+' </strong></div>'+
                             '</div>';
                         $carousel_inner.append(image);
-//                        if (count >= 4){
-//                            $('.carousel-inner').append($('<div id="new-row" class="carousel-item"></div>').append(image));
-//                        }
                     });
                 }
             },

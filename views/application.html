@@ -589,12 +589,12 @@
                 </div>
             </div>
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 <!-- Right Panel -->
 
     <!-- Modal -->
-    <div class="modal fade" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
+    <div class="modal" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -615,7 +615,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="comment()">Comment</button>
+                    <button type="button" class="btn btn-primary" onclick="comment()">Comment</button>
                 </div>
             </div>
         </div>
@@ -641,13 +641,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="setDocumentTitle()">Save</button>
+                    <button type="button" class="btn btn-primary" onclick="setDocumentTitle()">Save</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="disburseModalLabel">
+    <div class="modal" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="disburseModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -695,7 +695,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="disburse()">Disburse</button>
+                    <button type="button" class="btn btn-primary" onclick="disburse()">Disburse</button>
                 </div>
             </div>
         </div>
@@ -1434,15 +1434,16 @@
         function comment(){
             let $comment = $("#comment"),
                 comment = $comment.val();
-            if (!comment || comment === ""){
-                $comment.val("");
+            if (!comment || comment === "")
                 return swal('Kindly type a brief comment','','error');
-            }
+            $('#wait').show();
+            $('#addCommentModal').modal('hide');
             $.ajax({
                 'url': '/user/application/comments/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                 'type': 'post',
                 'data': {text: comment},
                 'success': function (data) {
+                    $('#wait').hide();
                     let comments = data.response;
                     results = comments;
                     loadComments(comments);
@@ -1450,6 +1451,7 @@
                     swal('Comment saved successfully','','success');
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     $comment.val("");
                     swal('Oops! An error occurred while saving comment','','error');
                 }
@@ -1473,6 +1475,7 @@
             let $title = $('#others-document-title');
             if (!$title.val())
                 return swal('Document title cannot be empty','','warning');
+            $('#addDocumentModal').modal('hide');
             $('#stage-documents-others').val($title.val());
             fileUpload($title.val());
         }
@@ -1938,16 +1941,19 @@
             disbursal.disbursement_date = $('#disbursement-date').val();
             if (disbursal.funding_source === "-- Select a Funding Source --" || disbursal.disbursement_channel === "-- Select a Channel --" || !disbursal.disbursement_date)
                 return swal('Kindly fill all required fields!','','warning');
-
+            $('#wait').show();
+            $('#disburseModal').modal('hide');
             $.ajax({
                 'url': '/user/application/disburse/'+application_id,
                 'type': 'post',
                 'data': disbursal,
                 'success': function (data) {
+                    $('#wait').hide();
                     swal('Loan disbursed successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     swal('Oops! An error occurred while disbursing loan','','error');
                 }
             });
