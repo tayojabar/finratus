@@ -2093,7 +2093,6 @@ users.get('/disbursements/filter', function(req, res, next) {
     db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
         db.query(query2, [loan_officer],  function (error, results, fields) {
-            console.log(query2)
             if(error){
                 res.send({"status": 500, "error": error, "response": null});
             } else {
