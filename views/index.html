@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loan 35 - Admin</title>
-    <meta name="description" content="Loan35 Admin">
+    <title>Loanratus - Admin</title>
+    <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
@@ -26,13 +26,12 @@
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
 <body class="bg-dark">
-
+<script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
     <div class="sufee-login d-flex align-content-center flex-wrap">
         <div class="container">
@@ -54,7 +53,7 @@
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"> Remember Me
+                                <input id="remember" type="checkbox"> Remember Me
                             </label>
                             <label class="pull-right">
                                 <a href="#" data-toggle="modal" data-target="#forgetPasswordModal">Forgotten Password?</a>
@@ -99,102 +98,117 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="forgotPassword()">Submit</button>
+                    <button type="button" class="btn btn-primary" id="forgotPassword">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
 
+    <script type="text/javascript">
+        jQuery(function($) {
+        (function () {
+            for (var it in $.cookie()) $.removeCookie(it);
+        })();
 
-</body>
-<script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script type="text/javascript">
-    (function () {
-        for (var it in $.cookie()) $.removeCookie(it);
-    })();
+        $(document).on("click", "#remember", function (e) {
+            if ($('#remember').is(':checked'))
+                return localStorage.remember = '1';
+            return localStorage.remember = '0';
+        });
 
-    $(document).on("click", "#submit", function (e) {
-        var obj = {}; test = {};
-        obj.username = $('#username').val();
-        obj.password = $('#password').val();
-        $.ajax({
-            'url': '/login',
-            'type': 'post',
-            'data': obj,
-            'success': function (data) {
-                $.each(data, function (key, val) {
-                    test[key] = val;
-                });
-                localStorage.setItem("user_obj",JSON.stringify(test["response"]));
-                if (test["status"] === 500){
-                    swal(test["response"]);
-                }
-                else if (test["status"] === 200){
-                    let minutes = 24 * 60,
-                        date = new Date();
-                    date.setTime(date.getTime() + (minutes * 60 * 1000));
-                    $.cookie('timeout', test["response"]["ID"], { expires: date });
-                    if (test["response"]["fullname"])
-                        localStorage.setItem("name", test["response"]["fullname"]);
-                    if (test["response"]["role"])
-                        localStorage.setItem("user", test["response"]["role"]);
-                    if (test["response"]["permissions"])
-                        localStorage.setItem("permissions", JSON.stringify(test["response"]["permissions"]));
-                    if (test["response"]["user_role"])
-                        localStorage.setItem("role", test["response"]["user_role"]);
-                    if (test["response"]["status"])
-                        localStorage.setItem("status", test["response"]["status"]);
-                    if (test["response"]["modules"])
-                        localStorage.setItem("modules", JSON.stringify(test["response"]["modules"]));
-                    if (test["response"]["permissions"] !== ""){
-                        window.location.href="./dashboard";
-                    } else {
-                        swal("Login Successful! However, No Views Set For This User");
+        if (localStorage.remember === '1' && localStorage.login === '1' && localStorage.user_obj)
+            initLogin(JSON.parse(localStorage.user_obj));
+
+        $(document).on("click", "#submit", function (e) {
+            let obj = {},
+                test = {};
+            obj.username = $('#username').val();
+            obj.password = $('#password').val();
+            $.ajax({
+                'url': '/login',
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $.each(data, function (key, val) {
+                        test[key] = val;
+                    });
+                    localStorage.user_obj = JSON.stringify(test["response"]);
+                    if (test["status"] === 500){
+                        swal(test["response"]);
+                    }
+                    else if (test["status"] === 200){
+                        initLogin(test["response"]);
                     }
                 }
-            }
+            });
+
         });
 
-    });
-
-    function forgotPassword() {
-        $('#wait').show();
-        let username = $('#forgot-username').val();
-        if (!username){
-            $('#wait').hide();
-            return swal('Kindly input a valid username');
+        function initLogin(user) {
+            let minutes = 24 * 60,
+                date = new Date();
+            date.setTime(date.getTime() + (minutes * 60 * 1000));
+            localStorage.login = '1';
+            $.cookie('timeout', user["ID"], { expires: date });
+            if (user["fullname"])
+                localStorage.setItem("name", user["fullname"]);
+            if (user["role"])
+                localStorage.setItem("user", user["role"]);
+            if (user["permissions"])
+                localStorage.setItem("permissions", JSON.stringify(user["permissions"]));
+            if (user["user_role"])
+                localStorage.setItem("role", user["user_role"]);
+            if (user["status"])
+                localStorage.setItem("status", user["status"]);
+            if (user["modules"])
+                localStorage.setItem("modules", JSON.stringify(user["modules"]));
+            if (user["permissions"] !== ""){
+                window.location.href="./dashboard";
+            } else {
+                swal("Login Successful! However, No Views Set For This User");
+            }
         }
-        $.ajax({
-            'url': '/user/forgot-password/'+username,
-            'type': 'get',
-            'success': function (data) {
-                $('#wait').hide();
-                if (data.status === 500){
-                    swal(data.response);
-                } else {
-                    $('#forgot-username').val('');
-                    swal('Forgot password request successful!');
+
+        $(document).on("click", "#forgotPassword", function (e) {
+            let username = $('#forgot-username').val();
+            if (!username)
+                return swal('Kindly input a valid username');
+            $('#wait').show();
+            $('#forgetPasswordModal').modal('hide');
+            $.ajax({
+                'url': '/user/forgot-password/'+username,
+                'type': 'get',
+                'success': function (data) {
+                    $('#wait').hide();
+                    if (data.status === 500){
+                        swal(data.response);
+                    } else {
+                        $('#forgot-username').val('');
+                        swal('Forgot password request successful!');
+                    }
+                },
+                'error': function (err) {
+                    $('#wait').hide();
+                    console.log(err);
+                    swal('No internet connection!');
                 }
-            },
-            'error': function (err) {
-                $('#wait').hide();
-                console.log(err);
-                swal('No internet connection!');
-            }
+            });
         });
-    }
 
-    $(document).ajaxStart(function(){
-        $("#wait").css("display", "block");
-    });
+        $(document).ajaxStart(function(){
+            $("#wait").css("display", "block");
+        });
 
-    $(document).ajaxComplete(function(){
-        $("#wait").css("display", "none");
-    });
-</script>
+        $(document).ajaxComplete(function(){
+            $("#wait").css("display", "none");
+        });
+        });
+    </script>
+
+</body>
 </html>

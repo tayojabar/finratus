@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loan35 Admin</title>
-    <meta name="description" content="Loan35 Admin">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
@@ -44,7 +44,7 @@
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                    <a class="navbar-brand" href="/dashboard">Loanratus</a>
                     <a class="navbar-brand hidden" href="/dashboard">35</a>
                 </div>
 
@@ -159,7 +159,13 @@
 
                                 <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
 
-                                <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                                <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                                <script type="text/javascript">
+                                    function logout() {
+                                        localStorage.login = "0";
+                                        window.location.href = "/logout";
+                                    }
+                                </script>
                             </div>
                         </div>
 
@@ -260,7 +266,7 @@
 
                 </div>
             </div><!-- .animated -->
-            <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 

@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loan35 Admin</title>
-    <meta name="description" content="Loan35 Admin">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
@@ -63,7 +63,7 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="/dashboard">Loan 35</a>
+                <a class="navbar-brand" href="/dashboard">Loanratus</a>
                 <a class="navbar-brand hidden" href="/dashboard">35</a>
             </div>
 
@@ -178,7 +178,13 @@
 
                             <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
 
-                            <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                            <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                            <script type="text/javascript">
+                                function logout() {
+                                    localStorage.login = "0";
+                                    window.location.href = "/logout";
+                                }
+                            </script>
                         </div>
                     </div>
 
@@ -278,7 +284,7 @@
                 </div>
             </div><!-- .animated -->
 
-            <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 
@@ -301,7 +307,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="archive()">Archive</button>
+                    <button type="button" class="btn btn-primary write" onclick="archive()">Archive</button>
                 </div>
             </div>
         </div>
@@ -329,7 +335,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="comment()">Save</button>
+                    <button type="button" class="btn btn-primary write" onclick="comment()">Save</button>
                 </div>
             </div>
         </div>
@@ -354,36 +360,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="addWorkflowModal" tabindex="-1" role="dialog" aria-labelledby="addWorkflowModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="addWorkflowModalLabel">Assign Workflow</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class=" form-control-label">Select Workflow</label><strong style="color:red"> *</strong><span id="workflow-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-chain"></i></div>
-                                <select id="workflows" class="form-control" required="required">
-                                    <option selected="selected">-- Choose Workflow Process --</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary write" data-dismiss="modal" onclick="comment()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
@@ -629,16 +605,20 @@
         }
 
         function archive(){
+            $('#wait').show();
+            $('#myModal').modal('hide');
             $.ajax({
                 'url': '/user/applications/delete/'+localStorage.getItem("application_id"),
                 'type': 'get',
                 'success': function (data) {
+                    $('#wait').hide();
                     let applications = data.response;
                     results = applications;
                     populateDataTable(applications);
                     swal('Application archived successfully');
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     swal('Oops! An error occurred during archiving');
                 }
             });
@@ -647,24 +627,28 @@
         function comment(){
             let $comment = $("#comment"),
                 comment = $comment.val();
-            if (!comment || comment === ""){
-                $comment.val("");
+            if (!comment || comment === "")
                 return swal('Kindly type a brief comment');
-            }
+            $('#wait').show();
+            $('#addCommentModal').modal('hide');
             $.ajax({
                 'url': '/user/applications/comment/'+localStorage.getItem("application_id"),
                 'type': 'post',
                 'data': {comment: comment},
                 'success': function (data) {
+                    $('#wait').hide();
                     let applications = data.response;
                     results = applications;
                     populateDataTable(applications);
                     $comment.val("");
                     swal('Comment saved successfully');
+                    window.location.reload();
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     $comment.val("");
                     swal('Oops! An error occurred while saving comment');
+                    window.location.reload();
                 }
             });
         }

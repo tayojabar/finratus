@@ -535,7 +535,7 @@ users.get('/usersCount', function(req, res, next) {
 
 /* GET All Requests count. */
 users.get('/all-requests', function(req, res, next) {
-    let query = 'select count(*) as requests from requests where status = 1';
+    let query = 'select count(*) as requests from requests, clients where clients.ID = requests.userID AND requests.status <> 0';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -547,7 +547,7 @@ users.get('/all-requests', function(req, res, next) {
 
 /* GET All Applications count. */
 users.get('/all-applications', function(req, res, next) {
-    let query = 'select count(*) as applications from applications where interest_rate != 0 and status = 1';
+    let query = 'select count(*) as applications from applications where applications.status = 1';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -811,9 +811,9 @@ users.post('/apply', function(req, res) {
             data.name = req.body.username;
             data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
             let mailOptions = {
-                from: 'no-reply Loan35 <applications@loan35.com>',
+                from: 'no-reply Loanratus <applications@loan35.com>',
                 to: req.body.email,
-                subject: 'Loan35 Application Successful',
+                subject: 'Loanratus Application Successful',
                 template: 'main',
                 context: data
             };
@@ -1987,7 +1987,7 @@ users.get('/forgot-password/:username', function(req, res) {
         let mailOptions = {
             from: 'no-reply@loan35.com',
             to: user.email,
-            subject: 'Loan35: Forgot Password Request',
+            subject: 'Loanratus: Forgot Password Request',
             template: 'forgot',
             context: user
         };

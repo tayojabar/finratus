@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loan35 Admin</title>
-    <meta name="description" content="Loan35 Admin">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
@@ -122,7 +122,7 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="/dashboard">Loan 35</a>
+            <a class="navbar-brand" href="/dashboard">Loanratus</a>
             <a class="navbar-brand hidden" href="/dashboard">35</a>
         </div>
 
@@ -168,7 +168,13 @@
 
                                 <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
 
-                                <a class="nav-link pull-right" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+                            <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                            <script type="text/javascript">
+                                function logout() {
+                                    localStorage.login = "0";
+                                    window.location.href = "/logout";
+                                }
+                            </script>
                         </div>
                     </div>
 
@@ -235,12 +241,12 @@
                 </div>
             </div>
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:absolute;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 <!-- Right Panel -->
 
     <!-- Modal -->
-    <div class="modal fade" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
+    <div class="modal" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -261,13 +267,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="comment()">Comment</button>
+                    <button type="button" class="btn btn-primary" onclick="comment()">Comment</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="confirmPayment" tabindex="-1" role="dialog" aria-labelledby="confirmPaymentLabel">
+    <div class="modal" id="confirmPayment" tabindex="-1" role="dialog" aria-labelledby="confirmPaymentLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -338,13 +344,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="confirm-payment-button" type="button" class="btn btn-primary" data-dismiss="modal" onclick="confirmPayment()">Save</button>
+                    <button id="confirm-payment-button" type="button" class="btn btn-primary" onclick="confirmPayment()">Save</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="editSchedule" tabindex="-1" role="dialog" aria-labelledby="editScheduleLabel">
+    <div class="modal" id="editSchedule" tabindex="-1" role="dialog" aria-labelledby="editScheduleLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -427,7 +433,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="editSchedule()">Save</button>
+                    <button type="button" class="btn btn-primary" onclick="editSchedule()">Save</button>
                 </div>
             </div>
         </div>
@@ -764,15 +770,16 @@
         function comment(){
             let $comment = $("#comment"),
                 comment = $comment.val();
-            if (!comment || comment === ""){
-                $comment.val("");
+            if (!comment || comment === "")
                 return swal('Kindly type a brief comment','','warning');
-            }
+            $('#wait').show();
+            $('#addCommentModal').modal('hide');
             $.ajax({
                 'url': '/user/application/comments/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                 'type': 'post',
                 'data': {text: comment},
                 'success': function (data) {
+                    $('#wait').hide();
                     let comments = data.response;
                     results = comments;
                     loadComments(comments);
@@ -780,6 +787,7 @@
                     swal('Comment saved successfully','','success');
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     $comment.val("");
                     swal('Oops! An error occurred while saving comment','','error');
                 }
@@ -1016,11 +1024,6 @@
             }
             expected_invoice = invoice;
             $('#source').val(0);
-            $('#payment').val(0);
-            $('#principal').val(0);
-            $('#interest').val(0);
-            $('#fees').val(0);
-            $('#penalty').val(0);
             $('#message').text('');
             $('#overpayment-message').text('');
 //            $('#repayment-date').val(new Date().toDateInputValue());
@@ -1052,7 +1055,6 @@
             invoice.actual_interest_amount = parseFloat($('#interest').val());
 
             if (invoice.actual_payment_amount > (parseFloat(expected_invoice.payment_amount)).round(2)){
-                console.log('here')
                 $message.text('Principal cannot be greater than '+expected_invoice.payment_amount);
                 $button.prop('disabled', true);
                 $interest.removeClass('error');
@@ -1080,18 +1082,18 @@
         });
 
         Date.prototype.toDateInputValue = (function() {
-            var local = new Date(this);
+            let local = new Date(this);
             local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
             return local.toJSON().slice(0,10);
         });
 
         function confirmPayment() {
             let invoice = {},
-                payment = parseFloat($('#payment').val());
-            invoice.actual_payment_amount = $('#principal').val();
-            invoice.actual_interest_amount = $('#interest').val();
-            invoice.actual_fees_amount = $('#fees').val();
-            invoice.actual_penalty_amount = $('#penalty').val();
+                payment = parseFloat($('#payment').val() || '0');
+            invoice.actual_payment_amount = $('#principal').val() || '0';
+            invoice.actual_interest_amount = $('#interest').val() || '0';
+            invoice.actual_fees_amount = $('#fees').val() || '0';
+            invoice.actual_penalty_amount = $('#penalty').val() || '0';
             invoice.payment_source = $('#source').val();
             invoice.payment_date = $('#repayment-date').val();
             let total_payment = (parseFloat(invoice.actual_payment_amount)+parseFloat(invoice.actual_interest_amount)+parseFloat(invoice.actual_fees_amount)+parseFloat(invoice.actual_penalty_amount)).round(2);
@@ -1102,9 +1104,12 @@
             application.escrow = application.escrow || "0";
             if (invoice.payment_source === 'escrow' && (total_payment > (parseFloat(application.escrow)).round(2)))
                 return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+parseFloat(application.escrow).round(2)+')','','warning');
+            $('#wait').show();
+            $('#confirmPayment').modal('hide');
             updateEscrow(invoice.payment_source, total_payment, function () {
                 let overpayment = (payment - (parseFloat(invoice.actual_payment_amount) + parseFloat(invoice.actual_interest_amount))).round(2);
                 if (overpayment > 0){
+                    $('#wait').hide();
                     swal({
                         title: "Are you sure?",
                         text: "Overpayment of ₦"+(parseFloat(overpayment).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+" would be saved to escrow",
@@ -1114,14 +1119,17 @@
                     })
                         .then((yes) => {
                             if (yes) {
+                                $('#wait').show();
                                 $.ajax({
                                     'url': '/user/application/confirm-payment/'+invoice_id+'/'+application_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                                     'type': 'post',
                                     'data': invoice,
                                     'success': function (data) {
+                                        $('#wait').hide();
                                         return escrow(overpayment);
                                     },
                                     'error': function (err) {
+                                        $('#wait').hide();
                                         swal('Oops! An error occurred while confirming payment','','error');
                                     }
                                 });
@@ -1133,10 +1141,12 @@
                         'type': 'post',
                         'data': invoice,
                         'success': function (data) {
+                            $('#wait').hide();
                             swal('Payment confirmed successfully','','success');
                             window.location.reload();
                         },
                         'error': function (err) {
+                            $('#wait').hide();
                             swal('Oops! An error occurred while confirming payment','','error');
                         }
                     });
@@ -1220,15 +1230,19 @@
             invoice.payment_create_date = processPaymentDate($('#edit-principal-invoice-date').val(),1);
             invoice.interest_collect_date = processPaymentDate($('#edit-interest-payment-date').val(),1);
             invoice.interest_create_date = processPaymentDate($('#edit-interest-invoice-date').val(),1);
+            $('#wait').show();
+            $('#editSchedule').modal('hide');
             $.ajax({
                 'url': '/user/application/edit-schedule/'+edit_invoice_id+'/'+(JSON.parse(localStorage.getItem('user_obj')))['ID'],
                 'type': 'post',
                 'data': invoice,
                 'success': function (data) {
+                    $('#wait').hide();
                     swal('Schedule updated successfully','','success');
                     window.location.reload();
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     swal('Oops! An error occurred while confirming payment','','error');
                 }
             });
