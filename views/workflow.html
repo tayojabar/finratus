@@ -179,7 +179,6 @@
 
             //create task
             function createTodo(stage){
-                $('#addStage').modal('hide');
                 let markup = '',
                     count = parseInt($sortable.find("li").length);
                 if (stage.action_names){
@@ -194,6 +193,7 @@
                 $('#stage-action-div').html('');
                 $('#stage-template').val('');
                 $('#stage-name').val('');
+                resetMultiselect();
                 getLocalStages();
             }
 
@@ -363,7 +363,7 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label class=" form-control-label">Transition Name</label><strong style="color:red"> *</strong><span id="stage-name-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Transition Name</label><strong style="color:red"> *</strong><span id="stage-name-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-list"></i></div>
                                 <input id="stage-name" type="text" class="form-control add-todo" placeholder="Transition Name" maxlength="50" required="required">
@@ -371,14 +371,14 @@
                             <small class="form-text text-muted">Maximum of 50 characters</small>
                         </div>
                         <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Transition Description</label><span id="stage-description-error" style="padding-left:50px; text-align: center"></span>-->
+                            <!--<label class="form-control-label">Transition Description</label><span id="stage-description-error" style="padding-left:50px; text-align: center"></span>-->
                             <!--<div class="input-group">-->
                                 <!--<textarea id="stage-description" class="form-control" placeholder="Transition Description" maxlength="250"></textarea>-->
                             <!--</div>-->
                             <!--<small class="form-text text-muted">Maximum of 250 characters</small>-->
                         <!--</div>-->
                         <div class="form-group">
-                            <label class=" form-control-label">Start Stage</label><strong style="color:red"> *</strong>
+                            <label class="form-control-label">Start Stage</label><strong style="color:red"> *</strong>
                             <div class="input-group">
                                 <select id="stage-template" class="form-control" required="required">
                                     <option selected="selected">-- Choose Action --</option>
@@ -412,10 +412,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Rules</label>
+                            <label class="form-control-label">Rules</label>
                             <div class="input-group">
                                 <a id="document-upload">
-                                    <label class=" form-control-label" style="display: block">
+                                    <label class="form-control-label" style="display: block">
                                         <i class="fa fa-plus"></i> Document Upload Required
                                         </label></a><small class="form-text text-muted">&nbsp; (Maximum of 50 characters)</small>
                             </div>
@@ -433,7 +433,7 @@
                             }
                         </script>
                         <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Triggers</label>-->
+                            <!--<label class="form-control-label">Triggers</label>-->
                             <!--<div class="input-group">-->
                                 <!--<label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>-->
                             <!--</div>-->
@@ -456,7 +456,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="add-stage" type="button" class="btn btn-primary">Add Transition</button>
+                    <button id="add-stage" type="button" class="btn btn-primary" data-dismiss="modal">Add Transition</button>
                 </div>
             </div>
         </div>
@@ -497,6 +497,10 @@
         $(document).ajaxComplete(function(){
             $("#wait").css("display", "none");
         });
+
+        function resetMultiselect() {
+            $('#process-rights').multiselect("clearSelection");
+        }
 
         function check(){
             if (localStorage.getItem('role') !== 1){
@@ -612,7 +616,7 @@
                     $.each(JSON.parse(response), function (key, val) {
                         $("#process-rights").append('<option value = "'+val.id+'">'+val.role_name+'</option>');
                     });
-                    $('.multiselect-ui').multiselect({
+                    $('#process-rights').multiselect({
                         includeSelectAllOption: true
                     });
                 }
