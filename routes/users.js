@@ -2082,7 +2082,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
         query = queryPart.concat(group);
 
-        query2 = query2.concat('and (select loan_officer from clients where clients.ID = userID) = ?');
+        query2 = query2.concat('and (select loan_officer from clients where clients.ID = userID) = '+loan_officer+' ');
     }
     if (start  && end){
         start = "'"+start+"'"

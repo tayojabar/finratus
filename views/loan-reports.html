@@ -745,11 +745,11 @@
                                                                 <form id="filterglp" class="form-inline" style="float: right;">
                                                                     <div class="form-group">
                                                                         <label class="" for="startDate">Start date</label>
-                                                                        <input type="date" class="form-control" id="startDate" placeholder="Start date">
+                                                                        <input type="date" class="form-control" id="startGLPDate" placeholder="Start date">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label class="" for="endDate">End date</label>
-                                                                        <input type="date" class="form-control" id="endDate" placeholder="End date">
+                                                                        <input type="date" class="form-control" id="endGLPDate" placeholder="End date">
                                                                     </div>
                                                                     <button type="submit" class="btn btn-success">Filter</button>
                                                                 </form>
@@ -856,6 +856,7 @@
         getOfficers();
         loadInfo();
         loadDisbursed();
+        loadGLP();
         loadPayments();
         loadLoansByBranch();
 //        loadProjectedInterests();
@@ -1021,8 +1022,7 @@
         $("#disburse-button").attr('class', 'btn btn-primary col-sm-12');
         $("#loan-branch-button").attr('class', 'btn col-sm-12');
     });
-
-    $(document).on("click", "#loan-branch-button", function (e) {
+     $(document).on("click", "#loan-branch-button", function (e) {
         $("#loan-by-branch-div").show();
         $("#loan-by-branch-div").attr('class', 'col-sm-12');
         $("#disbursement-div").hide();
@@ -1196,6 +1196,24 @@
         });
     }
 
+    function loadGLP(){
+        let start = $("#startGLPDate").val(),
+            end = $("#endGLPDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                (data.status === 200) ? populateGLP(data.response) : swal({"icon": "error", "text": 'Database Error'})
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
     function populateDisbursed(dets){
         $("#disbursed-table").dataTable().fnClearTable();
         if (dets.length === 0){
@@ -1220,23 +1238,21 @@
 //                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) === 0)){
 //                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid)) === 0))){
 //                if (!(parseFloat(v.loan_amount - v.valid_payment) === 0)){
-                if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
-//                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) : 0
-                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
-                    pay+=v.valid_payment;
-//                    console.log((v.loan_amount - v.valid_payment) + ' -> ' +totalglp);
-                    $("#glp-table").dataTable().fnAddData([
-                        padWithZeroes(parseInt(v.applicationID),6),
-                        v.fullname,
-                        formatter.format(parseFloat(v.loan_amount)),
-//                        formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
-                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
-                        formatDate(v.date)
-                    ]);
-                }
+//                if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
+////                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) : 0
+//                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
+//                    pay+=v.valid_payment;
+////                    console.log((v.loan_amount - v.valid_payment) + ' -> ' +totalglp);
+//                    $("#glp-table").dataTable().fnAddData([
+//                        padWithZeroes(parseInt(v.applicationID),6),
+//                        v.fullname,
+//                        formatter.format(parseFloat(v.loan_amount)),
+////                        formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
+//                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
+//                        formatDate(v.date)
+//                    ]);
+//                }
             });
-            console.log(totalglp);
-            console.log(pay);
             var totalhere = 0;
             jQuery.each(dets.without_pay, function(k, v){
 //                loans+=v.loan_amount;
@@ -1253,6 +1269,47 @@
                     formatter.format(parseFloat(v.loan_amount)),
                     formatDate(v.date_modified)
                 ]);
+            });
+            $('#total-disbursements').html(formatter.format(total));
+//            $('#glp').html(formatter.format(totalglp));
+//            $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
+//            $('#avg-loan-disbursed').html(formatter.format((num_all === 0) ? 0: total/num_all));
+        }
+    }
+
+    function populateGLP(dets){
+        $("#glp-table").dataTable().fnClearTable();
+        if (dets.length === 0){
+            $("#glp-table").dataTable().fnClearTable();
+        }else{
+            var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
+            jQuery.each(dets.with_payments, function(k, v){
+                loa += v.loan_amount;
+                num_all++;
+                num_paid++;
+                total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                pay+=v.valid_payment;
+                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0
+                if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
+                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
+                    pay+=v.valid_payment;
+                    $("#glp-table").dataTable().fnAddData([
+                        padWithZeroes(parseInt(v.applicationID),6),
+                        v.fullname,
+                        formatter.format(parseFloat(v.loan_amount)),
+                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
+                        formatDate(v.date)
+                    ]);
+                }
+            });
+            var totalhere = 0;
+            jQuery.each(dets.without_pay, function(k, v){
+                totalhere += parseFloat(v.loan_amount);
+                total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                console.log(v.loan_amount + ' -> ' + totalglp);
+                totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                num_all++;
                 $("#glp-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.ID),6),
                     v.fullname,
@@ -1261,9 +1318,6 @@
                     formatDate(v.date_modified)
                 ]);
             });
-            console.log(totalhere);
-            console.log(total);
-            $('#total-disbursements').html(formatter.format(total));
             $('#glp').html(formatter.format(totalglp));
             $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
             $('#avg-loan-disbursed').html(formatter.format((num_all === 0) ? 0: total/num_all));
@@ -1276,9 +1330,14 @@
         let start = $("#startDate").val(),
             end = $("#endDate").val(),
             type = $("#type-filter").val(),
+            officer = $('#filter-officers').find('option:selected').attr('id'),
             url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
-        if (!start || !end)
+        if ((!start || !end) && officer==0 ) {
             return loadDisbursed();
+        }
+        else{
+            url = url.concat('&&officer='+officer);
+        }
 
         $.ajax({
             'url': url,
@@ -1287,6 +1346,30 @@
                 let applications = data.response;
                 results = applications;
                 populateDisbursed(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    $("#filterglp").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#startGLPDate").val(),
+            end = $("#endGLPDate").val(),
+            url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (!start || !end ) {
+            return loadGLP();
+        }
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateGLP(applications);
             },
             'error': function (err) {
                 console.log(err);
@@ -1799,6 +1882,7 @@
             return loadDisbursed();
         }
         url = url.concat('officer='+officer.value);
+        console.log(url);
 
         $.ajax({
             'url': url,
