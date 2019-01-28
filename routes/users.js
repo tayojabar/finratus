@@ -407,12 +407,61 @@ users.get('/users-list', function(req, res, next) {
 });
 
 users.get('/teams-list', function(req, res, next) {
-    let query = 'SELECT *, (select u.fullname from users u where u.ID = t.supervisor) as supervisor from teams t where t.status = 1 order by t.ID desc';
+    let query = 'SELECT *, (select u.fullname from users u where u.ID = t.supervisor) as supervisor, (select count(*) from team_members m where m.teamID = t.ID and m.status = 1) as members from teams t where t.status = 1 order by t.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "error": null, "response": results});
+            res.send({"status": 200, "message": "Teams fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/team/members/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Team members fetched successfully", "response": results});
+        }
+    });
+});
+
+users.post('/team/members', function(req, res, next) {
+    db.query('SELECT * FROM team_members WHERE teamID=? AND memberID=?', [req.body.teamID,req.body.memberID], function (error, result, fields) {
+        if (result && result[0]) {
+            res.send({"status": 500, "error": "User has already been assigned to this team"});
+        } else {
+            db.query('INSERT INTO team_members SET ?', req.body, function (error, result, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    db.query('SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc', [req.body.teamID], function (error, results, fields) {
+                        if(error){
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            res.send({"status": 200, "message": "Team members assigned successfully", "response": results});
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+users.delete('/team/members/:id', function(req, res, next) {
+    db.query('UPDATE team_members SET status = 0 WHERE ID = ?', [req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc', [req.params.id], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Team member deleted successfully", "response": results});
+                }
+            });
         }
     });
 });
