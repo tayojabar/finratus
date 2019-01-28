@@ -2371,4 +2371,69 @@ users.get('/agg-projected-interests', function(req, res, next) {
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
+/////// Activity
+/*Create New Activity Type*/
+users.post('/new-activity-type', function(req, res, next) {
+    let postData = req.body,
+        query =  'INSERT INTO activity_types Set ?',
+        query2 = 'select * from activity_types where activity_name = ?';
+    postData.status = 1;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query2,req.body.role, function (error, results, fields) {
+        if (results && results[0])
+            return res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Activity type already exists!"}));
+        db.query(query,{"activity_name":postData.role, "date_created": postData.date_created, "status": 1}, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Type Added!"}));
+            }
+        });
+    });
+});
+
+users.get('/activity-types', function(req, res, next) {
+    let query = 'SELECT * from activity_types where status = 1';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Add New Activity */
+users.post('/new-activity', function(req, res, next) {
+    let data = [],
+        postData = req.body,
+        query =  'INSERT INTO activities Set ?';
+    postData.status = 1;
+    postData.date_created = Date.now();
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query,postData, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created"}));
+            }
+        });
+    });
+});
+
+/* All Activities */
+users.get('/activities', function(req, res, next) {
+    let current_user = req.query.user;
+    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients from activities where for_ = ? and status = 1';
+    db.query(query, [current_user], function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
 module.exports = users;

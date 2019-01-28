@@ -293,6 +293,10 @@ app.get('/forgot-password/:id?', function(req, res) {
     res.sendFile('forgot-password.html', {root: __dirname + '/views'});
 });
 
+app.get('/activity', function(req, res) {
+    res.sendFile('activity.html', {root: __dirname + '/views'});
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     let err = new Error('Not Found');
