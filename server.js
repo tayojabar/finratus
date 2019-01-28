@@ -293,6 +293,14 @@ app.get('/forgot-password/:id?', function(req, res) {
     res.sendFile('forgot-password.html', {root: __dirname + '/views'});
 });
 
+app.get('/all-targets', function(req, res) {
+    res.sendFile('all-targets.html', {root: __dirname + '/views'});
+});
+
+app.get('/all-teams', function(req, res) {
+    res.sendFile('all-teams.html', {root: __dirname + '/views'});
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     let err = new Error('Not Found');

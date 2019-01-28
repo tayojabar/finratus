@@ -222,6 +222,21 @@ users.post('/new-client', function(req, res, next) {
     });
 });
 
+/* Add New Team*/
+users.post('/new-team', function(req, res, next) {
+    let postData = req.body,
+        query =  'INSERT INTO teams Set ?';
+    postData.status = 1;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query,postData, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "New Team Added!"}));
+        }
+    });
+});
+
 /* Add New User Role*/
 users.post('/new-role', function(req, res, next) {
     let postData = req.body,
@@ -389,6 +404,17 @@ users.get('/users-list', function(req, res, next) {
   			res.send(JSON.stringify(results));
 	  	}
   	});
+});
+
+users.get('/teams-list', function(req, res, next) {
+    let query = 'SELECT *, (select u.fullname from users u where u.ID = t.supervisor) as supervisor from teams t where t.status = 1 order by t.ID desc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results});
+        }
+    });
 });
 
 users.get('/users-list-full', function(req, res, next) {

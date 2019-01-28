@@ -27,6 +27,21 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .select2-container{
+            width: 91% !important;
+        }
+        .select2-selection{
+            height: 100% !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+            color: #495057 !important;
+        }
+        input.invalid, span.invalid {
+            border: 2px dashed red;
+        }
+    </style>
     <script>
         $(function () {
             // when the modal is closed
@@ -44,6 +59,7 @@
 <body>
         <!-- Left Panel -->
         <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
         <script type="text/javascript">
             jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
         </script>
@@ -209,7 +225,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>Add New User</h1>
+                        <h1>Add New User/Team</h1>
                     </div>
                 </div>
             </div>
@@ -219,7 +235,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active">New User</li>
+                            <li class="active">New User/Team</li>
                         </ol>
                     </div>
                 </div>
@@ -228,106 +244,129 @@
 
         <div class="content mt-3">
             <div class="animated fadeIn">
-
-                <div class="row">
-
-                    <div id="user-form" class="col-xs-12 col-sm-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <strong>Add User Data</strong> <small> User Information</small>
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Add User/Team Data</strong> <small> User/Team Information</small>
+                    </div>
+                    <div class="card-body card-block">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#user_tab" role="tab" data-toggle="tab">User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#team_tab" role="tab" data-toggle="tab">Team</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade active show in" id="user_tab">
+                                <div id="user-form" class="col-xs-12 col-sm-12">
+                                    <div style="margin-top: 15px;">
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">Full Name</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                <input id="fullname" class="form-control" required="required">
+                                            </div>
+                                            <small class="form-text text-muted">ex. user123</small>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">Email </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-male"></i></div>
+                                                <input type="email" id="email" class="form-control" required="required">
+                                            </div>
+                                            <small class="form-text text-muted">ex. email@email.com</small>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">Password</label><strong style="color:red"> *</strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                                                <input id="password" type="password" class="form-control" required="required">
+                                            </div>
+                                            <small class="form-text text-muted">ex. qwerty_*123</small>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">Confirm Password</label><strong style="color:red"> *</strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                                                <input id="cpassword" type="password" class="form-control" required="required">
+                                            </div>
+                                            <small class="form-text text-muted">ex. qwerty_*123</small>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">User Role</label>
+                                            <strong style="color:red"> *</strong>
+                                            <span id="role_error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                                <select id="role" class="form-control" required="required">
+                                                    <option selected="selected" id="0">-- Choose User Role --</option>
+                                                </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New Role"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">Branch</label>
+                                            <strong style="color:red"> *</strong>
+                                            <span id="branch_error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-building"></i></div>
+                                                <select id="branch" class="form-control" required="required">
+                                                    <option selected="selected" id="0">-- Select a branch --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">Supervisor</label>
+                                            <span id="supervisor_error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                                <select id="supervisor" class="form-control" required="required">
+                                                    <option selected="selected">-- Choose Supervisor --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class=" form-control-label">Loan Officer</label>
+                                            <span id="loan_officer_status_error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <input id="loan_officer_status" type="checkbox" style="margin: 7px 7px 0 0" />
+                                                Check this box if the user is a loan officer
+                                            </div>
+                                        </div>
+                                        <div class ="form-group col-lg-12">
+                                            <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Add New User"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body card-block">
-                                <div class="form-group">
-                                    <label class=" form-control-label">Full Name</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                        <input id="fullname" class="form-control" required="required">
+                            <div role="tabpanel" class="tab-pane fade" id="team_tab">
+                                <div style="margin-top: 15px;">
+                                    <div class="form-group col-lg-6">
+                                        <label class=" form-control-label">Team Name</label><strong style="color:red"> *</strong><span id="team_name-error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                            <input id="team_name" class="form-control" required="required">
+                                        </div>
+                                        <small class="form-text text-muted">ex. Team123</small>
                                     </div>
-                                    <small class="form-text text-muted">ex. user123</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Email </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-male"></i></div>
-                                        <input type="email" id="email" class="form-control" required="required">
+                                    <div class="form-group col-lg-6">
+                                        <label class=" form-control-label">Supervisor</label>
+                                        <span id="team_supervisor_error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                            <select id="team_supervisor" class="form-control" required="required">
+                                                <option selected="selected">-- Choose Supervisor --</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <small class="form-text text-muted">ex. <Address>email@email.com</Address></small>
-                                </div>
-                                <!--<div class="form-group">-->
-                                    <!--<label class=" form-control-label">Username</label><strong style="color:red"> *</strong><span id="username-error" style="padding-left:50px; text-align: center"></span>-->
-                                    <!--<div class="input-group">-->
-                                        <!--<div class="input-group-addon"><i class="fa fa-calendar"></i></div>-->
-                                        <!--<input id="username" class="form-control" required="required">-->
-                                    <!--</div>-->
-                                    <!--<small class="form-text text-muted">ex. user123</small>-->
-                                <!--</div>-->
-                                <div class="form-group">
-                                    <label class=" form-control-label">Password</label><strong style="color:red"> *</strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                        <input id="password" type="password" class="form-control" required="required">
+                                    <div class ="form-group col-lg-12">
+                                        <input onclick="createTeam()" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Add New Team"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                     </div>
-                                    <small class="form-text text-muted">ex. qwerty_*123</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Confirm Password</label><strong style="color:red"> *</strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
-                                        <input id="cpassword" type="password" class="form-control" required="required">
-                                    </div>
-                                    <small class="form-text text-muted">ex. qwerty_*123</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">User Role</label>
-                                    <strong style="color:red"> *</strong>
-                                    <span id="role_error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
-                                        <select id="role" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Choose User Role --</option>
-                                        </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New Role"/>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Branch</label>
-                                    <strong style="color:red"> *</strong>
-                                    <span id="branch_error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <div class="input-group-addon"><i class="fa fa-building"></i></div>
-                                        <select id="branch" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Select a branch --</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!--<div class="form-group">-->
-                                    <!--<label class=" form-control-label">Phone Number</label>-->
-                                    <!--<div class="input-group">-->
-                                        <!--<div class="input-group-addon"><i class="fa fa-phone"></i></div>-->
-                                        <!--<input id="phone" class="form-control" required="required">-->
-                                    <!--</div>-->
-                                    <!--<small class="form-text text-muted">ex. +234 - 813 - 455 - 6944</small>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                    <!--<label class=" form-control-label">Address</label>-->
-                                    <!--<div class="input-group">-->
-                                        <!--<div class="input-group-addon"><i class="fa fa-credit-card"></i></div>-->
-                                        <!--<input id="address" class="form-control" required="required">-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <div class = "form-group">
-                                    <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Add New User"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                   
-
-
-
                 </div>
-
-
             </div><!-- .animated -->
             <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
@@ -370,6 +409,7 @@
     <script>
         jQuery(document).ready(function() {
             getRoles();
+            getUsers();
             getBranches();
         });
 
@@ -450,9 +490,6 @@
         });
 
         function confirmPassword(){
-            console.log("Here");
-            console.log($('#cpassword').val());
-            console.log($('#password').val());
             if ($('#cpassword').val() == "" || $('#cpassword').val() != $('#password').val()){
                 $('#cpassword').css('border-color', 'red');
                 $('#cpassword-error').html("Passwords don't match");
@@ -472,12 +509,6 @@
                 $('#submit-error').css("color", "red");
                 $('#submit-error').html("Unable to submit. Check information entered.");
             }
-//            else if ($('#username').val() == "" || $('#username').val() == null){
-//                $('#username-error').html("Choose a username");
-//                $('#username-error').css("color", "red");
-//                $('#submit-error').css("color", "red");
-//                $('#submit-error').html("Unable to submit. Check information entered.");
-//            }
             else if ($('#password').val() == "" || $('#password').val() == null){
                 $('#password-error').html("Enter password");
                 $('#password-error').css("color", "red");
@@ -504,8 +535,7 @@
         function getRoles(){
             $.ajax({
                 type: "GET",
-                url: "/user/user-roles/",
-                data: '{}',
+                url: "/user/user-roles",
                 success: function (response) {
                     var role = $("[id=role]");
                      role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
@@ -515,37 +545,118 @@
                 }
             });
         }
+
+        function getUsers(){
+            $.ajax({
+                type: "GET",
+                url: "/user/users-list",
+                success: function (response) {
+                    $.each(JSON.parse(response), function (key, val) {
+                        $("#supervisor").append('<option value = "' + val.ID + '">' + val.fullname + '</option>');
+                        $("#team_supervisor").append('<option value = "' + val.ID + '">' + val.fullname + '</option>');
+                    });
+                    $("#supervisor").select2();
+                    $("#team_supervisor").select2();
+                }
+            });
+        }
         
         function createUser(){
-            var obj = {};
+            let obj = {},
+                test = {};
             obj.username = $('#email').val();
             obj.password = $('#password').val();
             obj.fullname = $('#fullname').val();
-//            obj.phone = $('#phone').val();
-//            obj.address = $('#address').val();
             obj.email = $('#email').val();
             obj.user_role = $('#role').find('option:selected').attr('id');
             obj.branch = $('#branch').find('option:selected').attr('id');
-            var test={};
+            if ($('#supervisor').val() !== '-- Choose Supervisor --')
+                obj.supervisor = $('#supervisor').val();
+            if ($('#loan_officer_status').is(':checked'))
+                obj.loan_officer_status = 1;
+            $('#wait').show();
             $.ajax({
-                'url': '/user/new-user/',
+                'url': '/user/new-user',
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
+                    $('#wait').hide();
                     $.each(JSON.parse(data), function (key, val) {
                         test[key] = val;
                     });
                     if(test.message){
                         swal("Username already exists!","","error");
                     }
-                    else if(test.status == 500){
+                    else if(test.status === 500){
                         swal("Please recheck entered values","","error");
                     }
-                    else
+                    else{
                         swal("User Registered!","","success");
+                        window.location.href = "/all-users";
+                    }
                 }
             });
+        }
 
+        function createUser(){
+            let obj = {},
+                test = {};
+            obj.username = $('#email').val();
+            obj.password = $('#password').val();
+            obj.fullname = $('#fullname').val();
+            obj.email = $('#email').val();
+            obj.user_role = $('#role').find('option:selected').attr('id');
+            obj.branch = $('#branch').find('option:selected').attr('id');
+            if ($('#supervisor').val() !== '-- Choose Supervisor --')
+                obj.supervisor = $('#supervisor').val();
+            if ($('#loan_officer_status').is(':checked'))
+                obj.loan_officer_status = 1;
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/new-user',
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $('#wait').hide();
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    if(test.message){
+                        swal("Username already exists!","","error");
+                    }
+                    else if(test.status === 500){
+                        swal("Please recheck entered values","","error");
+                    }
+                    else{
+                        swal("User Registered!","","success");
+                        window.location.href = "/all-users";
+                    }
+                }
+            });
+        }
+
+        function createTeam(){
+            let obj = {};
+            obj.name = $('#team_name').val();
+            if (!obj.name)
+                return swal('Kindly input the team name','','warning');
+            if ($('#team_supervisor').val() !== '-- Choose Supervisor --')
+                obj.supervisor = $('#team_supervisor').val();
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/new-team',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal("Please recheck entered values","","error");
+                    } else{
+                        swal("Team Registered!","","success");
+                        window.location.href = "/all-teams";
+                    }
+                }
+            });
         }
 
         function validateRole(){
@@ -560,9 +671,9 @@
         }
 
         function saveNewRole(){
-            var obj = {};
+            let obj = {},
+                test = {};
             obj.role = $('#new-role').val();
-            var test={};
             $.ajax({
                 'url': '/user/new-role/',
                 'type': 'post',
@@ -575,7 +686,7 @@
                         $('#role').val("");
                         swal("Role already exists!","","error");
                     }
-                    else if(test.status == 500){
+                    else if(test.status === 500){
                         $('#role').val("");
                         swal("Please recheck entered values!","","error");
                     }
@@ -588,8 +699,7 @@
         function getBranches(){
             $.ajax({
                 type: "GET",
-                url: "/user/branches/",
-                data: '{}',
+                url: "/user/branches",
                 success: function (response) {
                     var branch = $("[id=branch]");
                     branch.empty().append('<option selected="selected" id="0">-- Select a Branch --</option>');
