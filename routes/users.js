@@ -429,6 +429,7 @@ users.get('/team/members/:id', function(req, res, next) {
 });
 
 users.post('/team/members', function(req, res, next) {
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     db.query('SELECT * FROM team_members WHERE teamID=? AND memberID=?', [req.body.teamID,req.body.memberID], function (error, result, fields) {
         if (result && result[0]) {
             res.send({"status": 500, "error": "User has already been assigned to this team"});
@@ -450,12 +451,13 @@ users.post('/team/members', function(req, res, next) {
     });
 });
 
-users.delete('/team/members/:id', function(req, res, next) {
-    db.query('UPDATE team_members SET status = 0 WHERE ID = ?', [req.params.id], function (error, result, fields) {
+users.delete('/team/members/:id/:teamID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE team_members SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            db.query('SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc', [req.params.id], function (error, results, fields) {
+            db.query('SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc', [req.params.teamID], function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
                 } else {
