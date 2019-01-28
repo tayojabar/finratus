@@ -311,7 +311,7 @@
                 </div>
             </div>
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 
 
@@ -481,7 +481,7 @@
             if (k.module_name === page){
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
             }
-        });console.log(parseInt(w[0]['editable']));console.log('Here');
+        });
         if (parseInt(w[0]['editable']) != 1){
             $(".write").hide();
         }

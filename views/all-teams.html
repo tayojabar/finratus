@@ -25,50 +25,45 @@
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
-
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
     <style type="text/css">
-        .badge {
-            color: #ffffff;
-            font-size: 15px;
+        .select2-container{
+            width: 100% !important;
+            height: 35px !important;
         }
-        .badge-success {
-            background-color: #28a745;
+        .select2-selection{
+            height: 100% !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+            color: #495057 !important;
         }
-        .badge-danger {
-            background-color: #dc3545;
-        }
-        .badge-warning {
-            background-color: #f0ad4e;
-        }
-        .badge-info {
-            background-color: #17a2b8;
-        }
-        .badge-primary {
-            background-color: #007bff;
-        }
-        div.dataTables_wrapper div.dataTables_filter{
-            float: right;
-            margin-right: 15px;
-        }
-        div.dataTables_length{
-            float: left;
-        }
-        .dt-buttons.btn-group{
-            float: right;
-        }
-        .btn-default{
-            color: #fff;
-            background-color: #6c757d;
-            border-color: #666e76;
+        input.invalid, span.invalid {
+            border: 2px dashed red;
         }
     </style>
+    <script>
+        $(function () {
+            // when the modal is closed
+            $('#myModal1').on('hidden.bs.modal', function () {
+                // remove the bs.modal data attribute from it
+                $(this).removeData('bs.modal');
+                // and empty the modal-content element
+                $('#myModal1 .modal-content span').empty();
+                $('#myModal1 input').val("");
+            });
+        });
+    </script>
+
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+
 </head>
 <body>
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <!-- Left Panel -->
+
         <script type="text/javascript">
-            jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
+            jQuery(document).ready(function($){
+                loadTeams(); check(); loadMenus(); read_write();});
         </script>
 
     <aside id="left-panel" class="left-panel">
@@ -233,7 +228,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Collections</h1>
+                        <h1>All Teams</h1>
                     </div>
                 </div>
             </div>
@@ -243,7 +238,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Users</a></li>
-                            <li class="active"><a href="/all-applications">All Collections</a></li>
+                            <li class="active">All Teams</li>
                         </ol>
                     </div>
                 </div>
@@ -253,76 +248,29 @@
         <div class="content mt-3">
             <div class="animated fadeIn">
                 <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title" style="float: left;">All Collections</strong>
-                            <form id="filter" class="form-inline" style="float: right;">
-                                <div class="form-group">
-                                    <label for="type-filter">Type</label>
-                                    <select id="type-filter" class="form-control" style="width:200px; margin: 0 5px;">
-                                        <option value="overdue" selected="selected">Overdue Payments</option>
-                                        <option value="due">Due Payments</option>
-                                    </select>
-                                </div>
-                                <div id="overdue-filter-div" class="form-group">
-                                    <label for="overdue-filter">Overdue Over</label>
-                                    <select id="overdue-filter" class="form-control" style="width:220px; margin: 0 5px;">
-                                        <option value="0">All</option>
-                                        <option value="1">Yesterday</option>
-                                        <option value="7">2 to 7 days ago</option>
-                                        <option value="14">8 to 14 days ago</option>
-                                        <option value="30">15 to 30 days ago</option>
-                                        <option value="60">31 to 60 days ago</option>
-                                        <option value="61" selected="selected">More than 60 days ago</option>
-                                    </select>
-                                </div>
-                                <div id="due-filter-div" class="form-group" style="display: none;">
-                                    <label for="due-filter">Due In</label>
-                                    <select id="due-filter" class="form-control" style="width:220px; margin: 0 5px;">
-                                        <option value="0" selected="selected">Today</option>
-                                        <option value="1">Tomorrow</option>
-                                        <option value="7">2 to 7 days</option>
-                                        <option value="14">8 to 14 days</option>
-                                        <option value="30">15 to 30 days</option>
-                                        <option value="60">31 to 60 days</option>
-                                        <option value="61">More than 60 days</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-success">Filter</button>
-                            </form>
-                        </div>
-                        <script type="text/javascript">
-                            $('#type-filter').change(function () {
-                                if (this.value === 'due'){
-                                    $('#due-filter-div').show();
-                                    $('#overdue-filter-div').hide();
-                                } else if (this.value === 'overdue'){
-                                    $('#due-filter-div').hide();
-                                    $('#overdue-filter-div').show();
-                                }
-                            });
-                        </script>
-                        <div class="card-body">
-                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                <thead>
-                                  <tr>
-                                      <th>Loan ID</th>
-                                      <th>Client</th>
-                                      <th>Amount Due</th>
-                                      <th>Date Due</th>
-                                      <th>Action</th>
-                                  </tr>
-                                </thead>
-                                <tbody id="collections">
-                                </tbody>
-                            </table>
+
+                    <div id="user-table" class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">All Teams</strong>
+                            </div>
+                            <div class="card-body">
+                                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Supervisor</th>
+                                        <th>No of Members</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="users"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                </div>
             </div><!-- .animated -->
-
             <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
@@ -331,11 +279,51 @@
 
     <!-- Right Panel -->
 
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Team Members</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-lg-8">
+                            <select id="user_list" class="form-control" required="required">
+                                <option selected="selected">-- Select User --</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-4">
+                            <button type="button" class="btn btn-success" onclick="addMember()">Add Member</button>
+                        </div>
+                    </div>
+                    <hr style="">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table id="members" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Fullname</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/popper.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
-
+    <script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
 
     <script src="assets/js/lib/data-table/datatables.min.js"></script>
     <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
@@ -348,13 +336,14 @@
     <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
     <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
     <script src="assets/js/lib/data-table/datatables-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
 
     <script type="text/javascript">
         $(document).ready(function() {
-          $('#bootstrap-data-table-export').DataTable();
-          loadCollections();
-          read_write();
+            getUsers();
+            $('#members').DataTable();
+            $('#bootstrap-data-table-export').DataTable();
         });
 
         $(document).ajaxStart(function(){
@@ -374,6 +363,34 @@
             }
             else{
                 jQuery('#user').html(localStorage.getItem("name"));
+            }
+        }
+
+        function loadTeams(){
+            $.ajax({
+                'url': '/user/teams-list',
+                'type': 'get',
+                'success': function (data) {
+                    let teams = data.response;
+                    populateDataTable(teams);
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
+        }
+
+        function read_write(){
+            let w;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k,v){
+                if (k.module_name === page){
+                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+                }
+            });
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
+                $(".write").hide();
             }
         }
 
@@ -411,108 +428,97 @@
             });
         }
 
-        function read_write(){
-            let w;
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-                if (k.module_name === page){
-                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-                }
-            });
-            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
-                $(".write").hide();
-            }
-        }
-
-        function loadCollections(){
+        function getUsers(){
             $.ajax({
-                'url': '/user/collections/filter?type=overdue&&range=61',
-                'type': 'get',
-                'success': function (data) {
-                    let collections = data.response;
-                    populateDataTable(collections);
-                },
-                'error': function (err) {
-                    console.log('Error');
+                type: "GET",
+                url: "/user/users-list",
+                success: function (response) {
+                    $.each(JSON.parse(response), function (key, val) {
+                        $("#user_list").append('<option value = "' + val.ID + '">' + val.fullname + '</option>');
+                    });
+                    $("#user_list").select2();
                 }
             });
         }
 
         function populateDataTable(data) {
-            console.log("populating data table...");
-            $("#bootstrap-data-table").dataTable().fnClearTable();
-            let processed_data = [];
+            $("#bootstrap-data-table").DataTable().clear();
+            var length = data.length;
             $.each(data, function(k, v){
-                let table = {
-                    a:padWithZeroes(v.applicationID, 9),
-                    b:v.client,
-                    c:'₦' + (parseFloat(v.payment_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+' ('+v.type+')',
-                    d:v.payment_collect_date,
-                    e:'<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="goToApplication(' + v.applicationID + ')"><i class="fa fa-eye"></i> View Loan</button>'
-                };
-                processed_data.push(table);
-            });
-            $('#bootstrap-data-table').DataTable({
-                dom: 'Blfrtip',
-                bDestroy: true,
-                data: processed_data,
-                order: [[ 3, "asc" ]],
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                columns: [
-                    { data: "a" },
-                    { data: "b" },
-                    { data: "c" },
-                    { data: "d" },
-                    { data: "e" }
-                ]
+                $('#bootstrap-data-table').dataTable().fnAddData( [
+                    v.name,
+                    v.supervisor,
+                    v.members,
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-list"></i> Add/View Members</button>'
+                ]);
             });
         }
 
-        function padWithZeroes(n, width, z) {
-            z = z || '0';
-            n = n + '';
-            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-        }
-
-        function goToApplication(id) {
-            window.location.href = "/application?id="+id;
-        }
-
-        $("#filter").submit(function (e) {
-            e.preventDefault();
-
-            let due = $("#due-filter").val(),
-                type = $("#type-filter").val(),
-                overdue = $("#overdue-filter").val(),
-                url = '/user/collections/filter?';
-            if (type){
-                url = url.concat('&&type='+type);
-                if (type === 'due'){
-                    url = url.concat('&&range='+due);
-                } else if (type === 'overdue'){
-                    url = url.concat('&&range='+overdue);
-                }
-            } else {
-                return swal('Kindly select a collection type!','','warning');
-            }
-
+        function openDetailsModal(id) {
+            localStorage.team_id = id;
             $.ajax({
-                'url': url,
-                'type': 'get',
-                'success': function (data) {
-                    let collections = data.response;
-                    populateDataTable(collections);
-                },
-                'error': function (err) {
-                    console.log(err);
+                type: "GET",
+                url: "/user/team/members/"+id,
+                success: function (data) {
+                    populateMembers(data);
                 }
             });
-        });
+        }
 
+        function populateMembers(data){
+            $("#members").DataTable().clear();
+            var length = data.length;
+            $.each(data.response, function(k, v){
+                $('#members').dataTable().fnAddData( [
+                    v.member,
+                    '<button type="button" class="btn btn-danger" onclick="removeMember('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+                ]);
+            });
+        }
+        
+        function addMember() {
+            let obj = {};
+            if ($('#user_list').val() === '-- Select User --')
+                return swal('Kindly select the user to be added','','warning');
+            obj.teamID = localStorage.team_id;
+            obj.memberID = $('#user_list').val();
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/team/members',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal(response.error,"","error");
+                    } else{
+                        swal("Member added successfully!","","success");
+                        populateMembers(response);
+                        loadTeams();
+                    }
+                }
+            });
+        }
+
+        function removeMember(id) {
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/team/members/'+id,
+                'type': 'delete',
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal("No internet connection","","error");
+                    } else{
+                        swal("Member deleted successfully!","","success");
+                        populateMembers(response);
+                        loadTeams();
+                    }
+                }
+            });
+        }
     </script>
+
 
 </body>
 </html>

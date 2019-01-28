@@ -3,7 +3,9 @@ var router = express.Router();
 var async = require('async');
 var db = require('../db');
 const fs = require('fs');
-const moment = require('moment');
+const Moment = require('moment');
+const MomentRange = require('moment-range');
+const moment = MomentRange.extendMoment(Moment);
 
 //File Upload - Inspection
 router.post('/upload/:number_plate/:part', function(req, res) {
@@ -1569,6 +1571,110 @@ router.get('/document_check/:id/:name', function(req, res, next) {
     else {
         res.json({status:status});
     }
+});
+
+router.post('/targets', function(req, res, next) {
+    let target = req.body,
+        query = 'INSERT INTO targets SET ?';
+    target.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query, target, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Target added successfully!"});
+        }
+    });
+});
+
+router.get('/targets', function(req, res, next) {
+    db.query('SELECT t.ID, t.title, t.description, t.period, t.value, t.date_created, p.start, p.end FROM targets AS t, periods AS p ' +
+        'WHERE t.period = p.ID AND t.status = 1', function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Targets fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.post('/periods', function(req, res, next) {
+    let period = req.body,
+        query = 'INSERT INTO periods SET ?';
+    period.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query, period, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('SELECT MAX(ID) AS ID from periods', function(err, period_id, fields) {
+                if (err){
+                    res.send({"status": 200, "error": err, "response": null});
+                } else{
+                    generateSubPeriods(period, period_id[0]['ID'], function (sub_periods) {
+                        db.getConnection(function(err, connection) {
+                            if (err) throw err;
+
+                            async.forEach(sub_periods, function (sub_period, callback) {
+                                connection.query('INSERT INTO sub_periods SET ?', sub_period, function (error, results, fields) {
+                                    if(error)
+                                        console.log(error);
+                                    callback();
+                                });
+                            }, function (data) {
+                                connection.release();
+                                res.send({"status": 200, "message": "Period added successfully!"});
+                            });
+                        });
+                    });
+                }
+            });
+        }
+    });
+});
+
+function generateSubPeriods(period, periodID, callback) {
+    let code, dates, count,
+        sub_periods = [];
+    switch (period.type){
+        case 'half_yearly':{
+            dates = dateRangeArray(period, 6);
+            code = 'H';
+            count = 2;
+            break;
+        }
+        case 'quarterly':{
+            dates = dateRangeArray(period, 3);
+            code = 'Q';
+            count = 4;
+            break;
+        }
+    }
+    for (let i=1; i<=count; i++){
+        let sub_period = {
+            periodID: periodID,
+            name: code+i+' of '+period.name,
+            type: i,
+            start: dates[i-1],
+            end: dates[i]
+        };
+        sub_periods.push(sub_period);
+    }
+    return callback(sub_periods);
+}
+
+function dateRangeArray(period, interval) {
+    let range = moment.range(period.start,period.end),
+        values = Array.from(range.by('day', {step: (30*interval)}));
+    return values.map(m => m.format('YYYY-MM-DD'));
+}
+
+router.get('/periods', function(req, res, next) {
+    db.query('SELECT * FROM periods', function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Periods fetched successfully!", "response": results});
+        }
+    });
 });
 
 module.exports = router;
