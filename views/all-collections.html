@@ -441,7 +441,7 @@
 
         function populateDataTable(data) {
             console.log("populating data table...");
-            $("#bootstrap-data-table").dataTable().fnClearTable();
+            $("#bootstrap-data-table").DataTable().clear();
             let processed_data = [];
             $.each(data, function(k, v){
                 let table = {

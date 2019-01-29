@@ -261,6 +261,7 @@
                                         <th>Name</th>
                                         <th>Supervisor</th>
                                         <th>No of Members</th>
+                                        <th>No of Targets</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -329,21 +330,27 @@
                 </div>
                 <div class="modal-body">
                     <div class="row" style="margin-bottom: 15px;">
-                        <div class="col-lg-12">
-                            <select id="target_list" class="form-control" required="required">
-                                <option selected="selected">-- Select Target --</option>
-                            </select>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="target_list" class="form-control" required="required">
+                                    <option selected="selected">-- Select Target --</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-lg-12">
-                            <select id="sub_period_list" class="form-control" required="required" disabled="disabled">
-                                <option selected="selected">-- Select Target Period --</option>
-                            </select>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="sub_period_list" class="form-control" required="required" disabled="disabled"></select>
+                            </div>
                         </div>
-                        <div class="col-lg-12">
-                            <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
+                            </div>
                         </div>
                         <div class="col-lg-4">
-                            <button type="button" class="btn btn-success" onclick="assignTarget()">Assign Target</button>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success pull-right" onclick="assignTarget()">Assign Target</button>
+                            </div>
                         </div>
                     </div>
                     <hr>
@@ -353,8 +360,8 @@
                                 <thead>
                                 <tr>
                                     <th>Target</th>
-                                    <th>Value</th>
                                     <th>Period</th>
+                                    <th>Value</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -392,6 +399,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             getUsers();
+            getTargets();
             $('#members').DataTable();
             $('#bootstrap-data-table-export').DataTable();
         });
@@ -491,14 +499,52 @@
             });
         }
 
+        $('#target_list').on('change', function() {
+            let target_id = $("#target_list").find("option:selected").val();
+            getPeriods(target_id);
+        });
+
+        function getTargets(){
+            $.ajax({
+                type: "GET",
+                url: "/targets",
+                success: function (data) {
+                    $.each(data.response, function (key, val) {
+                        $("#target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
+                    });
+                    $("#target_list").select2();
+                }
+            });
+        }
+
+        $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+        function getPeriods(id){
+            if (id && id !== '-- Select Target --'){
+                $('#wait').show();
+                $.ajax({
+                    type: "GET",
+                    url: "/target/sub_periods/"+id,
+                    success: function (data) {
+                        $('#wait').hide();
+                        $("#sub_period_list").prop('disabled',false);
+                        $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+                        $.each(data.response, function (key, val) {
+                            $("#sub_period_list").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        });
+                        $("#sub_period_list").select2();
+                    }
+                });
+            }
+        }
+
         function populateDataTable(data) {
-            $("#bootstrap-data-table").DataTable().clear();
-            var length = data.length;
+            $("#bootstrap-data-table").dataTable().fnClearTable();
             $.each(data, function(k, v){
                 $('#bootstrap-data-table').dataTable().fnAddData( [
                     v.name,
                     v.supervisor,
                     v.members,
+                    v.targets,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openMembersModal('+v.ID+')"><i class="fa fa-users"></i> Add/View Members</button>'+
                     '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Targets</button>'
                 ]);
@@ -520,7 +566,7 @@
             localStorage.team_id = id;
             $.ajax({
                 type: "GET",
-                url: "/user/target/"+id,
+                url: "/user/team/targets/"+id,
                 success: function (data) {
                     populateTargets(data);
                 }
@@ -528,7 +574,7 @@
         }
 
         function populateMembers(data){
-            $("#members").DataTable().clear();
+            $("#members").dataTable().fnClearTable();
             $.each(data.response, function(k, v){
                 $('#members').dataTable().fnAddData( [
                     v.member,
@@ -538,7 +584,7 @@
         }
 
         function populateTargets(data){
-            $("#targets").DataTable().clear();
+            $("#targets").dataTable().fnClearTable();
             $.each(data.response, function(k, v){
                 $('#targets').dataTable().fnAddData( [
                     v.target,
@@ -575,7 +621,7 @@
 
         function assignTarget() {
             let obj = {};
-            obj.teamID = localStorage.team_id;
+            obj.userID = localStorage.team_id;
             obj.targetID = $('#target_list').val();
             obj.sub_periodID = $('#sub_period_list').val();
             obj.value = $('#target_value').val();
@@ -593,6 +639,7 @@
                     } else{
                         swal("Target assigned successfully!","","success");
                         populateTargets(response);
+                        loadTeams();
                     }
                 }
             });
@@ -628,6 +675,7 @@
                     } else{
                         swal("Target deleted successfully!","","success");
                         populateTargets(response);
+                        loadTeams();
                     }
                 }
             });

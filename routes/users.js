@@ -407,7 +407,8 @@ users.get('/users-list', function(req, res, next) {
 });
 
 users.get('/teams-list', function(req, res, next) {
-    let query = 'SELECT *, (select u.fullname from users u where u.ID = t.supervisor) as supervisor, (select count(*) from team_members m where m.teamID = t.ID and m.status = 1) as members from teams t where t.status = 1 order by t.ID desc';
+    let query = 'SELECT *, (select u.fullname from users u where u.ID = t.supervisor) as supervisor, (select count(*) from team_members m where m.teamID = t.ID and m.status = 1) as members, ' +
+        '(select count(*) from user_targets m where m.userID = t.ID and m.status = 1) as targets from teams t where t.status = 1 order by t.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -430,7 +431,7 @@ users.get('/team/members/:id', function(req, res, next) {
 
 users.post('/team/members', function(req, res, next) {
     req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('SELECT * FROM team_members WHERE teamID=? AND memberID=?', [req.body.teamID,req.body.memberID], function (error, result, fields) {
+    db.query('SELECT * FROM team_members WHERE teamID=? AND memberID=? AND status = 1', [req.body.teamID,req.body.memberID], function (error, result, fields) {
         if (result && result[0]) {
             res.send({"status": 500, "error": "User has already been assigned to this team"});
         } else {
@@ -442,7 +443,7 @@ users.post('/team/members', function(req, res, next) {
                         if(error){
                             res.send({"status": 500, "error": error, "response": null});
                         } else {
-                            res.send({"status": 200, "message": "Team members assigned successfully", "response": results});
+                            res.send({"status": 200, "message": "Team member assigned successfully", "response": results});
                         }
                     });
                 }
@@ -468,8 +469,145 @@ users.delete('/team/members/:id/:teamID', function(req, res, next) {
     });
 });
 
+users.get('/team/targets/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Team targets fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/user-targets/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User targets fetched successfully", "response": results});
+        }
+    });
+});
+
+users.post('/team/targets', function(req, res, next) {
+    req.body.user_type = "team";
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM user_targets WHERE userID=? AND sub_periodID=? AND status = 1', [req.body.userID,req.body.sub_periodID], function (error, result, fields) {
+        if (result && result[0]) {
+            res.send({"status": 500, "error": "Target has already been assigned to this team"});
+        } else {
+            db.query('SELECT * FROM targets WHERE ID=?', [req.body.targetID], function (error, target, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    req.body.periodID = target[0]['period'];
+                    db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
+                        if(error){
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+                                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                            db.query(query, [req.body.userID], function (error, results, fields) {
+                                if(error){
+                                    res.send({"status": 500, "error": error, "response": null});
+                                } else {
+                                    res.send({"status": 200, "message": "Team target assigned successfully", "response": results});
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+users.post('/user-targets', function(req, res, next) {
+    req.body.user_type = "user";
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM user_targets WHERE userID=? AND sub_periodID=? AND status = 1', [req.body.userID,req.body.sub_periodID], function (error, result, fields) {
+        if (result && result[0]) {
+            res.send({"status": 500, "error": "Target has already been assigned to this user"});
+        } else {
+            db.query('SELECT * FROM users WHERE ID=?', [req.body.userID], function (error, user, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    if (!user[0]['supervisor'] && user[0]['loan_officer_status'] !== 1)
+                        return res.send({"status": 500, "error": "User must be a loan officer and have a supervisor"});
+                    db.query('SELECT * FROM targets WHERE ID=?', [req.body.targetID], function (error, target, fields) {
+                        if(error){
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            req.body.periodID = target[0]['period'];
+                            db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
+                                if(error){
+                                    res.send({"status": 500, "error": error, "response": null});
+                                } else {
+                                    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+                                        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                                    db.query(query, [req.body.userID], function (error, results, fields) {
+                                        if(error){
+                                            res.send({"status": 500, "error": error, "response": null});
+                                        } else {
+                                            res.send({"status": 200, "message": "User target assigned successfully", "response": results});
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+users.delete('/team/targets/:id/:userID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_targets SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+            db.query(query, [req.params.userID], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Team target deleted successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.delete('/user-targets/:id/:userID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_targets SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+            db.query(query, [req.params.userID], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "User target deleted successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
 users.get('/users-list-full', function(req, res, next) {
-    let query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role not in (3, 4) order by ID desc';
+    let query = 'SELECT *, (select u.fullname from users u where u.ID = s.supervisor) as supervisor, (select u.role_name from user_roles u where u.ID = s.user_role) as Role ' +
+        'from users s where s.user_role not in (3, 4) order by s.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -666,8 +804,8 @@ users.post('/edit-user/:id', function(req, res, next) {
 	let date = Date.now(),
         postData = req.body;
 	postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    let payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.user_role, postData.email, postData.branch, postData.date_modified, req.params.id],
-        query = 'Update users SET username = ?, fullname=?, phone=?, address = ?, user_role=?, email=?, branch =?, date_modified = ? where id=?';
+    let payload = [postData.fullname, postData.user_role, postData.email, postData.branch, postData.supervisor, postData.loan_officer_status, postData.date_modified, req.params.id],
+        query = 'Update users SET fullname=?, user_role=?, email=?, branch =?, supervisor =?, loan_officer_status =?, date_modified = ? where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
