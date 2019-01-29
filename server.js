@@ -293,9 +293,9 @@ app.get('/forgot-password/:id?', function(req, res) {
     res.sendFile('forgot-password.html', {root: __dirname + '/views'});
 });
 
-
 app.get('/activity', function(req, res) {
     res.sendFile('activity.html', {root: __dirname + '/views'});
+});
 
 app.get('/all-targets', function(req, res) {
     res.sendFile('all-targets.html', {root: __dirname + '/views'});
