@@ -261,6 +261,7 @@
                                         <th>Name</th>
                                         <th>Supervisor</th>
                                         <th>No of Members</th>
+                                        <th>No of Targets</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -295,7 +296,7 @@
                             </select>
                         </div>
                         <div class="col-lg-4">
-                            <button type="button" class="btn btn-success" onclick="addMember()">Add Member</button>
+                            <button type="button" class="btn btn-success" onclick="assignMember()">Assign Member</button>
                         </div>
                     </div>
                     <hr style="">
@@ -305,6 +306,62 @@
                                 <thead>
                                 <tr>
                                     <th>Fullname</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="targetsModal" role="dialog" aria-labelledby="targetsModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="targetsModalLabel">Team Targets</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="target_list" class="form-control" required="required">
+                                    <option selected="selected">-- Select Target --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="sub_period_list" class="form-control" required="required" disabled="disabled"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success pull-right" onclick="assignTarget()">Assign Target</button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table id="targets" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Target</th>
+                                    <th>Period</th>
+                                    <th>Value</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -342,6 +399,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             getUsers();
+            getTargets();
             $('#members').DataTable();
             $('#bootstrap-data-table-export').DataTable();
         });
@@ -441,20 +499,59 @@
             });
         }
 
+        $('#target_list').on('change', function() {
+            let target_id = $("#target_list").find("option:selected").val();
+            getPeriods(target_id);
+        });
+
+        function getTargets(){
+            $.ajax({
+                type: "GET",
+                url: "/targets",
+                success: function (data) {
+                    $.each(data.response, function (key, val) {
+                        $("#target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
+                    });
+                    $("#target_list").select2();
+                }
+            });
+        }
+
+        $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+        function getPeriods(id){
+            if (id && id !== '-- Select Target --'){
+                $('#wait').show();
+                $.ajax({
+                    type: "GET",
+                    url: "/target/sub_periods/"+id,
+                    success: function (data) {
+                        $('#wait').hide();
+                        $("#sub_period_list").prop('disabled',false);
+                        $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+                        $.each(data.response, function (key, val) {
+                            $("#sub_period_list").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        });
+                        $("#sub_period_list").select2();
+                    }
+                });
+            }
+        }
+
         function populateDataTable(data) {
-            $("#bootstrap-data-table").DataTable().clear();
-            var length = data.length;
+            $("#bootstrap-data-table").dataTable().fnClearTable();
             $.each(data, function(k, v){
                 $('#bootstrap-data-table').dataTable().fnAddData( [
                     v.name,
                     v.supervisor,
                     v.members,
-                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-list"></i> Add/View Members</button>'
+                    v.targets,
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openMembersModal('+v.ID+')"><i class="fa fa-users"></i> Add/View Members</button>'+
+                    '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Targets</button>'
                 ]);
             });
         }
 
-        function openDetailsModal(id) {
+        function openMembersModal(id) {
             localStorage.team_id = id;
             $.ajax({
                 type: "GET",
@@ -465,9 +562,19 @@
             });
         }
 
+        function openTargetsModal(id) {
+            localStorage.team_id = id;
+            $.ajax({
+                type: "GET",
+                url: "/user/team/targets/"+id,
+                success: function (data) {
+                    populateTargets(data);
+                }
+            });
+        }
+
         function populateMembers(data){
-            $("#members").DataTable().clear();
-            var length = data.length;
+            $("#members").dataTable().fnClearTable();
             $.each(data.response, function(k, v){
                 $('#members').dataTable().fnAddData( [
                     v.member,
@@ -475,8 +582,20 @@
                 ]);
             });
         }
-        
-        function addMember() {
+
+        function populateTargets(data){
+            $("#targets").dataTable().fnClearTable();
+            $.each(data.response, function(k, v){
+                $('#targets').dataTable().fnAddData( [
+                    v.target,
+                    v.period,
+                    '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
+                    '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+                ]);
+            });
+        }
+
+        function assignMember() {
             let obj = {};
             if ($('#user_list').val() === '-- Select User --')
                 return swal('Kindly select the user to be added','','warning');
@@ -492,8 +611,34 @@
                     if(response.status === 500){
                         swal(response.error,"","error");
                     } else{
-                        swal("Member added successfully!","","success");
+                        swal("Member assigned successfully!","","success");
                         populateMembers(response);
+                        loadTeams();
+                    }
+                }
+            });
+        }
+
+        function assignTarget() {
+            let obj = {};
+            obj.userID = localStorage.team_id;
+            obj.targetID = $('#target_list').val();
+            obj.sub_periodID = $('#sub_period_list').val();
+            obj.value = $('#target_value').val();
+            if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
+                return swal('Kindly fill all required field(s)','','warning');
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/team/targets',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal(response.error,"","error");
+                    } else{
+                        swal("Target assigned successfully!","","success");
+                        populateTargets(response);
                         loadTeams();
                     }
                 }
@@ -503,7 +648,7 @@
         function removeMember(id) {
             $('#wait').show();
             $.ajax({
-                'url': '/user/team/members/'+id,
+                'url': '/user/team/members/'+id+'/'+localStorage.team_id,
                 'type': 'delete',
                 'success': function (response) {
                     $('#wait').hide();
@@ -512,6 +657,24 @@
                     } else{
                         swal("Member deleted successfully!","","success");
                         populateMembers(response);
+                        loadTeams();
+                    }
+                }
+            });
+        }
+
+        function removeTarget(id) {
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/team/targets/'+id+'/'+localStorage.team_id,
+                'type': 'delete',
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal("No internet connection","","error");
+                    } else{
+                        swal("Target deleted successfully!","","success");
+                        populateTargets(response);
                         loadTeams();
                     }
                 }

@@ -808,21 +808,21 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <strong><label class=" form-control-label">User</label></strong>
+                    <strong><label class="form-control-label">User</label></strong>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
                         <input id="username" type="text" class="form-control" required="required" readonly="readonly">
                     </div>
                 </div>
                 <div class="form-group">
-                    <strong><label class=" form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
+                    <strong><label class="form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                         <input id="new-password" type="password" class="form-control" required="required">
                     </div>
                 </div>
                 <div class="form-group">
-                    <strong><label class=" form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                    <strong><label class="form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                         <input id="cpassword" type="password" class="form-control" required="required">
@@ -1104,15 +1104,12 @@
     }
 
     function populateDataTable(data) {
-        // clear the table before populating it with more data
         $("#bootstrap-data-table").DataTable().clear();
-        //var action = '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>';
         let processed_data = [];
         $.each(data, function(k, v){
             let actions;
             if (v.status === "1"){
-//                actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
-                    actions = '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
+                actions = '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
                     '<button onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
             }
             else {

@@ -1677,4 +1677,30 @@ router.get('/periods', function(req, res, next) {
     });
 });
 
+router.get('/period/sub_periods/:id', function(req, res, next) {
+    db.query('SELECT * FROM sub_periods WHERE periodID = ?', [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Sub periods fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.get('/target/sub_periods/:id', function(req, res, next) {
+    db.query('SELECT * FROM targets WHERE ID = ?', [req.params.id], function (error, target, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('SELECT * FROM sub_periods WHERE periodID = ?', target[0]['period'], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Sub periods fetched successfully!", "response": results});
+                }
+            });
+        }
+    });
+});
+
 module.exports = router;
