@@ -1652,7 +1652,7 @@ function generateSubPeriods(period, periodID, callback) {
         let sub_period = {
             periodID: periodID,
             name: code+i+' of '+period.name,
-            type: i,
+            type: code+i,
             start: dates[i-1],
             end: dates[i]
         };

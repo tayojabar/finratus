@@ -24,6 +24,22 @@
     <link rel="stylesheet" href="assets/scss/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .select2-container{
+            width: 200px !important;
+            height: 38px !important;
+        }
+        .select2-selection{
+            height: 100% !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+            color: #495057 !important;
+        }
+        .zc-ref {
+            display: none;
+        }
+    </style>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -31,6 +47,7 @@
     <!------ Include the above in your HEAD tag ---------->
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="assets/js/zingchart.min.js"></script>
 </head>
 <body>
     <!-- Left Panel -->
@@ -134,6 +151,17 @@
                         <div class="card">
                             <div class="card-header">
                                 <strong class="card-title" style="float: left;">Target Dashboard</strong>
+                                <form id="filter" class="form-inline" style="float: right;">
+                                    <div class="form-group">
+                                        <select id="filter_target_list" class="form-control">
+                                            <option selected="selected">-- Select Target --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin: 0 5px;">
+                                        <select id="filter_sub_period" class="form-control" disabled="disabled"></select>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Filter</button>
+                                </form>
                             </div>
                             <div class="card-body">
                                 <table id="bootstrap-data-table" class="table table-striped table-bordered">
@@ -166,7 +194,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document" style="max-width: 1000px;">
+        <div class="modal-dialog" role="document" style="max-width: 95%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="myModalLabel">Committal History</h4>
@@ -224,7 +252,7 @@
                             </table>
                         </div>
                         <div class="col-lg-7">
-
+                            <div id='myChart'><a class="zc-ref" href="https://www.zingchart.com/">Charts by ZingChart</a></div>
                         </div>
                     </div>
                 </div>
@@ -252,13 +280,14 @@
     <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
     <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
     <script src="assets/js/lib/data-table/datatables-init.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
             check(); loadMenus(); read_write;
             $('#bootstrap-data-table-export').DataTable();
             getTargets();
+            getTargetList();
         });
 
         $(document).ajaxStart(function(){
@@ -344,6 +373,71 @@
             });
         }
 
+        $('#filter_target_list').on('change', function() {
+            let target_id = $("#filter_target_list").find("option:selected").val();
+            getPeriods(target_id);
+        });
+
+        function getTargetList(){
+            $.ajax({
+                type: "GET",
+                url: "/targets",
+                success: function (data) {
+                    $.each(data.response, function (key, val) {
+                        $("#filter_target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
+                    });
+                    $("#filter_target_list").select2();
+                }
+            });
+        }
+
+        $("#filter_sub_period").html('<option selected="selected">-- Select Period --</option>');
+        function getPeriods(id){
+            if (id && id !== '-- Select Target --'){
+                $('#wait').show();
+                $.ajax({
+                    type: "GET",
+                    url: "/target/sub_periods/"+id,
+                    success: function (data) {
+                        $('#wait').hide();
+                        $("#filter_sub_period").prop('disabled',false);
+                        $("#filter_sub_period").html('<option selected="selected">-- Select Period --</option>');
+                        $.each(data.response, function (key, val) {
+                            $("#filter_sub_period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        });
+                        $("#filter_sub_period").select2();
+                    }
+                });
+            }
+        }
+
+        $("#filter").submit(function (e) {
+            e.preventDefault();
+
+            let filter = {},
+                url = '/user/targets-list',
+                filter_target_list = $("#filter_target_list").val(),
+                filter_sub_period = $("#filter_sub_period").val();
+            if (filter_target_list !== '-- Select Target --')
+                filter.target = filter_target_list;
+            if (filter_sub_period !== '-- Select Period --')
+                filter.sub_period = filter_sub_period;
+            if (!$.isEmptyObject(filter))
+                url = url.concat('?'+$.param(filter));
+            $.ajax({
+                'url': url,
+                'type': 'get',
+                'success': function (data) {
+                    let targets = data.response;
+                    results = targets;
+                    populateDataTable(targets);
+                },
+                'error': function (err) {
+                    console.log(err);
+                }
+            });
+        });
+
         function populateDataTable(data) {
             console.log("populating data table...");
             $("#bootstrap-data-table").dataTable().fnClearTable();
@@ -379,6 +473,7 @@
                     $('#committal-total').text('₦'+(parseFloat(data.total)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     let rate = parseInt((parseFloat(data.total)/parseFloat(goal)) * 100);
                     $('#committal-rate').text(rate+'%');
+                    initGuage(rate);
                     populateCommittals(data);
                 }
             });
@@ -394,6 +489,155 @@
                     v.disbursement_channel,
                     v.disbursement_date
                 ]);
+            });
+        }
+
+        function initGuage(value) {
+            zingchart.THEME = "classic";
+            let myConfig = {
+                "graphset": [{
+                    "type": "gauge",
+                    "background-color": "#fff",
+                    "plot": {
+                        "background-color": "#666"
+                    },
+                    "plotarea": {
+                        "margin": "0 0 0 0"
+                    },
+                    "scale": {
+                        "size-factor": 1.25,
+                        "offset-y": 120
+                    },
+                    "tooltip": {
+                        "background-color": "black"
+                    },
+                    "scale-r": {
+                        "values": "0:100:10",
+                        "border-color": "#b3b3b3",
+                        "border-width": "2",
+                        "background-color": "#eeeeee,#b3b3b3",
+                        "ring": {
+                            "size": 10,
+                            "offset-r": "130px",
+                            "rules": [{
+                                "rule": "%v >=0 && %v < 20",
+                                "background-color": "#348D00"
+                            }, {
+                                "rule": "%v >= 20 && %v < 40",
+                                "background-color": "#B1AD00"
+                            }, {
+                                "rule": "%v >= 40 && %v < 60",
+                                "background-color": "#FAC100"
+                            }, {
+                                "rule": "%v >= 60 && %v < 80",
+                                "background-color": "#EC7928"
+                            }, {
+                                "rule": "%v >= 80",
+                                "background-color": "#FB0A02"
+                            }]
+                        }
+                    },
+                    "labels": [{
+                        "id": "lbl1",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": 160,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Very High",
+                        "backgroundColor": "#FB0A02",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#ea0901",
+                            "text": "< 80 <br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl2",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": 80,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "High",
+                        "backgroundColor": "#EC7928",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#da6817",
+                            "text": "> 60 < 80<br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl3",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": 0,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Medium",
+                        "backgroundColor": "#FAC100",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#e9b000",
+                            "text": "> 40 < 60<br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl4",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": -80,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Low",
+                        "backgroundColor": "#B1AD00",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#a09c00",
+                            "text": "> 20 < 40<br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl5",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": -160,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Very Low",
+                        "backgroundColor": "#348D00",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#237b00",
+                            "text": "< 20<br>Percent",
+                            "shadow": 0
+                        }
+                    }],
+                    "series": [{
+                        "values": [value],
+                        "animation": {
+                            "method": 5,
+                            "effect": 2,
+                            "speed": 2500
+                        }
+                    }],
+                    "alpha": 1
+                }]
+            };
+
+            zingchart.render({
+                id: 'myChart',
+                data: myConfig,
             });
         }
     </script>
