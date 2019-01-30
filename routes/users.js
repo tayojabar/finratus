@@ -494,12 +494,23 @@ users.get('/user-targets/:id', function(req, res, next) {
 });
 
 users.get('/targets-list', function(req, res, next) {
-    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+    let target = req.query.target,
+        sub_period = req.query.sub_period,
+        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
         '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
-        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "team" order by t.ID desc',
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "team"',
         query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
             '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
-            '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "user" order by t.ID desc';
+            '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "user"';
+
+    if (target){
+        query = query.concat(' AND targetID = '+target);
+        query2 = query2.concat(' AND targetID = '+target);
+    }
+    if (sub_period){
+        query = query.concat(' AND sub_periodID = '+sub_period);
+        query2 = query2.concat(' AND sub_periodID = '+sub_period);
+    }
     db.query(query, function (error, team_targets, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});

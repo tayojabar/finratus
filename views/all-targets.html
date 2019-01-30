@@ -202,6 +202,16 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="form-control-label">Target Type</label><strong style="color:red"> *</strong><span id="new-target-type-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <select id="new-target-type" class="form-control" required="required">
+                                    <option selected="selected">-- Select Target Type --</option>
+                                    <option value="disbursement">Disbursement</option>
+                                    <option value="interest">Interest</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="form-control-label">Target Value</label><strong style="color:red"> *</strong><span id="new-target-value-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
@@ -406,8 +416,9 @@
             target.title = $('#new-target-title').val();
             target.description = $('#new-target-description').val();
             target.period = $('#new-target-period').val();
+            target.type = $('#new-target-type').val();
             target.value = $('#new-target-value').val();
-            if (!target.title || !target.description || !target.value || target.period === '-- Select Target Period --')
+            if (!target.title || !target.description || !target.value || target.period === '-- Select Target Period --' || target.type === '-- Select Target Type --')
                 return swal('Kindly fill all required field(s)','','warning');
             $('#wait').show();
             $('#addNewTargetModal').modal('hide');
