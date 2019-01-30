@@ -493,6 +493,29 @@ users.get('/user-targets/:id', function(req, res, next) {
     });
 });
 
+users.get('/targets-list', function(req, res, next) {
+    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+        '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "team" order by t.ID desc',
+        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "user" order by t.ID desc';
+    db.query(query, function (error, team_targets, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, function (error, user_targets, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    results = team_targets.concat(user_targets);
+                    res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
 users.post('/team/targets', function(req, res, next) {
     req.body.user_type = "team";
     req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
@@ -537,8 +560,8 @@ users.post('/user-targets', function(req, res, next) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
                 } else {
-                    if (!user[0]['supervisor'] && user[0]['loan_officer_status'] !== 1)
-                        return res.send({"status": 500, "error": "User must be a loan officer and have a supervisor"});
+                    if (user[0]['loan_officer_status'] !== 1)
+                        return res.send({"status": 500, "error": "User must be a loan officer"});
                     db.query('SELECT * FROM targets WHERE ID=?', [req.body.targetID], function (error, target, fields) {
                         if(error){
                             res.send({"status": 500, "error": error, "response": null});
