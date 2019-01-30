@@ -31,12 +31,6 @@
     <!------ Include the above in your HEAD tag ---------->
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <style type="text/css">
-        #stages td i{
-            float: right;
-            margin-top: 5px;
-        }
-    </style>
 </head>
 <body>
     <!-- Left Panel -->
@@ -151,6 +145,7 @@
                                           <th>Period</th>
                                           <th>Start Date</th>
                                           <th>End Date</th>
+                                          <th>Committals</th>
                                         </tr>
                                     </thead>
                                     <tbody id="targets">
@@ -170,107 +165,71 @@
     <!-- Right Panel -->
 
     <!-- Modal -->
-    <div class="modal fade" id="addNewTargetModal" tabindex="-1" role="dialog" aria-labelledby="addNewTargetModalLabel">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="max-width: 1000px;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="addNewTargetModalLabel">Add Target</h4>
+                    <h4 class="modal-title" id="myModalLabel">Committal History</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="form-control-label">Target Title</label><strong style="color:red"> *</strong><span id="new-target-title-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <input id="new-target-title" type="text" class="form-control" placeholder="Target Title" required="required">
+                    <div class="row setup-content">
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="committal-count" class="mb-0"></h3>
+                                    <p class="text-light">No Of Committals</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-control-label">Target Description</label><strong style="color:red"> *</strong><span id="new-target-description-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <textarea id="new-target-description" class="form-control" placeholder="Target Description" required="required"></textarea>
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="committal-total" class="mb-0"></h3>
+                                    <p class="text-light">Total Committal</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-control-label">Target Period</label><strong style="color:red"> *</strong><span id="new-target-period-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <select id="new-target-period" class="form-control" required="required">
-                                    <option selected="selected">-- Select Target Period --</option>
-                                </select>
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="target-value" class="mb-0"></h3>
+                                    <p class="text-light">Target Value</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-control-label">Target Value</label><strong style="color:red"> *</strong><span id="new-target-value-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <div class="input-group-addon">₦</div>
-                                <input id="new-target-value" type="number" class="form-control" placeholder="Target Value" required="required">
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="committal-rate" class="mb-0"></h3>
+                                    <p class="text-light">Progress Rate</p>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" onclick="addNewTarget()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                    </div>
+                    <hr style="">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <table id="committals" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Amount</th>
+                                    <th>Tenor</th>
+                                    <th>Channel</th>
+                                    <th>Date</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-7">
 
-    <div class="modal fade" id="addNewPeriodModal" tabindex="-1" role="dialog" aria-labelledby="addNewPeriodModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="addNewPeriodModalLabel">Add Period</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="form-control-label">Period Name</label><strong style="color:red"> *</strong><span id="new-period-name-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <input id="new-period-name" type="text" class="form-control" placeholder="Period Name" required="required">
-                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="form-control-label">Start Date</label><strong style="color:red"> *</strong><span id="new-period-start-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <input id="new-period-start" type="date" class="form-control" placeholder="Start Date" required="required">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="form-control-label">End Date</label><strong style="color:red"> *</strong><span id="new-period-end-error" style="padding-left:50px; text-align: center"></span>
-                                    <div class="input-group">
-                                        <input id="new-period-end" type="date" class="form-control" placeholder="End Date" disabled="disabled" required="required">
-                                    </div>
-                                </div>
-                            </div>
-                            <script type="text/javascript">
-                                $('#new-period-start').change(function () {
-                                    let start_array = this.value.split('-'),
-                                        end = (parseInt(start_array[0])+1)+'-'+start_array[1]+'-'+start_array[2];
-                                    $('#new-period-end').val(end);
-                                });
-                            </script>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-control-label">Sub Period</label><strong style="color:red"> *</strong><span id="new-period-type-error" style="padding-left:50px; text-align: center"></span>
-                            <div class="input-group">
-                                <select id="new-period-type" class="form-control" required="required">
-                                    <option>-- Select Sub Period --</option>
-                                    <option value="half_yearly">Half Yearly</option>
-                                    <option value="quarterly">Quarterly</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" onclick="addNewPeriod()">Save</button>
                 </div>
             </div>
         </div>
@@ -299,9 +258,7 @@
         $(document).ready(function() {
             check(); loadMenus(); read_write;
             $('#bootstrap-data-table-export').DataTable();
-            $('#stages').DataTable({"bFilter": false, "bInfo" : false});
             getTargets();
-            getPeriods();
         });
 
         $(document).ajaxStart(function(){
@@ -387,70 +344,6 @@
             });
         }
 
-        function getPeriods(){
-            $.ajax({
-                url: '/periods',
-                type: 'GET',
-                success: function (response) {
-                    $.each(response.response, function (key, val) {
-                        $("#new-target-period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
-                    });
-                }
-            });
-        }
-
-        function addNewTarget() {
-            let target = {};
-            target.title = $('#new-target-title').val();
-            target.description = $('#new-target-description').val();
-            target.period = $('#new-target-period').val();
-            target.value = $('#new-target-value').val();
-            if (!target.title || !target.description || !target.value || target.period === '-- Select Target Period --')
-                return swal('Kindly fill all required field(s)','','warning');
-            $('#wait').show();
-            $('#addNewTargetModal').modal('hide');
-            $.ajax({
-                'url': '/targets',
-                'type': 'post',
-                'data': target,
-                'success': function (data) {
-                    $('#wait').hide();
-                    swal('Target saved successfully','','success');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    $('#wait').hide();
-                    swal('Oops! An error occurred while saving target','','error');
-                }
-            });
-        }
-
-        function addNewPeriod() {
-            let period = {};
-            period.name = $('#new-period-name').val();
-            period.start = $('#new-period-start').val();
-            period.end = $('#new-period-end').val();
-            period.type = $('#new-period-type').val();
-            if (!period.name || !period.start || !period.end || period.type === '-- Select Sub Period --')
-                return swal('Kindly fill all required field(s)','','warning');
-            $('#wait').show();
-            $('#addNewPeriodModal').modal('hide');
-            $.ajax({
-                'url': '/periods',
-                'type': 'post',
-                'data': period,
-                'success': function (data) {
-                    $('#wait').hide();
-                    swal('Period saved successfully','','success');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    $('#wait').hide();
-                    swal('Oops! An error occurred while saving period','','error');
-                }
-            });
-        }
-
         function populateDataTable(data) {
             console.log("populating data table...");
             $("#bootstrap-data-table").dataTable().fnClearTable();
@@ -461,13 +354,48 @@
                     '₦'+(parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
                     v.period,
                     v.start,
-                    v.end
+                    v.end,
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openCommittalsModal(\''+v.userID+','+v.user_type+','+v.start+','+v.end+','+v.value+'\')"><i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
             });
         }
+
+        function openCommittalsModal(owner) {
+            let values = owner.split(','),
+                id = values[0],
+                user_type = values[1],
+                start = values[2],
+                end = values[3],
+                goal = values[4];
+            $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $.ajax({
+                type: "GET",
+                url: "/user/committals/"+user_type+"/disbursement/"+id+"?start="+start+"&&end="+end,
+                success: function (response) {
+                    let data = response.response;
+                    $('#committal-count').text(data.count);
+                    data.total = data.total || 0;
+                    $('#committal-total').text('₦'+(parseFloat(data.total)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    let rate = parseInt((parseFloat(data.total)/parseFloat(goal)) * 100);
+                    $('#committal-rate').text(rate+'%');
+                    populateCommittals(data);
+                }
+            });
+        }
+
+        function populateCommittals(data){
+            $("#committals").dataTable().fnClearTable();
+            $.each(data.data, function(k, v){
+                $('#committals').dataTable().fnAddData( [
+                    v.client,
+                    v.loan_amount,
+                    v.duration,
+                    v.disbursement_channel,
+                    v.disbursement_date
+                ]);
+            });
+        }
     </script>
-
-
 </body>
 </html>
