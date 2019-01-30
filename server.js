@@ -305,6 +305,10 @@ app.get('/all-teams', function(req, res) {
     res.sendFile('all-teams.html', {root: __dirname + '/views'});
 });
 
+app.get('/target-dashboard', function(req, res) {
+    res.sendFile('target-dashboard.html', {root: __dirname + '/views'});
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     let err = new Error('Not Found');

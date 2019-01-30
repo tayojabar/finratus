@@ -1,0 +1,473 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <style type="text/css">
+        #stages td i{
+            float: right;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Panel -->
+    <aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+
+            <div class="navbar-header">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="/dashboard">Loanratus</a>
+                <a class="navbar-brand hidden" href="/dashboard">35</a>
+            </div>
+
+            <div id="main-menu" class="main-menu collapse navbar-collapse">
+                <ul id="sidebar" class="nav navbar-nav">
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+</aside><!-- /#left-panel -->
+
+    <!-- Left Panel -->
+
+    <!-- Right Panel -->
+
+    <div id="right-panel" class="right-panel">
+
+        <!-- Header-->
+        <header id="header" class="header">
+
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                    <div class="header-left">
+                        <button class="search-trigger"><i class="fa fa-search"></i></button>
+                        <div class="form-inline">
+                            <form class="search-form">
+                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-5">
+                    <div class="user-area dropdown float-right">
+                        <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                        </a>
+
+                        <div class="user-menu dropdown-menu">
+                                <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+
+                                <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+
+                                <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+
+                            <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                            <script type="text/javascript">
+                                function logout() {
+                                    localStorage.login = "0";
+                                    window.location.href = "/logout";
+                                }
+                            </script>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </header><!-- /header -->
+        <!-- Header-->
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Target Dashboard</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Users</a></li>
+                            <li class="active">Target Dashboard</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title" style="float: left;">Target Dashboard</strong>
+                            </div>
+                            <div class="card-body">
+                                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                          <th>Owner</th>
+                                          <th>User Type</th>
+                                          <th>Value</th>
+                                          <th>Period</th>
+                                          <th>Start Date</th>
+                                          <th>End Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="targets">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .animated -->
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        </div><!-- .content -->
+
+
+    </div><!-- /#right-panel -->
+
+    <!-- Right Panel -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="addNewTargetModal" tabindex="-1" role="dialog" aria-labelledby="addNewTargetModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addNewTargetModalLabel">Add Target</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="form-control-label">Target Title</label><strong style="color:red"> *</strong><span id="new-target-title-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <input id="new-target-title" type="text" class="form-control" placeholder="Target Title" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Target Description</label><strong style="color:red"> *</strong><span id="new-target-description-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <textarea id="new-target-description" class="form-control" placeholder="Target Description" required="required"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Target Period</label><strong style="color:red"> *</strong><span id="new-target-period-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <select id="new-target-period" class="form-control" required="required">
+                                    <option selected="selected">-- Select Target Period --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Target Value</label><strong style="color:red"> *</strong><span id="new-target-value-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <div class="input-group-addon">₦</div>
+                                <input id="new-target-value" type="number" class="form-control" placeholder="Target Value" required="required">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" onclick="addNewTarget()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addNewPeriodModal" tabindex="-1" role="dialog" aria-labelledby="addNewPeriodModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addNewPeriodModalLabel">Add Period</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="form-control-label">Period Name</label><strong style="color:red"> *</strong><span id="new-period-name-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <input id="new-period-name" type="text" class="form-control" placeholder="Period Name" required="required">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Start Date</label><strong style="color:red"> *</strong><span id="new-period-start-error" style="padding-left:50px; text-align: center"></span>
+                                    <div class="input-group">
+                                        <input id="new-period-start" type="date" class="form-control" placeholder="Start Date" required="required">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">End Date</label><strong style="color:red"> *</strong><span id="new-period-end-error" style="padding-left:50px; text-align: center"></span>
+                                    <div class="input-group">
+                                        <input id="new-period-end" type="date" class="form-control" placeholder="End Date" disabled="disabled" required="required">
+                                    </div>
+                                </div>
+                            </div>
+                            <script type="text/javascript">
+                                $('#new-period-start').change(function () {
+                                    let start_array = this.value.split('-'),
+                                        end = (parseInt(start_array[0])+1)+'-'+start_array[1]+'-'+start_array[2];
+                                    $('#new-period-end').val(end);
+                                });
+                            </script>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Sub Period</label><strong style="color:red"> *</strong><span id="new-period-type-error" style="padding-left:50px; text-align: center"></span>
+                            <div class="input-group">
+                                <select id="new-period-type" class="form-control" required="required">
+                                    <option>-- Select Sub Period --</option>
+                                    <option value="half_yearly">Half Yearly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" onclick="addNewPeriod()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+
+
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            check(); loadMenus(); read_write;
+            $('#bootstrap-data-table-export').DataTable();
+            $('#stages').DataTable({"bFilter": false, "bInfo" : false});
+            getTargets();
+            getPeriods();
+        });
+
+        $(document).ajaxStart(function(){
+            $("#wait").css("display", "block");
+        });
+
+        $(document).ajaxComplete(function(){
+            $("#wait").css("display", "none");
+        });
+
+        function check(){
+            if (localStorage.getItem('role') !== 1){
+                jQuery('#car-models').hide();
+                jQuery('#new-user').hide();
+                jQuery('#models-card').hide();
+                jQuery('#user').html(localStorage.getItem("name"));
+            }
+            else{
+                jQuery('#user').html(localStorage.getItem("name"));
+            }
+        }
+
+        function loadMenus(){
+            let modules = {};
+            modules = JSON.parse(localStorage.getItem("modules"));
+            modules.forEach(function(k, v){
+                if (k.menu_name === 'Sub Menu'){
+                    let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
+                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+                }else{
+                    $('#sidebar').append(k.module_tag);
+                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-requests",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#requests-badge').html(v.requests);
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-applications",
+                success: function (response) {
+                    $.each(response, function(k,v){
+                        $('#applications-badge').html(v.applications);
+                    });
+                }
+            });
+        }
+
+        function read_write(){
+            let w;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k,v){
+                if (k.module_name === page){
+                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+                }
+            });
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
+                $(".write").hide();
+            }
+        }
+
+        let results;
+
+        function getTargets(){
+            $.ajax({
+                'url': '/user/targets-list',
+                'type': 'GET',
+                'success': function (data) {
+                    let targets = data.response;
+                    results = targets;
+                    populateDataTable(targets);
+                },
+                'error': function (err) {
+                    console.log('Error');
+                }
+            });
+        }
+
+        function getPeriods(){
+            $.ajax({
+                url: '/periods',
+                type: 'GET',
+                success: function (response) {
+                    $.each(response.response, function (key, val) {
+                        $("#new-target-period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                    });
+                }
+            });
+        }
+
+        function addNewTarget() {
+            let target = {};
+            target.title = $('#new-target-title').val();
+            target.description = $('#new-target-description').val();
+            target.period = $('#new-target-period').val();
+            target.value = $('#new-target-value').val();
+            if (!target.title || !target.description || !target.value || target.period === '-- Select Target Period --')
+                return swal('Kindly fill all required field(s)','','warning');
+            $('#wait').show();
+            $('#addNewTargetModal').modal('hide');
+            $.ajax({
+                'url': '/targets',
+                'type': 'post',
+                'data': target,
+                'success': function (data) {
+                    $('#wait').hide();
+                    swal('Target saved successfully','','success');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    $('#wait').hide();
+                    swal('Oops! An error occurred while saving target','','error');
+                }
+            });
+        }
+
+        function addNewPeriod() {
+            let period = {};
+            period.name = $('#new-period-name').val();
+            period.start = $('#new-period-start').val();
+            period.end = $('#new-period-end').val();
+            period.type = $('#new-period-type').val();
+            if (!period.name || !period.start || !period.end || period.type === '-- Select Sub Period --')
+                return swal('Kindly fill all required field(s)','','warning');
+            $('#wait').show();
+            $('#addNewPeriodModal').modal('hide');
+            $.ajax({
+                'url': '/periods',
+                'type': 'post',
+                'data': period,
+                'success': function (data) {
+                    $('#wait').hide();
+                    swal('Period saved successfully','','success');
+                    window.location.reload();
+                },
+                'error': function (err) {
+                    $('#wait').hide();
+                    swal('Oops! An error occurred while saving period','','error');
+                }
+            });
+        }
+
+        function populateDataTable(data) {
+            console.log("populating data table...");
+            $("#bootstrap-data-table").dataTable().fnClearTable();
+            $.each(data, function(k, v){
+                let table = [
+                    v.owner,
+                    v.user_type,
+                    '₦'+(parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    v.period,
+                    v.start,
+                    v.end
+                ];
+                $('#bootstrap-data-table').dataTable().fnAddData(table);
+            });
+        }
+    </script>
+
+
+</body>
+</html>
