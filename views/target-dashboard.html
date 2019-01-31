@@ -153,6 +153,13 @@
                                 <strong class="card-title" style="float: left;">Target Dashboard</strong>
                                 <form id="filter" class="form-inline" style="float: right;">
                                     <div class="form-group">
+                                        <select id="filter_type" class="form-control">
+                                            <option selected="selected">-- Select Type --</option>
+                                            <option value="disbursement">Disbursement</option>
+                                            <option value="interest">Interest</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-left: 5px;">
                                         <select id="filter_target_list" class="form-control">
                                             <option selected="selected">-- Select Target --</option>
                                         </select>
@@ -170,6 +177,7 @@
                                           <th>Owner</th>
                                           <th>User Type</th>
                                           <th>Value</th>
+                                          <th>Type</th>
                                           <th>Period</th>
                                           <th>Start Date</th>
                                           <th>End Date</th>
@@ -286,6 +294,7 @@
         $(document).ready(function() {
             check(); loadMenus(); read_write;
             $('#bootstrap-data-table-export').DataTable();
+            $("#filter_type").select2();
             getTargets();
             getTargetList();
         });
@@ -416,8 +425,11 @@
 
             let filter = {},
                 url = '/user/targets-list',
+                filter_type = $("#filter_type").val(),
                 filter_target_list = $("#filter_target_list").val(),
                 filter_sub_period = $("#filter_sub_period").val();
+            if (filter_type !== '-- Select Type --')
+                filter.type = filter_type;
             if (filter_target_list !== '-- Select Target --')
                 filter.target = filter_target_list;
             if (filter_sub_period !== '-- Select Period --')
@@ -446,6 +458,7 @@
                     v.owner,
                     v.user_type,
                     '₦'+(parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    v.type,
                     v.period,
                     v.start,
                     v.end,

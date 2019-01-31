@@ -261,7 +261,6 @@
                                         <th>Name</th>
                                         <th>Supervisor</th>
                                         <th>No of Members</th>
-                                        <th>No of Targets</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -544,7 +543,6 @@
                     v.name,
                     v.supervisor,
                     v.members,
-                    v.targets,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openMembersModal('+v.ID+')"><i class="fa fa-users"></i> Add/View Members</button>'+
                     '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Targets</button>'
                 ]);

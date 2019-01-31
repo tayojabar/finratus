@@ -494,22 +494,26 @@ users.get('/user-targets/:id', function(req, res, next) {
 });
 
 users.get('/targets-list', function(req, res, next) {
-    let target = req.query.target,
+    let type = req.query.type,
+        target = req.query.target,
         sub_period = req.query.sub_period,
         query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
         '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
-        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "team"',
+        '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "team"',
         query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
             '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
-            '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and user_type = "user"';
-
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "user"';
+    if (type){
+        query = query.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+        query2 = query2.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+    }
     if (target){
-        query = query.concat(' AND targetID = '+target);
-        query2 = query2.concat(' AND targetID = '+target);
+        query = query.concat(' AND t.targetID = '+target);
+        query2 = query2.concat(' AND t.targetID = '+target);
     }
     if (sub_period){
-        query = query.concat(' AND sub_periodID = '+sub_period);
-        query2 = query2.concat(' AND sub_periodID = '+sub_period);
+        query = query.concat(' AND t.sub_periodID = '+sub_period);
+        query2 = query2.concat(' AND t.sub_periodID = '+sub_period);
     }
     db.query(query, function (error, team_targets, fields) {
         if(error){
