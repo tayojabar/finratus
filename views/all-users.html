@@ -654,13 +654,22 @@
             $.each(data, function(k, v){
                 let actions;
                 if (v.status === "1"){
-                    actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
-                        '<div class="dropdown-menu">\n' +
-                        '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
-                        '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Target</a>\n' +
-                        '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</a>\n' +
-                        '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
-                        '</div>';
+                    if (v.loan_officer_status === 1){
+                        actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
+                            '<div class="dropdown-menu">\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Target</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</a>\n' +
+                            '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
+                            '</div>';
+                    } else {
+                        actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
+                            '<div class="dropdown-menu">\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</a>\n' +
+                            '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
+                            '</div>';
+                    }
                 }
                 else {
                     actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable User</button>';
