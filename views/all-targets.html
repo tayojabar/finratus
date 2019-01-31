@@ -333,10 +333,12 @@
                     <hr style="">
                     <div class="row">
                         <div class="col-lg-6">
-                            <div id='targetGuage'></div>
+                            <h4 class="text-center" style="margin-bottom: 5px;">Committals Guage</h4>
+                            <div id="targetGuage"></div>
                         </div>
                         <div class="col-lg-6">
-                            <div id='allocationPiechart'></div>
+                            <h4 class="text-center" style="margin-bottom: 5px;">Allocations Pie Chart</h4>
+                            <div id="allocationPiechart"></div>
                         </div>
                     </div>
                 </div>
@@ -571,14 +573,23 @@
                     for (let i=0; i<data.data.length; i++){
                         let portion = data.data[i],
                             plot = {
-                                values : [11.38],
-                                text: "Internet Explorer",
-                                backgroundColor: '#50ADF5',
+                                values : [portion.value],
+                                text: portion.owner,
+                                backgroundColor: generateColour()
                             };
+                        series.push(plot);
                     }
-                    initAllocationPiechart();
+                    initAllocationPiechart(series);
                 }
             });
+        }
+
+        function generateColour() {
+            let color = '#',
+                letters = "0123456789ABCDEF";
+            for (let i = 0; i < 6; i++)
+                color += letters[(Math.floor(Math.random() * 16))];
+            return color;
         }
 
         function initTargetGuage(value) {
@@ -730,7 +741,7 @@
             });
         }
         
-        function initAllocationPiechart() {
+        function initAllocationPiechart(series) {
             let myConfig = {
                 type: "pie",
                 backgroundColor: "#fff",
@@ -758,33 +769,7 @@
                 plotarea: {
                     margin: "0 0 0 0"
                 },
-                series : [
-                    {
-                        values : [11.38],
-                        text: "Internet Explorer",
-                        backgroundColor: '#50ADF5',
-                    },
-                    {
-                        values: [56.94],
-                        text: "Chrome",
-                        backgroundColor: '#FF7965'
-                    },
-                    {
-                        values: [14.52],
-                        text: 'Firefox',
-                        backgroundColor: '#FFCB45'
-                    },
-                    {
-                        text: 'Safari',
-                        values: [9.69],
-                        backgroundColor: '#6877e5'
-                    },
-                    {
-                        text: 'Other',
-                        values: [7.48],
-                        backgroundColor: '#6FB07F'
-                    }
-                ]
+                series : series
             };
 
             zingchart.THEME = "classic";
@@ -794,7 +779,5 @@
             });
         }
     </script>
-
-
 </body>
 </html>
