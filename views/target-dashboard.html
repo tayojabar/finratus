@@ -260,7 +260,7 @@
                             </table>
                         </div>
                         <div class="col-lg-7">
-                            <div id='myChart'><a class="zc-ref" href="https://www.zingchart.com/">Charts by ZingChart</a></div>
+                            <div id='myChart'></div>
                         </div>
                     </div>
                 </div>
@@ -478,12 +478,12 @@
                 end = values[3],
                 goal = values[4],
                 type = values[5];
-            $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $.ajax({
                 type: "GET",
                 url: "/user/committals/"+user_type+"/"+type+"/"+id+"?start="+start+"&&end="+end,
                 success: function (response) {
                     let data = response.response;
+                    $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     $('#committal-count').text(data.count);
                     data.total = data.total || 0;
                     $('#committal-total').text('₦'+(parseFloat(data.total)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));

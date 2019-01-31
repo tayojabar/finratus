@@ -703,7 +703,8 @@ users.get('/committals/interest/:id', function(req, res, next) {
 
 users.get('/target/details/:id', function(req, res, next) {
     let query = 'SELECT count(*) count, sum(t.value) total FROM user_targets AS t WHERE targetID = ? AND status = 1',
-        query2 = 'SELECT * FROM user_targets AS t WHERE targetID = ? AND status = 1';
+        query2 = 'SELECT *, (SELECT name FROM sub_periods WHERE ID = t.sub_periodID) AS period, (CASE WHEN t.user_type = "user" THEN (SELECT fullname FROM users WHERE ID = userID) WHEN t.user_type = "team" THEN (SELECT name FROM teams WHERE ID = userID) END) AS owner ' +
+            'FROM user_targets AS t WHERE t.targetID = ? AND t.status = 1';
     db.query(query, [req.params.id], function (error, aggregate, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
