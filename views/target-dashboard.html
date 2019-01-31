@@ -462,7 +462,9 @@
                     v.period,
                     v.start,
                     v.end,
-                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openCommittalsModal(\''+v.userID+','+v.user_type+','+v.start+','+v.end+','+v.value+'\')"><i class="fa fa-eye"></i> View Details</button>'
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
+                    'onclick="openCommittalsModal(\''+v.userID+','+v.user_type+','+v.start+','+v.end+','+v.value+','+v.type+'\')">' +
+                    '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
             });
@@ -474,11 +476,12 @@
                 user_type = values[1],
                 start = values[2],
                 end = values[3],
-                goal = values[4];
+                goal = values[4],
+                type = values[5];
             $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $.ajax({
                 type: "GET",
-                url: "/user/committals/"+user_type+"/disbursement/"+id+"?start="+start+"&&end="+end,
+                url: "/user/committals/"+user_type+"/"+type+"/"+id+"?start="+start+"&&end="+end,
                 success: function (response) {
                     let data = response.response;
                     $('#committal-count').text(data.count);
@@ -497,10 +500,10 @@
             $.each(data.data, function(k, v){
                 $('#committals').dataTable().fnAddData( [
                     v.client,
-                    v.loan_amount,
+                    v.amount,
                     v.duration,
-                    v.disbursement_channel,
-                    v.disbursement_date
+                    v.channel,
+                    v.date
                 ]);
             });
         }
