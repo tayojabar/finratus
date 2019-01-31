@@ -28,13 +28,13 @@
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="assets/js/zingchart.min.js"></script>
     <!------ Include the above in your HEAD tag ---------->
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <style type="text/css">
-        #stages td i{
-            float: right;
-            margin-top: 5px;
+        .zc-ref {
+            display: none;
         }
     </style>
 </head>
@@ -150,9 +150,9 @@
                                           <th>ID</th>
                                           <th>Title</th>
                                           <th>Goal</th>
-                                          <th>Achieved</th>
                                           <th>Start Date</th>
                                           <th>End Date</th>
+                                          <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="targets">
@@ -288,6 +288,76 @@
         </div>
     </div>
 
+    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="max-width: 95%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Target Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row setup-content">
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="committal-count" class="mb-0"></h3>
+                                    <p class="text-light">No Of Committals</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="committal-total" class="mb-0"></h3>
+                                    <p class="text-light">Total Committal</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="target-value" class="mb-0"></h3>
+                                    <p class="text-light">Target Value</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="card text-white bg-flat-color-1">
+                                <div class="card-body pb-0">
+                                    <h3 id="committal-rate" class="mb-0"></h3>
+                                    <p class="text-light">Progress Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <table id="committals" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Amount</th>
+                                    <th>Tenor</th>
+                                    <th>Channel</th>
+                                    <th>Date</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-7">
+                            <div id='myChart'><a class="zc-ref" href="https://www.zingchart.com/">Charts by ZingChart</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/plugins.js"></script>
@@ -311,7 +381,6 @@
         $(document).ready(function() {
             check(); loadMenus(); read_write;
             $('#bootstrap-data-table-export').DataTable();
-            $('#stages').DataTable({"bFilter": false, "bInfo" : false});
             getTargets();
             getPeriods();
         });
@@ -472,11 +541,197 @@
                     v.ID,
                     v.title,
                     '₦'+(parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
-                    '₦0.00',
                     v.start,
-                    v.end
+                    v.end,
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
+                    'onclick="openDetailsModal(\''+v.ID+','+v.value+','+v.type+'\')">' +
+                    '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
+            });
+        }
+
+        function openDetailsModal(owner) {
+            let values = owner.split(','),
+                id = values[0],
+                goal = values[1],
+                type = values[2];
+            $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $.ajax({
+                type: "GET",
+                url: "/user/committals/"+type+"/"+id,
+                success: function (response) {
+                    let data = response.response;
+                    $('#committal-count').text(data.count);
+                    data.total = data.total || 0;
+                    $('#committal-total').text('₦'+(parseFloat(data.total)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    let rate = parseInt((parseFloat(data.total)/parseFloat(goal)) * 100);
+                    $('#committal-rate').text(rate+'%');
+                    initGuage(rate);
+                    populateCommittals(data);
+                }
+            });
+        }
+
+        function populateCommittals(data){
+            $("#committals").dataTable().fnClearTable();
+            $.each(data.data, function(k, v){
+                $('#committals').dataTable().fnAddData( [
+                    v.client,
+                    v.amount,
+                    v.duration,
+                    v.channel,
+                    v.date
+                ]);
+            });
+        }
+
+        function initGuage(value) {
+            zingchart.THEME = "classic";
+            let myConfig = {
+                "graphset": [{
+                    "type": "gauge",
+                    "background-color": "#fff",
+                    "plot": {
+                        "background-color": "#666"
+                    },
+                    "plotarea": {
+                        "margin": "0 0 0 0"
+                    },
+                    "scale": {
+                        "size-factor": 1.25,
+                        "offset-y": 120
+                    },
+                    "tooltip": {
+                        "background-color": "black"
+                    },
+                    "scale-r": {
+                        "values": "0:100:10",
+                        "border-color": "#b3b3b3",
+                        "border-width": "2",
+                        "background-color": "#eeeeee,#b3b3b3",
+                        "ring": {
+                            "size": 10,
+                            "offset-r": "130px",
+                            "rules": [{
+                                "rule": "%v >=0 && %v < 20",
+                                "background-color": "#348D00"
+                            }, {
+                                "rule": "%v >= 20 && %v < 40",
+                                "background-color": "#B1AD00"
+                            }, {
+                                "rule": "%v >= 40 && %v < 60",
+                                "background-color": "#FAC100"
+                            }, {
+                                "rule": "%v >= 60 && %v < 80",
+                                "background-color": "#EC7928"
+                            }, {
+                                "rule": "%v >= 80",
+                                "background-color": "#FB0A02"
+                            }]
+                        }
+                    },
+                    "labels": [{
+                        "id": "lbl1",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": 160,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Very High",
+                        "backgroundColor": "#FB0A02",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#ea0901",
+                            "text": "< 80 <br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl2",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": 80,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "High",
+                        "backgroundColor": "#EC7928",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#da6817",
+                            "text": "> 60 < 80<br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl3",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": 0,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Medium",
+                        "backgroundColor": "#FAC100",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#e9b000",
+                            "text": "> 40 < 60<br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl4",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": -80,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Low",
+                        "backgroundColor": "#B1AD00",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#a09c00",
+                            "text": "> 20 < 40<br>Percent",
+                            "shadow": 0
+                        }
+                    }, {
+                        "id": "lbl5",
+                        "x": "50%",
+                        "y": "90%",
+                        "width": 80,
+                        "offsetX": -160,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": "Very Low",
+                        "backgroundColor": "#348D00",
+                        "tooltip": {
+                            "padding": 10,
+                            "backgroundColor": "#237b00",
+                            "text": "< 20<br>Percent",
+                            "shadow": 0
+                        }
+                    }],
+                    "series": [{
+                        "values": [value],
+                        "animation": {
+                            "method": 5,
+                            "effect": 2,
+                            "speed": 2500
+                        }
+                    }],
+                    "alpha": 1
+                }]
+            };
+
+            zingchart.render({
+                id: 'myChart',
+                data: myConfig,
             });
         }
     </script>
