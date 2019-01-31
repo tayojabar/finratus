@@ -701,6 +701,26 @@ users.get('/committals/interest/:id', function(req, res, next) {
     });
 });
 
+users.get('/target/details/:id', function(req, res, next) {
+    let query = 'SELECT count(*) count, sum(t.value) total FROM user_targets AS t WHERE targetID = ? AND status = 1',
+        query2 = 'SELECT * FROM user_targets AS t WHERE targetID = ? AND status = 1';
+    db.query(query, [req.params.id], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Target details fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
 users.post('/team/targets', function(req, res, next) {
     req.body.user_type = "team";
     req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
