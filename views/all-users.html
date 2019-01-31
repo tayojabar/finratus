@@ -466,6 +466,7 @@
                         <div class="col-lg-8">
                             <div class="form-group">
                                 <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
+                                <small id="target_limit" class="form-text text-muted"></small>
                             </div>
                         </div>
                         <div class="col-lg-4">
@@ -958,6 +959,7 @@
         $('#target_list').on('change', function() {
             let target_id = $("#target_list").find("option:selected").val();
             getPeriods(target_id);
+            getLimit(target_id);
         });
 
         function getTargets(){
@@ -971,6 +973,23 @@
                     $("#target_list").select2();
                 }
             });
+        }
+
+        let target_limit;
+        $('#target_limit').text('');
+        function getLimit(id){
+            if (id && id !== '-- Select Target --'){
+                $.ajax({
+                    type: "GET",
+                    url: "/user/target/limit/"+id,
+                    success: function (data) {
+                        target_limit = parseFloat(data.response.unallocated);
+                        $('#target_limit').text('Total unallocated target is ₦'+(target_limit.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
+                    }
+                });
+            } else {
+                $('#target_limit').text('');
+            }
         }
 
         $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
@@ -1024,6 +1043,8 @@
             obj.value = $('#target_value').val();
             if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
                 return swal('Kindly fill all required field(s)','','warning');
+            if (parseFloat(obj.value) > target_limit)
+                return swal('Target value ('+obj.value+') cannot be greater that the Total unallocated Target ('+target_limit+')','','warning');
             $('#wait').show();
             $.ajax({
                 'url': '/user/user-targets',
@@ -1036,6 +1057,7 @@
                     } else{
                         swal("Target assigned successfully!","","success");
                         populateTargets(response);
+                        getLimit(obj.targetID);
                     }
                 }
             });

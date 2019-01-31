@@ -722,6 +722,18 @@ users.get('/target/details/:id', function(req, res, next) {
     });
 });
 
+users.get('/target/limit/:id', function(req, res, next) {
+    let query = 'SELECT sum(t.value) allocated, (SELECT value FROM targets WHERE ID = t.targetID) target, ' +
+        '((SELECT value FROM targets WHERE ID = t.targetID) - sum(t.value)) unallocated FROM user_targets AS t WHERE targetID = ? AND status = 1';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Target limit fetched successfully", "response": results[0]});
+        }
+    });
+});
+
 users.post('/team/targets', function(req, res, next) {
     req.body.user_type = "team";
     req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
