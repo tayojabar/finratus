@@ -45,6 +45,21 @@
         input.invalid, span.invalid {
             border: 2px dashed red;
         }
+        div.dataTables_wrapper div.dataTables_filter{
+            float: right;
+            margin-right: 15px;
+        }
+        div.dataTables_length{
+            float: left;
+        }
+        .dt-buttons.btn-group{
+            float: right;
+        }
+        .btn-default{
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #666e76;
+        }
     </style>
 </head>
 <body>
@@ -136,7 +151,6 @@
         <div class="animated fadeIn">
 
             <div id="new" class="row">
-
                 <div id="new-form" class="col-xs-12 col-sm-12">
                     <div class="card">
                         <div class="card-header">
@@ -164,6 +178,24 @@
                                     <small class="form-text text-muted">Example: Sales demo follow-up</small>
                                 </div>
                                 <div class="col-sm-6 form-group">
+                                    <label class="col-form-label">Activity Category <strong style="color:red"> *</strong></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                        <select id="activity-cat" class="form-control fields" required="required">
+                                            <option id="personal">Personal Activity</option>
+                                            <option id="team">Team Activity</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="team-div" class="col-sm-6 form-group" style="display: none">
+                                    <label class="col-form-label">Choose Team <strong style="color:red"> *</strong></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                        <select id="team-list" class="form-control" required="required">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 form-group">
                                     <label class="col-form-label">Select Client <strong style="color:red"> *</strong></label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
@@ -175,7 +207,7 @@
                                     <label class="col-form-label">Select Activity Type<strong style="color:red"> *</strong></label>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-list"></i></div>
-                                        <select id="activity" class="form-control fields" required="required">
+                                        <select id="activity-type" class="form-control fields" required="required">
                                         </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New Activity Type"/>
                                     </div>
                                 </div>
@@ -238,16 +270,13 @@
                 <div id="user-table" class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="col-sm-9">
-                                <strong class="card-title">All Activities</strong>
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="pull-right">
-                                    <button id="newActivity" class="btn-primary"><i class="fa fa-plus"></i> New Activity</button>
-                                </div>
+                            <strong class="card-title">All Activities</strong><span id="user-name"></span>
+                            <div class="pull-right">
+                                <button id="newActivity" class="btn-primary"><i class="fa fa-plus"></i> New Activity</button>
+                                <button id="teamActivity" class="btn-info"><i class="fa fa-users"></i> Team Activities</button>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div id="default-table" class="card-body">
                             <table id="bootstrap-data-table" class="table table-striped table-bordered">
                                 <thead>
                                 <tr>
@@ -263,6 +292,24 @@
                                 </tr>
                                 </thead>
                                 <tbody id = "activities">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="filtered-table" class="card-body" style="display: none">
+                            <table id="user-activities" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <!--<th>ID</th>-->
+                                    <th>Activity Name</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>Duration</th>
+                                    <th>Client</th>
+                                    <th>Client Email</th>
+                                    <th>Client Phone</th>
+                                </tr>
+                                </thead>
+                                <tbody>
                                 </tbody>
                             </table>
                         </div>
@@ -326,7 +373,10 @@
     (function( $ ) {
         jQuery(document).ready(function() {
             $('#bootstrap-data-table-export').DataTable();
+            $('#user-activities').DataTable();
+            checkForEdit();
             getClients();
+            getTeams();
             loadActivities();
             getActivityTypes();
             check();
@@ -347,6 +397,9 @@
 //            $('#details').show();
             $('#new').hide();
             $('#all-list').show();
+            $('#default-table').show();
+            $('#filtered-table').hide();
+            $('#user-name').html('');
         });
 
         $(document).on("click", "#newActivity", function (e) {
@@ -354,6 +407,17 @@
             $('#details').hide();
             $('#new').show();
             $('#all-list').hide();
+        });
+
+        $("#activity-cat").on('change', function (){
+
+            if ($(this).find('option:selected').attr('id') === 'team'){
+                $('#team-div').show();
+            }
+            else{
+                $('#team-div').hide();
+            }
+
         });
 
         $("#submit").click(function () {
@@ -417,6 +481,52 @@
             });
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
+            }
+        }
+
+        function checkForEdit(){
+            const urlParams = new URLSearchParams(window.location.search);
+            const user_id = urlParams.get('id');
+            const teamid = urlParams.get('team');
+
+            if (user_id){
+                $('#user-name').html(': '+user_id);
+                $('#new').hide();
+                $('#all-list').show();
+                $('#default-table').hide();
+                $('#filtered-table').show();
+                $.ajax({
+                    'url': '/user/activities?user='+user_id+"&&team="+teamid,
+                    'type': 'get',
+                    'success': function (data) {
+                        let activities = JSON.parse(data);
+                        $("#user-activities").DataTable().clear();
+                        let processed_data = [];
+                        $.each(activities, function(k, v){
+                            processed_data.push(v);
+                        });
+                        $('#user-activities').DataTable({
+                            dom: 'Blfrtip',
+                            bDestroy: true,
+                            data: processed_data,
+                            buttons: [
+                                'copy', 'csv', 'excel', 'pdf', 'print'
+                            ],
+                            columns: [
+                                { data: "activity_name" },
+                                { data: "activity_description" },
+                                { data: "activity_date" },
+                                { data: "activity_duration" },
+                                { data: "clients" },
+                                { data: "client_email" },
+                                { data: "client_phone" }
+                            ]
+                        });
+                    },
+                    'error': function (err) {
+                        swal('Oops! An error occurred while retrieving details.');
+                    }
+                });
             }
         }
 
@@ -501,10 +611,24 @@
                 type: "GET",
                 url: "/user/activity-types/",
                 success: function (response) {
-                    var role = $("[id=activity]");
+                    var role = $("[id=activity-type]");
                     role.empty().append('<option id="0">-- Choose Activity Type --</option>');
                     $.each(JSON.parse(response), function (key, val) {
                         role.append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.activity_name + '</option>');
+                    });
+                }
+            });
+        }
+
+        function getTeams(){
+            $.ajax({
+                type: "GET",
+                url: "/user/teams/",
+                success: function (response) {
+                    var role = $("[id=team-list]");
+                    role.empty().append('<option id="0">-- Choose Team --</option>');
+                    $.each(JSON.parse(response), function (key, val) {
+                        role.append('<option class="deptSp" value = "' + val.teamID + '" id="' + val.teamID + '">' + val.team_name + '</option>');
                     });
                 }
             });
@@ -579,8 +703,10 @@
             obj.activity_date = $('#activity-date').val();
             obj.client_email = $('#email').val();
             obj.client = $('#client-list').find('option:selected').attr('id');
-            obj.activity_type = $('#activity').find('option:selected').attr('id');
+            obj.activity_type = $('#activity-type').find('option:selected').attr('id');
             obj.for_ = localStorage.getItem('name');
+            obj.category = $('#activity-cat').find('option:selected').attr('id');
+            obj.team = $('#team-list').find('option:selected').attr('id');
             var test={};
             $.ajax({
                 'url': '/user/new-activity/',

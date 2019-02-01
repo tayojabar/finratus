@@ -556,9 +556,12 @@
             }
         }
 
+        let teamid;
+
         function populateDataTable(data) {
             $("#bootstrap-data-table").dataTable().fnClearTable();
             $.each(data, function(k, v){
+                teamid = v.ID;
                 $('#bootstrap-data-table').dataTable().fnAddData( [
                     v.name,
                     v.supervisor,
@@ -596,7 +599,8 @@
             $.each(data.response, function(k, v){
                 $('#members').dataTable().fnAddData( [
                     v.member,
-                    '<button type="button" class="btn btn-danger" onclick="removeMember('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+                    '<button type="button" class="btn btn-danger" onclick="removeMember('+v.ID+')"><i class="fa fa-remove"></i> Remove</button> &nbsp; &nbsp; &nbsp;'+
+                    '<button type="button" class="btn btn-primary" onclick="viewActivities(\''+v.member+'\')"><i class="fa fa-eye"></i> View Activities</button>'
                 ]);
             });
         }
@@ -699,6 +703,10 @@
                     }
                 }
             });
+        }
+
+        function viewActivities(id){
+            window.location.href = "/activity?id="+id+"&&team="+teamid;
         }
     </script>
 </body>

@@ -1,0 +1,574 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .select2-container{
+            width: 100% !important;
+            height: 38px !important;
+        }
+        .select2-selection{
+            height: 100% !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+            color: #495057 !important;
+        }
+        input.invalid, span.invalid {
+            border: 2px dashed red;
+        }
+    </style>
+    <script>
+        $(function () {
+            // when the modal is closed
+            $('#myModal1').on('hidden.bs.modal', function () {
+                // remove the bs.modal data attribute from it
+                $(this).removeData('bs.modal');
+                // and empty the modal-content element
+                $('#myModal1 .modal-content span').empty();
+                $('#myModal1 input').val("");
+            });
+        });
+    </script>
+
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+
+</head>
+<body>
+<!-- Left Panel -->
+
+<script type="text/javascript">
+    jQuery(document).ready(function($){
+        loadTeams(); check(); loadMenus(); read_write();});
+</script>
+
+<aside id="left-panel" class="left-panel">
+    <nav class="navbar navbar-expand-sm navbar-default">
+
+        <div class="navbar-header">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="/dashboard">Loanratus</a>
+            <a class="navbar-brand hidden" href="/dashboard">35</a>
+        </div>
+
+        <div id="main-menu" class="main-menu collapse navbar-collapse">
+            <ul id="sidebar" class="nav navbar-nav">
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </nav>
+</aside><!-- /#left-panel -->
+
+<!-- Left Panel -->
+
+<!-- Right Panel -->
+
+<div id="right-panel" class="right-panel">
+
+    <!-- Header-->
+    <header id="header" class="header">
+
+        <div class="header-menu">
+
+            <div class="col-sm-7">
+                <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                <div class="header-left">
+                    <!--<button class="search-trigger"><i class="fa fa-search"></i></button>-->
+                    <!--<div class="form-inline">-->
+                    <!--<form class="search-form">-->
+                    <!--<input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">-->
+                    <!--<button class="search-close" type="submit"><i class="fa fa-close"></i></button>-->
+                    <!--</form>-->
+                    <!--</div>-->
+
+                    <!-- <div class="dropdown for-notification">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-bell"></i>
+                        <span class="count bg-danger">5</span>
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="notification">
+                        <p class="red">You have 3 Notification</p>
+                        <a class="dropdown-item media bg-flat-color-1" href="#">
+                            <i class="fa fa-check"></i>
+                            <p>Server #1 overloaded.</p>
+                        </a>
+                        <a class="dropdown-item media bg-flat-color-4" href="#">
+                            <i class="fa fa-info"></i>
+                            <p>Server #2 overloaded.</p>
+                        </a>
+                        <a class="dropdown-item media bg-flat-color-5" href="#">
+                            <i class="fa fa-warning"></i>
+                            <p>Server #3 overloaded.</p>
+                        </a>
+                      </div>
+                    </div> -->
+
+                    <!-- <div class="dropdown for-message">
+                      <button class="btn btn-secondary dropdown-toggle" type="button"
+                            id="message"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="ti-email"></i>
+                        <span class="count bg-primary">9</span>
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="message">
+                        <p class="red">You have 4 Mails</p>
+                        <a class="dropdown-item media bg-flat-color-1" href="#">
+                            <span class="photo media-left"><img alt="avatar" src="images/avatar/1.jpg"></span>
+                            <span class="message media-body">
+                                <span class="name float-left">Jonathan Smith</span>
+                                <span class="time float-right">Just now</span>
+                                    <p>Hello, this is an example msg</p>
+                            </span>
+                        </a>
+                        <a class="dropdown-item media bg-flat-color-4" href="#">
+                            <span class="photo media-left"><img alt="avatar" src="images/avatar/2.jpg"></span>
+                            <span class="message media-body">
+                                <span class="name float-left">Jack Sanders</span>
+                                <span class="time float-right">5 minutes ago</span>
+                                    <p>Lorem ipsum dolor sit amet, consectetur</p>
+                            </span>
+                        </a>
+                        <a class="dropdown-item media bg-flat-color-5" href="#">
+                            <span class="photo media-left"><img alt="avatar" src="images/avatar/3.jpg"></span>
+                            <span class="message media-body">
+                                <span class="name float-left">Cheryl Wheeler</span>
+                                <span class="time float-right">10 minutes ago</span>
+                                    <p>Hello, this is an example msg</p>
+                            </span>
+                        </a>
+                        <a class="dropdown-item media bg-flat-color-3" href="#">
+                            <span class="photo media-left"><img alt="avatar" src="images/avatar/4.jpg"></span>
+                            <span class="message media-body">
+                                <span class="name float-left">Rachel Santos</span>
+                                <span class="time float-right">15 minutes ago</span>
+                                    <p>Lorem ipsum dolor sit amet, consectetur</p>
+                            </span>
+                        </a>
+                      </div>
+                    </div> -->
+                </div>
+            </div>
+
+            <div class="col-sm-5">
+                <div class="user-area dropdown float-right">
+                    <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                    </a>
+
+                    <div class="user-menu dropdown-menu">
+                        <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+
+                        <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+
+                        <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+
+                        <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                        <script type="text/javascript">
+                            function logout() {
+                                localStorage.login = "0";
+                                window.location.href = "/logout";
+                            }
+                        </script>
+                    </div>
+                </div>
+
+                <!-- <div class="language-select dropdown" id="language-select">
+                    <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
+                        <i class="flag-icon flag-icon-us"></i>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="language" >
+                        <div class="dropdown-item">
+                            <span class="flag-icon flag-icon-fr"></span>
+                        </div>
+                        <div class="dropdown-item">
+                            <i class="flag-icon flag-icon-es"></i>
+                        </div>
+                        <div class="dropdown-item">
+                            <i class="flag-icon flag-icon-us"></i>
+                        </div>
+                        <div class="dropdown-item">
+                            <i class="flag-icon flag-icon-it"></i>
+                        </div>
+                    </div>
+                </div> -->
+
+            </div>
+        </div>
+
+    </header><!-- /header -->
+    <!-- Header-->
+
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    <h1>All Teams</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="page-header float-right">
+                <div class="page-title">
+                    <ol class="breadcrumb text-right">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Users</a></li>
+                        <li class="active">Activity Feed</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+        </div><!-- .animated -->
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+    </div><!-- .content -->
+
+
+</div><!-- /#right-panel -->
+
+<!-- Right Panel -->
+
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
+
+<script src="assets/js/lib/data-table/datatables.min.js"></script>
+<script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+<script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+<script src="assets/js/lib/data-table/jszip.min.js"></script>
+<script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+<script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+<script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+<script src="assets/js/lib/data-table/datatables-init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        getUsers();
+        getTargets();
+        $('#members').DataTable();
+        $('#bootstrap-data-table-export').DataTable();
+    });
+
+    $(document).ajaxStart(function(){
+        $("#wait").css("display", "block");
+    });
+
+    $(document).ajaxComplete(function(){
+        $("#wait").css("display", "none");
+    });
+
+    function check(){
+        if (localStorage.getItem('role') !== 1){
+            jQuery('#car-models').hide();
+            jQuery('#new-user').hide();
+            jQuery('#models-card').hide();
+            jQuery('#user').html(localStorage.getItem("name"));
+        }
+        else{
+            jQuery('#user').html(localStorage.getItem("name"));
+        }
+    }
+
+    function loadTeams(){
+        $.ajax({
+            'url': '/user/teams-list',
+            'type': 'get',
+            'success': function (data) {
+                let teams = data.response;
+                populateDataTable(teams);
+            },
+            'error': function (err) {
+                console.log('Error');
+            }
+        });
+    }
+
+    function read_write(){
+        let w;
+        var perms = JSON.parse(localStorage.getItem("permissions"));
+        var page = (window.location.pathname.split('/')[1].split('.'))[0];
+        perms.forEach(function (k,v){
+            if (k.module_name === page){
+                w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+            }
+        });
+        if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
+            $(".write").hide();
+        }
+    }
+
+    function loadMenus(){
+        let modules = {};
+        modules = JSON.parse(localStorage.getItem("modules"));
+        modules.forEach(function(k, v){
+            if (k.menu_name === 'Sub Menu'){
+                let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
+                $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+            }else if(k.menu_name === 'Main Menu'){
+                $('#sidebar').append(k.module_tag);
+                $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
+            }else{
+                $('#'+k.module_name).show();
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "/user/all-requests",
+            success: function (response) {
+                $.each(response, function(k,v){
+                    $('#requests-badge').html(v.requests);
+                });
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "/user/all-applications",
+            success: function (response) {
+                $.each(response, function(k,v){
+                    $('#applications-badge').html(v.applications);
+                });
+            }
+        });
+    }
+
+    function getUsers(){
+        $.ajax({
+            type: "GET",
+            url: "/user/users-list",
+            success: function (response) {
+                $.each(JSON.parse(response), function (key, val) {
+                    $("#user_list").append('<option value = "' + val.ID + '">' + val.fullname + '</option>');
+                });
+                $("#user_list").select2();
+            }
+        });
+    }
+
+    $('#target_list').on('change', function() {
+        let target_id = $("#target_list").find("option:selected").val();
+        getPeriods(target_id);
+    });
+
+    function getTargets(){
+        $.ajax({
+            type: "GET",
+            url: "/targets",
+            success: function (data) {
+                $.each(data.response, function (key, val) {
+                    $("#target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
+                });
+                $("#target_list").select2();
+            }
+        });
+    }
+
+    $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+    function getPeriods(id){
+        if (id && id !== '-- Select Target --'){
+            $('#wait').show();
+            $.ajax({
+                type: "GET",
+                url: "/target/sub_periods/"+id,
+                success: function (data) {
+                    $('#wait').hide();
+                    $("#sub_period_list").prop('disabled',false);
+                    $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+                    $.each(data.response, function (key, val) {
+                        $("#sub_period_list").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                    });
+                    $("#sub_period_list").select2();
+                }
+            });
+        }
+    }
+
+    let teamid;
+
+    function populateDataTable(data) {
+        $("#bootstrap-data-table").dataTable().fnClearTable();
+        $.each(data, function(k, v){
+            teamid = v.ID;
+            $('#bootstrap-data-table').dataTable().fnAddData( [
+                v.name,
+                v.supervisor,
+                v.members,
+                v.targets,
+                '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openMembersModal('+v.ID+')"><i class="fa fa-users"></i> Add/View Members</button>'+
+                '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Targets</button>'
+            ]);
+        });
+    }
+
+    function openMembersModal(id) {
+        localStorage.team_id = id;
+        $.ajax({
+            type: "GET",
+            url: "/user/team/members/"+id,
+            success: function (data) {
+                populateMembers(data);
+            }
+        });
+    }
+
+    function openTargetsModal(id) {
+        localStorage.team_id = id;
+        $.ajax({
+            type: "GET",
+            url: "/user/team/targets/"+id,
+            success: function (data) {
+                populateTargets(data);
+            }
+        });
+    }
+
+    function populateMembers(data){
+        $("#members").dataTable().fnClearTable();
+        $.each(data.response, function(k, v){
+            $('#members').dataTable().fnAddData( [
+                v.member,
+                '<button type="button" class="btn btn-danger" onclick="removeMember('+v.ID+')"><i class="fa fa-remove"></i> Remove</button> &nbsp; &nbsp; &nbsp;'+
+                '<button type="button" class="btn btn-primary" onclick="viewActivities(\''+v.member+'\')"><i class="fa fa-eye"></i> View Activities</button>'
+            ]);
+        });
+    }
+
+    function populateTargets(data){
+        $("#targets").dataTable().fnClearTable();
+        $.each(data.response, function(k, v){
+            $('#targets').dataTable().fnAddData( [
+                v.target,
+                v.period,
+                '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
+                '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+            ]);
+        });
+    }
+
+    function assignMember() {
+        let obj = {};
+        if ($('#user_list').val() === '-- Select User --')
+            return swal('Kindly select the user to be added','','warning');
+        obj.teamID = localStorage.team_id;
+        obj.memberID = $('#user_list').val();
+        $('#wait').show();
+        $.ajax({
+            'url': '/user/team/members',
+            'type': 'post',
+            'data': obj,
+            'success': function (response) {
+                $('#wait').hide();
+                if(response.status === 500){
+                    swal(response.error,"","error");
+                } else{
+                    swal("Member assigned successfully!","","success");
+                    populateMembers(response);
+                    loadTeams();
+                }
+            }
+        });
+    }
+
+    function assignTarget() {
+        let obj = {};
+        obj.userID = localStorage.team_id;
+        obj.targetID = $('#target_list').val();
+        obj.sub_periodID = $('#sub_period_list').val();
+        obj.value = $('#target_value').val();
+        if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
+            return swal('Kindly fill all required field(s)','','warning');
+        $('#wait').show();
+        $.ajax({
+            'url': '/user/team/targets',
+            'type': 'post',
+            'data': obj,
+            'success': function (response) {
+                $('#wait').hide();
+                if(response.status === 500){
+                    swal(response.error,"","error");
+                } else{
+                    swal("Target assigned successfully!","","success");
+                    populateTargets(response);
+                    loadTeams();
+                }
+            }
+        });
+    }
+
+    function removeMember(id) {
+        $('#wait').show();
+        $.ajax({
+            'url': '/user/team/members/'+id+'/'+localStorage.team_id,
+            'type': 'delete',
+            'success': function (response) {
+                $('#wait').hide();
+                if(response.status === 500){
+                    swal("No internet connection","","error");
+                } else{
+                    swal("Member deleted successfully!","","success");
+                    populateMembers(response);
+                    loadTeams();
+                }
+            }
+        });
+    }
+
+    function removeTarget(id) {
+        $('#wait').show();
+        $.ajax({
+            'url': '/user/team/targets/'+id+'/'+localStorage.team_id,
+            'type': 'delete',
+            'success': function (response) {
+                $('#wait').hide();
+                if(response.status === 500){
+                    swal("No internet connection","","error");
+                } else{
+                    swal("Target deleted successfully!","","success");
+                    populateTargets(response);
+                    loadTeams();
+                }
+            }
+        });
+    }
+
+    function viewActivities(id){
+        window.location.href = "/activity?id="+id+"&&team="+teamid;
+    }
+</script>
+
+
+</body>
+</html>

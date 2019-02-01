@@ -127,7 +127,7 @@ function requireLogin (req, res, next) {
     } else {
         let url = req.originalUrl;
         if (url){
-            var page = url.split('/')[1];
+            var page = url.split('/')[1].split('?')[0];
             let name = 'Others'
             let role = parseInt(req.session.user);
             let query = 'SELECT id,module_id, (select module_name from modules m where m.id = module_id) as module_name, read_only, editable FROM permissions where role_id = ? ' +
@@ -307,6 +307,10 @@ app.get('/all-teams', function(req, res) {
 
 app.get('/target-dashboard', function(req, res) {
     res.sendFile('target-dashboard.html', {root: __dirname + '/views'});
+});
+
+app.get('/activity-feed', function(req, res) {
+    res.sendFile('activity-feed.html', {root: __dirname + '/views'});
 });
 
 // catch 404 and forward to error handler
