@@ -2591,7 +2591,7 @@ users.get('/interests/', function(req, res, next) {
         start = "'"+start+"'"
         end = "'"+end+"'"
         // query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = (queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
     }
     db.query(query, function (error, results, fields) {
         if(error){
@@ -2715,8 +2715,8 @@ users.get('/payments', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query2 = query2.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
+        query = (queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query2 = query2.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
     db.query(query, function (error, results, fields) {
         items.payment = results;
@@ -2756,7 +2756,7 @@ users.get('/loans-by-branches', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = (queryPart.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
     }
     db.query(query, function (error, results, fields) {
         if(error){
