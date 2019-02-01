@@ -383,9 +383,6 @@
     <script type="text/javascript">
         $(document).ready(function() {
           $('#bootstrap-data-table-export').DataTable();
-          getWorkflows();
-          loadUsers();
-          read_write();
         });
 
         $(document).ajaxStart(function(){
@@ -443,45 +440,41 @@
         }
 
         function read_write(){
-            let w;
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-                if (k.module_name === page){
+            let w,
+                perms = JSON.parse(localStorage.getItem("permissions")),
+                page = (window.location.pathname.split('/')[1].split('.'))[0],
+                applicationsList = ($.grep(perms, function(e){return e.module_name === 'applicationsList';}))[0];
+            perms.forEach(function (k){
+                if (k.module_name === page)
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-                }
             });
-            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
                 $(".write").hide();
+
+            if (applicationsList && applicationsList['read_only'] === '1'){
+                loadApplications();
+            } else {
+                loadApplications((JSON.parse(localStorage.user_obj)).ID);
             }
         }
 
-        let results;
 
-        function loadUsers(){
+        let results;
+        $('#wait').show();
+        function loadApplications(id){
+            let uid = id || '';
             $.ajax({
-                'url': '/user/applications',
+                'url': '/user/applications/'+uid,
                 'type': 'get',
                 'success': function (data) {
-                    var applications = data.response;
+                    $('#wait').hide();
+                    let applications = data.response;
                     results = applications;
                     populateDataTable(applications);
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     console.log('Error');
-                }
-            });
-        }
-
-        function getWorkflows(){
-            $.ajax({
-                type: "GET",
-                url: "/workflows",
-                success: function (response) {
-                    localStorage.setItem("workflows",JSON.stringify(response.response));
-                    $.each(response.response, function (key, val) {
-                        $("#workflows").append('<option class="deptSp" value = "'+val.ID+'"">'+val.name+'</option>');
-                    });
                 }
             });
         }
@@ -659,9 +652,9 @@
             let start = $("#startDate").val(),
                 end = $("#endDate").val(),
                 type = $("#type-filter").val(),
-                url = '/user/applications/filter?start='+formatDate(start)+'&&end='+formatDate(end);
+                url = '/user/applications/?start='+formatDate(start)+'&&end='+formatDate(end);
             if (!start || !end)
-                return loadUsers();
+                return loadApplications();
             if (type)
                 url = url.concat('&&type='+type);
 
@@ -682,7 +675,7 @@
         function filterType(type) {
             let start = $("#startDate").val(),
                 end = $("#endDate").val(),
-                url = '/user/applications/filter?';
+                url = '/user/applications/?';
             if (start && end)
                 url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
             url = url.concat('type='+type.value);
