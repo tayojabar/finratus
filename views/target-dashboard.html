@@ -153,6 +153,13 @@
                                 <strong class="card-title" style="float: left;">Target Dashboard</strong>
                                 <form id="filter" class="form-inline" style="float: right;">
                                     <div class="form-group">
+                                        <select id="filter_type" class="form-control">
+                                            <option selected="selected">-- Select Type --</option>
+                                            <option value="disbursement">Disbursement</option>
+                                            <option value="interest">Interest</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-left: 5px;">
                                         <select id="filter_target_list" class="form-control">
                                             <option selected="selected">-- Select Target --</option>
                                         </select>
@@ -170,6 +177,7 @@
                                           <th>Owner</th>
                                           <th>User Type</th>
                                           <th>Value</th>
+                                          <th>Type</th>
                                           <th>Period</th>
                                           <th>Start Date</th>
                                           <th>End Date</th>
@@ -252,7 +260,8 @@
                             </table>
                         </div>
                         <div class="col-lg-7">
-                            <div id='myChart'><a class="zc-ref" href="https://www.zingchart.com/">Charts by ZingChart</a></div>
+                            <h4 class="text-center" style="margin-bottom: 5px;">Committals Guage</h4>
+                            <div id="myChart"></div>
                         </div>
                     </div>
                 </div>
@@ -286,6 +295,7 @@
         $(document).ready(function() {
             check(); loadMenus(); read_write;
             $('#bootstrap-data-table-export').DataTable();
+            $("#filter_type").select2();
             getTargets();
             getTargetList();
         });
@@ -416,8 +426,11 @@
 
             let filter = {},
                 url = '/user/targets-list',
+                filter_type = $("#filter_type").val(),
                 filter_target_list = $("#filter_target_list").val(),
                 filter_sub_period = $("#filter_sub_period").val();
+            if (filter_type !== '-- Select Type --')
+                filter.type = filter_type;
             if (filter_target_list !== '-- Select Target --')
                 filter.target = filter_target_list;
             if (filter_sub_period !== '-- Select Period --')
@@ -446,10 +459,13 @@
                     v.owner,
                     v.user_type,
                     '₦'+(parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    v.type,
                     v.period,
                     v.start,
                     v.end,
-                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openCommittalsModal(\''+v.userID+','+v.user_type+','+v.start+','+v.end+','+v.value+'\')"><i class="fa fa-eye"></i> View Details</button>'
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
+                    'onclick="openCommittalsModal(\''+v.userID+','+v.user_type+','+v.start+','+v.end+','+v.value+','+v.type+'\')">' +
+                    '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
             });
@@ -461,13 +477,14 @@
                 user_type = values[1],
                 start = values[2],
                 end = values[3],
-                goal = values[4];
-            $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                goal = values[4],
+                type = values[5];
             $.ajax({
                 type: "GET",
-                url: "/user/committals/"+user_type+"/disbursement/"+id+"?start="+start+"&&end="+end,
+                url: "/user/committals/"+user_type+"/"+type+"/"+id+"?start="+start+"&&end="+end,
                 success: function (response) {
                     let data = response.response;
+                    $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     $('#committal-count').text(data.count);
                     data.total = data.total || 0;
                     $('#committal-total').text('₦'+(parseFloat(data.total)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
@@ -484,10 +501,10 @@
             $.each(data.data, function(k, v){
                 $('#committals').dataTable().fnAddData( [
                     v.client,
-                    v.loan_amount,
+                    v.amount,
                     v.duration,
-                    v.disbursement_channel,
-                    v.disbursement_date
+                    v.channel,
+                    v.date
                 ]);
             });
         }

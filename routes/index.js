@@ -1587,7 +1587,7 @@ router.post('/targets', function(req, res, next) {
 });
 
 router.get('/targets', function(req, res, next) {
-    db.query('SELECT t.ID, t.title, t.description, t.period, t.value, t.date_created, p.start, p.end FROM targets AS t, periods AS p ' +
+    db.query('SELECT t.ID, t.title, t.description, t.period, t.type, t.value, t.date_created, p.start, p.end FROM targets AS t, periods AS p ' +
         'WHERE t.period = p.ID AND t.status = 1', function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});

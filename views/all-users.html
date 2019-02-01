@@ -466,6 +466,7 @@
                         <div class="col-lg-8">
                             <div class="form-group">
                                 <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
+                                <small id="target_limit" class="form-text text-muted"></small>
                             </div>
                         </div>
                         <div class="col-lg-4">
@@ -477,7 +478,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-lg-12">
-                            <table id="targets" class="table table-striped table-bordered">
+                            <table id="user_targets" class="table table-striped table-bordered">
                                 <thead>
                                 <tr>
                                     <th>Target</th>
@@ -520,6 +521,7 @@
         $(document).ready(function() {
             getUsers();
             getTargets();
+            $('#user_targets').DataTable();
             $('#bootstrap-data-table-export').DataTable();
         });
 
@@ -654,13 +656,22 @@
             $.each(data, function(k, v){
                 let actions;
                 if (v.status === "1"){
-                    actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
-                        '<div class="dropdown-menu">\n' +
-                        '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
-                        '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Target</a>\n' +
-                        '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</a>\n' +
-                        '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
-                        '</div>';
+                    if (v.loan_officer_status === 1){
+                        actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
+                            '<div class="dropdown-menu">\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Target</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</a>\n' +
+                            '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
+                            '</div>';
+                    } else {
+                        actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
+                            '<div class="dropdown-menu">\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</a>\n' +
+                            '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
+                            '</div>';
+                    }
                 }
                 else {
                     actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable User</button>';
@@ -948,6 +959,7 @@
         $('#target_list').on('change', function() {
             let target_id = $("#target_list").find("option:selected").val();
             getPeriods(target_id);
+            getLimit(target_id);
         });
 
         function getTargets(){
@@ -961,6 +973,23 @@
                     $("#target_list").select2();
                 }
             });
+        }
+
+        let target_limit;
+        $('#target_limit').text('');
+        function getLimit(id){
+            if (id && id !== '-- Select Target --'){
+                $.ajax({
+                    type: "GET",
+                    url: "/user/target/limit/"+id,
+                    success: function (data) {
+                        target_limit = parseFloat(data.response.unallocated);
+                        $('#target_limit').text('Total unallocated target is ₦'+(target_limit.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
+                    }
+                });
+            } else {
+                $('#target_limit').text('');
+            }
         }
 
         $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
@@ -995,9 +1024,9 @@
         }
 
         function populateTargets(data){
-            $("#targets").dataTable().fnClearTable();
+            $("#user_targets").dataTable().fnClearTable();
             $.each(data.response, function(k, v){
-                $('#targets').dataTable().fnAddData( [
+                $('#user_targets').dataTable().fnAddData( [
                     v.target,
                     v.period,
                     '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
@@ -1014,6 +1043,8 @@
             obj.value = $('#target_value').val();
             if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
                 return swal('Kindly fill all required field(s)','','warning');
+            if (parseFloat(obj.value) > target_limit)
+                return swal('Target value ('+obj.value+') cannot be greater that the Total unallocated Target ('+target_limit+')','','warning');
             $('#wait').show();
             $.ajax({
                 'url': '/user/user-targets',
@@ -1026,6 +1057,7 @@
                     } else{
                         swal("Target assigned successfully!","","success");
                         populateTargets(response);
+                        getLimit(obj.targetID);
                     }
                 }
             });
