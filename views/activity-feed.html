@@ -63,7 +63,7 @@
 
 <script type="text/javascript">
     jQuery(document).ready(function($){
-        loadTeams(); check(); loadMenus(); read_write();});
+        check(); loadMenus(); read_write();});
 </script>
 
 <aside id="left-panel" class="left-panel">
@@ -247,6 +247,29 @@
 
     <div class="content mt-3">
         <div class="animated fadeIn">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9fcdff; text-align: center">
+                                        <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>UA</h1></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-11" style="padding-left: 30px">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>'+comment.fullname+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>
+                                        <div class="panel-body">'+comment.text+'</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div><!-- .animated -->
         <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
@@ -277,10 +300,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        getUsers();
-        getTargets();
-        $('#members').DataTable();
-        $('#bootstrap-data-table-export').DataTable();
     });
 
     $(document).ajaxStart(function(){
@@ -301,20 +320,6 @@
         else{
             jQuery('#user').html(localStorage.getItem("name"));
         }
-    }
-
-    function loadTeams(){
-        $.ajax({
-            'url': '/user/teams-list',
-            'type': 'get',
-            'success': function (data) {
-                let teams = data.response;
-                populateDataTable(teams);
-            },
-            'error': function (err) {
-                console.log('Error');
-            }
-        });
     }
 
     function read_write(){
@@ -363,209 +368,6 @@
                 });
             }
         });
-    }
-
-    function getUsers(){
-        $.ajax({
-            type: "GET",
-            url: "/user/users-list",
-            success: function (response) {
-                $.each(JSON.parse(response), function (key, val) {
-                    $("#user_list").append('<option value = "' + val.ID + '">' + val.fullname + '</option>');
-                });
-                $("#user_list").select2();
-            }
-        });
-    }
-
-    $('#target_list').on('change', function() {
-        let target_id = $("#target_list").find("option:selected").val();
-        getPeriods(target_id);
-    });
-
-    function getTargets(){
-        $.ajax({
-            type: "GET",
-            url: "/targets",
-            success: function (data) {
-                $.each(data.response, function (key, val) {
-                    $("#target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
-                });
-                $("#target_list").select2();
-            }
-        });
-    }
-
-    $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
-    function getPeriods(id){
-        if (id && id !== '-- Select Target --'){
-            $('#wait').show();
-            $.ajax({
-                type: "GET",
-                url: "/target/sub_periods/"+id,
-                success: function (data) {
-                    $('#wait').hide();
-                    $("#sub_period_list").prop('disabled',false);
-                    $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
-                    $.each(data.response, function (key, val) {
-                        $("#sub_period_list").append('<option value = "' + val.ID + '">' + val.name + '</option>');
-                    });
-                    $("#sub_period_list").select2();
-                }
-            });
-        }
-    }
-
-    let teamid;
-
-    function populateDataTable(data) {
-        $("#bootstrap-data-table").dataTable().fnClearTable();
-        $.each(data, function(k, v){
-            teamid = v.ID;
-            $('#bootstrap-data-table').dataTable().fnAddData( [
-                v.name,
-                v.supervisor,
-                v.members,
-                v.targets,
-                '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openMembersModal('+v.ID+')"><i class="fa fa-users"></i> Add/View Members</button>'+
-                '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Targets</button>'
-            ]);
-        });
-    }
-
-    function openMembersModal(id) {
-        localStorage.team_id = id;
-        $.ajax({
-            type: "GET",
-            url: "/user/team/members/"+id,
-            success: function (data) {
-                populateMembers(data);
-            }
-        });
-    }
-
-    function openTargetsModal(id) {
-        localStorage.team_id = id;
-        $.ajax({
-            type: "GET",
-            url: "/user/team/targets/"+id,
-            success: function (data) {
-                populateTargets(data);
-            }
-        });
-    }
-
-    function populateMembers(data){
-        $("#members").dataTable().fnClearTable();
-        $.each(data.response, function(k, v){
-            $('#members').dataTable().fnAddData( [
-                v.member,
-                '<button type="button" class="btn btn-danger" onclick="removeMember('+v.ID+')"><i class="fa fa-remove"></i> Remove</button> &nbsp; &nbsp; &nbsp;'+
-                '<button type="button" class="btn btn-primary" onclick="viewActivities(\''+v.member+'\')"><i class="fa fa-eye"></i> View Activities</button>'
-            ]);
-        });
-    }
-
-    function populateTargets(data){
-        $("#targets").dataTable().fnClearTable();
-        $.each(data.response, function(k, v){
-            $('#targets').dataTable().fnAddData( [
-                v.target,
-                v.period,
-                '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
-                '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
-            ]);
-        });
-    }
-
-    function assignMember() {
-        let obj = {};
-        if ($('#user_list').val() === '-- Select User --')
-            return swal('Kindly select the user to be added','','warning');
-        obj.teamID = localStorage.team_id;
-        obj.memberID = $('#user_list').val();
-        $('#wait').show();
-        $.ajax({
-            'url': '/user/team/members',
-            'type': 'post',
-            'data': obj,
-            'success': function (response) {
-                $('#wait').hide();
-                if(response.status === 500){
-                    swal(response.error,"","error");
-                } else{
-                    swal("Member assigned successfully!","","success");
-                    populateMembers(response);
-                    loadTeams();
-                }
-            }
-        });
-    }
-
-    function assignTarget() {
-        let obj = {};
-        obj.userID = localStorage.team_id;
-        obj.targetID = $('#target_list').val();
-        obj.sub_periodID = $('#sub_period_list').val();
-        obj.value = $('#target_value').val();
-        if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
-            return swal('Kindly fill all required field(s)','','warning');
-        $('#wait').show();
-        $.ajax({
-            'url': '/user/team/targets',
-            'type': 'post',
-            'data': obj,
-            'success': function (response) {
-                $('#wait').hide();
-                if(response.status === 500){
-                    swal(response.error,"","error");
-                } else{
-                    swal("Target assigned successfully!","","success");
-                    populateTargets(response);
-                    loadTeams();
-                }
-            }
-        });
-    }
-
-    function removeMember(id) {
-        $('#wait').show();
-        $.ajax({
-            'url': '/user/team/members/'+id+'/'+localStorage.team_id,
-            'type': 'delete',
-            'success': function (response) {
-                $('#wait').hide();
-                if(response.status === 500){
-                    swal("No internet connection","","error");
-                } else{
-                    swal("Member deleted successfully!","","success");
-                    populateMembers(response);
-                    loadTeams();
-                }
-            }
-        });
-    }
-
-    function removeTarget(id) {
-        $('#wait').show();
-        $.ajax({
-            'url': '/user/team/targets/'+id+'/'+localStorage.team_id,
-            'type': 'delete',
-            'success': function (response) {
-                $('#wait').hide();
-                if(response.status === 500){
-                    swal("No internet connection","","error");
-                } else{
-                    swal("Target deleted successfully!","","success");
-                    populateTargets(response);
-                    loadTeams();
-                }
-            }
-        });
-    }
-
-    function viewActivities(id){
-        window.location.href = "/activity?id="+id+"&&team="+teamid;
     }
 </script>
 
