@@ -1332,7 +1332,7 @@
             type = $("#type-filter").val(),
             officer = $('#filter-officers').find('option:selected').attr('id'),
             url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
-        if (start && end && officer===0){
+        if (start && end && officer==0){
             url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
         }
         if ((!start || !end) && officer==0 ) {
