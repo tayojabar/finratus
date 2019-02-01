@@ -538,6 +538,72 @@ users.get('/targets-list', function(req, res, next) {
     });
 });
 
+users.get('/targets-list/:officerID', function(req, res, next) {
+    let type = req.query.type,
+        id = req.params.officerID,
+        target = req.query.target,
+        sub_period = req.query.sub_period,
+        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "team"',
+        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "user"',
+        query3 = query2.concat(' AND t.userID = '+id+' '),
+        query4 = query2.concat(' AND (select supervisor from users where users.id = t.userID) =  '+id+' ');
+    if (id)
+        query2 = query3;
+    if (type){
+        query = query.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+        query2 = query2.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+    }
+    if (target){
+        query = query.concat(' AND t.targetID = '+target);
+        query2 = query2.concat(' AND t.targetID = '+target);
+    }
+    if (sub_period){
+        query = query.concat(' AND t.sub_periodID = '+sub_period);
+        query2 = query2.concat(' AND t.sub_periodID = '+sub_period);
+    }
+    if (id){
+        db.query(query, function (error, team_targets, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query2, function (error, user_targets, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        db.query(query4, function (error, user_targets2, fields) {
+                            if(error){
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                results = team_targets.concat(user_targets,user_targets2);
+                                res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, team_targets, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query2, function (error, user_targets, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        results = team_targets.concat(user_targets);
+                        res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                    }
+                });
+            }
+        });
+    }
+});
+
 users.get('/committals/user/disbursement/:id', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,

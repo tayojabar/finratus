@@ -439,11 +439,12 @@
             });
         }
 
+        let applicationsList;
         function read_write(){
             let w,
                 perms = JSON.parse(localStorage.getItem("permissions")),
-                page = (window.location.pathname.split('/')[1].split('.'))[0],
-                applicationsList = ($.grep(perms, function(e){return e.module_name === 'applicationsList';}))[0];
+                page = (window.location.pathname.split('/')[1].split('.'))[0];
+            applicationsList = ($.grep(perms, function(e){return e.module_name === 'applicationsList';}))[0];
             perms.forEach(function (k){
                 if (k.module_name === page)
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
@@ -649,10 +650,14 @@
         $("#filter").submit(function (e) {
             e.preventDefault();
 
+            let id = '';
+            if (!(applicationsList && applicationsList['read_only'] === '1'))
+                id = (JSON.parse(localStorage.user_obj)).ID;
+
             let start = $("#startDate").val(),
                 end = $("#endDate").val(),
                 type = $("#type-filter").val(),
-                url = '/user/applications/?start='+formatDate(start)+'&&end='+formatDate(end);
+                url = '/user/applications/'+id+'?start='+formatDate(start)+'&&end='+formatDate(end);
             if (!start || !end)
                 return loadApplications();
             if (type)
@@ -673,9 +678,13 @@
         });
 
         function filterType(type) {
+            let id = '';
+            if (!(applicationsList && applicationsList['read_only'] === '1'))
+                id = (JSON.parse(localStorage.user_obj)).ID;
+
             let start = $("#startDate").val(),
                 end = $("#endDate").val(),
-                url = '/user/applications/?';
+                url = '/user/applications/'+id+'?';
             if (start && end)
                 url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
             url = url.concat('type='+type.value);

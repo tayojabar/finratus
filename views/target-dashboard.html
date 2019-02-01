@@ -293,10 +293,9 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            check(); loadMenus(); read_write;
+            check(); loadMenus(); read_write();
             $('#bootstrap-data-table-export').DataTable();
             $("#filter_type").select2();
-            getTargets();
             getTargetList();
         });
 
@@ -352,25 +351,32 @@
             });
         }
 
+        let targetsList;
         function read_write(){
-            let w;
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-                if (k.module_name === page){
+            let w,
+                perms = JSON.parse(localStorage.getItem("permissions")),
+                page = (window.location.pathname.split('/')[1].split('.'))[0];
+            targetsList = ($.grep(perms, function(e){return e.module_name === 'targetsList';}))[0];
+            perms.forEach(function (k){
+                if (k.module_name === page)
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-                }
             });
-            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
                 $(".write").hide();
+
+            if (targetsList && targetsList['read_only'] === '1'){
+                getTargets();
+            } else {
+                getTargets((JSON.parse(localStorage.user_obj)).ID);
             }
         }
 
         let results;
 
-        function getTargets(){
+        function getTargets(id){
+            let uid = id || '';
             $.ajax({
-                'url': '/user/targets-list',
+                'url': '/user/targets-list/'+uid,
                 'type': 'GET',
                 'success': function (data) {
                     let targets = data.response;
@@ -423,9 +429,13 @@
 
         $("#filter").submit(function (e) {
             e.preventDefault();
+            
+            let id = '';
+            if (!(targetsList && targetsList['read_only'] === '1'))
+                id = (JSON.parse(localStorage.user_obj)).ID;
 
             let filter = {},
-                url = '/user/targets-list',
+                url = '/user/targets-list/'+id,
                 filter_type = $("#filter_type").val(),
                 filter_target_list = $("#filter_target_list").val(),
                 filter_sub_period = $("#filter_sub_period").val();
