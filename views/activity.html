@@ -623,7 +623,7 @@
         function getTeams(){
             $.ajax({
                 type: "GET",
-                url: "/user/teams/",
+                url: "/user/teams?user="+localStorage.getItem("name"),
                 success: function (response) {
                     var role = $("[id=team-list]");
                     role.empty().append('<option id="0">-- Choose Team --</option>');

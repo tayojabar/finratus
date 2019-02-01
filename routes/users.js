@@ -2589,7 +2589,8 @@ users.get('/interests/', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        // query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
     }
     db.query(query, function (error, results, fields) {
         if(error){
@@ -2890,7 +2891,10 @@ users.post('/new-activity', function(req, res, next) {
 users.get('/activities', function(req, res, next) {
     let current_user = req.query.user;
     let team = req.query.team;
-    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients from activities where for_ = ? and status = 1 and team = ?';
+    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients from activities where for_ = ? and status = 1';
+    if (team){
+        query = query.concat('  and team = ?')
+    }
     db.query(query, [current_user, team], function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -2903,8 +2907,11 @@ users.get('/activities', function(req, res, next) {
 /* Teams */
 users.get('/teams', function(req, res, next) {
     let current_user = req.query.user;
-    let query = 'select teamID, (select name from teams where teams.id = teamID) as team_name from team_members where memberID = ' +
-                '(select users.ID from users where users.fullname = ? and users.status = 1) and status = 1'
+    let query = 'select teamID, ' +
+                '(select name from teams where teams.id = teamID) as team_name ' +
+                'from team_members where memberID = ' +
+                '(select users.ID from users where users.fullname = ? and users.status = 1) ' +
+                'and status = 1'
     db.query(query, [current_user], function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
