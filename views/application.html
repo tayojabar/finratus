@@ -262,7 +262,7 @@
                                     <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span></p>
                                 </div>
                                 <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
-                                <div id="close_loan" class="btn-group write" style="float: right; display: none; margin-top: 5px;">
+                                <div id="close_loan" class="btn-group" style="float: right; display: none; margin-top: 5px;">
                                     <button type="button" class="btn btn-danger btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Close Loan
                                     </button>
@@ -512,8 +512,8 @@
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
                                                 </div>
                                                 <div class="col-sm-5">
-                                                    <button id="rejectCSV2" class="btn btn-danger write" style="float: right;">Reject <i class="fa fa-times"></i></button>
-                                                    <button id="approveCSV2" class="btn btn-success write" style="float: right;">Approve <i class="fa fa-check"></i></button>
+                                                    <button id="rejectCSV2" class="btn btn-danger" style="float: right;">Reject <i class="fa fa-times"></i></button>
+                                                    <button id="approveCSV2" class="btn btn-success" style="float: right;">Approve <i class="fa fa-check"></i></button>
                                                     <button id="saveCSV2" class="btn btn-primary" style="float: right;">Add <i class="fa fa-plus"></i></button>
                                                     <button id="uploadCSV2" class="btn btn-info" style="float: right;">Preview <i class="fa fa-eye-slash"></i></button>
                                                     <i id="csvLoader2" class="fa fa-spinner fa-spin" style="display: none;"></i>
@@ -827,7 +827,6 @@
                             <th>Penalty</th>
                             <th>Paid By</th>
                             <th>Date</th>
-                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody id="history">
@@ -1271,6 +1270,7 @@
                                 }
                             }
                             checkTotalDue();
+                            read_write();
                         }
                         $('#disbursement-amount').val((parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                         $('#stage-actions').append('<a href="#" id="stage-action-0" class="dropdown-item" data-toggle="modal" data-target="#disburseModal">Disburse Loan</a>');
@@ -1815,11 +1815,6 @@
                             v.agent,
                             v.date_created
                         ];
-                        if (v.status === 0){
-                            table.push('Payment Reversed');
-                        } else if (v.status === 1){
-                            table.push('<button class="btn btn-danger" onclick="reversePayment('+v.ID+','+v.invoiceID+')"><i class="fa fa-remove"></i> Reverse</button>');
-                        }
                         $('#invoice-history').dataTable().fnAddData(table);
                         $('#invoice-history').dataTable().fnSort([[0,'desc']]);
                     });
@@ -2345,17 +2340,28 @@
         }
 
         function read_write(){
-            let w;
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-                if (k.module_name === page){
+            let w,
+                perms = JSON.parse(localStorage.getItem("permissions")),
+                page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k){
+                if (k.module_name === page)
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-                }
             });
-            if (w && w[0] && (parseInt(w[0]['editable']) != 1)){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
                 $(".write").hide();
-            }
+
+            if (($.grep(perms, function(e){return e.module_name === 'collectPaymentButton';}))[0]['read_only'] === '0')
+                $('#collect-payment-button').hide();
+            if (($.grep(perms, function(e){return e.module_name === 'uploadCSV2';}))[0]['read_only'] === '0')
+                $('#uploadCSV2').hide();
+            if (($.grep(perms, function(e){return e.module_name === 'saveCSV2';}))[0]['read_only'] === '0')
+                $('#saveCSV2').hide();
+            if (($.grep(perms, function(e){return e.module_name === 'approveCSV2';}))[0]['read_only'] === '0')
+                $('#approveCSV2').hide();
+            if (($.grep(perms, function(e){return e.module_name === 'rejectCSV2';}))[0]['read_only'] === '0')
+                $('#rejectCSV2').hide();
+            if (($.grep(perms, function(e){return e.module_name === 'close-loan';}))[0]['read_only'] === '0')
+                $('#close_loan').hide();
         }
 
         Number.prototype.roundTo = function(n) {

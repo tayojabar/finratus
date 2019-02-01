@@ -1267,10 +1267,11 @@
                         if (v.status === 0){
                             table.push('Payment Reversed');
                         } else if (v.status === 1){
-                            table.push('<button class="btn btn-danger" onclick="reversePayment('+v.ID+','+v.invoiceID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                            table.push('<button class="btn btn-danger reversePayment" onclick="reversePayment('+v.ID+','+v.invoiceID+')"><i class="fa fa-remove"></i> Reverse</button>');
                         }
                         $('#invoice-history').dataTable().fnAddData(table);
                         $('#invoice-history').dataTable().fnSort([[0,'desc']]);
+                        read_write();
                     });
                 },
                 'error': function (err) {
@@ -1294,10 +1295,11 @@
                         if (v.status === 0){
                             table.push('Payment Reversed');
                         } else if (v.status === 1){
-                            table.push('<button class="btn btn-danger" onclick="reverseEscrowPayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                            table.push('<button class="btn btn-danger reversePayment" onclick="reverseEscrowPayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
                         }
                         $('#escrow-history').dataTable().fnAddData(table);
                         $('#escrow-history').dataTable().fnSort([[2,'desc']]);
+                        read_write();
                     });
                 },
                 'error': function (err) {
@@ -1426,6 +1428,22 @@
             p = p || 10;
             return parseFloat( this.toFixed(p) );
         };
+
+        function read_write(){
+            let w,
+                perms = JSON.parse(localStorage.getItem("permissions")),
+                page = (window.location.pathname.split('/')[1].split('.'))[0],
+                reversePayment = ($.grep(perms, function(e){return e.module_name === 'reversePayment';}))[0];
+            perms.forEach(function (k){
+                if (k.module_name === page)
+                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+            });
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
+                $(".write").hide();
+
+            if (reversePayment && reversePayment['read_only'] === '0')
+                $('.reversePayment').hide();
+        }
     </script>
 </body>
 </html>
