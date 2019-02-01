@@ -1338,7 +1338,7 @@
         if ((!start || !end) && officer==0 ) {
             return loadDisbursed();
         }
-        else{
+        if (officer != 0){
             url = url.concat('&&officer='+officer);
         }
 
