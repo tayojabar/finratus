@@ -2841,8 +2841,40 @@ users.post('/new-activity', function(req, res, next) {
 /* All Activities */
 users.get('/activities', function(req, res, next) {
     let current_user = req.query.user;
-    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients from activities where for_ = ? and status = 1';
+    let team = req.query.team;
+    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients from activities where for_ = ? and status = 1 and team = ?';
+    db.query(query, [current_user, team], function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Teams */
+users.get('/teams', function(req, res, next) {
+    let current_user = req.query.user;
+    let query = 'select teamID, (select name from teams where teams.id = teamID) as team_name from team_members where memberID = ' +
+                '(select users.ID from users where users.fullname = ? and users.status = 1) and status = 1'
     db.query(query, [current_user], function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Team Activities */
+users.get('/team-activities', function(req, res, next) {
+    let current_user = req.query.user;
+    let query = 'select *, (select name from teams where teams.Id = team) as team_name ' +
+                'from activities where ' +
+                'category = team and ' +
+                'for_ in (select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
+                'and for_ <> ?';
+    db.query(query, [current_user, current_user], function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
