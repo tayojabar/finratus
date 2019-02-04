@@ -2693,8 +2693,8 @@ users.get('/disbursements/filter', function(req, res, next) {
             'END as valid_payment '+
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
-            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
-             'and status = 1 '
+            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
+            // 'and status = 1 '
             ;
     group = 'group by applicationID';
     query = queryPart.concat(group);
