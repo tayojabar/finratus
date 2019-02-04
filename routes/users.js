@@ -538,6 +538,72 @@ users.get('/targets-list', function(req, res, next) {
     });
 });
 
+users.get('/targets-list/:officerID', function(req, res, next) {
+    let type = req.query.type,
+        id = req.params.officerID,
+        target = req.query.target,
+        sub_period = req.query.sub_period,
+        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "team"',
+        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "user"',
+        query3 = query2.concat(' AND t.userID = '+id+' '),
+        query4 = query2.concat(' AND (select supervisor from users where users.id = t.userID) =  '+id+' ');
+    if (id)
+        query2 = query3;
+    if (type){
+        query = query.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+        query2 = query2.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+    }
+    if (target){
+        query = query.concat(' AND t.targetID = '+target);
+        query2 = query2.concat(' AND t.targetID = '+target);
+    }
+    if (sub_period){
+        query = query.concat(' AND t.sub_periodID = '+sub_period);
+        query2 = query2.concat(' AND t.sub_periodID = '+sub_period);
+    }
+    if (id){
+        db.query(query, function (error, team_targets, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query2, function (error, user_targets, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        db.query(query4, function (error, user_targets2, fields) {
+                            if(error){
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                results = team_targets.concat(user_targets,user_targets2);
+                                res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, team_targets, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query2, function (error, user_targets, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        results = team_targets.concat(user_targets);
+                        res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                    }
+                });
+            }
+        });
+    }
+});
+
 users.get('/committals/user/disbursement/:id', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
@@ -710,8 +776,8 @@ users.get('/committals/interest/:id', function(req, res, next) {
 
 users.get('/target/details/:id', function(req, res, next) {
     let query = 'SELECT count(*) count, sum(t.value) total FROM user_targets AS t WHERE targetID = ? AND status = 1',
-        query2 = 'SELECT *, (SELECT name FROM sub_periods WHERE ID = t.sub_periodID) AS period, (CASE WHEN t.user_type = "user" THEN (SELECT fullname FROM users WHERE ID = userID) WHEN t.user_type = "team" THEN (SELECT name FROM teams WHERE ID = userID) END) AS owner ' +
-            'FROM user_targets AS t WHERE t.targetID = ? AND t.status = 1';
+        query2 = 'SELECT userID, sum(value) as value, (SELECT name FROM sub_periods WHERE ID = t.sub_periodID) AS period, (CASE WHEN t.user_type = "user" THEN (SELECT fullname FROM users WHERE ID = userID) WHEN t.user_type = "team" THEN (SELECT name FROM teams WHERE ID = userID) END) AS owner ' +
+            'FROM user_targets AS t WHERE t.targetID = ? AND t.status = 1 GROUP BY owner';
     db.query(query, [req.params.id], function (error, aggregate, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -912,10 +978,8 @@ users.get('/clients-list', function(req, res, next) {
 users.get('/clients-list-full', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
-        loan_officer = req.query.officer
-    let query = 'select * from clients ';
+        query = 'select * from clients ';
     if (start && end){
-        console.log("Here");
         start = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'"
         end = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'"
         query = query.concat('where TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')')
@@ -927,6 +991,46 @@ users.get('/clients-list-full', function(req, res, next) {
             res.send(JSON.stringify(results));
         }
     });
+});
+
+users.get('/clients-list-full/:officerID', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        id = req.params.officerID,
+        query = 'select * from clients ',
+        query2 = 'select * from clients where loan_officer = '+id,
+        query3 = 'select * from clients where (select supervisor from users where users.id = clients.loan_officer) = '+id;
+    if (id)
+        query = query2;
+    if (start && end){
+        let start_query = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'";
+        let end_query = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'";
+        query = query.concat(' where TIMESTAMP(date_created) between TIMESTAMP('+start_query+') and TIMESTAMP('+end_query+')')
+    }
+    if (id){
+        db.query(query, function (error, results1, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                db.query(query3, function (error, results2, fields) {
+                    if(error){
+                        res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    } else {
+                        let results = results1.concat(results2);
+                        res.send(JSON.stringify(results));
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify(results));
+            }
+        });
+    }
 });
 
 users.get('/users-list-v2', function(req, res, next) {
@@ -1462,15 +1566,20 @@ users.get('/application-id/:id', function(req, res, next) {
 });
 
 /* GET User Applications. */
-users.get('/applications/filter', function(req, res, next) {
+users.get('/applications/:officerID', function(req, res, next) {
     let start = req.query.start,
 		end = req.query.end,
-		type = req.query.type;
+		type = req.query.type,
+        id = req.params.officerID;
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
 
 	let query = "SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, " +
         "a.loan_amount, a.date_modified, a.comment, a.close_status, a.workflowID, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w " +
-        "WHERE u.ID=a.userID AND a.status <> 0 AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ";
+        "WHERE u.ID=a.userID AND a.status <> 0 AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ",
+        query2 = query.concat('AND loan_officer = '+id+' '),
+        query3 = query.concat('AND (select supervisor from users where users.id = u.loan_officer) =  '+id+' ');
+    if (id)
+        query = query2;
     if (type){
 	    switch (type){
             case '1': {
@@ -1502,13 +1611,30 @@ users.get('/applications/filter', function(req, res, next) {
     if (start && end)
         query = query.concat("AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ");
     query = query.concat("ORDER BY a.ID desc");
-    db.query(query, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
-        }
-    });
+    if (id){
+        db.query(query, function (error, results1, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query3, function (error, results2, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        results = results1.concat(results2);
+                        res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, results, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
+            }
+        });
+    }
 });
 
 users.get('/collections/filter', function(req, res, next) {
