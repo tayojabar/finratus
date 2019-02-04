@@ -2658,10 +2658,27 @@ users.get('/disbursements/filter', function(req, res, next) {
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
             '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
-            // 'and status = 1 '
+            'and status = 1 '
             ;
+    queryPart2 = 'select \n' +
+        '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, payment_amount, \n' +
+        'applicationID, (select loan_amount from applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
+        '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from applications where ID = applicationID) as date, \n' +
+        '(select date_created from applications ap where ap.ID = applicationID) as created_date, ' +
+        'CASE\n' +
+        '    WHEN status = 0 THEN sum(payment_amount)\n' +
+        'END as invalid_payment,\n' +
+        'CASE\n' +
+        '    WHEN status = 1 THEN sum(payment_amount)\n' +
+        'END as valid_payment '+
+        'from schedule_history \n' +
+        'where applicationID in (select applicationID from application_schedules\n' +
+        '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
+        'and status = 0 '
+        ;
     group = 'group by applicationID';
     query = queryPart.concat(group);
+    query3 = queryPart2.concat(group);
 
     let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified, date_created ' +
                  'from applications where status = 2 and ID not in (select applicationID from schedule_history) '
@@ -2669,8 +2686,9 @@ users.get('/disbursements/filter', function(req, res, next) {
     var items = {};
     if (loan_officer){
         queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
+        queryPart2 = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
         query = queryPart.concat(group);
-
+        query3 = queryPart.concat(group);
         query2 = query2.concat('and (select loan_officer from clients where clients.ID = userID) = '+loan_officer+' ');
     }
     if (start  && end){
@@ -2678,17 +2696,21 @@ users.get('/disbursements/filter', function(req, res, next) {
         end = "'"+end+"'"
         // query = (queryPart.concat('AND (TIMESTAMP((select date_modified from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query3 = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query2 = query2.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
     db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
-        db.query(query2, [loan_officer],  function (error, results, fields) {
-            if(error){
-                res.send({"status": 500, "error": error, "response": null});
-            } else {
-                items.without_pay = results;
-                res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
-            }
+        db.query(query3, [loan_officer], function (error, results, fields) {
+            items.with_invalid_payments = results;
+            db.query(query2, [loan_officer], function (error, results, fields) {
+                if (error) {
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    items.without_pay = results;
+                    res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
+                }
+            });
         });
     });
     // den = items.loan_officers[0]["loan_officers"]; console.log(den)
@@ -3018,7 +3040,7 @@ users.post('/new-activity', function(req, res, next) {
 users.get('/activities', function(req, res, next) {
     let current_user = req.query.user;
     let team = req.query.team;
-    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients from activities where for_ = ? and status = 1';
+    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients, (select activity_name from activity_types at where at.id = activity_type) as activity from activities where for_ = ? and status = 1';
     if (team){
         query = query.concat('  and team = ?')
     }
@@ -3036,8 +3058,8 @@ users.get('/teams', function(req, res, next) {
     let current_user = req.query.user;
     let query = 'select teamID, ' +
                 '(select name from teams where teams.id = teamID) as team_name ' +
-                'from team_members where memberID = ' +
-                '(select users.ID from users where users.fullname = ? and users.status = 1) ' +
+                'from team_members where memberID = ?' +
+                // '(select users.ID from users where users.fullname = ? and users.status = 1) ' +
                 'and status = 1'
     db.query(query, [current_user], function (error, results, fields) {
         if(error){
@@ -3051,12 +3073,14 @@ users.get('/teams', function(req, res, next) {
 /* Team Activities */
 users.get('/team-activities', function(req, res, next) {
     let current_user = req.query.user;
-    let query = 'select *, (select name from teams where teams.Id = team) as team_name ' +
+    let word = 'team'
+    let query = 'select *, (select name from teams where teams.Id = team) as team_name, (select fullname from users where users.id = for_) as user ' +
                 'from activities where ' +
-                'category = team and ' +
-                'for_ in (select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
-                'and for_ <> ?';
-    db.query(query, [current_user, current_user], function (error, results, fields) {
+                'category = ? and team in ((select teamID from team_members where memberID = ?))';
+                // 'for_ = ?  ';
+        // '(select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
+        //         'and for_ <> ?';
+    db.query(query, [word, current_user], function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
