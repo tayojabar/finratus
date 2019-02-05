@@ -90,6 +90,9 @@
             border: 1px solid #ced4da;
             border-radius: .25rem;
         }
+        .edit-item{
+            margin-right: 5px;
+        }
     </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -116,7 +119,9 @@
 
             //mark all tasks as done
             function AllDone(){
-                $sortable.find('li').remove();
+                let count = $sortable.find("li").length;
+                for (let i=count-3; i>0; i--)
+                    $sortable.find('li:eq('+i+')').remove();
                 countTodos();
             }
 
@@ -124,46 +129,96 @@
             $('#add-stage').click(function (e) {
                 e.preventDefault;
                 if($('.add-todo').val() !== ''){
-                    let stage = {},
-                        action_ids = [],
-                        action_names = [],
-                        stage_template = $('#stage-template').val(),
-                        documents = $('.document-upload-text').map(function() {
-                            if (this.value) return this.value;
-                        }).get(),
-                        actions = $('.local-stages-new').map(function() {
-                            if (this.value && (this.value !== '-- Choose Action --'))
-                                return this.value;
-                        }).get();
-                    stage.name = $('#stage-name').val();
-                    stage.description = $('#stage-description').val();
-                    stage.approverID = $('#process-rights').val();
-                    if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || !actions || !actions[0])
-                        return swal('Kindly fill all required fields!');
-                    stage.approverID = stage.approverID.join(',');
-                    if (documents && documents[0])
-                        stage.document = documents.join(',');
-                    if (actions[0]){
-                        $.each(actions, function (key, val) {
-                            let action = JSON.parse(decodeURIComponent(val));
-                            action_ids.push(action.ID);
-                            action_names.push(action.name);
-                            if (key === actions.length-1){
-                                if (action_ids[0])
-                                    stage.actions = action_ids.join(',');
-                                if (action_names[0])
-                                    stage.action_names = action_names;
-                                let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                                stage.stageID = stage_template_json.ID || stage_template_json.stageID;
-                                stage.stage_name = stage_template_json.name;
-                                createTodo(stage);
-                                countTodos();
-                            }
-                        });
-                    }
+                    addStage();
                 }else{
                     swal('Kindly fill all required fields!');
                 }
+            });
+
+            function addStage(id) {
+                let stage = {},
+                    action_ids = [],
+                    action_names = [],
+                    stage_template = $('#stage-template').val(),
+                    documents = $('.document-upload-text').map(function() {
+                        if (this.value) return this.value;
+                    }).get(),
+                    actions = $('.local-stages-new').map(function() {
+                        if (this.value && (this.value !== '-- Choose Action --'))
+                            return this.value;
+                    }).get();
+                stage.name = $('#stage-name').val();
+                stage.description = $('#stage-description').val();
+                stage.approverID = $('#process-rights').val();
+                if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || !actions || !actions[0])
+                    return swal('Kindly fill all required fields!');
+                stage.approverID = stage.approverID.join(',');
+                if (documents && documents[0])
+                    stage.document = documents.join(',');
+                if (actions[0]){
+                    $.each(actions, function (key, val) {
+                        let action = JSON.parse(decodeURIComponent(val));
+                        action_ids.push(action.ID);
+                        action_names.push(action.name);
+                        if (key === actions.length-1){
+                            if (action_ids[0])
+                                stage.actions = action_ids.join(',');
+                            if (action_names[0])
+                                stage.action_names = action_names;
+                            let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
+                            stage.stageID = stage_template_json.ID || stage_template_json.stageID;
+                            stage.stage_name = stage_template_json.name;
+                            createTodo(stage,id);
+                            countTodos();
+                        }
+                    });
+                }
+            }
+
+            //load edit task
+            $('.todolist').on('click','.edit-item',function(){
+                $('#edit-stage').show();
+                $('#add-stage').hide();
+                let stage = JSON.parse(decodeURIComponent(this.id));
+                $('#stage-name').val(stage.name);
+                $('#stage-template').val($('#stage-template').find('option').filter(function () { return $(this).html() === stage.stage_name; }).val());
+                $('#process-rights').val(stage.approverID.split(','));
+                refreshMultiselect();
+                if (stage.actions) {
+                    $('#stage-action-div').html('');
+                    let count = 0,
+                        actions_array = stage.actions.split(',');
+                    actions_array.forEach(function (action_id) {
+                        let action = ($.grep(JSON.parse(localStorage.stages), function (e) {return e.ID === parseInt(action_id);}))[0];
+                        count++;
+                        $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                            '<select id="action-name-'+count+'" class="form-control local-stages-new"><option selected="selected" value="-- Choose Action --">-- Choose Action --</option>' +
+                            '</select><i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeAction(this)"></i></div>');
+                        getLocalStages();
+                        $('#action-name-'+count).val($('#action-name-'+count).find('option').filter(function () { return $(this).html() === action.name; }).val());
+                    });
+                }
+                if (stage.document) {
+                    $('#document-upload-div').html('');
+                    let count = 0,
+                        documents_array = stage.document.split(',');
+                    documents_array.forEach(function (document) {
+                        count++;
+                        $("#document-upload-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                            '    <div class="input-group-addon"><i class="fa fa-upload"></i></div>\n' +
+                            '    <input id="document-name-'+count+'" type="text" class="form-control document-upload-text" placeholder="Document Upload Caption" max="50">\n' +
+                            '<i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeDocumentAction(this)"></i></div>');
+                        $('#document-name-'+count).val(document);
+                    });
+                }
+                localStorage.list_index = $(this).parent().index();
+            });
+
+            //edit todo
+            $('#edit-stage').click(function (e) {
+                e.preventDefault;
+                $sortable.find('li:eq('+localStorage.list_index+')').remove();
+                addStage(localStorage.list_index);
             });
 
             //delete done task from "already done"
@@ -178,24 +233,42 @@
             }
 
             //create task
-            function createTodo(stage){
+            window.createTodo = function (stage,id){
                 let markup = '',
                     count = parseInt($sortable.find("li").length);
                 if (stage.action_names){
-                    markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                        '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
                 } else {
-                    markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                        '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
                 }
-                $sortable.find('li:eq('+(count-2)+')').before(markup);
+                if (id){
+                    $sortable.find('li:eq('+id+')').before(markup);
+                } else {
+                    $sortable.find('li:eq('+(count-2)+')').before(markup);
+                }
                 $('#document-upload').prop('checked',false);
                 $('#document-upload-div').html('');
                 $('#stage-description').val('');
                 $('#stage-action-div').html('');
-                $('#stage-template').val('');
+                $('#stage-template').val('-- Choose Action --');
                 $('#stage-name').val('');
                 resetMultiselect();
                 getLocalStages();
-            }
+            };
+
+            $('#addTransition').on('click',function(){
+                $('#edit-stage').hide();
+                $('#add-stage').show();
+                $('#document-upload').prop('checked',false);
+                $('#document-upload-div').html('');
+                $('#stage-description').val('');
+                $('#stage-action-div').html('');
+                $('#stage-template').val('-- Choose Action --');
+                $('#stage-name').val('');
+                resetMultiselect();
+            });
 
             //remove done task from list
             function removeItem(element){
@@ -432,31 +505,12 @@
                                 $(element).parent().remove();
                             }
                         </script>
-                        <!--<div class="form-group">-->
-                            <!--<label class="form-control-label">Triggers</label>-->
-                            <!--<div class="input-group">-->
-                                <!--<label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<script type="text/javascript">-->
-                            <!--$('#document-upload').change(function () {-->
-                                <!--$('#document-upload-div').toggle();-->
-                            <!--});-->
-                            <!--let status = false;-->
-                            <!--$('#trigger-1').change(function () {-->
-                                <!--status = !status;-->
-                                <!--if (status){-->
-                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "Denied"; }).val());-->
-                                <!--} else {-->
-                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "&#45;&#45; Choose Action &#45;&#45;"; }).val())-->
-                                <!--}-->
-                            <!--});-->
-                        <!--</script>-->
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button id="add-stage" type="button" class="btn btn-primary" data-dismiss="modal">Add Transition</button>
+                    <button id="edit-stage" type="button" class="btn btn-primary" data-dismiss="modal" style="display: none;">Edit Transition</button>
                 </div>
             </div>
         </div>
@@ -484,8 +538,6 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            loadWorkflowStages();
-            loadProcesses();
             getStages();
             getRoles();
         });
@@ -500,6 +552,10 @@
 
         function resetMultiselect() {
             $('#process-rights').multiselect("clearSelection");
+        }
+
+        function refreshMultiselect() {
+            $('#process-rights').multiselect("refresh");
         }
 
         function check(){
@@ -562,37 +618,6 @@
             }
         }
 
-        let results;
-
-        function loadProcesses(){
-            $.ajax({
-                'url': '/workflows',
-                'type': 'get',
-                'data': {},
-                'success': function (data) {
-                    let processes = data.response;
-                    results = processes;
-                },
-                'error': function (err) {
-                    console.log('Error');
-                }
-            });
-        }
-
-        function loadWorkflowStages() {
-            $.ajax({
-                'url': '/workflow-stages',
-                'type': 'get',
-                'success': function (data) {
-                    localStorage.setItem('workflow_stages',JSON.stringify(data.response));
-                },
-                'error': function (err) {
-                    console.log('Error');
-                    swal('No internet connection','','error');
-                }
-            });
-        }
-
         function getLocalStages(){
             let $local_stages = $(".local-stages-new"),
                 count = $("#sortable").find("li").length;
@@ -628,8 +653,9 @@
                 type: "GET",
                 url: "/stages",
                 success: function (response) {
-                    localStorage.setItem('stages',JSON.stringify(response));
-                    let local_stages = [];
+                    let local_stages = [],
+                        stages = JSON.parse(JSON.stringify(response));
+                    localStorage.setItem('stages',JSON.stringify(stages));
                     $.each(response, function (key, val) {
                         if (val.type === 1){
                             val.approverID = 1;
@@ -672,50 +698,6 @@
                 }
             });
         }
-
-        function addNewStage() {
-            let $name = $('#new-stage-name');
-            if (!$name)
-                return swal('Kindly input a stage name');
-            $.ajax({
-                'url': '/stages',
-                'type': 'post',
-                'data': {name:$name.val()},
-                'success': function (data) {
-                    $name.val('');
-                    swal('Stage saved successfully');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    $name.val('');
-                    swal('Oops! An error occurred while saving stage');
-                }
-            });
-        }
-
-        function formatDate(timestamp) {
-            timestamp = parseInt(timestamp);
-            let date =  new Date(timestamp);
-            return date.toLocaleString();
-        }
-
-        function openModal(id) {
-            let stages = localStorage.getItem("workflow_stages");
-            if (stages){
-                let data = $.grep(JSON.parse(stages), function(e){ return e.workflowID === id; });
-                $("#stages-table").dataTable().fnClearTable();
-                $.each(data, function(k, v){
-                    let table = [
-                        v.ID,
-                        v.name,
-                        v.description,
-                        v.stage_name
-                    ];
-                    $('#stages-table').dataTable().fnAddData(table);
-                    $('#stages-table').dataTable().fnSort([[0,'asc']]);
-                });
-            }
-        }
         
         function addProcess() {
             let stages,
@@ -733,27 +715,21 @@
             if (($.grep(data.stages,function(e){return e.stage_name==='Application Start'})).length > 1)
                 data.stages.shift();
 
-            $('wait').show();
+            $('#wait').show();
             $.ajax({
                 type: 'POST',
                 url: '/workflows',
                 data: data,
                 success: function (data) {
-                    localStorage.setItem('workflow_stages',JSON.stringify(data.response));
                     localStorage.removeItem('local_stages');
-                    let $sortable = $("#sortable"),
-                        processes = data.response,
-                        count = $sortable.find("li").length;
-                    results = processes;
-                    $('.count-todos').html(0);
                     $('#process-name').val("");
-                    $sortable.html("");
-                    $('wait').hide();
+                    $('#wait').hide();
                     swal(data.message);
+                    window.location.href = "/all-workflow";
                 },
                 'error': function (err) {
                     console.log('Error');
-                    $('wait').hide();
+                    $('#wait').hide();
                     swal('No internet connection','','error');
                 }
             });
