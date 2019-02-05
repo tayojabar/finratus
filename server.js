@@ -309,8 +309,8 @@ app.get('/target-dashboard', function(req, res) {
     res.sendFile('target-dashboard.html', {root: __dirname + '/views'});
 });
 
-app.get('/activity-feed', function(req, res) {
-    res.sendFile('activity-feed.html', {root: __dirname + '/views'});
+app.get('/view-activity', function(req, res) {
+    res.sendFile('view-activity.html', {root: __dirname + '/views'});
 });
 
 // catch 404 and forward to error handler
