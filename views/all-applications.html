@@ -649,7 +649,6 @@
 
         $("#filter").submit(function (e) {
             e.preventDefault();
-
             let id = '';
             if (!(applicationsList && applicationsList['read_only'] === '1'))
                 id = (JSON.parse(localStorage.user_obj)).ID;

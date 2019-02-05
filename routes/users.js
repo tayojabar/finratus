@@ -978,10 +978,10 @@ users.get('/clients-list', function(req, res, next) {
 users.get('/clients-list-full', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
-        query = 'select * from clients ';
+        query = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients ';
     if (start && end){
-        start = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'"
-        end = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'"
+        start = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'";
+        end = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'";
         query = query.concat('where TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')')
     }
     db.query(query, function (error, results, fields) {
@@ -997,9 +997,9 @@ users.get('/clients-list-full/:officerID', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
         id = req.params.officerID,
-        query = 'select * from clients ',
-        query2 = 'select * from clients where loan_officer = '+id,
-        query3 = 'select * from clients where (select supervisor from users where users.id = clients.loan_officer) = '+id;
+        query = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients ',
+        query2 = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients where loan_officer = '+id,
+        query3 = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients where (select supervisor from users where users.id = clients.loan_officer) = '+id;
     if (id)
         query = query2;
     if (start && end){
@@ -1451,9 +1451,45 @@ users.post('/sendmail', function(req, res) {
 
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        type = req.query.type;
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
         'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w WHERE u.ID=a.userID AND a.status <> 0 ' +
-        'AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ORDER BY a.ID desc';
+        'AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ';
+    if (type){
+        switch (type){
+            case '1': {
+                //do nothing
+                break;
+            }
+            case '2': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage<>2  AND w.current_stage<>3 ");
+                break;
+            }
+            case '3': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=2 ");
+                break;
+            }
+            case '4': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=3 ");
+                break;
+            }
+            case '5': {
+                query = query.concat("AND a.status = 2  AND a.close_status = 0 ");
+                break;
+            }
+            case '6': {
+                query = query.concat("AND a.close_status <> 0 ");
+                break;
+            }
+        }
+    }
+    if (start && end)
+        query = query.concat("AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ");
+    query = query.concat("ORDER BY a.ID desc");
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
