@@ -3022,7 +3022,7 @@ users.post('/new-activity', function(req, res, next) {
         postData = req.body,
         query =  'INSERT INTO activities Set ?';
     postData.status = 1;
-    postData.date_created = Date.now();
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     db.getConnection(function(err, connection) {
         if (err) throw err;
 
@@ -3074,18 +3074,80 @@ users.get('/teams', function(req, res, next) {
 users.get('/team-activities', function(req, res, next) {
     let current_user = req.query.user;
     let word = 'team'
-    let query = 'select *, (select name from teams where teams.Id = team) as team_name, (select fullname from users where users.id = for_) as user ' +
+    let query = 'select *, (select activity_name from activity_types where activity_types.id = activity_type) as activity, (select name from teams where teams.Id = team) as team_name, (select fullname from users where users.id = for_) as user, (select fullname from clients where clients.id = client) as client_name ' +
                 'from activities where ' +
                 'category = ? and team in ((select teamID from team_members where memberID = ?))';
                 // 'for_ = ?  ';
         // '(select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
         //         'and for_ <> ?';
+    let query2 = 'select *, ' +
+        '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+        '(select fullname from clients where clients.id = client) as client_name ' +
+        'from activities where ' +
+        'team = 0 and for_ = ?';
+    let load = {}
     db.query(query, [word, current_user], function (error, results, fields) {
+        load.team_activities = results;
+        db.query(query2, [current_user], function (error, results, fields) {
+            load.personal_activities = results;
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify(load));
+            }
+        });
+    });
+});
+
+/* Add Comment */
+users.post('/save-comment', function(req, res, next) {
+    let data = [],
+        postData = req.body,
+        query =  'INSERT INTO activity_comments Set ?';
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query,postData, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify({"status": 200, "error": null, "response": "Comment Posted"}));
+            }
+        });
+    });
+});
+
+/* Activity Comments */
+users.get('/activity-comments', function(req, res, next) {
+    let activity = req.query.activity;
+    let query = 'select *, (select fullname from users where users.ID = commenter) as maker from activity_comments where activityID = ?'
+    db.query(query, [activity], function (error, results, fields) {
         if(error){
-            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            res.send({"status": 500, "error": error, "response": null});
         } else {
-            res.send(JSON.stringify(results));
+            res.send(results);
         }
+    });
+});
+
+/* Activity Details */
+users.get('/activity-details', function(req, res, next) {
+    var load = {}
+    let activity = req.query.id;
+    let query = 'select *, (select activity_name from activity_types where activity_types.id = activity_type) as activity, (select name from teams where teams.Id = team) as team_name, (select fullname from users where users.id = for_) as user, (select fullname from clients where clients.id = client) as client_name ' +
+                'from activities where activities.ID = ?'
+    let query2 = 'select *, (select fullname from users where users.ID = commenter) as maker from activity_comments where activityID = ?'
+    db.query(query, [activity], function (error, results, fields) {
+        load.activity_details = results
+        db.query(query2, [activity], function (error, results, fields) {
+            load.activity_comments = results
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                res.send(load);
+            }
+        });
     });
 });
 
