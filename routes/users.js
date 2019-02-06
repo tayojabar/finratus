@@ -693,12 +693,14 @@ users.get('/committals/team/interest/:id', function(req, res, next) {
         query = 'SELECT count(*) count, sum(s.interest_amount) total FROM schedule_history AS s, (SELECT ID application_id FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
         'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0',
         query2 = 'SELECT *, s.interest_amount amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
-            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = 1 AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
             'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
+    console.log(query)
+    console.log(query2)
     db.query(query, [req.params.id], function (error, aggregate, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
