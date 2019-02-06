@@ -212,7 +212,6 @@ users.post('/new-client', function(req, res, next) {
             }
             connection.query(query,postData, function (error, re, fields) {
                 if(error){
-                    console.log(error);
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                 } else {
                     res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
@@ -699,8 +698,6 @@ users.get('/committals/team/interest/:id', function(req, res, next) {
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
-    console.log(query)
-    console.log(query2)
     db.query(query, [req.params.id], function (error, aggregate, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -2658,7 +2655,6 @@ users.get('/report-cards', function(req, res, next) {
             });
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Disbursements  */
@@ -2740,7 +2736,6 @@ users.get('/disbursements/filter', function(req, res, next) {
             });
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Interest Received  */
@@ -2904,7 +2899,6 @@ users.get('/payments', function(req, res, next) {
             }
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Loans by Branches */
@@ -2981,7 +2975,6 @@ users.get('/projected-interests', function(req, res, next) {
             }
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Aggregate Projected Interests */
@@ -3008,7 +3001,6 @@ users.get('/agg-projected-interests', function(req, res, next) {
             res.send({"status": 200, "error": null, "response": results, "message": "Success!"});
         }
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /////// Activity
@@ -3075,7 +3067,6 @@ users.get('/activities', function(req, res, next) {
         query = query.concat('  and team = ?')
     }
     db.query(query, [current_user, team], function (error, results, fields) {
-        console.log(query)
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
