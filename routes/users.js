@@ -3067,11 +3067,15 @@ users.post('/new-activity', function(req, res, next) {
 users.get('/activities', function(req, res, next) {
     let current_user = req.query.user;
     let team = req.query.team;
-    let query = 'SELECT *, (select fullname from clients c where c.ID = client) as clients, (select activity_name from activity_types at where at.id = activity_type) as activity from activities where for_ = ? and status = 1';
+    let query = 'SELECT *, ' +
+        '(select fullname from clients c where c.ID = client) as clients, ' +
+        '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
+        'from activities where for_ = ? and status = 1';
     if (team){
         query = query.concat('  and team = ?')
     }
     db.query(query, [current_user, team], function (error, results, fields) {
+        console.log(query)
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
@@ -3101,9 +3105,13 @@ users.get('/teams', function(req, res, next) {
 users.get('/team-activities', function(req, res, next) {
     let current_user = req.query.user;
     let word = 'team'
-    let query = 'select *, (select activity_name from activity_types where activity_types.id = activity_type) as activity, (select name from teams where teams.Id = team) as team_name, (select fullname from users where users.id = for_) as user, (select fullname from clients where clients.id = client) as client_name ' +
+    let query = 'select *, ' +
+                '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+                '(select name from teams where teams.Id = team) as team_name, ' +
+                '(select fullname from users where users.id = for_) as user, ' +
+                '(select fullname from clients where clients.id = client) as client_name ' +
                 'from activities where ' +
-                'category = ? and team in ((select teamID from team_members where memberID = ?))';
+                'category = ? and team in ((select teamID from team_members where memberID = ?)) order by id desc';
                 // 'for_ = ?  ';
         // '(select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
         //         'and for_ <> ?';
@@ -3111,7 +3119,7 @@ users.get('/team-activities', function(req, res, next) {
         '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
         '(select fullname from clients where clients.id = client) as client_name ' +
         'from activities where ' +
-        'team = 0 and for_ = ?';
+        'team = 0 and for_ = ? order by id desc';
     let load = {}
     db.query(query, [word, current_user], function (error, results, fields) {
         load.team_activities = results;
@@ -3175,6 +3183,25 @@ users.get('/activity-details', function(req, res, next) {
                 res.send(load);
             }
         });
+    });
+});
+
+/* Client Activities */
+users.get('/client-activities', function(req, res, next) {
+    var load = {}
+    let client = req.query.id;
+    let query = 'select *, ' +
+        '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select fullname from clients where clients.id = client) as client_name ' +
+        'from activities where client = ?'
+    let query2 = 'select *, (select fullname from users where users.ID = commenter) as maker from activity_comments where activityID = ?'
+    db.query(query, [client], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send(results);
+        }
     });
 });
 

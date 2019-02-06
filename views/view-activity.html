@@ -522,10 +522,12 @@
                     return $comments.append('<h2 style="margin: auto;">No comments available yet!</h2>');
                 comments.forEach(function (comment) {
                     $comments.append('<div class="row">\n' +
-                        '    <div class="col-sm-2">\n' +
-                        '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+                        '    <div class="col-sm-1">\n' +
+                        '        <div class="thumbnail" style="border-radius: 50%; width: 80px; height: 80px; background: #99abb4; text-align: center">' +
+                        '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(comment.maker)+'</h1></div>'+
+                        '        </div>\n' +
                         '    </div>\n' +
-                        '    <div class="col-sm-10">\n' +
+                        '    <div class="col-sm-11">\n' +
                         '        <div class="panel panel-default">\n' +
                         '            <div class="panel-heading"><strong>'+comment.maker+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
                         '            <div class="panel-body">'+comment.comment+'</div>\n' +
@@ -580,6 +582,18 @@
         n = n + '';
         return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
     }
+
+    var getInitials = function (name) {
+        var parts = name.split(' ')
+        var initials = ''
+        for (var i = 0; i < parts.length; i++) {
+            if (parts[i].length > 0 && parts[i] !== '') {
+                initials += parts[i][0]
+            }
+        }
+        return initials
+    }
+
 </script>
 </body>
 </html>

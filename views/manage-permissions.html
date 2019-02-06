@@ -234,7 +234,7 @@
                                 <div class="card-body">
                                     <div class="widget-main padding-8">
                                         <div class="form-group">
-                                            <strong><label class="form-control-label">Role Name</label></strong>
+                                            <strong><label class="form-control-label">Role Name</label></strong><strong style="color:red"> *</strong>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                                 <input id="role" type="text" class="form-control" required="required">
@@ -243,6 +243,28 @@
                                         </div>
                                         <div class="form-group">
                                             <span id="submit-error" style="padding-left:50px; text-align: center"></span><button type="button" class="btn btn-primary pull-right write" onclick="validate()"><i class="fa fa-save"></i> Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="widget-title lighter smaller">New Activity Type</h4>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="widget-main padding-8">
+                                        <div class="form-group">
+                                            <strong><label class=" form-control-label">Activity Name</label></strong><strong style="color:red"> *</strong><span id="activity-error" style="padding-left:50px; text-align: center"></span>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                                <input id="new-role" type="text" class="form-control" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <button id="submit-activity" type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>
                                         </div>
                                     </div>
                                 </div>
@@ -336,6 +358,44 @@
     $(document).ajaxComplete(function(){
         $("#wait").css("display", "none");
     });
+
+    $("#submit-activity").click(function () {
+        validateActivity();
+    });
+
+    function validateActivity(){
+        if ($('#new-role').val() == "" || $('#new-role').val() == null){
+            swal('Empty field!', 'Enter a Valid Activity Name.', 'warning');
+        }else{
+            saveNewActivityType();
+        }
+    }
+
+    function saveNewActivityType(){
+        var obj = {};
+        obj.role = $('#new-role').val();
+        var test={};
+        $.ajax({
+            'url': '/user/new-activity-type/',
+            'type': 'post',
+            'data': obj,
+            'success': function (data) {
+                $.each(JSON.parse(data), function (key, val) {
+                    test[key] = val;
+                });
+                if(test.message){
+                    $('#role').val("");
+                    swal("Activity type already exists!","","error");
+                }
+                else if(test.status == 500){
+                    $('#role').val("");
+                    swal("Please recheck entered values!","","error");
+                }
+                else
+                {$('#role').val(""); swal("New Activity Type Registered!","","success"); getActivityTypes();}
+            }
+        });
+    }
 
     var myTable = $('#role-table')
         .DataTable({
@@ -737,10 +797,11 @@
 
     function validate(){
         if ($('#role').val() == "" || $('#role').val() == null){
-            $('#role-error').html("Enter a valid role name");
-            $('#role-error').css("color", "red");
-            $('#submit-error').css("color", "red");
-            $('#submit-error').html("Unable to submit. Check information entered.");
+            swal('Empty field!', 'Please type in a valid role', 'warning');
+//            $('#role-error').html("Enter a valid role name");
+//            $('#role-error').css("color", "red");
+//            $('#submit-error').css("color", "red");
+//            $('#submit-error').html("Unable to submit. Check information entered.");
         }else{
             saveNewRole();
         }

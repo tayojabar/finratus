@@ -243,6 +243,46 @@
 
                         </div>
                         <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="widget-title lighter smaller"><strong>Activities</strong> <span id="no_of_activities"></span></h4>
+                                </div>
+
+                                <div id="feed" class="card-body">
+                                    <!--<div  class="card-body" style="border-radius: 0px"></div>-->
+                                </div>
+                            </div>
+
+                            <!--<div class="col-sm-5">-->
+
+                            <!--<div class="card">-->
+                            <!--<div class="card-header">-->
+                            <!--<h4 class="widget-title lighter smaller">Vehicles Owned <span id="selectedName"></span></h4>-->
+                            <!--</div>-->
+
+                            <!--<div class="card-body">-->
+                            <!--<div>-->
+                            <!--<table id="vehicles-table" class="table table-striped table-bordered">-->
+                            <!--<thead>-->
+                            <!--<tr>-->
+                            <!--<th>Number Plate</th>-->
+                            <!--<th>Status</th>-->
+                            <!--&lt;!&ndash;<th>View</th>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<th>Write</th>&ndash;&gt;-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+
+                            <!--<tbody id="roleassignmentbody">-->
+                            <!--</tbody>-->
+
+                            <!--</table>-->
+                            <!--</div>-->
+                            <!--</div>-->
+                            <!--</div>-->
+                            <!--</div>-->
+
+                        </div>
+                        <div class="col-sm-12">
                             <div class="col-sm-4">
                                 <div class="card">
                                     <div class="card-header"><strong>Personal Information</strong></div>
@@ -341,7 +381,7 @@
 
 <script>
     jQuery(document).ready(function() {
-        loadApplications(); loadInfo();
+        loadApplications(); loadInfo(); loadActivities();
     });
 
     var myTable = $('#vehicles-table')
@@ -472,10 +512,8 @@
             'type': 'get',
             'data': {},
             'success': function (data) {
-                //console.log(data);
                 $('#user-form').slideDown();
                 $('#user-table').slideToggle();
-                //console.log(data[0]);
                 var fullname = data[0].fullname;
                 $('#first_name').val(fullname.split(' ')[0]);
                 $('#middle_name').val(fullname.split(' ')[1]);
@@ -570,7 +608,6 @@
         pbody.html(tr);
 
         // Employment Info Card
-        console.log(obj.job);
         if (obj.job)
             te += "<tr><td><strong>Job Description</strong></td><td>"+obj.job+"</td></tr>";
         if (obj.employer_name)
@@ -610,6 +647,47 @@
         });
     }
 
+    function loadActivities(){
+        $.ajax({
+            'url': 'user/client-activities?id='+application_id,
+            'type': 'get',
+            'data': {},
+            'success': function (data) {
+                displayActivities(data);
+            },
+            'error': function (err) {
+                //alert ('Error');
+                console.log('Error');
+            }
+        });
+    }
+
+    function displayActivities(data) {
+        let $feed = $('#feed');
+        $feed.html('');
+        $.each(data, function(k, v){
+            $feed.append('<div id="feed'+v.ID+'" class="row">\n' +
+//                '    <div class="col-sm-1">\n' +
+//                '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9fcdff; text-align: center">' +
+//                '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(v.user)+'</h1></div>'+
+//                '        </div>\n' +
+//                '    </div>\n' +
+                '    <div class="col-sm-12" style="padding-left: 30px">\n' +
+                '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 4px">\n' +
+                '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+'</span></div>' +
+//            '               <button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
+                '            <div class="panel-body">'+v.activity+' '+
+                '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
+                '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
+                '            </div>\n' +
+                '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
+//                '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><input type="text" id="act'+v.ID+'" maxlength="250" class="form-control"/></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+                '        </div>\n' +
+                '    </div>\n' +
+                '</div><br/>');
+        });
+    }
+
     function loadImages(foldername, name){
         var test = {};
         $.ajax({
@@ -641,7 +719,6 @@
     }
 
     function populateLoanTable(dets){
-        console.log(dets);
         if (dets.length === 0){
             $("#loan-table").dataTable().fnClearTable();
         }else{
@@ -661,7 +738,6 @@
                 else{
                     stat = '<span class="label label-warning" style="background-color:orange; color:white; padding: 5px; border-radius: 5px">Closed</span>';
                 }
-//                    console.log(v.Inspection_Status);
                 let view = ' <button type="button" class="btn btn-outline-primary" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Application</button>';
                 $("#loan-table").dataTable().fnAddData([formatter.format(v.loan_amount), (v.date_created), stat, view ]);
             });
