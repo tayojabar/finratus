@@ -67,7 +67,7 @@
         }
     </style>
 </head>
-<div>
+
 <!-- Left Panel -->
 <aside id="left-panel" class="left-panel">
     <nav class="navbar navbar-expand-sm navbar-default">
@@ -86,6 +86,8 @@
         </div><!-- /.navbar-collapse -->
     </nav>
 </aside><!-- /#left-panel -->
+<script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
 <!-- Left Panel -->
 
@@ -152,16 +154,15 @@
     <div class="content mt-3">
         <div id="container" class="animated fadeIn">
             <div id="all-list" class="row card">
-                <div id="cover-new" class="col-sm-12" style="padding: 10px">
+                <div id="cover-new" class="col-sm-12" style="padding: 10px; padding-bottom: 5px">
                     <div class="input-group">
-                        <textarea contenteditable="true" style="border-radius: 10px" type="text" id="temp-desc" class="form-control fields" rows="3" placeholder="New Activity" data-emojiable="true" data-emoji-input="unicode"></textarea>
-                    </div><br/>
-                    <div id="form" class="row col-sm-12" style="display: none">
+                        <textarea contenteditable="true" style="border-radius: 10px" type="text" id="temp-desc" class="form-control fields" rows="1" placeholder="New Activity" data-emojiable="true" data-emoji-input="unicode"></textarea>
+                    </div>
+                    <div id="form" class="row col-sm-12" style="display: none; padding-top: 5px">
                         <div id="team-div" class="col-sm-2 form-group">
                             <div class="input-group">
-                                <!--<div class="input-group-addon"><i class="fa fa-users"></i></div>-->
+                                <div class="input-group-addon"><i class="fa fa-users"></i></div>
                                 <select id="team-list" class="form-control" required="required">
-                                    <option id="-1">Team</option>
                                     <option id="0">Personal</option>
                                 </select>
                             </div>
@@ -176,7 +177,7 @@
                         </div>
                         <div class="col-sm-2 form-group">
                             <div class="input-group">
-                                <!--<div class="input-group-addon"><i class="fa fa-filter"></i></div>-->
+                                <div class="input-group-addon"><i class="fa fa-filter"></i></div>
                                 <select id="activity-type" class="form-control fields" required="required">
                                     <option>Type</option>
                                 </select>
@@ -185,13 +186,13 @@
                         </div>
                         <div class="col-sm-2 form-group">
                             <div class="input-group">
-                                <!--<div class="input-group-addon"><i class="fa fa-calendar"></i></div>-->
+                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                 <input type="date" id="activity-date" class="form-control fields" required="required"/>
                             </div>
                         </div>
                         <div class="col-sm-2 form-group">
                             <div class="input-group">
-                                <!--<div class="input-group-addon"><i class="fa fa-history"></i></div>-->
+                                <div class="input-group-addon"><i class="fa fa-history"></i></div>
                                 <input type="number" id="activity-duration" class="form-control fields col-sm-4" placeholder="Duration" required="required" min=0 >
                                 &nbsp;&nbsp;
                                 <select id="time-unit" class="form-control fields col-sm-8">
@@ -205,17 +206,17 @@
                         <div class="col-sm-2 form-group">
                             <!--<label><strong>Attach Document</strong></label>-->
                             <div class="input-group">
-                                <!--<div class="input-group-addon"><i class="fa fa-file-pdf-o"></i></div>-->
+                                <div class="input-group-addon"><i class="fa fa-file-pdf-o"></i></div>
                                 <input class="form-control" type="file"/>
                             </div>
                         </div>
                     </div>
-                </div><br/>
+                </div>
                 <div style="padding-top: 5px" class="pull-right col-sm-2">
                     <input id="continue" style="display: none" type="button" class="btn btn-default write" data-toggle="modal" data-target="#myModal1" value="Post Activity"/>
                 </div>
                 <hr/>
-                <div id="feed" class="card-body" style="border-radius: 10px"></div>
+                <div id="feed" class="card-body" style="border-radius: 0px"></div>
 
             </div>
         </div><!-- .animated -->
@@ -294,7 +295,7 @@
             checkForEdit();
             getClients();
             getTeams();
-            loadActivities();
+//            loadActivities();
             getActivityTypes();
             check();
             loadMenus();
@@ -402,55 +403,59 @@
         }
 
         function checkForEdit(){
+            let url = '/user/team-activities?user='+JSON.parse(localStorage.user_obj).ID;
             const urlParams = new URLSearchParams(window.location.search);
-            const user_id = urlParams.get('id');
-            const teamid = urlParams.get('team');
-
-            if (user_id){
-                $('#user-name').html(': '+user_id);
-                $('#new').hide();
-                $('#all-list').show();
-                $('#default-table').hide();
-                $('#filtered-table').show();
-                $.ajax({
-                    'url': '/user/activities?user='+user_id+"&&team="+teamid,
-                    'type': 'get',
-                    'success': function (data) {
-                        let activities = JSON.parse(data);
-//                        $("#user-activities").DataTable().clear();
-                        let processed_data = [];
-                        $.each(activities, function(k, v){
-                            processed_data.push(v);
-                        });
-//                        $('#user-activities').DataTable({
-//                            dom: 'Blfrtip',
-//                            bDestroy: true,
-//                            data: processed_data,
-//                            buttons: [
-//                                'copy', 'csv', 'excel', 'pdf', 'print'
-//                            ],
-//                            columns: [
-//                                { data: "activity_name" },
-//                                { data: "activity_description" },
-//                                { data: "activity_date" },
-//                                { data: "activity_duration" },
-//                                { data: "clients" },
-//                                { data: "client_email" },
-//                                { data: "client_phone" }
-//                            ]
-//                        });
-                    },
-                    'error': function (err) {
-                        swal('Oops! An error occurred while retrieving details.');
-                    }
-                });
+            const officer = urlParams.get('id');
+            const team = urlParams.get('team');
+            if (officer && team){
+                url = '/user/activities?user='+officer+'&&team='+team;
+            }else{
+                return loadActivities();
             }
+            $.ajax({
+                'url': url,
+                'type': 'get',
+                'data': {},
+                'success': function (data) {
+                    var activities = JSON.parse(data);
+                    results = activities;
+                    loadUserActivities(activities);
+                },
+                'error': function (err) {
+                    swal('Network Error!', 'No internet connection', 'error');
+                }
+            });
+        }
+
+        function loadUserActivities(data) {
+            let $feed = $('#feed');
+            $feed.html('');
+            $.each(data, function(k, v){
+                $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
+//                    '    <div class="col-sm-1">\n' +
+//                    '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9aa2ab; text-align: center">' +
+//                    '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(localStorage.getItem("name"))+'</h1></div>'+
+//                    '        </div>\n' +
+//                    '    </div>\n' +
+                    '    <div class="col-sm-12" style="padding-left: 30px">\n' +
+                    '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
+                    '            <div class="panel-heading"><i class="fa fa-user"></i> Activity by <span class="text-muted">'+localStorage.getItem("name")+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
+                    '            <div class="panel-body">'+v.activity+' '+
+                    '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
+                    '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
+                    '            </div>\n' +
+                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted">created on '+v.date_created+'</span></div>\n' +
+                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><input type="text" id="act'+v.ID+'" maxlength="250" class="form-control"/></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+                    '        </div>\n' +
+                    '    </div>\n' +
+                    '</div><br/>');
+            });
         }
 
         function loadActivities(){
-            let user = localStorage.getItem('name');
+            let url = '/user/team-activities?user='+JSON.parse(localStorage.user_obj).ID;
             $.ajax({
-                'url': '/user/team-activities?user='+JSON.parse(localStorage.user_obj).ID,
+                'url': url,
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
@@ -459,8 +464,7 @@
                     populateDataTable(activities);
                 },
                 'error': function (err) {
-                    //alert ('Error');
-                    console.log('Error');
+                    swal('Network Error!', 'No internet connection', 'error');
                 }
             });
 
@@ -470,14 +474,14 @@
             let $feed = $('#feed');
             $feed.html('');
             $.each(data.personal_activities, function(k, v){
-                $feed.append('<div id="feed'+v.ID+'" class="row">\n' +
+                $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
                     '    <div class="col-sm-1">\n' +
                     '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9aa2ab; text-align: center">' +
                     '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(localStorage.getItem("name"))+'</h1></div>'+
                     '        </div>\n' +
                     '    </div>\n' +
                     '    <div class="col-sm-11" style="padding-left: 30px">\n' +
-                    '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 4px">\n' +
+                    '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
                     '            <div class="panel-heading"><i class="fa fa-user"></i> Activity by <span class="text-muted">'+localStorage.getItem("name")+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
                     '            <div class="panel-body">'+v.activity+' '+
                     '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
@@ -501,7 +505,7 @@
                     '    </div>\n' +
                     '    <div class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 4px">\n' +
-                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
+                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+'  for '+v.team_name+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
                     '            <div class="panel-body">'+v.activity+' '+
                     '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
                     '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
@@ -629,7 +633,7 @@
                 url: "/user/teams?user="+JSON.parse(localStorage.user_obj).ID,
                 success: function (response) {
                     var role = $("[id=team-list]");
-                    role.append('<option id="0"> Team  </option>');
+//                    role.append('<option id="0"> Team  </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         role.append('<option class="deptSp" value = "' + val.teamID + '" id="' + val.teamID + '">' + val.team_name + '</option>');
                     });
@@ -705,7 +709,7 @@
             if (valid){
                 createActivity();
             }else{
-                swal({"icon": "warning", "text": "Please Fill All Mandatory Fields!"});
+                swal({"icon": "warning", "text": "Please Fill All Mandatory Fields.", "title": "Empty field(s)!"});
             }
         }
 
@@ -720,7 +724,7 @@
             obj.client = $('#client-list').find('option:selected').attr('id');
             obj.activity_type = $('#activity-type').find('option:selected').attr('id');
             obj.for_ = JSON.parse(localStorage.user_obj).ID;
-            obj.category = $('#activity-cat').find('option:selected').attr('id');
+            obj.category = ($('#team-list').find('option:selected').attr('id') === '0') ? 'personal' : 'team';
             obj.team = $('#team-list').find('option:selected').attr('id');
             var test={};
             $.ajax({

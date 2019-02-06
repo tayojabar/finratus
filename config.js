@@ -6,6 +6,7 @@ config.test = {
     user     : 'loan35admin',
     password : 'Loan35Pass@word2018',
     database : 'test',
+    charset : 'utf8mb4',
     insecureAuth: true
 };
 
@@ -15,6 +16,7 @@ config.staging = {
     user     : 'loan35admin',
     password : 'Loan35Pass@word2018',
     database : 'staging',
+    charset : 'utf8mb4',
     insecureAuth: true
 };
 
@@ -24,6 +26,7 @@ config.live = {
     user     : 'loan35admin',
     password : 'Loan35Pass@word2018',
     database : 'loan35',
+    charset : 'utf8mb4',
     insecureAuth: true
 };
 
@@ -33,6 +36,7 @@ config.production = {
     user     : 'loan35admin',
     password : 'Pass@word1',
     database : 'loan35',
+    charset : 'utf8mb4',
     insecureAuth: true
 };
 
