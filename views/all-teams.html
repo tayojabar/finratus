@@ -500,17 +500,20 @@
             });
         }
 
+        let target_id;
         $('#target_list').on('change', function() {
-            let target_id = $("#target_list").find("option:selected").val();
+            target_id = $("#target_list").find("option:selected").val();
             getPeriods(target_id);
             getLimit(target_id);
         });
 
+        let targets;
         function getTargets(){
             $.ajax({
                 type: "GET",
                 url: "/targets",
                 success: function (data) {
+                    targets = data.response;
                     $.each(data.response, function (key, val) {
                         $("#target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
                     });
@@ -572,8 +575,9 @@
             });
         }
 
+        let team_id;
         function openMembersModal(id) {
-            localStorage.team_id = id;
+            team_id = id;
             $.ajax({
                 type: "GET",
                 url: "/user/team/members/"+id,
@@ -584,7 +588,7 @@
         }
 
         function openTargetsModal(id) {
-            localStorage.team_id = id;
+            team_id = id;
             $.ajax({
                 type: "GET",
                 url: "/user/team/targets/"+id,
@@ -621,7 +625,7 @@
             let obj = {};
             if ($('#user_list').val() === '-- Select User --')
                 return swal('Kindly select the user to be added','','warning');
-            obj.teamID = localStorage.team_id;
+            obj.teamID = team_id;
             obj.memberID = $('#user_list').val();
             $('#wait').show();
             $.ajax({
@@ -643,7 +647,7 @@
 
         function assignTarget() {
             let obj = {};
-            obj.userID = localStorage.team_id;
+            obj.userID = team_id;
             obj.targetID = $('#target_list').val();
             obj.sub_periodID = $('#sub_period_list').val();
             obj.value = $('#target_value').val();
@@ -651,6 +655,7 @@
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.value) > target_limit)
                 return swal('Target value ('+obj.value+') cannot be greater that the Total unallocated Target ('+target_limit+')','','warning');
+            obj.periodID = ($.grep(targets, function(e){return e.ID === parseInt(target_id);}))[0]['period'];
             $('#wait').show();
             $.ajax({
                 'url': '/user/team/targets',
@@ -672,7 +677,7 @@
         function removeMember(id) {
             $('#wait').show();
             $.ajax({
-                'url': '/user/team/members/'+id+'/'+localStorage.team_id,
+                'url': '/user/team/members/'+id+'/'+team_id,
                 'type': 'delete',
                 'success': function (response) {
                     $('#wait').hide();
@@ -690,7 +695,7 @@
         function removeTarget(id) {
             $('#wait').show();
             $.ajax({
-                'url': '/user/team/targets/'+id+'/'+localStorage.team_id,
+                'url': '/user/team/targets/'+id+'/'+team_id,
                 'type': 'delete',
                 'success': function (response) {
                     $('#wait').hide();

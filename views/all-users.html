@@ -956,17 +956,20 @@
             }
         }
 
+        let target_id;
         $('#target_list').on('change', function() {
-            let target_id = $("#target_list").find("option:selected").val();
+            target_id = $("#target_list").find("option:selected").val();
             getPeriods(target_id);
             getLimit(target_id);
         });
 
+        let targets;
         function getTargets(){
             $.ajax({
                 type: "GET",
                 url: "/targets",
                 success: function (data) {
+                    targets = data.response;
                     $.each(data.response, function (key, val) {
                         $("#target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
                     });
@@ -1045,6 +1048,7 @@
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.value) > target_limit)
                 return swal('Target value ('+obj.value+') cannot be greater that the Total unallocated Target ('+target_limit+')','','warning');
+            obj.periodID = ($.grep(targets, function(e){return e.ID === parseInt(target_id);}))[0]['period'];
             $('#wait').show();
             $.ajax({
                 'url': '/user/user-targets',
