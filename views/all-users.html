@@ -306,7 +306,7 @@
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                         <select id="role" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Choose User Role --</option>
+                                            <option id="0">-- Choose User Role --</option>
                                         </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#roleModal" value="New Role"/>
                                     </div>
                                 </div>
@@ -317,7 +317,7 @@
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-building"></i></div>
                                         <select id="branch" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Select a branch --</option>
+                                            <option id="0">-- Select a branch --</option>
                                         </select>
                                     </div>
                                 </div>
@@ -327,7 +327,7 @@
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                         <select id="supervisor" class="form-control" required="required">
-                                            <option selected="selected">-- Choose Supervisor --</option>
+                                            <option >-- Choose Supervisor --</option>
                                         </select>
                                     </div>
                                 </div>
@@ -519,7 +519,7 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            getUsers();
+//            getUsers();
             getTargets();
             $('#user_targets').DataTable();
             $('#bootstrap-data-table-export').DataTable();
@@ -782,8 +782,20 @@
             });
         }
 
+        function setSelectedIndex(s, valsearch){
+        // Loop through all the items in drop down list
+            for (i = 0; i< s.options.length; i++){
+                if (s.options[i].value == valsearch){
+                // Item is found. Set its property and exit
+                    s.options[i].selected = true;
+                    break;
+                }
+            }
+            return;
+        }
+
         function edit(){
-            getRoles(); getBranches();
+            getRoles(); getBranches(); getUsers();
             $.ajax({
                 'url': '/user/user-dets/'+localStorage.getItem("user_id"),
                 'type': 'get',
@@ -797,8 +809,10 @@
                     $('#address').val(data[0].address);
                     $('#email').val(data[0].email);
                     $('#role').val(data[0].user_role);
-                    $('#branch').val(data[0].branch);
-                    $('#supervisor').val(data[0].supervisor);
+//                    $('#branch').val(data[0].branch);
+                    setSelectedIndex(document.getElementById('branch'), data[0].branch);
+                    setSelectedIndex(document.getElementById('supervisor'), data[0].supervisor);
+//                    $('#supervisor').val(data[0].supervisor);
                     if (data[0].loan_officer_status === 1)
                         $('#loan_officer_status').prop('checked','checked');
                 },
