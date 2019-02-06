@@ -212,7 +212,6 @@ users.post('/new-client', function(req, res, next) {
             }
             connection.query(query,postData, function (error, re, fields) {
                 if(error){
-                    console.log(error);
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                 } else {
                     res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
@@ -477,7 +476,7 @@ users.delete('/team/members/:id/:teamID', function(req, res, next) {
 });
 
 users.get('/team/targets/:id', function(req, res, next) {
-    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
         '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
     db.query(query, [req.params.id], function (error, results, fields) {
         if(error){
@@ -489,7 +488,7 @@ users.get('/team/targets/:id', function(req, res, next) {
 });
 
 users.get('/user-targets/:id', function(req, res, next) {
-    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
         '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
     db.query(query, [req.params.id], function (error, results, fields) {
         if(error){
@@ -504,10 +503,10 @@ users.get('/targets-list', function(req, res, next) {
     let type = req.query.type,
         target = req.query.target,
         sub_period = req.query.sub_period,
-        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
         '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
         '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "team"',
-        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
             '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
             '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "user"';
     if (type){
@@ -543,10 +542,10 @@ users.get('/targets-list/:officerID', function(req, res, next) {
         id = req.params.officerID,
         target = req.query.target,
         sub_period = req.query.sub_period,
-        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
             '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
             '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "team"',
-        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
             '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
             '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "user"',
         query3 = query2.concat(' AND t.userID = '+id+' '),
@@ -699,8 +698,6 @@ users.get('/committals/team/interest/:id', function(req, res, next) {
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
-    console.log(query)
-    console.log(query2)
     db.query(query, [req.params.id], function (error, aggregate, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -721,10 +718,10 @@ users.get('/committals/team/interest/:id', function(req, res, next) {
 users.get('/committals/disbursement/:id', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
-        query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT ID user_id FROM users WHERE loan_officer_status = 1 AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
+        query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT userID user_id FROM user_targets WHERE targetID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
         'WHERE a.userID = c.client_id AND a.status = 2',
         query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, ' +
-            '(SELECT cl.ID client_id FROM clients AS cl, (SELECT ID user_id FROM users WHERE loan_officer_status = 1 AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
+            '(SELECT cl.ID client_id FROM clients AS cl, (SELECT userID user_id FROM user_targets WHERE targetID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
             'WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
@@ -750,10 +747,10 @@ users.get('/committals/disbursement/:id', function(req, res, next) {
 users.get('/committals/interest/:id', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
-        query = 'SELECT count(*) count, sum(s.interest_amount) total FROM schedule_history AS s, (SELECT ID application_id FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT ID user_id FROM users WHERE loan_officer_status = 1 AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
+        query = 'SELECT count(*) count, sum(s.interest_amount) total FROM schedule_history AS s, (SELECT ID application_id FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT userID user_id FROM user_targets WHERE targetID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
         'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0',
         query2 = 'SELECT *, s.interest_amount amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
-            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT ID user_id FROM users WHERE loan_officer_status = 1 AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT userID user_id FROM user_targets WHERE targetID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
             'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
@@ -778,7 +775,8 @@ users.get('/committals/interest/:id', function(req, res, next) {
 
 users.get('/target/details/:id', function(req, res, next) {
     let query = 'SELECT count(*) count, sum(t.value) total FROM user_targets AS t WHERE targetID = ? AND status = 1',
-        query2 = 'SELECT userID, sum(value) as value, (SELECT name FROM sub_periods WHERE ID = t.sub_periodID) AS period, (CASE WHEN t.user_type = "user" THEN (SELECT fullname FROM users WHERE ID = userID) WHEN t.user_type = "team" THEN (SELECT name FROM teams WHERE ID = userID) END) AS owner ' +
+        query2 = 'SELECT userID, sum(value) as value, (SELECT name FROM sub_periods WHERE ID = t.sub_periodID) AS period, ' +
+            '(CASE WHEN t.user_type = "user" THEN (SELECT fullname FROM users WHERE ID = userID) WHEN t.user_type = "team" THEN (SELECT name FROM teams WHERE ID = userID) END) AS owner ' +
             'FROM user_targets AS t WHERE t.targetID = ? AND t.status = 1 GROUP BY owner';
     db.query(query, [req.params.id], function (error, aggregate, fields) {
         if(error){
@@ -798,9 +796,9 @@ users.get('/target/details/:id', function(req, res, next) {
 });
 
 users.get('/target/limit/:id', function(req, res, next) {
-    let query = 'SELECT sum(t.value) allocated, (SELECT value FROM targets WHERE ID = t.targetID) target, ' +
-        '((SELECT value FROM targets WHERE ID = t.targetID) - sum(t.value)) unallocated FROM user_targets AS t WHERE targetID = ? AND status = 1';
-    db.query(query, [req.params.id], function (error, results, fields) {
+    let query = 'SELECT (CASE WHEN sum(t.value) IS NULL THEN 0 ELSE sum(t.value) END) allocated, (SELECT value FROM targets WHERE ID = ?) target, ' +
+        '((SELECT value FROM targets WHERE ID = ?) - (CASE WHEN sum(t.value) IS NULL THEN 0 ELSE sum(t.value) END)) unallocated FROM user_targets AS t WHERE targetID = ? AND status = 1';
+    db.query(query, [req.params.id,req.params.id,req.params.id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
@@ -812,28 +810,22 @@ users.get('/target/limit/:id', function(req, res, next) {
 users.post('/team/targets', function(req, res, next) {
     req.body.user_type = "team";
     req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('SELECT * FROM user_targets WHERE userID=? AND sub_periodID=? AND status = 1', [req.body.userID,req.body.sub_periodID], function (error, result, fields) {
+    db.query('SELECT * FROM user_targets WHERE userID=? AND targetID=? AND periodID=? AND sub_periodID=? AND status = 1',
+        [req.body.userID,req.body.targetID,req.body.periodID,req.body.sub_periodID], function (error, result, fields) {
         if (result && result[0]) {
             res.send({"status": 500, "error": "Target has already been assigned to this team"});
         } else {
-            db.query('SELECT * FROM targets WHERE ID=?', [req.body.targetID], function (error, target, fields) {
+            db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
                 } else {
-                    req.body.periodID = target[0]['period'];
-                    db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
+                    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+                        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                    db.query(query, [req.body.userID], function (error, results, fields) {
                         if(error){
                             res.send({"status": 500, "error": error, "response": null});
                         } else {
-                            let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
-                                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
-                            db.query(query, [req.body.userID], function (error, results, fields) {
-                                if(error){
-                                    res.send({"status": 500, "error": error, "response": null});
-                                } else {
-                                    res.send({"status": 200, "message": "Team target assigned successfully", "response": results});
-                                }
-                            });
+                            res.send({"status": 200, "message": "Team target assigned successfully", "response": results});
                         }
                     });
                 }
@@ -845,7 +837,8 @@ users.post('/team/targets', function(req, res, next) {
 users.post('/user-targets', function(req, res, next) {
     req.body.user_type = "user";
     req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('SELECT * FROM user_targets WHERE userID=? AND sub_periodID=? AND status = 1', [req.body.userID,req.body.sub_periodID], function (error, result, fields) {
+    db.query('SELECT * FROM user_targets WHERE userID=? AND targetID=? AND periodID=? AND sub_periodID=? AND status = 1',
+        [req.body.userID,req.body.targetID,req.body.periodID,req.body.sub_periodID], function (error, result, fields) {
         if (result && result[0]) {
             res.send({"status": 500, "error": "Target has already been assigned to this user"});
         } else {
@@ -855,24 +848,17 @@ users.post('/user-targets', function(req, res, next) {
                 } else {
                     if (user[0]['loan_officer_status'] !== 1)
                         return res.send({"status": 500, "error": "User must be a loan officer"});
-                    db.query('SELECT * FROM targets WHERE ID=?', [req.body.targetID], function (error, target, fields) {
+                    db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
                         if(error){
                             res.send({"status": 500, "error": error, "response": null});
                         } else {
-                            req.body.periodID = target[0]['period'];
-                            db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
+                            let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+                                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                            db.query(query, [req.body.userID], function (error, results, fields) {
                                 if(error){
                                     res.send({"status": 500, "error": error, "response": null});
                                 } else {
-                                    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
-                                        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
-                                    db.query(query, [req.body.userID], function (error, results, fields) {
-                                        if(error){
-                                            res.send({"status": 500, "error": error, "response": null});
-                                        } else {
-                                            res.send({"status": 200, "message": "User target assigned successfully", "response": results});
-                                        }
-                                    });
+                                    res.send({"status": 200, "message": "User target assigned successfully", "response": results});
                                 }
                             });
                         }
@@ -889,7 +875,7 @@ users.delete('/team/targets/:id/:userID', function(req, res, next) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+            let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
                 '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
             db.query(query, [req.params.userID], function (error, results, fields) {
                 if(error){
@@ -908,7 +894,7 @@ users.delete('/user-targets/:id/:userID', function(req, res, next) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID) as period,' +
+            let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
                 '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
             db.query(query, [req.params.userID], function (error, results, fields) {
                 if(error){
@@ -2669,7 +2655,6 @@ users.get('/report-cards', function(req, res, next) {
             });
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Disbursements  */
@@ -2751,7 +2736,6 @@ users.get('/disbursements/filter', function(req, res, next) {
             });
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Interest Received  */
@@ -2915,7 +2899,6 @@ users.get('/payments', function(req, res, next) {
             }
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Loans by Branches */
@@ -2992,7 +2975,6 @@ users.get('/projected-interests', function(req, res, next) {
             }
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Aggregate Projected Interests */
@@ -3019,7 +3001,6 @@ users.get('/agg-projected-interests', function(req, res, next) {
             res.send({"status": 200, "error": null, "response": results, "message": "Success!"});
         }
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /////// Activity
@@ -3086,7 +3067,6 @@ users.get('/activities', function(req, res, next) {
         query = query.concat('  and team = ?')
     }
     db.query(query, [current_user, team], function (error, results, fields) {
-        console.log(query)
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
