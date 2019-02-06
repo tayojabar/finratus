@@ -756,6 +756,8 @@ users.get('/committals/interest/:id', function(req, res, next) {
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
+    console.log(query)
+    console.log(query2)
     db.query(query, [req.params.id], function (error, aggregate, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
