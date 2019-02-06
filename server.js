@@ -313,6 +313,10 @@ app.get('/view-activity', function(req, res) {
     res.sendFile('view-activity.html', {root: __dirname + '/views'});
 });
 
+app.get('/activity-settings', function(req, res) {
+    res.sendFile('activity-settings.html', {root: __dirname + '/views'});
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     let err = new Error('Not Found');
