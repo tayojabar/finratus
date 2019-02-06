@@ -1072,7 +1072,7 @@
         function getWorkflows(data){
             $.ajax({
                 type: "GET",
-                url: "/workflows",
+                url: "/workflows-all",
                 success: function (response) {
                     localStorage.setItem("workflows",JSON.stringify(response.response));
                     let fullname = data.fullname || '';
