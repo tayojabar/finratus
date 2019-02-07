@@ -145,7 +145,7 @@
                     <ol class="breadcrumb text-right">
                         <li><a href="#">Dashboard</a></li>
                         <li><a href="#">Users</a></li>
-                        <li class="active">Activity Feed</li>
+                        <li class="active"><a href="/activity">Activity Feed</a></li>
                     </ol>
                 </div>
             </div>
@@ -466,7 +466,7 @@
                     '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
                     '            </div>\n' +
                     '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
-                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><input type="text" id="act'+v.ID+'" maxlength="250" class="form-control"/></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
                     '        </div>\n' +
                     '    </div>\n' +
                     '</div><br/>');

@@ -243,15 +243,15 @@
                     test[key] = val;
                 });
                 if(test.message){
-                    $('#role').val("");
+                    $('#new-role').val("");
                     swal("Activity type already exists!","","error");
                 }
                 else if(test.status == 500){
-                    $('#role').val("");
+                    $('#new-role').val("");
                     swal("Please recheck entered values!","","error");
                 }
                 else
-                {$('#role').val(""); swal("New Activity Type Registered!","","success"); getRoles();}
+                {$('#new-role').val(""); swal("New Activity Type Registered!","","success"); getRoles();}
             }
         });
     }
