@@ -64,7 +64,6 @@
             cursor: pointer !important;
         }
         li.disabled, option.disabled {
-            pointer-events:none;
             background: #efefef;
         }
         li.ui-state-default > span > small{
@@ -90,7 +89,11 @@
             border-radius: .25rem;
         }
         .edit-item{
+            pointer-events: auto;
             margin-right: 5px;
+        }
+        .disabled{
+            pointer-events:none;
         }
     </style>
 
@@ -104,6 +107,9 @@
     <script type="text/javascript">
         jQuery(document).ready(function($){
             check(); loadMenus(); read_write();
+            localStorage.list_index = '';
+            localStorage.list_type = '';
+
             let $sortable = $("#sortable");
             $sortable.sortable();
             $sortable.disableSelection();
@@ -174,17 +180,49 @@
                 }
             }
 
+            $('.todolist').on('click','.edit-item-enabled',function(){
+                localStorage.list_type = 'enabled';
+            });
+
+            $('.todolist').on('click','.edit-item-disabled',function(){
+                localStorage.list_type = 'disabled';
+            });
+
+            function enableTransitionInputs() {
+                $('#stage-name').prop('disabled',false);
+                $('#stage-template').prop('disabled',false);
+                $('.local-stages-new').prop('disabled',false);
+                $('#more-actions-link').removeClass('disabled');
+                $('#stage-action-div').find('.fa-times').show();
+                $('.document-upload-text').prop('disabled',false);
+                $('#document-upload').removeClass('disabled');
+                $('#document-upload-div').find('.fa-times').show();
+            }
+
+            function disableTransitionInputs() {
+                $('#stage-name').prop('disabled',true);
+                $('#stage-template').prop('disabled',true);
+                $('.local-stages-new').prop('disabled',true);
+                $('#more-actions-link').addClass('disabled');
+                $('#stage-action-div').find('.fa-times').hide();
+                $('.document-upload-text').prop('disabled',true);
+                $('#document-upload').addClass('disabled');
+                $('#document-upload-div').find('.fa-times').hide();
+            }
+
             //load edit task
             $('.todolist').on('click','.edit-item',function(){
                 $('#edit-stage').show();
                 $('#add-stage').hide();
+                $('#stage-action-div').html('');
+                $('#document-upload-div').html('');
+
                 let stage = JSON.parse(decodeURIComponent(this.id));
                 $('#stage-name').val(stage.name);
                 $('#stage-template').val($('#stage-template').find('option').filter(function () { return $(this).html() === stage.stage_name; }).val());
                 $('#process-rights').val(stage.approverID.split(','));
                 refreshMultiselect();
                 if (stage.actions) {
-                    $('#stage-action-div').html('');
                     let count = 0,
                         actions_array = stage.actions.split(',');
                     actions_array.forEach(function (action_id) {
@@ -196,9 +234,18 @@
                         getLocalStages();
                         $('#action-name-'+count).val($('#action-name-'+count).find('option').filter(function () { return $(this).html() === action.name; }).val());
                     });
+                } else if (stage.action_names && stage.action_names[0]){
+                    let count = 0;
+                    stage.action_names.forEach(function (action) {
+                        count++;
+                        $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                            '<select id="action-name-'+count+'" class="form-control local-stages-new"><option selected="selected" value="-- Choose Action --">-- Choose Action --</option>' +
+                            '</select><i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeAction(this)"></i></div>');
+                        getLocalStages();
+                        $('#action-name-'+count).val($('#action-name-'+count).find('option').filter(function () { return $(this).html() === action; }).val());
+                    });
                 }
                 if (stage.document) {
-                    $('#document-upload-div').html('');
                     let count = 0,
                         documents_array = stage.document.split(',');
                     documents_array.forEach(function (document) {
@@ -211,12 +258,16 @@
                     });
                 }
                 localStorage.list_index = $(this).parent().index();
+                if (localStorage.list_type === 'enabled'){
+                    enableTransitionInputs();
+                } else if (localStorage.list_type === 'disabled'){
+                    disableTransitionInputs();
+                }
             });
 
             //edit todo
             $('#edit-stage').click(function (e) {
                 e.preventDefault;
-                $sortable.find('li:eq('+localStorage.list_index+')').remove();
                 addStage(localStorage.list_index);
             });
 
@@ -235,31 +286,35 @@
             window.createTodo = function (stage,id){
                 let markup = '',
                     count = parseInt($sortable.find("li").length);
-                if (stage.action_names){
-                    markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
-                        '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
+                if (id && localStorage.list_type === 'disabled'){
+                    markup = '<li class="ui-state-default disabled"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                        '<button class="edit-item edit-item-disabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
                 } else {
-                    markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
-                        '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
+                    if (stage.action_names){
+                        markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                            '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item edit-item-enabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
+                    } else {
+                        markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                            '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item edit-item-enabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
+                    }
                 }
                 if (id){
-                    $sortable.find('li:eq('+id+')').before(markup);
+                    if (id < count-1){
+                        $sortable.find('li:eq('+id+')').remove();
+                        $sortable.find('li:eq('+id+')').before(markup);
+                    } else {
+                        $sortable.find('li:eq('+id+')').before(markup);
+                        $sortable.find('li:eq('+count+')').remove();
+                    }
                 } else {
                     $sortable.find('li:eq('+(count-2)+')').before(markup);
                 }
-                $('#document-upload').prop('checked',false);
-                $('#document-upload-div').html('');
-                $('#stage-description').val('');
-                $('#stage-action-div').html('');
-                $('#stage-template').val('-- Choose Action --');
-                $('#stage-name').val('');
+                clearStageInputs();
                 resetMultiselect();
                 getLocalStages();
             };
 
-            $('#addTransition').on('click',function(){
-                $('#edit-stage').hide();
-                $('#add-stage').show();
+            function clearStageInputs() {
                 $('#document-upload').prop('checked',false);
                 $('#document-upload-div').html('');
                 $('#stage-description').val('');
@@ -267,6 +322,13 @@
                 $('#stage-template').val('-- Choose Action --');
                 $('#stage-name').val('');
                 resetMultiselect();
+            }
+
+            $('#addTransition').on('click',function(){
+                enableTransitionInputs();
+                $('#edit-stage').hide();
+                $('#add-stage').show();
+                clearStageInputs();
             });
 
             //remove done task from list
@@ -395,7 +457,7 @@
                                     <div class="col-sm-9">
                                         <div class="row">
                                             <div class="col-sm-11">
-                                                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addStage"><i class="fa fa-plus"></i>Add Transition</button>
+                                                <button id="addTransition" class="btn btn-outline-dark" data-toggle="modal" data-target="#addStage"><i class="fa fa-plus"></i>Add Transition</button>
                                                 <button id="checkAll" class="btn btn-danger"><i class="fa fa-remove"></i>Clear Transition</button>
                                             </div>
                                             <div class="col-sm-11" style="margin-top: 15px;">
@@ -661,14 +723,14 @@
                     localStorage.setItem('stages',JSON.stringify(stages));
                     $.each(response, function (key, val) {
                         if (val.type === 1){
-                            val.approverID = 1;
+                            val.approverID = '1';
                             val.stageID = val.ID;
                             delete val.ID;
                             val.stage_name = val.name;
                             local_stages.push(val);
                         }
                         if (val.name === 'Disbursal'){
-                            $("#stage-template").append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                            $("#stage-template").append('<option class="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                         } else {
                             $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                         }
@@ -691,7 +753,9 @@
                                         action_names = ['Disbursed']; break;
                                     }
                                 }
-                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+' <small> '+stage_name+' → '+action_names.join(" → ")+'</small></span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/></li>';
+                                val.action_names = action_names;
+                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+' <small> '+stage_name+' → '+action_names.join(" → ")+'</small></span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/>' +
+                                    '<button class="edit-item edit-item-disabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(val))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
                                 $('#sortable').append(markup);
                                 if (key === local_stages_sorted.length-1)
                                     return getLocalStages();
