@@ -191,8 +191,10 @@
             $('#stage-template').prop('disabled',false);
             $('.local-stages-new').prop('disabled',false);
             $('#more-actions-link').removeClass('disabled');
+            $('#stage-action-div').find('.fa-times').show();
             $('.document-upload-text').prop('disabled',false);
             $('#document-upload').removeClass('disabled');
+            $('#document-upload-div').find('.fa-times').show();
         }
 
         function disableTransitionInputs() {
@@ -200,8 +202,10 @@
             $('#stage-template').prop('disabled',true);
             $('.local-stages-new').prop('disabled',true);
             $('#more-actions-link').addClass('disabled');
+            $('#stage-action-div').find('.fa-times').hide();
             $('.document-upload-text').prop('disabled',true);
             $('#document-upload').addClass('disabled');
+            $('#document-upload-div').find('.fa-times').hide();
         }
 
         //load edit task
@@ -782,6 +786,7 @@
             data.stages.shift();
         if (localStorage.archive_workflow === 'false')
             url = '/edit-workflows/';
+
         $('#wait').show();
         $.ajax({
             type: 'POST',
