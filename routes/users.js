@@ -172,7 +172,7 @@ users.post('/new-user', function(req, res, next) {
     db.getConnection(function(err, connection) {
         if (err) throw err;
 
-        connection.query(query2,data, function (error, results, fields) {
+        connection.query(query2,[req.body.username, req.body.email], function (error, results, fields) {
             if (results && results[0]){
                 res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "User already exists!"}));
             }
@@ -3118,7 +3118,7 @@ users.get('/teams', function(req, res, next) {
 users.get('/team-activities', function(req, res, next) {
     let current_user = req.query.user;
     let word = 'team'
-    let query = 'select *, ' +
+    let query = 'select *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
                 '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
                 '(select name from teams where teams.Id = team) as team_name, ' +
                 '(select fullname from users where users.id = for_) as user, ' +
@@ -3128,7 +3128,7 @@ users.get('/team-activities', function(req, res, next) {
                 // 'for_ = ?  ';
         // '(select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
         //         'and for_ <> ?';
-    let query2 = 'select *, ' +
+    let query2 = 'select *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count,' +
         '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
         '(select fullname from clients where clients.id = client) as client_name, ' +
         '(select name from teams where teams.Id = team) as team_name, ' +
@@ -3183,10 +3183,14 @@ users.get('/activity-comments', function(req, res, next) {
 users.get('/activity-details', function(req, res, next) {
     var load = {}
     let activity = req.query.id;
-    let query = 'select *, (select activity_name from activity_types where activity_types.id = activity_type) as activity, (select name from teams where teams.Id = team) as team_name, (select fullname from users where users.id = for_) as user, (select fullname from clients where clients.id = client) as client_name ' +
+    let query = 'select *, (select count(*) from activity_comments where activityID = ? group by activityID) as comment_count, ' +
+        '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+        '(select name from teams where teams.Id = team) as team_name, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select fullname from clients where clients.id = client) as client_name ' +
                 'from activities where activities.ID = ?'
     let query2 = 'select *, (select fullname from users where users.ID = commenter) as maker from activity_comments where activityID = ?'
-    db.query(query, [activity], function (error, results, fields) {
+    db.query(query, [activity, activity], function (error, results, fields) {
         load.activity_details = results
         db.query(query2, [activity], function (error, results, fields) {
             load.activity_comments = results
@@ -3231,7 +3235,6 @@ users.get('/clients-act', function(req, res, next) {
         params = [team];
     }
     db.query(query, params, function (error, results, fields) {
-        console.log(params)
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {

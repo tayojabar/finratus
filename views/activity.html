@@ -626,7 +626,7 @@
             }else{
                 $feed.append(message);
             }
-            let code, pic;
+            let code, pic, for_, comment_count;
             $.each(data, function(k, v){
                 if (v.team == 0){
                     code = '';
@@ -634,15 +634,17 @@
                 }
                 code = (v.team == 0) ? '#9aa2ab' : '#9fcdff';
                 pic = (v.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
+                for_ = (v.team == 0) ? '' : v.team_name;
+                comment_count = (v.comment_count === null) ? 'No' : v.comment_count;
                 $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
                     '    <div class="col-sm-1">\n' +
                     '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: '+code+'; text-align: center">' +
                     '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(v.user)+'</h1></div>'+
                     '        </div>\n' +
                     '    </div>\n' +
-                    '    <div class="col-sm-11" style="padding-left: 30px">\n' +
+                    '    <div id="inside'+v.ID+'" class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+v.user+'</span></div>\n' +
+                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+v.user+ ' for '+for_+'</span></div>\n' +
 //                    '<button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>
                     '            <div class="panel-body">'+v.activity+' '+
                     '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
@@ -651,9 +653,24 @@
                     '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
                     '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
                     '        </div>\n' +
-                    //                    '        <div class="panel panel-default col-sm-2" style=" padding-left: 10px; border-radius: 4px">\n' +
-                    //                    '           <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
-                    //                    '        </div>'+
+                        '    <div class="col-sm-12">' +
+                        '       <div class="col-sm-1"></div>' +
+                        '       <div class="col-sm-11 text-muted"><button id="toggle-comment'+v.ID+'" style="background-color: #e9ecef; border: none" onclick="getComments('+v.ID+')">'+comment_count+' comment(s) ...</button></div>'+
+                        '    </div>'+
+                        '    <div id="comments-cover'+v.ID+'" style="display: none"></div>'+
+//                            '<div id="comments"  class="">\n' +
+//                            '    <div class="col-sm-2">\n' +
+////                            '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: '+code+'; text-align: center">' +
+////                            '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(v.user)+'</h1></div>'+
+////                    '               </div>\n' +
+//                            '    </div>\n' +
+//                            '    <div class="col-sm-10">\n' +
+//                            '        <div class="panel panel-default">\n' +
+//                            '            <div class="panel-heading"><strong>'+v.fullname+'</strong> <span class="text-muted">commented on '+v.date_created+'</span></div>\n' +
+//                            '            <div class="panel-body">'+v.text+'</div>\n' +
+//                            '        </div>\n' +
+//                            '    </div>\n' +
+//                            '</div>' +
                     '    </div>\n' +
                     '</div><br/>');
             });
@@ -680,6 +697,103 @@
 //                    '    </div>\n' +
 //                    '</div><br/>');
 //            });
+        }
+
+        function getComments(id){
+            let item = '#comments-cover'+id;
+            let area = '#comments'+id;
+            let button = '#toggle-comment'+id;
+            $(item).children().remove();
+//            $(item).children(area).remove();
+            $(item).slideDown();
+//            $(area).html('');
+            $.ajax({
+                'url': '/user/activity-comments/?activity='+id,
+                'type': 'get',
+                'success': function (data) {
+                    let comments = data,
+                        $comments = $(item);
+//                    $comments.html('');
+                    if (!comments[0])
+                        return $comments.append('<h3 style="margin: auto;">No comments available yet!</h3>');
+                    comments.forEach(function (comment) {
+                        $comments.append('<div id="comments'+id+'" class="">\n' +
+                            '    <div class="col-sm-2">\n' +
+//                            '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+                            '    </div>\n' +
+                            '    <div class="col-sm-10">\n' +
+                            '        <div class="panel panel-default">\n' +
+                            '            <div class="panel-heading"><strong>'+comment.maker+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
+                            '            <div class="panel-body">'+comment.comment+'</div>\n' +
+                            '        </div>\n' +
+                            '    </div>\n' +
+                            '</div>');
+                    });
+                    $(button).html('Hide comments');
+                    $(button).attr('onclick', 'hideComments('+id+')');
+                },
+                'error': function (err) {
+                    swal('No internet connection','','error');
+                }
+            });
+        }
+
+        function hideComments(id){
+            let area = '#comments-cover'+id;
+            let button = '#toggle-comment'+id;
+            $(area).hide();
+            $(button).html('View comments');
+            $(button).attr('onclick', 'getComments('+id+')');
+        }
+
+        function loadDetails(id){
+            let feed = '#feed'+id;
+            let code, pic, for_, comment_count;
+            $.ajax({
+                'url': '/user/activity-details?id='+id,
+                'type': 'get',
+                'success': function (data) {
+                    let activity = data.activity_details,
+                        $feed = $(feed);
+                    $feed.html('');
+                    if (!activity[0])
+                        return $feed.append('<h2 style="margin: auto;">No activity selected!</h2>');
+                    activity.forEach(function (activity) {
+                        code = (activity.team == 0) ? '#9aa2ab' : '#9fcdff';
+                        pic = (activity.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
+                        for_ = (activity.team == 0) ? '' : activity.team_name;
+                        comment_count = (activity.comment_count === null) ? 'No' : activity.comment_count;
+                        let icon = (activity.team === 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users">';
+                        $feed.append(
+                            '    <div class="col-sm-1">\n' +
+                            '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: '+code+'; text-align: center">' +
+                            '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(activity.user)+'</h1></div>'+
+                            '        </div>\n' +
+                            '    </div>\n' +
+                            '    <div id="inside'+activity.ID+'" class="col-sm-11" style="padding-left: 30px">\n' +
+                            '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
+                            '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+activity.user+ ' for '+for_+'</span></div>\n' +
+                            //                    '<button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>
+                            '            <div class="panel-body">'+activity.activity+' '+
+                            '               <i class="fa fa-user"></i><span> '+activity.client_name+'</span>&nbsp;|&nbsp;'+
+                            '               <i class="fa fa-phone"></i><span> '+activity.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+activity.client_email+'</span><br/>\n'+
+                            '            </div>\n' +
+                            '            <div class="panel-footer">'+activity.activity_description+'<br/><span class="text-muted"><small>created on '+activity.date_created+'</small></span></div>\n' +
+                            '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+activity.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+activity.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+                            '        </div>\n' +
+                            '    <div class="col-sm-12">' +
+                            '       <div class="col-sm-1"></div>' +
+                            '       <div class="col-sm-11 text-muted"><button id="toggle-comment'+activity.ID+'" style="background-color: #e9ecef; border: none" onclick="getComments('+activity.ID+')">'+comment_count+' comment(s) ...</button></div>'+
+                            '    </div>'+
+                            '    <div id="comments-cover'+activity.ID+'" style="display: none"></div>'+
+                            '    </div>');
+                    });
+                },
+                'error': function (err) {
+                    console.log('Error');
+                    swal('No internet connection','','error');
+                }
+            });
         }
 
         var getInitials = function (name) {
@@ -721,6 +835,7 @@
                         {
                             $('#role').val(""); swal("Comment Submitted!","","success");
                             $(comment).val('');
+                            loadDetails(id);
                         }
                     }
                 });
@@ -770,9 +885,9 @@
             if ($('.emoji-wysiwyg-editor').text() == null || $('.emoji-wysiwyg-editor').text() == "" || $('.emoji-wysiwyg-editor').text() == undefined){
                 $('#continue').hide();
                 $('#form').slideUp();
-                $('.emoji-wysiwyg-editor').css('border-style', 'solid');
-                $('.emoji-wysiwyg-editor').css('border-width', '1px');
-                $('.emoji-wysiwyg-editor').css('border-color', '#e9ecef');
+//                $('.emoji-wysiwyg-editor').css('border-style', 'solid');
+//                $('.emoji-wysiwyg-editor').css('border-width', '1px');
+//                $('.emoji-wysiwyg-editor').css('border-color', '#e9ecef');
             }
             else {
                 $('#continue').show();
