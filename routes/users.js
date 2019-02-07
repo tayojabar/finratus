@@ -3067,14 +3067,17 @@ users.post('/new-activity', function(req, res, next) {
 users.get('/activities', function(req, res, next) {
     let current_user = req.query.user;
     let team = req.query.team;
+    let word = 'team'
     let query = 'SELECT *, ' +
         '(select fullname from clients c where c.ID = client) as clients, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select name from teams where teams.Id = ?) as team_name, ' +
         '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
-        'from activities where for_ = ? and status = 1';
+        'from activities where for_ = ? and status = 1 and category = ? ';
     if (team){
-        query = query.concat('  and team = ?')
+        query = query.concat('  and team = ? order by id desc')
     }
-    db.query(query, [current_user, team], function (error, results, fields) {
+    db.query(query, [team, current_user, word, team], function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
@@ -3116,18 +3119,18 @@ users.get('/team-activities', function(req, res, next) {
         //         'and for_ <> ?';
     let query2 = 'select *, ' +
         '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
-        '(select fullname from clients where clients.id = client) as client_name ' +
+        '(select fullname from clients where clients.id = client) as client_name, ' +
+        '(select name from teams where teams.Id = team) as team_name, ' +
+        '(select fullname from users where users.id = for_) as user ' +
         'from activities where ' +
         'team = 0 and for_ = ? order by id desc';
-    let load = {}
-    db.query(query, [word, current_user], function (error, results, fields) {
-        load.team_activities = results;
-        db.query(query2, [current_user], function (error, results, fields) {
-            load.personal_activities = results;
+    db.query(query, [word, current_user], function (error, results_team, fields) {
+        db.query(query2, [current_user], function (error, results_personal, fields) {
             if(error){
                 res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             } else {
-                res.send(JSON.stringify(load));
+                let results = _.orderBy(results_team.concat(results_personal), ['ID'], ['desc']);
+                res.send(JSON.stringify(results));
             }
         });
     });

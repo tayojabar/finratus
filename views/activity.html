@@ -25,7 +25,8 @@
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>-->
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
@@ -66,6 +67,7 @@
             border-color: #666e76;
         }
     </style>
+
 </head>
 
 <!-- Left Panel -->
@@ -86,7 +88,6 @@
         </div><!-- /.navbar-collapse -->
     </nav>
 </aside><!-- /#left-panel -->
-<script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
 <!-- Left Panel -->
@@ -131,20 +132,20 @@
     <!-- Header-->
 
     <div class="breadcrumbs">
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="page-header float-left">
                 <div class="page-title">
-                    <h1>User Activity</h1>
+                    <h1 id="title-text">User Activity</h1>
                 </div>
             </div>
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
             <div class="page-header float-right">
                 <div class="page-title">
                     <ol class="breadcrumb text-right">
                         <li><a href="#">Dashboard</a></li>
                         <li><a href="#">Users</a></li>
-                        <li class="active">Activity Feed</li>
+                        <li class="active"><a href="/activity">Activity Feed</a></li>
                     </ol>
                 </div>
             </div>
@@ -170,7 +171,7 @@
                         <div class="col-sm-2 form-group">
                             <div class="input-group">
                                 <!--<div class="input-group-addon"><i class="fa fa-user"></i></div>-->
-                                <select id="client-list" class="form-control fields" required="required">
+                                <select id="client-list" class="form-control select fields" required="required">
                                     <option id="0">Client</option>
                                 </select>
                             </div>
@@ -216,7 +217,14 @@
                     <input id="continue" style="display: none" type="button" class="btn btn-default write" data-toggle="modal" data-target="#myModal1" value="Post Activity"/>
                 </div>
                 <hr/>
-                <div id="feed" class="card-body" style="border-radius: 0px"></div>
+                <div id="feed" class="card-body" style="border-radius: 0px; padding-top: 0px">
+                    <div class="text-muted" style="text-align: center" >
+                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>
+                        <h2>No activities to display!</h2>
+                        <p><br/>This could be a network error though. If you think so, click the button below.</p><br/>
+                        <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>
+                    </div>
+                </div>
 
             </div>
         </div><!-- .animated -->
@@ -288,11 +296,12 @@
 <!--<script src="assets/js/lib/data-table/buttons.print.min.js"></script>-->
 <!--<script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>-->
 <!--<script src="assets/js/lib/data-table/datatables-init.js"></script>-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>-->
 <script>
 //    (function( $ ) {
         jQuery(document).ready(function() {
-            checkForEdit();
+//            checkForEdit();
+            window.emojiPicker.discover();
             getClients();
             getTeams();
 //            loadActivities();
@@ -430,22 +439,34 @@
         function loadUserActivities(data) {
             let $feed = $('#feed');
             $feed.html('');
+            let message = '<div class="text-muted" style="text-align: center" >\n' +
+                '                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>\n' +
+                '                        <h2>No activities to display!</h2>\n' +
+                '                        <p><br/>This could be a network error though. If you think so, click the button below.</p><br/>\n' +
+                '                        <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>\n' +
+                '                    </div>';
+            if (data[0]){
+                $feed.append('<div class="col-sm-12" style="padding-bottom: 10px"><button style="float: right; margin-left: 100px" onclick="checkForEdit()" class="btn btn-primary pull-right"><i class="fa fa-refresh"></i> Refresh Feed</button></div>');
+            }else{
+                $feed.append(message);
+            }
             $.each(data, function(k, v){
+                $('#title-text').html(v.user+': '+v.team_name);
                 $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
-//                    '    <div class="col-sm-1">\n' +
-//                    '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9aa2ab; text-align: center">' +
-//                    '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(localStorage.getItem("name"))+'</h1></div>'+
-//                    '        </div>\n' +
-//                    '    </div>\n' +
-                    '    <div class="col-sm-12" style="padding-left: 30px">\n' +
+                    '    <div class="col-sm-1">\n' +
+                    '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9fcdff; text-align: center">' +
+                    '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(v.user)+'</h1></div>'+
+                    '        </div>\n' +
+                    '    </div>\n' +
+                    '    <div class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading"><i class="fa fa-user"></i> Activity by <span class="text-muted">'+localStorage.getItem("name")+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
+                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+' for '+v.team_name+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
                     '            <div class="panel-body">'+v.activity+' '+
                     '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
                     '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
                     '            </div>\n' +
-                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted">created on '+v.date_created+'</span></div>\n' +
-                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><input type="text" id="act'+v.ID+'" maxlength="250" class="form-control"/></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
+                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
                     '        </div>\n' +
                     '    </div>\n' +
                     '</div><br/>');
@@ -473,22 +494,41 @@
         function populateDataTable(data) {
             let $feed = $('#feed');
             $feed.html('');
-            $.each(data.personal_activities, function(k, v){
+            let message = '<div class="text-muted" style="text-align: center" >\n' +
+                '                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>\n' +
+                '                        <h2>No activities to display!</h2>\n' +
+                '                        <p><br/>This could be a network error though. If you think so, click the button below.</p><br/>\n' +
+                '                        <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>\n' +
+                '                    </div>';
+            if (data[0]){
+                $feed.append('<div class="col-sm-12" style="padding-bottom: 10px"><button style="float: right; margin-left: 100px" onclick="checkForEdit()" class="btn btn-primary pull-right"><i class="fa fa-refresh"></i> Refresh Feed</button></div>');
+            }else{
+                $feed.append(message);
+            }
+            let code, pic;
+            $.each(data, function(k, v){
+                if (v.team == 0){
+                    code = '';
+                    pic = '<i class="fa fa-user"></i>';
+                }
+                code = (v.team == 0) ? '#9aa2ab' : '#9fcdff';
+                pic = (v.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
                 $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
                     '    <div class="col-sm-1">\n' +
-                    '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9aa2ab; text-align: center">' +
-                    '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(localStorage.getItem("name"))+'</h1></div>'+
+                    '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: '+code+'; text-align: center">' +
+                    '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(v.user)+'</h1></div>'+
                     '        </div>\n' +
                     '    </div>\n' +
                     '    <div class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading"><i class="fa fa-user"></i> Activity by <span class="text-muted">'+localStorage.getItem("name")+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
+                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+localStorage.getItem("name")+'</span></div>\n' +
+//                    '<button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>
                     '            <div class="panel-body">'+v.activity+' '+
                     '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
                     '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
                     '            </div>\n' +
-                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted">created on '+v.date_created+'</span></div>\n' +
-                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><input type="text" id="act'+v.ID+'" maxlength="250" class="form-control"/></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
+                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
                     '        </div>\n' +
                     //                    '        <div class="panel panel-default col-sm-2" style=" padding-left: 10px; border-radius: 4px">\n' +
                     //                    '           <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
@@ -496,29 +536,29 @@
                     '    </div>\n' +
                     '</div><br/>');
             });
-            $.each(data.team_activities, function(k, v){
-                $feed.append('<div id="feed'+v.ID+'" class="row">\n' +
-                    '    <div class="col-sm-1">\n' +
-                    '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: #9fcdff; text-align: center">' +
-                    '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(v.user)+'</h1></div>'+
-                    '        </div>\n' +
-                    '    </div>\n' +
-                    '    <div class="col-sm-11" style="padding-left: 30px">\n' +
-                    '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 4px">\n' +
-                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+'  for '+v.team_name+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
-                    '            <div class="panel-body">'+v.activity+' '+
-                    '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
-                    '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
-                    '            </div>\n' +
-                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted">created on '+v.date_created+'</span></div>\n' +
-                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><input type="text" id="act'+v.ID+'" maxlength="250" class="form-control"/></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
-                    '        </div>\n' +
-//                    '        <div class="panel panel-default col-sm-2" style=" padding-left: 10px; border-radius: 4px">\n' +
-//                    '           <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
-//                    '        </div>'+
-                    '    </div>\n' +
-                    '</div><br/>');
-            });
+//            $.each(data.team_activities, function(k, v){
+//                $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
+//                    '    <div class="col-sm-1">\n' +
+//                    '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: '#9fcdff; text-align: center">' +
+//                    '           <div id="name" style="display: inline-block; margin: 0 auto; padding-top: 20px"><h1>'+getInitials(v.user)+'</h1></div>'+
+//                    '        </div>\n' +
+//                    '    </div>\n' +
+//                    '    <div class="col-sm-11" style="padding-left: 30px">\n' +
+//                    '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 4px">\n' +
+//                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+'  for '+v.team_name+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
+//                    '            <div class="panel-body">'+v.activity+' '+
+//                    '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
+//                    '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
+//                    '            </div>\n' +
+//                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
+//                    '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+//                    '        </div>\n' +
+////                    '        <div class="panel panel-default col-sm-2" style=" padding-left: 10px; border-radius: 4px">\n' +
+////                    '           <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
+////                    '        </div>'+
+//                    '    </div>\n' +
+//                    '</div><br/>');
+//            });
         }
 
         var getInitials = function (name) {
@@ -538,7 +578,7 @@
             obj.comment = $(comment).val();
             obj.activityID = id;
             obj.commenter = JSON.parse(localStorage.user_obj).ID;
-            console.log($('comment').val());
+//            console.log($('comment').val());
             if (obj.comment == "" || obj.comment == "undefined"){
                 swal("Please leave a comment!", "", "warning");
             }
@@ -613,6 +653,10 @@
             }
         });
 
+        $('#temp-desc').on('click', function(){
+            $('#form').slideDown();
+        });
+
         function getActivityTypes(){
             $.ajax({
                 type: "GET",
@@ -664,7 +708,7 @@
         }
 
         $("#continue").click(function () {
-            console.log($('#temp-desc').text());
+//            console.log($('#temp-desc').text());
             validate();
         });
 

@@ -349,7 +349,7 @@
     this.emojiPopup.appendUnicodeAsImageToElement(this.$editor, $textarea.val());
 
     this.$editor.attr({
-      'id': 'temp-desc',
+      // 'id': 'temp-desc',
       'data-id': id,
       'data-type': 'textarea',
       'placeholder': $textarea.attr('placeholder'),
