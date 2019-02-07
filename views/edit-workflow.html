@@ -294,8 +294,13 @@
                 }
             }
             if (id){
-                $sortable.find('li:eq('+id+')').remove();
-                $sortable.find('li:eq('+id+')').before(markup);
+                if (id < count-1){
+                    $sortable.find('li:eq('+id+')').remove();
+                    $sortable.find('li:eq('+id+')').before(markup);
+                } else {
+                    $sortable.find('li:eq('+id+')').before(markup);
+                    $sortable.find('li:eq('+count+')').remove();
+                }
             } else {
                 $sortable.find('li:eq('+(count-2)+')').before(markup);
             }
@@ -708,53 +713,52 @@
             type: "GET",
             url: "/stages",
             success: function (response) {
-                let local_stages = [],
-                    stages = JSON.parse(JSON.stringify(response));
-                localStorage.setItem('stages',JSON.stringify(stages));
-                init(stages);
-                $.each(response, function (key, val) {
-                    if (val.type === 1){
-                        val.approverID = '1';
-                        val.stageID = val.ID;
-                        delete val.ID;
-                        val.stage_name = val.name;
-                        local_stages.push(val);
-                    }
-                    if (val.name === 'Disbursal'){
-                        $("#stage-template").append('<option class="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
-                    } else {
-                        $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
-                    }
-                    if (key === response.length-1){
-                        let local_stages_sorted = local_stages.sort(function(a, b) { return a.stageID - b.stageID; });
-                        localStorage.setItem('local_stages', JSON.stringify(local_stages_sorted));
-                        $.each(local_stages_sorted, function (key, val) {
-                            let stage_name, action_names;
-                            switch (val.name){
-                                case 'Application Start':{
-                                    stage_name = "N/A";
-                                    action_names = ['Application Start']; break;
-                                }
-                                case 'Final Approval':{
-                                    stage_name = "Final Approval";
-                                    action_names = ['Disbursal']; break;
-                                }
-                                case 'Disbursal':{
-                                    stage_name = "Disbursal";
-                                    action_names = ['Disbursed']; break;
-                                }
-                            }
-                            val.action_names = action_names;
-                            let markup = '<li class="ui-state-default disabled"><span>'+val.name+' <small> '+stage_name+' → '+action_names.join(" → ")+'</small></span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/>' +
-                                '<button class="edit-item edit-item-disabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(val))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
-                            $('#sortable').append(markup);
-                            if (key === local_stages_sorted.length-1)
-                                return getLocalStages();
-                        });
-                    }
-                });
+                localStorage.setItem('stages',JSON.stringify(response));
+                init(response);
             }
         });
+    }
+
+    localStorage.archive_workflow = 'false';
+    $('#process-name').click(function (e) {
+        archiveWorkflow(e);
+    });
+    $('#stage-name').click(function (e) {
+        archiveWorkflow(e);
+    });
+    $('#stage-template').click(function (e) {
+        archiveWorkflow(e);
+    });
+    $('#more-actions-link').click(function (e) {
+        archiveWorkflow(e);
+    });
+    $('#stage-action-div').on('click','.local-stages-new', function (e) {
+        archiveWorkflow(e);
+    });
+    $('#document-upload').click(function (e) {
+        archiveWorkflow(e);
+    });
+    $('#document-upload-div').on('click','.document-upload-text', function (e) {
+        archiveWorkflow(e);
+    });
+
+    function archiveWorkflow(e) {
+        if (localStorage.archive_workflow === 'false'){
+            e.preventDefault();
+            swal({
+                title: "Are you sure?",
+                text: "Only Approval Rights are editable. Any other changes to this workflow would be saved as a new copy.\n\n" +
+                "Once started, this process is not reversible!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((yes) => {
+                    if (yes) {
+                        localStorage.archive_workflow = 'true';
+                    }
+                });
+        }
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -763,7 +767,8 @@
     function addProcess() {
         let stages,
             data = {},
-            workflow = {};
+            workflow = {},
+            url = '/workflows/';
         workflow.name = $('#process-name').val();
         stages = $('.stage-items').map(function() {
             return JSON.parse(decodeURIComponent(this.value));
@@ -775,11 +780,12 @@
         data.stages = stages;
         if (($.grep(data.stages,function(e){return e.stage_name==='Application Start'})).length > 1)
             data.stages.shift();
-        return console.log(data)
+        if (localStorage.archive_workflow === 'false')
+            url = '/edit-workflows/';
         $('#wait').show();
         $.ajax({
             type: 'POST',
-            url: '/workflows/'+workflow_id,
+            url: url+workflow_id,
             data: data,
             success: function (data) {
                 localStorage.removeItem('local_stages');
@@ -813,6 +819,7 @@
             'type': 'get',
             'success': function (data) {
                 let transitions = [];
+                initDefaultStages(stages, data.response);
                 data.response.forEach(function (stagex) {
                     let stage = {
                         action_names: [],
@@ -839,6 +846,55 @@
             },
             'error': function (err) {
                 console.log('Error');
+            }
+        });
+    }
+
+    function initDefaultStages(response,workflow_stages) {
+        let local_stages = [];
+        $.each(response, function (key, val) {
+            let valx = $.grep(workflow_stages, function(e){return e.stageID === val.ID});
+            if (val.type === 1){
+                if (valx && valx[0]){
+                    val.approverID = valx[0]['approverID'];
+                } else {
+                    val.approverID = '1';
+                }
+                val.stageID = val.ID;
+                val.stage_name = val.name;
+                local_stages.push(val);
+            }
+            if (val.name === 'Disbursal'){
+                $("#stage-template").append('<option class="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+            } else {
+                $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+            }
+            if (key === response.length-1){
+                let local_stages_sorted = local_stages.sort(function(a, b) { return a.stageID - b.stageID; });
+                localStorage.setItem('local_stages', JSON.stringify(local_stages_sorted));
+                $.each(local_stages_sorted, function (key, val) {
+                    let stage_name, action_names;
+                    switch (val.name){
+                        case 'Application Start':{
+                            stage_name = "N/A";
+                            action_names = ['Application Start']; break;
+                        }
+                        case 'Final Approval':{
+                            stage_name = "Final Approval";
+                            action_names = ['Disbursal']; break;
+                        }
+                        case 'Disbursal':{
+                            stage_name = "Disbursal";
+                            action_names = ['Disbursed']; break;
+                        }
+                    }
+                    val.action_names = action_names;
+                    let markup = '<li class="ui-state-default disabled"><span>'+val.name+' <small> '+stage_name+' → '+action_names.join(" → ")+'</small></span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/>' +
+                        '<button class="edit-item edit-item-disabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(val))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
+                    $('#sortable').append(markup);
+                    if (key === local_stages_sorted.length-1)
+                        return getLocalStages();
+                });
             }
         });
     }

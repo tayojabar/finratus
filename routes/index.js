@@ -1389,6 +1389,7 @@ router.post('/workflows/:workflow_id', function(req, res, next) {
                         async.forEach(stages, function (stage, callback) {
                             stage.workflowID = results[0]['ID'];
                             stage.date_created = date_created;
+                            delete stage.ID;
                             delete stage.stage_name;
                             delete stage.type;
                             if (stage.action_names)
@@ -1411,6 +1412,35 @@ router.post('/workflows/:workflow_id', function(req, res, next) {
                 });
             }
         });
+    });
+});
+
+router.post('/edit-workflows/:workflow_id', function(req, res, next) {
+    let count = 0,
+        stages = req.body.stages,
+        workflow = req.body.workflow,
+        workflow_id = req.params.workflow_id,
+        date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        async.forEach(stages, function (stage, callback) {
+            connection.query('UPDATE workflow_stages SET approverID=?, date_modified=? WHERE workflowID=? AND stageID=?',
+                [stage.approverID,date_modified,workflow_id,stage.stageID], function (error, results, fields) {
+                if (error){
+                    console.log(error);
+                } else {
+                    count++;
+                }
+                callback();
+            });
+        }, function (data) {
+            connection.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+                connection.release();
+                res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) updated successfully!", "response": results});
+            });
+        })
     });
 });
 
