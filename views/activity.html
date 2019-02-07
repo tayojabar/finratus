@@ -66,11 +66,88 @@
             background-color: #6c757d;
             border-color: #666e76;
         }
+        .inp {
+            position: relative;
+            margin: auto;
+            width: 100%;
+            max-width: 280px;
+        }
+        .inp .label {
+            position: absolute;
+            top: 16px;
+            left: 0;
+            font-size: 16px;
+            color: #9098a9;
+            font-weight: 500;
+            transform-origin: 0 0;
+            transition: all 0.2s ease;
+        }
+        .inp .border {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            width: 100%;
+            background: #07f;
+            transform: scaleX(0);
+            transform-origin: 0 0;
+            transition: all 0.15s ease;
+        }
+        .inp input {
+            -webkit-appearance: none;
+            width: 100%;
+            border: 0;
+            font-family: inherit;
+            padding: 12px 0;
+            height: 48px;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 2px solid #c8ccd4;
+            background: none;
+            border-radius: 0;
+            color: #223254;
+            transition: all 0.15s ease;
+        }
+        .inp select {
+            -webkit-appearance: none;
+            width: 100%;
+            border: 0;
+            font-family: inherit;
+            padding: 12px 0;
+            height: 48px;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 2px solid #c8ccd4;
+            background: none;
+            border-radius: 0;
+            color: #223254;
+            transition: all 0.15s ease;
+        }
+        .inp input:hover {
+            background: rgba(34,50,84,0.03);
+        }
+        .inp input:not(:placeholder-shown) + span {
+            color: #5a667f;
+            transform: translateY(-26px) scale(0.75);
+        }
+        .inp input:focus {
+            background: none;
+            outline: none;
+        }
+        .inp input:focus + span {
+            color: #07f;
+            transform: translateY(-26px) scale(0.75);
+        }
+        .inp input:focus + span + .border {
+            transform: scaleX(1);
+        }
     </style>
 
 </head>
 
 <!-- Left Panel -->
+<script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 <aside id="left-panel" class="left-panel">
     <nav class="navbar navbar-expand-sm navbar-default">
 
@@ -88,7 +165,7 @@
         </div><!-- /.navbar-collapse -->
     </nav>
 </aside><!-- /#left-panel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>-->
 
 <!-- Left Panel -->
 
@@ -159,56 +236,100 @@
                     <div class="input-group">
                         <textarea contenteditable="true" style="border-radius: 10px" type="text" id="temp-desc" class="form-control fields" rows="1" placeholder="New Activity" data-emojiable="true" data-emoji-input="unicode"></textarea>
                     </div>
-                    <div id="form" class="row col-sm-12" style="display: none; padding-top: 5px">
+                    <br/>
+                    <div id="form" class="row" style="display: none; padding-top: 5px">
                         <div id="team-div" class="col-sm-2 form-group">
                             <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-users"></i></div>
-                                <select id="team-list" class="form-control" required="required">
-                                    <option id="0">Personal</option>
-                                </select>
+                                <!--<div class="input-group-addon"><i class="fa fa-users"></i></div>-->
+                                <!--<select id="team-list" class="form-control" required="required">-->
+                                    <!--<option id="0">Personal</option>-->
+                                <!--</select>-->
+                                <label for="team-list" class="inp">
+                                    <select id="team-list" class="fields" required="required">
+                                        <option value="0">Personal</option>
+                                    </select>
+                                    <span class="label"></span>
+                                    <span class="border"></span>
+                                </label>
                             </div>
                         </div>
                         <div class="col-sm-2 form-group">
                             <div class="input-group">
                                 <!--<div class="input-group-addon"><i class="fa fa-user"></i></div>-->
-                                <select id="client-list" class="form-control select fields" required="required">
-                                    <option id="0">Client</option>
-                                </select>
+                                <!--<select id="client-list" class="form-control select fields" required="required">-->
+                                    <!--<option value="-1">Client</option>-->
+                                <!--</select>-->
+                                <label for="activity-date" class="inp">
+                                    <select id="client-list" class="fields" required="required">
+                                        <option value="-1">Client</option>
+                                    </select>
+                                    <span class="label"></span>
+                                    <span class="border"></span>
+                                </label>
                             </div>
                         </div>
                         <div class="col-sm-2 form-group">
                             <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-filter"></i></div>
-                                <select id="activity-type" class="form-control fields" required="required">
-                                    <option>Type</option>
-                                </select>
+                                <!--<div class="input-group-addon"><i class="fa fa-filter"></i></div>-->
+                                <!--<select id="activity-type" class="form-control fields" required="required">-->
+                                    <!--<option>Type</option>-->
+                                <!--</select>-->
+                                <label for="activity-type" class="inp">
+                                    <select id="activity-type" class="fields" required="required">
+                                        <option value="-1">Type</option>
+                                    </select>
+                                    <span class="label"></span>
+                                    <span class="border"></span>
+                                </label>
                                 <!--<input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New"/>-->
                             </div>
                         </div>
                         <div class="col-sm-2 form-group">
                             <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                <input type="date" id="activity-date" class="form-control fields" required="required"/>
+                                <!--<div class="input-group-addon"><i class="fa fa-calendar"></i></div>-->
+                                <!--<input type="date" id="activity-date" class="form-control fields" required="required"/>-->
+                                <label for="activity-date" class="inp">
+                                    <input type="date" class="fields" id="activity-date">
+                                    <span class="label">Date</span>
+                                    <span class="border"></span>
+                                </label>
                             </div>
                         </div>
-                        <div class="col-sm-2 form-group">
+                        <div class="col-sm-1 form-group">
                             <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-history"></i></div>
-                                <input type="number" id="activity-duration" class="form-control fields col-sm-4" placeholder="Duration" required="required" min=0 >
-                                &nbsp;&nbsp;
-                                <select id="time-unit" class="form-control fields col-sm-8">
-                                    <option value="Minutes">Minutes</option>
-                                    <option value="Hours">Hours</option>
-                                    <option value="Day(s)">Day(s)</option>
-                                    <option value="Years">Years</option>
-                                </select>
+                                <!--<div class="input-group-addon"><i class="fa fa-history"></i></div>-->
+                                <!--<input type="number" id="activity-duration" class="form-control fields col-sm-4" placeholder="Duration" required="required" min=0 >-->
+                                <label for="activity-duration" class="inp">
+                                    <input type="number" class="fields" min=1 id="activity-duration">
+                                    <span class="label">Duration</span>
+                                    <span class="border"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 form-group">
+                            <div class="input-group">
+                                <label for="time-unit" class="inp">
+                                    <select id="time-unit" class="fields">
+                                        <option value="Minutes">Minutes</option>
+                                        <option value="Hours">Hours</option>
+                                        <option value="Day(s)">Day(s)</option>
+                                        <option value="Years">Years</option>
+                                    </select>
+                                    <span class="label"></span>
+                                    <span class="border"></span>
+                                </label>
                             </div>
                         </div>
                         <div class="col-sm-2 form-group">
                             <!--<label><strong>Attach Document</strong></label>-->
                             <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-file-pdf-o"></i></div>
-                                <input class="form-control" type="file"/>
+                                <!--<div class="input-group-addon"><i class="fa fa-file-pdf-o"></i></div>-->
+                                <!--<input class="form-control" type="file"/>-->
+                                <label for="activity-file" class="inp">
+                                    <input type="file" id="activity-file">
+                                    <span class="label">Attachment</span>
+                                    <span class="border"></span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -221,7 +342,7 @@
                     <div class="text-muted" style="text-align: center" >
                         <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>
                         <h2>No activities to display!</h2>
-                        <p><br/>This could be a network error though. If you think so, click the button below.</p><br/>
+                        <p><br/>This could be a network error. If you think so, click the button below.</p><br/>
                         <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>
                     </div>
                 </div>
@@ -258,7 +379,7 @@
 </div>
 
 
-<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<!--<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>-->
 <!-- Begin emoji-picker JavaScript -->
 <script src="lib/js/config.js"></script>
 <script src="lib/js/util.js"></script>
@@ -302,7 +423,7 @@
         jQuery(document).ready(function() {
 //            checkForEdit();
             window.emojiPicker.discover();
-            getClients();
+//            getClients();
             getTeams();
 //            loadActivities();
             getActivityTypes();
@@ -521,7 +642,7 @@
                     '    </div>\n' +
                     '    <div class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+localStorage.getItem("name")+'</span></div>\n' +
+                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+v.user+'</span></div>\n' +
 //                    '<button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>
                     '            <div class="panel-body">'+v.activity+' '+
                     '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
@@ -613,16 +734,26 @@
 
         let clients;
 
-        function getClients(){
+        $("#team-list").on('change', function () {
+            var selectedID = $(this).find('option:selected').attr('id');
+            getClients(JSON.parse(localStorage.user_obj).ID, selectedID);
+        });
+
+        function getClients(user, team){
+            let url = 'user/clients-act?team='+team;
+            if (team == 0){
+                url = 'user/clients-act?user='+user;
+            }
             $.ajax({
                 type: "GET",
-                url: "/user/clients-list",
+                url: url,
                 success: function (response) {
                     clients = JSON.parse(response);
+                    $('#client-list').empty().append('<option value="-1">-- Choose Client --</option>');
                     $.each(JSON.parse(response), function (key, val) {
-                        $("#client-list").append('<option value = "' + encodeURIComponent(JSON.stringify(val)) + '" id="'+val.ID+'" phone="'+val.phone+'" email="'+val.email+'">' + val.fullname + ' &nbsp; (' + val.username + ')</option>');
+                        $("#client-list").append('<option value = "'+val.ID+'" id="'+val.ID+'" phone="'+val.phone+'" email="'+val.email+'">' + val.fullname + '</option>');
                     });
-//                    $("#client-list").select2();
+                    $("#client-list").select2({dropdownParent: $('body')});
                 }
             });
         }
@@ -646,7 +777,7 @@
             else {
                 $('#continue').show();
                 $('#form').slideDown();
-                $('.emoji-wysiwyg-editor').css('border', 'transparent');
+                $('.emoji-wysiwyg-editor').css('border', 'thin');
                 $('#cover-new').css('border-style', 'solid');
                 $('#cover-new').css('border-width', '1px');
                 $('#cover-new').css('border-color', '#e9ecef');
@@ -745,7 +876,7 @@
             // A loop that checks every input field in the current tab:
             for (i = 0; i < y.length; i++) {
                 // If a field is empty...
-                if (y[i].value == "") {
+                if (y[i].value == "" || y[i].value == "-1") {
                     valid = false;
                 }
             }

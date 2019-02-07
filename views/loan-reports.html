@@ -539,11 +539,11 @@
                                                                 <form id="filteraggprojectedinterest" class="form-inline" style="float: right;">
                                                                     <div class="form-group">
                                                                         <label class="" for="startDate">Start date</label>
-                                                                        <input type="date" class="form-control" id="filteraggprointstart" placeholder="Start date">
+                                                                        <input type="date" class="form-control" id="filteraggprointstart" name="filteraggprointstart" placeholder="Start date">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label class="" for="endDate">End date</label>
-                                                                        <input type="date" class="form-control" id="filteraggprointend" placeholder="End date">
+                                                                        <input type="date" class="form-control" id="filteraggprointend" name="filteraggprointend" placeholder="End date">
                                                                     </div>
                                                                     <button type="submit" class="btn btn-success">Filter</button>
                                                                 </form>
@@ -864,6 +864,9 @@
         loadBadLoans();
         loadOverdues();
         loadAggProjectedInterests();
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementsByName("filteraggprointend")[0].setAttribute('min', today);
+        document.getElementsByName("filteraggprointstart")[0].setAttribute('min', today);
     });
 
     const formatter = new Intl.NumberFormat('en-US', {

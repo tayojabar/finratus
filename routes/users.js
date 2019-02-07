@@ -3043,6 +3043,17 @@ users.get('/activity-types', function(req, res, next) {
     });
 });
 
+users.get('/activity-types-full', function(req, res, next) {
+    let query = 'SELECT * from activity_types';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
 /* Add New Activity */
 users.post('/new-activity', function(req, res, next) {
     let data = [],
@@ -3203,6 +3214,60 @@ users.get('/client-activities', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send(results);
+        }
+    });
+});
+
+users.get('/clients-act', function(req, res, next) {
+    let user = req.query.user;
+    let team = req.query.team;
+    let params;
+    let query = 'select * ' +
+                'from clients where loan_officer = ? ' +
+                'and status = 1';
+    params = [user];
+    if (team){
+        query = 'select * from clients where loan_officer in (select memberID from team_members where teamID = ?)';
+        params = [team];
+    }
+    db.query(query, params, function (error, results, fields) {
+        console.log(params)
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Change Activity Type Status */
+users.post('/del-act-type/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update activity_types SET status = 0, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Role Disabled!"}));
+        }
+    });
+});
+
+/* Reactivate Role */
+users.post('/en-act-type/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update activity_types SET status = 1, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Role Re-enabled!"}));
         }
     });
 });
