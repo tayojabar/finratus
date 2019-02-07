@@ -535,7 +535,7 @@
                     v.start,
                     v.end,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
-                    'onclick="openDetailsModal(\''+v.ID+','+v.value+','+v.type+'\')">' +
+                    'onclick="openDetailsModal(\''+v.ID+','+v.start+','+v.end+','+v.value+','+v.type+'\')">' +
                     '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
@@ -545,11 +545,13 @@
         function openDetailsModal(owner) {
             let values = owner.split(','),
                 id = values[0],
-                goal = values[1],
-                type = values[2];
+                start = values[1],
+                end = values[2],
+                goal = values[3],
+                type = values[4];
             $.ajax({
                 type: "GET",
-                url: "/user/committals/"+type+"/"+id,
+                url: "/user/committals/"+type+"/"+id+"?start="+start+"&&end="+end,
                 success: function (response) {
                     let data = response.response;
                     $('#target-value').text('₦'+(parseFloat(goal)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
