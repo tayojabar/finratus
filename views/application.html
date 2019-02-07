@@ -1177,7 +1177,7 @@
                         $('#stage-documents').append('<option value = "others">Others</option>');
                         fileUpload();
                     }
-
+console.log(stage)
                     if (stage.actions){
                         let actions = stage.actions.split(',');
                         actions.forEach(function (id) {
@@ -1242,6 +1242,9 @@
                         $(".next").hide();
                         $("#current_stage").html('<span>CANCELLED</span>');
                     }
+
+                    if (stage.stage_name === 'Final Approval')
+                        $('.next').text('Disbursal (Disbursal)');
 
                     if (stage.stage_name === 'Disbursal'){
                         if (application.status === 2){

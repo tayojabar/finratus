@@ -633,6 +633,8 @@
                     if(response.status === 500){
                         swal(response.error,"","error");
                     } else{
+                        $('#team_name').val('');
+                        $('#team_supervisor').val('-- Choose Supervisor --').trigger('change');
                         swal("Team Registered!","","success");
                         window.location.href = "/all-teams";
                     }

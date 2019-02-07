@@ -637,6 +637,7 @@
                     if(response.status === 500){
                         swal(response.error,"","error");
                     } else{
+                        $('#user_list').val('-- Select User --').trigger('change');
                         swal("Member assigned successfully!","","success");
                         populateMembers(response);
                         loadTeams();
