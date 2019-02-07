@@ -808,7 +808,8 @@
                     $('#phone').val(data[0].phone);
                     $('#address').val(data[0].address);
                     $('#email').val(data[0].email);
-                    $('#role').val(data[0].user_role);
+//                    $('#role').val(data[0].user_role);
+                    setSelectedIndex(document.getElementById('role'), data[0].user_role);
 //                    $('#branch').val(data[0].branch);
                     setSelectedIndex(document.getElementById('branch'), data[0].branch);
                     setSelectedIndex(document.getElementById('supervisor'), data[0].supervisor);
