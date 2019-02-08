@@ -272,7 +272,8 @@
 
         //delete done task from "already done"
         $('.todolist').on('click','.remove-item',function(){
-            removeItem(this);
+            if (localStorage.archive_workflow === 'true')
+                removeItem(this);
         });
 
         // count tasks
@@ -743,6 +744,9 @@
         archiveWorkflow(e);
     });
     $('#document-upload-div').on('click','.document-upload-text', function (e) {
+        archiveWorkflow(e);
+    });
+    $('.todolist').on('click','.remove-item', function (e) {
         archiveWorkflow(e);
     });
 

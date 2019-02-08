@@ -1177,7 +1177,7 @@
                         $('#stage-documents').append('<option value = "others">Others</option>');
                         fileUpload();
                     }
-console.log(stage)
+
                     if (stage.actions){
                         let actions = stage.actions.split(',');
                         actions.forEach(function (id) {
@@ -1509,7 +1509,6 @@ console.log(stage)
             let _self = this,
                 $images_preview = $('#images-preview'),
                 $files_preview = $('#files-preview');
-            console.log(this.files)
             if (this.files[0].type && (this.files[0].type).split('/') && ((this.files[0].type).split('/'))[0]){
                 if (((this.files[0].type).split('/'))[0] !== 'image'){
                     $images_preview.hide();
@@ -1696,7 +1695,6 @@ console.log(stage)
                             }
                         });
                     } else {
-                        console.log(validation.data);
                         swal('There are error(s) in the uploaded schedule!','','error');
                     }
                 });
@@ -2064,7 +2062,6 @@ console.log(stage)
                             }
                         });
                     } else {
-                        console.log(validation.data);
                         swal('There are error(s) in the uploaded schedule!','','warning');
                     }
                 });
@@ -2243,13 +2240,6 @@ console.log(stage)
                     errors.push(g+' is not a valid number');
                 }
                 validated_schedule.push(invoice);
-                console.log(a)
-                console.log(b)
-                console.log(c)
-                console.log(d)
-                console.log(e)
-                console.log(f)
-                console.log(g)
             }
             if (errors[0]){
                 callback({status: false, data: errors});
