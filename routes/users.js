@@ -3058,7 +3058,8 @@ users.get('/activity-types-full', function(req, res, next) {
 users.post('/new-activity', function(req, res, next) {
     let data = [],
         postData = req.body,
-        query =  'INSERT INTO activities Set ?';
+        query =  'INSERT INTO activities Set ?',
+        query2 = 'SELECT ID from activities where ID = LAST_INSERT_ID()';
     postData.status = 1;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     db.getConnection(function(err, connection) {
@@ -3068,7 +3069,12 @@ users.post('/new-activity', function(req, res, next) {
             if(error){
                 res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
             } else {
-                res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created"}));
+                connection.query(query2, function(error, results, fields){
+                    let id = results[0].ID;
+                    connection.query('update activities set attachments = ? where activities.id = ?', [postData.attachments, id], function(error, results, fields){
+                        res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created", "result": id}));
+                    });
+                });
             }
         });
     });
@@ -3079,7 +3085,7 @@ users.get('/activities', function(req, res, next) {
     let current_user = req.query.user;
     let team = req.query.team;
     let word = 'team'
-    let query = 'SELECT *, ' +
+    let query = 'SELECT *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
         '(select fullname from clients c where c.ID = client) as clients, ' +
         '(select fullname from users where users.id = for_) as user, ' +
         '(select name from teams where teams.Id = ?) as team_name, ' +
@@ -3273,6 +3279,72 @@ users.post('/en-act-type/:id', function(req, res, next) {
             res.send(JSON.stringify({"status": 200, "error": null, "response": "Role Re-enabled!"}));
         }
     });
+});
+
+//File Attachments - Activities
+users.post('/attach-files/:id', function(req, res) {
+    if (!req.files) return res.status(400).send('No files were uploaded.');
+    if (!req.params.id) return res.status(400).send('No Folder specified!');
+    if (req.body.num == 1){
+        fs.stat('files/activities/'+req.params.id+'/', function(err) {
+            if (!err) {
+                console.log('file or directory exists');
+            }
+            else if (err.code === 'ENOENT') {
+                fs.mkdirSync('files/activities/'+req.params.id+'/');
+            }
+        });
+    }
+    let sampleFile = req.files.file,
+        name = sampleFile.name,
+        extArray = sampleFile.name.split("."),
+        extension = extArray[extArray.length - 1],
+        fileName = name+'.'+extension;
+    console.log(req.body)
+    fs.stat('files/activities/'+req.params.id+'/'+name, function (err) {
+        if (err) {
+            sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
+                if (err) return res.status(500).send(err);
+                res.send('File uploaded!');
+            });
+        }
+        else{
+            fs.unlink('files/activities/'+req.params.id+'/'+name,function(err){
+                if(err){
+                    res.send('Unable to delete file!');
+                }
+                else{
+                    sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
+                        if (err)
+                            return res.status(500).send(err);
+                        res.send('File uploaded!');
+                    });
+                }
+            });
+        }
+    });
+});
+
+/* GET Activity Attachments. */
+users.get('/attached-images/:folder/', function(req, res, next) {
+    var array = [];
+    var path = 'files/activities/'+req.params.folder+'/';
+    if (fs.existsSync(path)){
+        fs.readdir(path, function (err, files){
+            //console.log(path+': Exists, hence image '+JSON.stringify(files));
+            var obj = [];
+            async.forEach(files, function (file, callback){
+                obj.push(path+file)
+                callback();
+            }, function(data){
+                //array.push(res);
+                res.send(JSON.stringify({"status": 200, "response":obj}));
+            });
+        })	;
+    }
+    else {
+        res.send(JSON.stringify({"status":500, "response": "No Attachments!"}));
+    }
 });
 
 module.exports = users;

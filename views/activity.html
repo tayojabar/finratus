@@ -141,6 +141,12 @@
         .inp input:focus + span + .border {
             transform: scaleX(1);
         }
+        #attachment-list img{
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            border-radius: 5px;
+        }
     </style>
 
 </head>
@@ -325,9 +331,9 @@
                             <div class="input-group">
                                 <!--<div class="input-group-addon"><i class="fa fa-file-pdf-o"></i></div>-->
                                 <!--<input class="form-control" type="file"/>-->
-                                <label for="activity-file" class="inp">
-                                    <input type="file" id="activity-file">
-                                    <span class="label">Attachment</span>
+                                <label for="activity-files" class="inp">
+                                    <input type="file" id="activity-files" multiple name="files">
+                                    <span class="label">Attachment(s)</span>
                                     <span class="border"></span>
                                 </label>
                             </div>
@@ -339,12 +345,12 @@
                 </div>
                 <hr/>
                 <div id="feed" class="card-body" style="border-radius: 0px; padding-top: 0px">
-                    <div class="text-muted" style="text-align: center" >
-                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>
-                        <h2>No activities to display!</h2>
-                        <p><br/>This could be a network error. If you think so, click the button below.</p><br/>
-                        <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>
-                    </div>
+                    <!--<div class="text-muted" style="text-align: center" >-->
+                        <!--<div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>-->
+                        <!--<h2>No activities to display!</h2>-->
+                        <!--<p><br/>This could be a network error. If you think so, click the button below.</p><br/>-->
+                        <!--<button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>-->
+                    <!--</div>-->
                 </div>
 
             </div>
@@ -358,22 +364,15 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Add New Activity Type</h4>
+                <h4 class="modal-title" id="myModalLabel">Attachments</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <strong><label class=" form-control-label">Activity Name</label></strong><strong style="color:red"> *</strong><span id="role-error" style="padding-left:50px; text-align: center"></span>
-                    <div class="input-group">
-                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
-                        <input id="new-role" type="text" class="form-control" required="required">
-                    </div>
-                </div>
+            <div id="attachment-list" class="modal-body">
             </div>
-            <div class="modal-footer">
-                <span id="submit-activity-error" style="padding-left:50px; text-align: center"></span><button id="submit" type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+            <!--<div class="modal-footer">-->
+                <!--<span id="submit-activity-error" style="padding-left:50px; text-align: center"></span><button id="submit" type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>-->
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+            <!--</div>-->
         </div>
     </div>
 </div>
@@ -569,9 +568,14 @@
             if (data[0]){
                 $feed.append('<div class="col-sm-12" style="padding-bottom: 10px"><button style="float: right; margin-left: 100px" onclick="checkForEdit()" class="btn btn-primary pull-right"><i class="fa fa-refresh"></i> Refresh Feed</button></div>');
             }else{
-                $feed.append(message);
+                return $feed.append(message);
             }
+            let code, pic, for_, comment_count;
             $.each(data, function(k, v){
+                code = (v.team == 0) ? '#9aa2ab' : '#9fcdff';
+                pic = (v.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
+                for_ = (v.team == 0) ? '' : v.team_name;
+                comment_count = (v.comment_count === null) ? 'No' : v.comment_count;
                 $('#title-text').html(v.user+': '+v.team_name);
                 $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
                     '    <div class="col-sm-1">\n' +
@@ -589,6 +593,11 @@
                     '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
                     '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
                     '        </div>\n' +
+                    '    <div class="col-sm-12">' +
+                    '       <div class="col-sm-1"></div>' +
+                    '       <div class="col-sm-11 text-muted"><button id="toggle-comment'+v.ID+'" style="background-color: #e9ecef; border: none" onclick="getComments('+v.ID+')">'+comment_count+' comment(s) ...</button></div>'+
+                    '    </div>'+
+                    '    <div id="comments-cover'+v.ID+'" style="display: none"></div>'+
                     '    </div>\n' +
                     '</div><br/>');
             });
@@ -626,16 +635,17 @@
             }else{
                 $feed.append(message);
             }
-            let code, pic, for_, comment_count;
+            let code, pic, for_, comment_count, attachment_count;
             $.each(data, function(k, v){
-                if (v.team == 0){
-                    code = '';
-                    pic = '<i class="fa fa-user"></i>';
-                }
+//                if (v.team == 0){
+//                    code = '';
+//                    pic = '<i class="fa fa-user"></i>';
+//                }
                 code = (v.team == 0) ? '#9aa2ab' : '#9fcdff';
                 pic = (v.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
                 for_ = (v.team == 0) ? '' : v.team_name;
                 comment_count = (v.comment_count === null) ? 'No' : v.comment_count;
+                attachment_count = (v.attachments === null) ? 'None' : v.attachments;
                 $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
                     '    <div class="col-sm-1">\n' +
                     '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: '+code+'; text-align: center">' +
@@ -645,12 +655,12 @@
                     '    <div id="inside'+v.ID+'" class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
                     '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+v.user+ ' for '+for_+'</span></div>\n' +
-//                    '<button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>
+                    '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
                     '            <div class="panel-body">'+v.activity+' '+
                     '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
                     '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
                     '            </div>\n' +
-                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
+                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small><i class="fa fa-calendar"></i> '+formatDate(v.activity_date)+'</small></span></div>\n' +
                     '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
                     '        </div>\n' +
                         '    <div class="col-sm-12">' +
@@ -715,17 +725,22 @@
                         $comments = $(item);
 //                    $comments.html('');
                     if (!comments[0])
-                        return $comments.append('<h3 style="margin: auto;">No comments available yet!</h3>');
+                        return $comments.append('<div><div class="col-sm-2"></div><div class="col-sm-10"><h5 style="margin: auto;">No comments available yet!</h5></div></div>');
                     comments.forEach(function (comment) {
                         $comments.append('<div id="comments'+id+'" class="">\n' +
                             '    <div class="col-sm-2">\n' +
-//                            '        <div class="thumbnail"><img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+//                            '        <div class="thumbnail"><img  width="30px" height="30px" class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
                             '    </div>\n' +
                             '    <div class="col-sm-10">\n' +
-                            '        <div class="panel panel-default">\n' +
-                            '            <div class="panel-heading"><strong>'+comment.maker+'</strong> <span class="text-muted">commented on '+comment.date_created+'</span></div>\n' +
-                            '            <div class="panel-body">'+comment.comment+'</div>\n' +
-                            '        </div>\n' +
+                                '    <div class="col-sm-1" style="padding-right: 0px">\n' +
+                                '        <div class="thumbnail col-xs-12"><img  width="30px" height="30px" class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"></div>\n' +
+                                '    </div>\n' +
+                            '        <div class="col-sm-11">'+
+                                '        <div class="panel panel-default">\n' +
+                                '            <div class="panel-heading"><strong>'+comment.maker+'</strong> <span class="text-muted"> <small>'+comment.date_created+'</small></span></div>\n' +
+                                '            <div class="panel-body">'+comment.comment+'</div>\n' +
+                                '        </div>\n' +
+                            '        </div>'+
                             '    </div>\n' +
                             '</div>');
                     });
@@ -985,6 +1000,10 @@
         }
 
         function validate(){
+//            console.log($('#activity-files')[0].files.length);
+//            for (var i = 0; i < $('#activity-files')[0].files.length; i++){
+//                console.log($('#activity-files')[0].files[i]);
+//            }
             let valid = true;
             let y = document.getElementsByClassName("fields");
 //        y = x[currentTab].getElementsByTagName("input");
@@ -1004,7 +1023,7 @@
         }
 
         function createActivity(){
-            var obj = {};
+            var obj = {}; let arr = [];
             obj.activity_name = $('#name').val();
             obj.activity_description = $('.emoji-wysiwyg-editor').text();
             obj.client_phone = $('#client-list').find('option:selected').attr('phone');
@@ -1016,6 +1035,10 @@
             obj.for_ = JSON.parse(localStorage.user_obj).ID;
             obj.category = ($('#team-list').find('option:selected').attr('id') === '0') ? 'personal' : 'team';
             obj.team = $('#team-list').find('option:selected').attr('id');
+            obj.attachments = $('#activity-files')[0].files.length;
+//            for (var i = 0; i < $('#activity-files')[0].files.length; i++){
+//                arr.push($('#activity-files')[0].files[i]);
+//            }
             var test={};
             $.ajax({
                 'url': '/user/new-activity/',
@@ -1029,9 +1052,13 @@
 //                        swal("An Activity  already exists!","","error");
 //                    }
                     if(test.status == 500){
-                        swal("Please recheck entered values","","error");
+                        swal("Error","Unable to submit","error");
                     }
                     else{
+                        for (var i = 0; i < $('#activity-files')[0].files.length; i++){
+                            console.log('Inside Here');
+                            upload(test.result, $('#activity-files')[0].files[i], i+1);
+                        }
                         swal("Activity Submitted!","","success");
                         $('.emoji-wysiwyg-editor').empty();
                         loadActivities();
@@ -1040,6 +1067,54 @@
                 }
             });
 
+        }
+
+        function upload(id, files, num){
+            console.log('I got here');
+            let folder_name = 'activity'+id;
+            if (!files) {
+                return swal ("", "No attachments!", 'info');
+            }else{
+                let formData = new FormData();
+                formData.append('file', files); formData.append('folder', folder_name); formData.append('num', num);
+                $.ajax({
+                    url: "user/attach-files/"+folder_name,
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log(response);
+                        swal("", "Attachments Uploaded Successfully!", 'success');
+                    },
+                    error: function() {
+                        swal("", "Error Attaching Documents!", 'error');
+                    }
+                });
+            }
+        }
+
+        function loadAttachments(activity){
+            let $carousel_inner = $('.carousel-inner');
+            $.ajax({
+                'url': 'user/attached-images/activity'+activity,
+                'type': 'get',
+                'success': function (data) {
+                    let res = JSON.parse(data);
+                    if(res.status === 500){
+                        $('#attachment-list').append("No Attachments for this Activity!");
+                    }
+                    else{
+                        $.each(res['response'], function (key, value){
+                            let image = '<div class="col-sm-4">'+
+                                '<a href="#">'+
+                                '<img src="'+value+'" alt="Image" style="max-width:100%;" height="200" width="300">'+
+                                '</a>'
+                            $('#attachment-list').append(image);
+                        });
+                    }
+                }
+            });
         }
 
         function isValidDate(dateString) {

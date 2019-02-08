@@ -32,6 +32,15 @@ if (fs.existsSync('./files')){
     }
 }
 
+if (fs.existsSync('./files')){
+    if (!fs.existsSync('./files/activities')){
+        fs.mkdirSync('./files/activities');
+        console.log('Activities folder created');
+    } else {
+        console.log('Activities folder exists');
+    }
+}
+
 let app = express(),
     cors = require('cors'),
     user = require('./routes/users'),
