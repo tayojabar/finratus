@@ -262,8 +262,14 @@
                             </div>
                             <script type="text/javascript">
                                 $('#new-period-start').change(function () {
-                                    let start_array = this.value.split('-'),
-                                        end = (parseInt(start_array[0])+1)+'-'+start_array[1]+'-'+start_array[2];
+                                    Date.prototype.addDays = function(days) {
+                                        let date = new Date(this.valueOf());
+                                        date.setDate(date.getDate() + days);
+                                        return date;
+                                    };
+
+                                    let start = new Date(this.value),
+                                        end = (start.addDays(364)).toISOString().split('T')[0];
                                     $('#new-period-end').val(end);
                                 });
                             </script>

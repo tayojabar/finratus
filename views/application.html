@@ -2324,24 +2324,6 @@ console.log(stage)
             });
         }
 
-        function saveLoanCirrusID() {
-            let id = $('#loancirrus-id-input').val();
-            if (!id)
-                return swal('Kindly input loan cirrus id','','warning');
-            $.ajax({
-                'url': '/user/application/loancirrus-id/'+application_id,
-                'type': 'post',
-                'data': {id:id},
-                'success': function (data) {
-                    swal('Loan cirrus id updated successfully','','success');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    swal('Oops! An error occurred while updating loan cirrus id','','error');
-                }
-            });
-        }
-
         function read_write(){
             let w,
                 perms = JSON.parse(localStorage.getItem("permissions")),

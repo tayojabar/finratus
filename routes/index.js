@@ -1741,8 +1741,8 @@ function generateSubPeriods(period, periodID, callback) {
             periodID: periodID,
             name: code+i+' of '+period.name,
             type: code+i,
-            start: dates[i-1],
-            end: dates[i]
+            start: dates[i-1]['start'],
+            end: dates[i-1]['end']
         };
         sub_periods.push(sub_period);
     }
@@ -1750,9 +1750,25 @@ function generateSubPeriods(period, periodID, callback) {
 }
 
 function dateRangeArray(period, interval) {
-    let range = moment.range(period.start,period.end),
-        values = Array.from(range.by('day', {step: (30*interval)}));
-    return values.map(m => m.format('YYYY-MM-DD'));
+    let dates_array = [],
+        count = 12/interval;
+    for (let i=0; i<count; i++){
+        let start,
+            date_object = {};
+        if (i === 0){
+            start = period.start;
+        } else {
+            start = moment(dates_array[i-1]['end']).add(1, 'days').format("YYYY-MM-DD");
+        }
+        date_object.start = start;
+        if (i < count-1){
+            date_object.end = moment(date_object.start).add((30*interval), 'days').format("YYYY-MM-DD");
+        } else {
+            date_object.end = period.end;
+        }
+        dates_array.push(date_object);
+    }
+    return dates_array;
 }
 
 router.get('/periods', function(req, res, next) {
