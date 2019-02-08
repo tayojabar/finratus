@@ -272,7 +272,8 @@
 
         //delete done task from "already done"
         $('.todolist').on('click','.remove-item',function(){
-            removeItem(this);
+            if (localStorage.archive_workflow === 'true')
+                removeItem(this);
         });
 
         // count tasks
@@ -745,6 +746,9 @@
     $('#document-upload-div').on('click','.document-upload-text', function (e) {
         archiveWorkflow(e);
     });
+    $('.todolist').on('click','.remove-item', function (e) {
+        archiveWorkflow(e);
+    });
 
     function archiveWorkflow(e) {
         if (localStorage.archive_workflow === 'false'){
@@ -797,7 +801,7 @@
                 $('#process-name').val("");
                 $('#wait').hide();
                 swal(data.message);
-                window.location.href = "/all-workflow";
+//                window.location.href = "/all-workflow";
             },
             'error': function (err) {
                 console.log('Error');
@@ -836,7 +840,7 @@
                         stageID: stagex.stageID,
                         stage_name: stagex.stage_name
                     };
-                    if (stage.stage_name !== 'Final Approval' && stage.stage_name !== 'Disbursal'){
+                    if (stage.stage_name !== 'Application Start' && stage.stage_name !== 'Final Approval' && stage.stage_name !== 'Disbursal'){
                         if (stage.actions){
                             let actions_array = stage.actions.split(',');
                             actions_array.forEach(function (action_id) {

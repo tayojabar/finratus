@@ -1508,7 +1508,6 @@
             let _self = this,
                 $images_preview = $('#images-preview'),
                 $files_preview = $('#files-preview');
-            console.log(this.files)
             if (this.files[0].type && (this.files[0].type).split('/') && ((this.files[0].type).split('/'))[0]){
                 if (((this.files[0].type).split('/'))[0] !== 'image'){
                     $images_preview.hide();
@@ -1695,7 +1694,6 @@
                             }
                         });
                     } else {
-                        console.log(validation.data);
                         swal('There are error(s) in the uploaded schedule!','','error');
                     }
                 });
@@ -2063,7 +2061,6 @@
                             }
                         });
                     } else {
-                        console.log(validation.data);
                         swal('There are error(s) in the uploaded schedule!','','warning');
                     }
                 });
@@ -2242,13 +2239,6 @@
                     errors.push(g+' is not a valid number');
                 }
                 validated_schedule.push(invoice);
-                console.log(a)
-                console.log(b)
-                console.log(c)
-                console.log(d)
-                console.log(e)
-                console.log(f)
-                console.log(g)
             }
             if (errors[0]){
                 callback({status: false, data: errors});
@@ -2319,24 +2309,6 @@
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred while closing loan','','error');
-                }
-            });
-        }
-
-        function saveLoanCirrusID() {
-            let id = $('#loancirrus-id-input').val();
-            if (!id)
-                return swal('Kindly input loan cirrus id','','warning');
-            $.ajax({
-                'url': '/user/application/loancirrus-id/'+application_id,
-                'type': 'post',
-                'data': {id:id},
-                'success': function (data) {
-                    swal('Loan cirrus id updated successfully','','success');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    swal('Oops! An error occurred while updating loan cirrus id','','error');
                 }
             });
         }
