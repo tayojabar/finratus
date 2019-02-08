@@ -801,7 +801,7 @@
                 $('#process-name').val("");
                 $('#wait').hide();
                 swal(data.message);
-                window.location.href = "/all-workflow";
+//                window.location.href = "/all-workflow";
             },
             'error': function (err) {
                 console.log('Error');
@@ -840,7 +840,7 @@
                         stageID: stagex.stageID,
                         stage_name: stagex.stage_name
                     };
-                    if (stage.stage_name !== 'Final Approval' && stage.stage_name !== 'Disbursal'){
+                    if (stage.stage_name !== 'Application Start' && stage.stage_name !== 'Final Approval' && stage.stage_name !== 'Disbursal'){
                         if (stage.actions){
                             let actions_array = stage.actions.split(',');
                             actions_array.forEach(function (action_id) {
