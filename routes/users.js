@@ -610,6 +610,7 @@ users.get('/committals/user/disbursement/:id', function(req, res, next) {
         query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2',
         query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -639,6 +640,7 @@ users.get('/committals/user/interest/:id', function(req, res, next) {
             'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
             'WHERE a.userID = c.client_id AND a.status = 2) AS apps WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -667,6 +669,7 @@ users.get('/committals/team/disbursement/:id', function(req, res, next) {
         query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
             'WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -696,6 +699,7 @@ users.get('/committals/team/interest/:id', function(req, res, next) {
             'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
             'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -726,6 +730,7 @@ users.get('/committals/disbursement/:id', function(req, res, next) {
             '(SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID in (SELECT userID FROM user_targets u WHERE u.targetID = ? AND u.status = 1 AND u.user_type = "team")) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
             'WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -759,6 +764,7 @@ users.get('/committals/interest/:id', function(req, res, next) {
             '(SELECT memberID user_id FROM team_members WHERE teamID in (SELECT userID FROM user_targets u WHERE u.targetID = ? AND u.status = 1 AND u.user_type = "team")) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
             'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
