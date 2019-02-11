@@ -302,31 +302,31 @@ app.get('/forgot-password/:id?', function(req, res) {
     res.sendFile('forgot-password.html', {root: __dirname + '/views'});
 });
 
-app.get('/activity', function(req, res) {
+app.get('/activity', requireLogin, function(req, res) {
     res.sendFile('activity.html', {root: __dirname + '/views'});
 });
 
-app.get('/all-targets', function(req, res) {
+app.get('/all-targets', requireLogin, function(req, res) {
     res.sendFile('all-targets.html', {root: __dirname + '/views'});
 });
 
-app.get('/all-teams', function(req, res) {
+app.get('/all-teams', requireLogin, function(req, res) {
     res.sendFile('all-teams.html', {root: __dirname + '/views'});
 });
 
-app.get('/target-dashboard', function(req, res) {
+app.get('/target-dashboard', requireLogin, function(req, res) {
     res.sendFile('target-dashboard.html', {root: __dirname + '/views'});
 });
 
-app.get('/view-activity', function(req, res) {
+app.get('/view-activity', requireLogin, function(req, res) {
     res.sendFile('view-activity.html', {root: __dirname + '/views'});
 });
 
-app.get('/activity-settings', function(req, res) {
+app.get('/activity-settings', requireLogin, function(req, res) {
     res.sendFile('activity-settings.html', {root: __dirname + '/views'});
 });
 
-app.get('/all-periods', function(req, res) {
+app.get('/all-periods', requireLogin, function(req, res) {
     res.sendFile('all-periods.html', {root: __dirname + '/views'});
 });
 
