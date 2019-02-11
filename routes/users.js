@@ -3090,17 +3090,29 @@ users.post('/new-activity', function(req, res, next) {
 users.get('/activities', function(req, res, next) {
     let current_user = req.query.user;
     let team = req.query.team;
+    let officer = req.query.officer;
     let word = 'team'
+    let load = [];
     let query = 'SELECT *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
         '(select fullname from clients c where c.ID = client) as clients, ' +
         '(select fullname from users where users.id = for_) as user, ' +
         '(select name from teams where teams.Id = ?) as team_name, ' +
         '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
-        'from activities where for_ = ? and status = 1 and category = ? ';
+        'from activities where for_ = ? and status = 1 ';
     if (team){
-        query = query.concat('  and team = ? order by id desc')
+        query = query.concat(' and category = ?').concat('  and team = ? order by id desc')
+        load = [team, current_user, word, team]
     }
-    db.query(query, [team, current_user, word, team], function (error, results, fields) {
+    if (officer){
+        query = 'SELECT *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
+            '(select fullname from clients c where c.ID = client) as clients, ' +
+            '(select fullname from users where users.id = for_) as user, ' +
+            '(select name from teams where teams.Id = team) as team_name, ' +
+            '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
+            'from activities where for_ = ? and status = 1 ';
+        load = [officer]
+    }
+    db.query(query, load, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {

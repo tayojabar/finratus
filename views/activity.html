@@ -43,10 +43,19 @@
             width: 92% !important;
         }
         .select2-selection{
-            height: 100% !important;
-            border: 1px solid #ced4da !important;
-            border-radius: .25rem !important;
-            color: #495057 !important;
+            padding-top: 10px !important;;
+            height: 49px !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            border: none !important;
+            border-bottom: 2px solid #c8ccd4 !important;
+            background: none !important;
+            border-radius: 0 !important;
+            color: #223254 !important;
+            transition: all 0.15s ease !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow{
+            display: none;
         }
         input.invalid, span.invalid {
             border: 2px dashed red;
@@ -240,7 +249,7 @@
             <div id="all-list" class="row card">
                 <div id="cover-new" class="col-sm-12" style="padding: 10px; padding-bottom: 5px">
                     <div class="input-group">
-                        <textarea contenteditable="true" style="border-radius: 10px" type="text" id="temp-desc" class="form-control fields" rows="1" placeholder="New Activity" data-emojiable="true" data-emoji-input="unicode"></textarea>
+                        <textarea contenteditable="true" style="border-radius: 10px" type="text" id="temp-desc" class="form-control fields" rows="1" placeholder="Type here to create a new activity" data-emojiable="true" data-emoji-input="unicode"></textarea>
                     </div>
                     <br/>
                     <div id="form" class="row" style="display: none; padding-top: 5px">
@@ -252,14 +261,14 @@
                                 <!--</select>-->
                                 <label for="team-list" class="inp">
                                     <select id="team-list" class="fields" required="required">
-                                        <option value="0">Personal</option>
+                                        <option value="0" id="0">Personal</option>
                                     </select>
                                     <span class="label"></span>
                                     <span class="border"></span>
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-2 form-group">
+                        <div class="col-sm-3 form-group">
                             <div class="input-group">
                                 <!--<div class="input-group-addon"><i class="fa fa-user"></i></div>-->
                                 <!--<select id="client-list" class="form-control select fields" required="required">-->
@@ -307,24 +316,26 @@
                                 <!--<input type="number" id="activity-duration" class="form-control fields col-sm-4" placeholder="Duration" required="required" min=0 >-->
                                 <label for="activity-duration" class="inp">
                                     <input type="number" class="fields" min=1 id="activity-duration">
-                                    <span class="label">Duration</span>
+                                    <span class="label">Duration(Min)</span>
                                     <span class="border"></span>
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-1 form-group">
-                            <div class="input-group">
-                                <label for="time-unit" class="inp">
-                                    <select id="time-unit" class="fields">
-                                        <option value="Minutes">Minutes</option>
-                                        <option value="Hours">Hours</option>
-                                        <option value="Day(s)">Day(s)</option>
-                                        <option value="Years">Years</option>
-                                    </select>
-                                    <span class="label"></span>
-                                    <span class="border"></span>
-                                </label>
-                            </div>
+                        <div>
+                        <!--<div class="col-sm-1 form-group">-->
+                            <!--<div class="input-group">-->
+                                <!--<label for="time-unit" class="inp">-->
+                                    <!--<select id="time-unit" class="fields">-->
+                                        <!--<option value="Minutes">Minutes</option>-->
+                                        <!--<option value="Hours">Hours</option>-->
+                                        <!--<option value="Day(s)">Day(s)</option>-->
+                                        <!--<option value="Years">Years</option>-->
+                                    <!--</select>-->
+                                    <!--<span class="label"></span>-->
+                                    <!--<span class="border"></span>-->
+                                <!--</label>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         </div>
                         <div class="col-sm-2 form-group">
                             <!--<label><strong>Attach Document</strong></label>-->
@@ -422,7 +433,7 @@
         jQuery(document).ready(function() {
             checkForEdit();
             window.emojiPicker.discover();
-//            getClients();
+            getClients(JSON.parse(localStorage.user_obj).ID, 0);
             getTeams();
 //            loadActivities();
             getActivityTypes();
@@ -536,7 +547,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             const officer = urlParams.get('id');
             const team = urlParams.get('team');
-            if (officer && team){
+            const id = urlParams.get('officer');
+            if (id){
+                url = '/user/activities?officer='+id;
+            }
+            else if (officer && team){
                 url = '/user/activities?user='+officer+'&&team='+team;
             }else{
                 return loadActivities();
@@ -570,12 +585,13 @@
             }else{
                 return $feed.append(message);
             }
-            let code, pic, for_, comment_count;
+            let code, pic, for_, comment_count, attachment_count;
             $.each(data, function(k, v){
                 code = (v.team == 0) ? '#9aa2ab' : '#9fcdff';
                 pic = (v.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
-                for_ = (v.team == 0) ? '' : v.team_name;
+                for_ = (v.team == 0) ? '' : ' for '+v.team_name;
                 comment_count = (v.comment_count === null) ? 'No' : v.comment_count;
+                attachment_count = (v.attachments === null) ? 'None' : v.attachments;
                 $('#title-text').html(v.user+': '+v.team_name);
                 $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
                     '    <div class="col-sm-1">\n' +
@@ -585,12 +601,13 @@
                     '    </div>\n' +
                     '    <div class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+' for '+v.team_name+'</span></div><button type="button" class="btn btn-outline-primary pull-right" onclick="viewActivity('+v.ID+')"><i class="fa fa-eye"></i> View More</button>\n' +
+                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+''+for_+'</span></div>\n' +
+                    '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
                     '            <div class="panel-body">'+v.activity+' '+
-                    '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
+                    '               <i class="fa fa-user"></i><span> '+v.clients+'</span>&nbsp;|&nbsp;'+
                     '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
                     '            </div>\n' +
-                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small>created on '+v.date_created+'</small></span></div>\n' +
+                    '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small><i class="fa fa-calendar"></i> '+formatDate(v.activity_date)+'</small></span></div>\n' +
                     '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
                     '        </div>\n' +
                     '    <div class="col-sm-12">' +
@@ -627,7 +644,7 @@
             let message = '<div class="text-muted" style="text-align: center" >\n' +
                 '                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>\n' +
                 '                        <h2>No activities to display!</h2>\n' +
-                '                        <p><br/>This could be a network error though. If you think so, click the button below.</p><br/>\n' +
+                '                        <p><br/>This could be a network error. If you think so, click the button below.</p><br/>\n' +
                 '                        <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>\n' +
                 '                    </div>';
             if (data[0]){
@@ -635,7 +652,7 @@
             }else{
                 $feed.append(message);
             }
-            let code, pic, for_, comment_count, attachment_count;
+            let code, pic, for_, comment_count, attachment_count, client_name;
             $.each(data, function(k, v){
 //                if (v.team == 0){
 //                    code = '';
@@ -643,9 +660,16 @@
 //                }
                 code = (v.team == 0) ? '#9aa2ab' : '#9fcdff';
                 pic = (v.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
-                for_ = (v.team == 0) ? '' : v.team_name;
+                for_ = (v.team == 0) ? '' : ' for '+v.team_name;
                 comment_count = (v.comment_count === null) ? 'No' : v.comment_count;
                 attachment_count = (v.attachments === null) ? 'None' : v.attachments;
+                client_name = v.client_name;
+                if (v.client === "-1"){
+                    client_name = 'No Client Chosen';
+                }
+                if (v.client === "0"){
+                    client_name = 'Prospective Client';
+                }
                 $feed.append('<div id="feed'+v.ID+'" class="row" style="background: #e9ecef; padding: 5px">\n' +
                     '    <div class="col-sm-1">\n' +
                     '        <div class="thumbnail" style="border-radius: 50%; width: 100px; height: 100px; background: '+code+'; text-align: center">' +
@@ -654,10 +678,10 @@
                     '    </div>\n' +
                     '    <div id="inside'+v.ID+'" class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+v.user+ ' for '+for_+'</span></div>\n' +
+                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+v.user+ ''+for_+'</span></div>\n' +
                     '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
                     '            <div class="panel-body">'+v.activity+' '+
-                    '               <i class="fa fa-user"></i><span> '+v.client_name+'</span>&nbsp;|&nbsp;'+
+                    '               <i class="fa fa-user"></i><span> '+client_name+'</span>&nbsp;|&nbsp;'+
                     '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
                     '            </div>\n' +
                     '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small><i class="fa fa-calendar"></i> '+formatDate(v.activity_date)+'</small></span></div>\n' +
@@ -879,7 +903,9 @@
                 url: url,
                 success: function (response) {
                     clients = JSON.parse(response);
-                    $('#client-list').empty().append('<option value="-1">-- Choose Client --</option>');
+                    $('#client-list').empty();
+                    $('#client-list').append('<option value="-1" id="-1">-- Choose Client --</option>');
+                    $('#client-list').append('<option value="0" id="0"> Prospective Client </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#client-list").append('<option value = "'+val.ID+'" id="'+val.ID+'" phone="'+val.phone+'" email="'+val.email+'">' + val.fullname + '</option>');
                     });
@@ -907,7 +933,7 @@
             else {
                 $('#continue').show();
                 $('#form').slideDown();
-                $('.emoji-wysiwyg-editor').css('border', 'thin');
+//                $('.emoji-wysiwyg-editor').css('border', 'thin');
                 $('#cover-new').css('border-style', 'solid');
                 $('#cover-new').css('border-width', '1px');
                 $('#cover-new').css('border-color', '#e9ecef');
@@ -1010,7 +1036,7 @@
             // A loop that checks every input field in the current tab:
             for (i = 0; i < y.length; i++) {
                 // If a field is empty...
-                if (y[i].value == "" || y[i].value == "-1") {
+                if (y[i].value == "") {
                     valid = false;
                 }
             }
@@ -1027,7 +1053,8 @@
             obj.activity_name = $('#name').val();
             obj.activity_description = $('.emoji-wysiwyg-editor').text();
             obj.client_phone = $('#client-list').find('option:selected').attr('phone');
-            obj.activity_duration = $('#activity-duration').val()+' '+$('#time-unit').find('option:selected').attr('value');
+            obj.activity_duration = $('#activity-duration').val();
+//            +' '+$('#time-unit').find('option:selected').attr('value');
             obj.activity_date = $('#activity-date').val();
             obj.client_email = $('#client-list').find('option:selected').attr('email');
             obj.client = $('#client-list').find('option:selected').attr('id');
