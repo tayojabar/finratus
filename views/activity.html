@@ -159,7 +159,7 @@
     </style>
 
 </head>
-
+<body>
 <!-- Left Panel -->
 <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
@@ -357,7 +357,10 @@
                 <hr/>
                 <div id="feed" class="card-body" style="border-radius: 0px; padding-top: 0px">
                     <!--<div class="text-muted" style="text-align: center" >-->
-                        <!--<div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>-->
+                        <!--<div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent; font-size: 24px">-->
+                            <!--&lt;!&ndash;<img class="img-responsive user-photo" src="not-found.jpg">&ndash;&gt;-->
+                            <!--<i class="fa fa-exclamation-circle fa-lg" style="font-size: 10em"></i><br/>-->
+                        <!--</div><br/>-->
                         <!--<h2>No activities to display!</h2>-->
                         <!--<p><br/>This could be a network error. If you think so, click the button below.</p><br/>-->
                         <!--<button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>-->
@@ -575,7 +578,9 @@
             let $feed = $('#feed');
             $feed.html('');
             let message = '<div class="text-muted" style="text-align: center" >\n' +
-                '                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>\n' +
+                '                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent">' +
+//                '                           <img class="img-responsive user-photo" src="not-found.jpg"></div>\n' +
+                '                           <i class="fa fa-exclamation-circle fa-lg" style="font-size: 10em"></i><br/>'+
                 '                        <h2>No activities to display!</h2>\n' +
                 '                        <p><br/>This could be a network error though. If you think so, click the button below.</p><br/>\n' +
                 '                        <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>\n' +
@@ -603,9 +608,10 @@
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
                     '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+''+for_+'</span></div>\n' +
                     '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
-                    '            <div class="panel-body">'+v.activity+' '+
-                    '               <i class="fa fa-user"></i><span> '+v.clients+'</span>&nbsp;|&nbsp;'+
-                    '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
+                    '            <div class="panel-body">'+
+                    '               <small><i class="fa fa-tasks"></i> '+v.activity+'</span></small>&nbsp;|'+
+                    '               <small><i class="fa fa-user"></i><span> '+v.clients+'</span></small>&nbsp;|'+
+                    '               <small><i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span></small><br/>\n'+
                     '            </div>\n' +
                     '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small><i class="fa fa-calendar"></i> '+formatDate(v.activity_date)+'</small></span></div>\n' +
                     '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
@@ -642,7 +648,10 @@
             let $feed = $('#feed');
             $feed.html('');
             let message = '<div class="text-muted" style="text-align: center" >\n' +
-                '                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent"><img class="img-responsive user-photo" src="not-found.jpg"></div>\n' +
+                '                        <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent">' +
+//                '                           <img class="img-responsive user-photo" src="not-found.jpg">' +
+                '                           <i class="fa fa-exclamation-circle fa-lg" style="font-size: 10em"></i><br/>'+
+            '                            </div><br/>\n' +
                 '                        <h2>No activities to display!</h2>\n' +
                 '                        <p><br/>This could be a network error. If you think so, click the button below.</p><br/>\n' +
                 '                        <button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>\n' +
@@ -654,10 +663,6 @@
             }
             let code, pic, for_, comment_count, attachment_count, client_name;
             $.each(data, function(k, v){
-//                if (v.team == 0){
-//                    code = '';
-//                    pic = '<i class="fa fa-user"></i>';
-//                }
                 code = (v.team == 0) ? '#9aa2ab' : '#9fcdff';
                 pic = (v.team == 0) ? '<i class="fa fa-user"></i>' : '<i class="fa fa-users"></i>';
                 for_ = (v.team == 0) ? '' : ' for '+v.team_name;
@@ -678,11 +683,12 @@
                     '    </div>\n' +
                     '    <div id="inside'+v.ID+'" class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading">'+pic+' Activity by <span class="text-muted">'+v.user+ ''+for_+'</span></div>\n' +
+                    '            <div class="panel-heading"><small>'+pic+' Activity by </small><span class="text-muted">'+v.user+ ''+for_+'</span></div>\n' +
                     '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
-                    '            <div class="panel-body">'+v.activity+' '+
-                    '               <i class="fa fa-user"></i><span> '+client_name+'</span>&nbsp;|&nbsp;'+
-                    '               <i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span><br/>\n'+
+                    '            <div class="panel-body">' +
+                    '               <small><i class="fa fa-tasks"></i> '+v.activity+'</span></small>&nbsp;|'+
+                    '               <small><i class="fa fa-user"></i><span> '+client_name+'</span></small>&nbsp;|'+
+                    '               <small><i class="fa fa-phone"></i><span> '+v.client_phone+'</span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span> '+v.client_email+'</span></small><br/>\n'+
                     '            </div>\n' +
                     '            <div class="panel-footer">'+v.activity_description+'<br/><span class="text-muted"><small><i class="fa fa-calendar"></i> '+formatDate(v.activity_date)+'</small></span></div>\n' +
                     '            <div class="input-group"><div class="input-group-addon"><i class="fa fa-comment"></i></div><textarea contenteditable="true" type="text" id="act'+v.ID+'" maxlength="250" class="form-control" placeholder="Type a comment" data-emojiable="true" data-emoji-input="unicode"></textarea></div><button onclick="savecomment('+v.ID+')" class ="btn btn-info" style="float: right; border-radius: 4px" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>'+
@@ -1130,6 +1136,7 @@
                 'success': function (data) {
                     let res = JSON.parse(data);
                     if(res.status === 500){
+                        $('#attachment-list').empty();
                         $('#attachment-list').append("No Attachments for this Activity!");
                     }
                     else{
