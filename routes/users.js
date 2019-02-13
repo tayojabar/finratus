@@ -24,7 +24,7 @@ let token,
 		extName: '.hbs'
 	};
 	transporter = nodemailer.createTransport(smtpConfig);
-transporter.use('compile', hbs(options));
+    transporter.use('compile', hbs(options));
 
 users.get('/import-bulk-clients', function(req, res) {
 let clients = [],
@@ -3098,7 +3098,7 @@ users.get('/activities', function(req, res, next) {
         '(select fullname from users where users.id = for_) as user, ' +
         '(select name from teams where teams.Id = ?) as team_name, ' +
         '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
-        'from activities where for_ = ? and status = 1 ';
+        'from activities where status = 1 and for_ = ? ';
     if (team){
         query = query.concat(' and category = ?').concat('  and team = ? order by id desc')
         load = [team, current_user, word, team]
@@ -3112,6 +3112,27 @@ users.get('/activities', function(req, res, next) {
             'from activities where for_ = ? and status = 1 ';
         load = [officer]
     }
+    db.query(query, load, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+users.get('/all-activities', function(req, res, next) {
+    let current_user = req.query.user;
+    let team = req.query.team;
+    let officer = req.query.officer;
+    let word = 'team'
+    let load = [];
+    let query = 'SELECT *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
+        '(select fullname from clients c where c.ID = client) as client_name, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select name from teams where teams.Id = team) as team_name, ' +
+        '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
+        'from activities where status = 1 order by ID desc';
     db.query(query, load, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -3148,7 +3169,8 @@ users.get('/team-activities', function(req, res, next) {
                 '(select fullname from users where users.id = for_) as user, ' +
                 '(select fullname from clients where clients.id = client) as client_name ' +
                 'from activities where ' +
-                'category = ? and team in ((select teamID from team_members where memberID = ?)) order by id desc';
+                'category = ? and team in (select teamID from team_members where memberID = ?) or (select supervisor from teams where teams.id = team) = ?' +
+                ' order by id desc';
                 // 'for_ = ?  ';
         // '(select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
         //         'and for_ <> ?';
@@ -3159,7 +3181,7 @@ users.get('/team-activities', function(req, res, next) {
         '(select fullname from users where users.id = for_) as user ' +
         'from activities where ' +
         'team = 0 and for_ = ? order by id desc';
-    db.query(query, [word, current_user], function (error, results_team, fields) {
+    db.query(query, [word, current_user, current_user], function (error, results_team, fields) {
         db.query(query2, [current_user], function (error, results_personal, fields) {
             if(error){
                 res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
