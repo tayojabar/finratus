@@ -1075,6 +1075,8 @@
             var obj = {}; let arr = [];
             obj.activity_name = $('#name').val();
             obj.activity_description = $('.emoji-wysiwyg-editor').text();
+            if (!(obj.activity_description).replace(/\s/g, '').length)
+                return swal('Empty Description', 'Enter a valid activity description!', 'warning');
             obj.client_phone = $('#client-list').find('option:selected').attr('phone');
             obj.activity_duration = $('#activity-duration').val();
 //            +' '+$('#time-unit').find('option:selected').attr('value');

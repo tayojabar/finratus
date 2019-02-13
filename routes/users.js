@@ -3139,7 +3139,7 @@ users.get('/all-activities', function(req, res, next) {
         '(select fullname from users where users.id = for_) as user, ' +
         '(select name from teams where teams.Id = team) as team_name, ' +
         '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
-        'from activities where status = 1 order by ID desc';
+        'from activities where status = 1 and for_ is not null order by ID desc';
     db.query(query, load, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
