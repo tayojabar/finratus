@@ -641,7 +641,7 @@
                     me = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
-            if (me && me[0] && (parseInt(me[0]['read_only']) == 1)){
+            if (me && me[0] && (parseInt(me[0]['read_only']) === 1)){
                 url = '/user/all-activities';
             }
             $.ajax({
