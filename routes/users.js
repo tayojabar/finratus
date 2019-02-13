@@ -500,6 +500,30 @@ users.get('/user-targets/:id', function(req, res, next) {
     });
 });
 
+users.get('/user-assigned-target/:id', function(req, res, next) {
+    let query = 'SELECT t.targetID AS ID,(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? group by t.targetID order by t.targetID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User assigned target fetched successfully", "response": results});
+        }
+    });
+});
+
+
+users.get('/user-targets/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User targets fetched successfully", "response": results});
+        }
+    });
+});
+
 users.get('/targets-list', function(req, res, next) {
     let type = req.query.type,
         target = req.query.target,
@@ -3369,6 +3393,135 @@ users.get('/attached-images/:folder/', function(req, res, next) {
     }
     else {
         res.send(JSON.stringify({"status":500, "response": "No Attachments!"}));
+    }
+});
+
+users.get('/user-commissions/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select s.title from commissions s where s.ID = c.commissionID) as commission,' +
+        '(select t.title from targets t where t.ID = c.targetID) as target from user_commissions c where c.status = 1 and c.userID = ? order by c.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User commissions fetched successfully", "response": results});
+        }
+    });
+});
+
+users.post('/user-commissions', function(req, res, next) {
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM user_commissions WHERE userID=? AND commissionID=? AND type=? AND status = 1',
+        [req.body.userID,req.body.commissionID,req.body.type], function (error, result, fields) {
+            if (result && result[0]) {
+                res.send({"status": 500, "error": req.body.type+" commission has already been assigned to this user"});
+            } else {
+                db.query('SELECT * FROM users WHERE ID=?', [req.body.userID], function (error, user, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        if (user[0]['loan_officer_status'] !== 1)
+                            return res.send({"status": 500, "error": "User must be a loan officer"});
+                        db.query('INSERT INTO user_commissions SET ?', req.body, function (error, result, fields) {
+                            if(error){
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                let query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select s.title from commissions s where s.ID = c.commissionID) as commission,' +
+                                    '(select t.title from targets t where t.ID = c.targetID) as target from user_commissions c where c.status = 1 and c.userID = ? order by c.ID desc';
+                                db.query(query, [req.body.userID], function (error, results, fields) {
+                                    if(error){
+                                        res.send({"status": 500, "error": error, "response": null});
+                                    } else {
+                                        res.send({"status": 200, "message": "User commission assigned successfully", "response": results});
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+});
+
+users.delete('/user-commissions/:id/:userID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_commissions SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select s.title from commissions s where s.ID = c.commissionID) as commission,' +
+                '(select t.title from targets t where t.ID = c.targetID) as target from user_commissions c where c.status = 1 and c.userID = ? order by c.ID desc';
+            db.query(query, [req.params.userID], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "User commission deleted successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/commissions-list', function(req, res, next) {
+    let type = req.query.type,
+        target = req.query.target,
+        commission = req.query.commission,
+        query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from commissions u where u.ID = c.commissionID) as commission,' +
+            '(select u.rate from commissions u where u.ID = c.commissionID) as rate,(select u.title from targets u where u.ID = c.targetID) as target from user_commissions c where c.status = 1';
+    if (type)
+        query = query.concat(' AND c.type = "'+type+'"');
+    if (target)
+        query = query.concat(' AND c.targetID = '+target);
+    if (commission)
+        query = query.concat(' AND c.commissionID = '+commission);
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commissions list fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/commissions-list/:officerID', function(req, res, next) {
+    let type = req.query.type,
+        id = req.params.officerID,
+        target = req.query.target,
+        commission = req.query.commission,
+        query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from commissions u where u.ID = c.commissionID) as commission,' +
+            '(select u.rate from commissions u where u.ID = c.commissionID) as rate,(select u.title from targets u where u.ID = c.targetID) as target from user_commissions c where c.status = 1',
+        query2 = query.concat(' AND c.userID = '+id+' '),
+        query3 = query.concat(' AND (select supervisor from users where users.id = c.userID) =  '+id+' ');
+    if (id)
+        query = query2;
+    if (type)
+        query = query.concat(' AND c.type = "'+type+'"');
+    if (target)
+        query = query.concat(' AND c.targetID = '+target);
+    if (commission)
+        query = query.concat(' AND c.commissionID = '+commission);
+    if (id){
+        db.query(query, function (error, commissions, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query3, function (error, commissions2, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        let results = commissions.concat(commissions2);
+                        res.send({"status": 200, "message": "Commissions list fetched successfully", "response": results});
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, results, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                res.send({"status": 200, "message": "Commissions list fetched successfully", "response": results});
+            }
+        });
     }
 });
 

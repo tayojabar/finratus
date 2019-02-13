@@ -498,7 +498,59 @@
             </div>
         </div>
     </div>
-    
+
+    <div class="modal fade" id="commissionsModal" role="dialog" aria-labelledby="commissionsModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="commissionsModalLabel">User Commissions</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="commission_list" class="form-control" required="required">
+                                    <option selected="selected">-- Select Commission --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="commission_target" class="form-control" required="required">
+                                    <option selected="selected">-- Select Target --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success pull-right" onclick="assignCommission()">Assign Commission</button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table id="user_commissions" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Commission</th>
+                                    <th>Target</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
@@ -521,7 +573,9 @@
         $(document).ready(function() {
 //            getUsers();
             getTargets();
+            getCommissions();
             $('#user_targets').DataTable();
+            $('#user_commissions').DataTable();
             $('#bootstrap-data-table-export').DataTable();
         });
 
@@ -661,6 +715,7 @@
                             '<div class="dropdown-menu">\n' +
                             '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
                             '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Target</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#commissionsModal" onclick="openCommissionsModal('+v.ID+')"><i class="fa fa-line-chart"></i> Add/View Commission</a>\n' +
                             '    <a href="#" class="write dropdown-item" onclick="activities('+v.ID+')"><i class="fa fa-tasks"></i> View Activities</a>\n' +
                             '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-lock"></i> Change Password</a>\n' +
                             '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
@@ -980,6 +1035,36 @@
             });
         }
 
+        function getAssignedTarget(user_id){
+            $.ajax({
+                type: "GET",
+                url: "/user/user-assigned-target/"+user_id,
+                success: function (data) {
+                    targets = data.response;
+                    $("#commission_target").html('<option value="-- Select Target --" selected="selected">-- Select Target --</option>');
+                    $.each(data.response, function (key, val) {
+                        $("#commission_target").append('<option value = "' + val.ID + '">' + val.target + '</option>');
+                    });
+                    $("#commission_target").select2();
+                }
+            });
+        }
+
+        let commissions;
+        function getCommissions(){
+            $.ajax({
+                type: "GET",
+                url: "/commissions",
+                success: function (data) {
+                    commissions = data.response;
+                    $.each(data.response, function (key, val) {
+                        $("#commission_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
+                    });
+                    $("#commission_list").select2();
+                }
+            });
+        }
+
         let target_limit;
         $('#target_limit').text('');
         function getLimit(id){
@@ -1040,6 +1125,29 @@
             });
         }
 
+        function openCommissionsModal(id) {
+            localStorage.user_commission_id = id;
+            getAssignedTarget(id);
+            $.ajax({
+                type: "GET",
+                url: "/user/user-commissions/"+id,
+                success: function (data) {
+                    populateCommissions(data);
+                }
+            });
+        }
+
+        function populateCommissions(data){
+            $("#user_commissions").dataTable().fnClearTable();
+            $.each(data.response, function(k, v){
+                $('#user_commissions').dataTable().fnAddData( [
+                    v.commission,
+                    v.target,
+                    '<button type="button" class="btn btn-danger" onclick="removeCommission('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+                ]);
+            });
+        }
+
         function assignTarget() {
             let obj = {};
             obj.userID = localStorage.user_target_id;
@@ -1081,6 +1189,48 @@
                     } else{
                         swal("Target deleted successfully!","","success");
                         populateTargets(response);
+                    }
+                }
+            });
+        }
+
+        function assignCommission() {
+            let obj = {};
+            obj.userID = localStorage.user_commission_id;
+            obj.targetID = $('#commission_target').val();
+            obj.commissionID = $('#commission_list').val();
+            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --')
+                return swal('Kindly fill all required field(s)','','warning');
+            obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/user-commissions',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal(response.error,"","error");
+                    } else{
+                        swal("Commission assigned successfully!","","success");
+                        populateCommissions(response);
+                    }
+                }
+            });
+        }
+
+        function removeCommission(id) {
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/user-commissions/'+id+'/'+localStorage.user_commission_id,
+                'type': 'delete',
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal("No internet connection","","error");
+                    } else{
+                        swal("Commission deleted successfully!","","success");
+                        populateCommissions(response);
                     }
                 }
             });
