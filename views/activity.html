@@ -156,6 +156,9 @@
             border: 1px solid #eeeeee;
             border-radius: 5px;
         }
+        #client-list{
+            font-family: 'FontAwesome', 'Second Font name';
+        }
     </style>
 
 </head>
@@ -276,7 +279,7 @@
                                 <!--</select>-->
                                 <label for="activity-date" class="inp">
                                     <select id="client-list" class="fields" required="required">
-                                        <option value="-1">Client</option>
+                                        <option value="-1">&#xf17b; Client</option>
                                     </select>
                                     <span class="label"></span>
                                     <span class="border"></span>
@@ -431,6 +434,7 @@
 <!--<script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>-->
 <!--<script src="assets/js/lib/data-table/datatables-init.js"></script>-->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>-->
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
 <script>
 //    (function( $ ) {
         jQuery(document).ready(function() {
@@ -531,6 +535,7 @@
             });
         }
 
+        let me;
         function read_write(){
             let w;
             var perms = JSON.parse(localStorage.getItem("permissions"));
@@ -538,6 +543,7 @@
             perms.forEach(function (k,v){
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+                    me = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
             });
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
@@ -606,7 +612,7 @@
                     '    </div>\n' +
                     '    <div class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading"><i class="fa fa-users"></i> Activity by <span class="text-muted">'+v.user+''+for_+'</span></div>\n' +
+                    '            <div class="panel-heading"><small>'+pic+' Activity by </small><span class="text-muted">'+v.user+''+for_+'</span></div>\n' +
                     '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
                     '            <div class="panel-body">'+
                     '               <small><i class="fa fa-tasks"></i> '+v.activity+'</span></small>&nbsp;|'+
@@ -628,6 +634,16 @@
 
         function loadActivities(){
             let url = '/user/team-activities?user='+JSON.parse(localStorage.user_obj).ID;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k,v){
+                if (k.module_name === 'allActivities'){
+                    me = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+                }
+            });
+            if (me && me[0] && (parseInt(me[0]['read_only']) === 1)){
+                url = '/user/all-activities';
+            }
             $.ajax({
                 'url': url,
                 'type': 'get',
@@ -908,10 +924,11 @@
                 type: "GET",
                 url: url,
                 success: function (response) {
+                    let pro = '<i class="fa fa-lock"></i> Prospective Client';
                     clients = JSON.parse(response);
                     $('#client-list').empty();
                     $('#client-list').append('<option value="-1" id="-1">-- Choose Client --</option>');
-                    $('#client-list').append('<option value="0" id="0"> Prospective Client </option>');
+                    $('#client-list').append('<option value="0" id="0"> &#xf17b; Prospective Client </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#client-list").append('<option value = "'+val.ID+'" id="'+val.ID+'" phone="'+val.phone+'" email="'+val.email+'">' + val.fullname + '</option>');
                     });
@@ -1058,6 +1075,8 @@
             var obj = {}; let arr = [];
             obj.activity_name = $('#name').val();
             obj.activity_description = $('.emoji-wysiwyg-editor').text();
+            if (!(obj.activity_description).replace(/\s/g, '').length)
+                return swal('Empty Description', 'Enter a valid activity description!', 'warning');
             obj.client_phone = $('#client-list').find('option:selected').attr('phone');
             obj.activity_duration = $('#activity-duration').val();
 //            +' '+$('#time-unit').find('option:selected').attr('value');
