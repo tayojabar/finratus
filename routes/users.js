@@ -501,7 +501,7 @@ users.get('/user-targets/:id', function(req, res, next) {
 });
 
 users.get('/user-assigned-target/:id', function(req, res, next) {
-    let query = 'SELECT t.targetID AS ID,(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? group by t.targetID order by t.targetID desc';
+    let query = 'SELECT t.targetID AS ID,sum(t.value) AS value,(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? group by t.targetID order by t.targetID desc';
     db.query(query, [req.params.id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -626,6 +626,72 @@ users.get('/targets-list/:officerID', function(req, res, next) {
             }
         });
     }
+});
+
+
+users.get('/committals/user/disbursement/:userID/:targetID', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c,' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2',
+        query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c,' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    } else {
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+    }
+    db.query(query, [req.params.userID,req.params.targetID], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.userID,req.params.targetID], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/user/interest/:userID/:targetID', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(s.interest_amount) total FROM schedule_history AS s, (SELECT ID application_id FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
+            'WHERE a.userID = c.client_id AND a.status = 2) AS apps,(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0',
+        query2 = 'SELECT *, s.interest_amount amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
+            'WHERE a.userID = c.client_id AND a.status = 2) AS apps,(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    } else {
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+    }
+    db.query(query, [req.params.userID,req.params.targetID], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.userID,req.params.targetID], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
 });
 
 users.get('/committals/user/disbursement/:id', function(req, res, next) {
@@ -1089,7 +1155,7 @@ users.get('/user-dets/:id', function(req, res, next) {
 });
 
 users.get('/client-dets/:id', function(req, res, next) {
-    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer, (select branch_name from branches b where b.ID = clients.branch) as branchname, (SELECT SUM(amount) FROM escrow WHERE clientID=clients.ID AND status=1) AS escrow   from clients where id = ? order by id desc ';
+    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer, (select branch_name from branches b where b.ID = clients.branch) as branchname, (SELECT sum(amount) FROM escrow WHERE clientID=clients.ID AND status=1) AS escrow   from clients where id = ? order by id desc ';
     db.query(query, req.params.id, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -1573,7 +1639,7 @@ users.get('/application-id/:id', function(req, res, next) {
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
         query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT SUM(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow ' +
+            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT sum(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow ' +
             'FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
@@ -3487,7 +3553,7 @@ users.get('/commissions-list', function(req, res, next) {
     let type = req.query.type,
         target = req.query.target,
         commission = req.query.commission,
-        query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from commissions u where u.ID = c.commissionID) as commission,' +
+        query = 'SELECT *,(SELECT CASE WHEN sum(amount) IS NULL THEN 0 ELSE sum(AMOUNT) END FROM commission_payments WHERE commissionID=c.ID AND status=1) AS value,(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from commissions u where u.ID = c.commissionID) as commission,' +
             '(select u.rate from commissions u where u.ID = c.commissionID) as rate,(select u.title from targets u where u.ID = c.targetID) as target from user_commissions c where c.status = 1';
     if (type)
         query = query.concat(' AND c.type = "'+type+'"');
@@ -3509,7 +3575,7 @@ users.get('/commissions-list/:officerID', function(req, res, next) {
         id = req.params.officerID,
         target = req.query.target,
         commission = req.query.commission,
-        query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from commissions u where u.ID = c.commissionID) as commission,' +
+        query = 'SELECT *,(SELECT sum(amount) FROM commission_payments WHERE commissionID=c.ID AND status=1) AS value,(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from commissions u where u.ID = c.commissionID) as commission,' +
             '(select u.rate from commissions u where u.ID = c.commissionID) as rate,(select u.title from targets u where u.ID = c.targetID) as target from user_commissions c where c.status = 1',
         query2 = query.concat(' AND c.userID = '+id+' '),
         query3 = query.concat(' AND (select supervisor from users where users.id = c.userID) =  '+id+' ');
@@ -3545,6 +3611,59 @@ users.get('/commissions-list/:officerID', function(req, res, next) {
             }
         });
     }
+});
+
+users.post('/commission/payments', function(req, res, next) {
+    let data = req.body;
+    data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('INSERT INTO commission_payments SET ?', data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission payment saved successfully!"});
+        }
+    });
+});
+
+users.get('/commission/payment-history/:commissionID', function(req, res, next) {
+    db.query('SELECT * FROM commission_payments WHERE commissionID = '+req.params.commissionID, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission payment fetched successfully!", response: result});
+        }
+    });
+});
+
+users.get('/application/commission-payment-reversal/:id', function(req, res, next) {
+    db.query('UPDATE commission_payments SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Payment reversed successfully!"});
+        }
+    });
+});
+
+users.get('/target-mail', function(req, res) {
+    // let data = req.body;
+    // if (!data.name || !data.email || !data.company || !data.phone || !data.title || !data.location || !data.description || !data.lead)
+    //     return res.send("Required Parameters not sent!");
+    // data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let mailOptions = {
+        from: 'Loanratus Target <applications@loan35.com>',
+        to: 'itaukemeabasi@gmail.com',
+        subject: 'Target',
+        template: 'target'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        console.log(error)
+        console.log(info)
+        if(error)
+            return res.send("Error");
+        return res.send("OK");
+    });
 });
 
 module.exports = users;

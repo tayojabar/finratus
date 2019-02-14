@@ -500,7 +500,7 @@
     </div>
 
     <div class="modal fade" id="commissionsModal" role="dialog" aria-labelledby="commissionsModalLabel">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog" role="document" style="max-width: 50%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="commissionsModalLabel">User Commissions</h4>
@@ -522,7 +522,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Value" />
+                                <small id="commission_target_value" class="form-text text-muted"></small>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
                             <div class="form-group">
                                 <button type="button" class="btn btn-success pull-right" onclick="assignCommission()">Assign Commission</button>
                             </div>
@@ -536,6 +542,8 @@
                                 <tr>
                                     <th>Commission</th>
                                     <th>Target</th>
+                                    <th>Type</th>
+                                    <th>Threshold</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -1035,12 +1043,13 @@
             });
         }
 
+        let assigned_targets;
         function getAssignedTarget(user_id){
             $.ajax({
                 type: "GET",
                 url: "/user/user-assigned-target/"+user_id,
                 success: function (data) {
-                    targets = data.response;
+                    assigned_targets = data.response;
                     $("#commission_target").html('<option value="-- Select Target --" selected="selected">-- Select Target --</option>');
                     $.each(data.response, function (key, val) {
                         $("#commission_target").append('<option value = "' + val.ID + '">' + val.target + '</option>');
@@ -1049,6 +1058,18 @@
                 }
             });
         }
+
+        let commission_target_value;
+        $('#commission_target_value').text('');
+        $('#commission_target').on('change', function() {
+            let commission_target = $("#commission_target").find("option:selected").val();
+            if (commission_target && commission_target !== '-- Select Target --'){
+                commission_target_value = parseFloat(($.grep(assigned_targets, function(e){return e.ID === parseInt(commission_target);}))[0]['value']);
+                $('#commission_target_value').text('Total target value is ₦'+(commission_target_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
+            } else {
+                $('#commission_target_value').text('');
+            }
+        });
 
         let commissions;
         function getCommissions(){
@@ -1143,6 +1164,8 @@
                 $('#user_commissions').dataTable().fnAddData( [
                     v.commission,
                     v.target,
+                    v.type,
+                    v.threshold,
                     '<button type="button" class="btn btn-danger" onclick="removeCommission('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
                 ]);
             });
@@ -1199,8 +1222,11 @@
             obj.userID = localStorage.user_commission_id;
             obj.targetID = $('#commission_target').val();
             obj.commissionID = $('#commission_list').val();
-            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --')
+            obj.threshold = $('#commission_threshold').val();
+            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || !obj.threshold)
                 return swal('Kindly fill all required field(s)','','warning');
+            if (parseFloat(obj.threshold) > commission_target_value)
+                return swal('Commission threshold value ('+obj.threshold+') cannot be greater that the Total allocated Target ('+commission_target_value+')','','warning');
             obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
             $('#wait').show();
             $.ajax({
