@@ -455,7 +455,8 @@
                     v.type,
                     v.target,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
-                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+','+v.rate+','+v.threshold+'\')">' +
+                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+
+                    ','+v.rate+','+v.threshold+','+v.accelerator+','+v.accelerator_type+'\')">' +
                     '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#commissions').dataTable().fnAddData(table);
@@ -475,7 +476,9 @@
                 paid = values[3],
                 type = values[4],
                 rate = values[5],
-                threshold = values[6];
+                threshold = values[6],
+                accelerator = values[7],
+                accelerator_type = values[8];
             user_id = userID;
             commission_id = ID;
             amount_paid = paid;
@@ -487,8 +490,25 @@
                     $('#commission-paid').text('₦'+(parseFloat(paid)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     let data = response.response;
                     data.total = data.total || 0;
-                    if (parseFloat(data.total) >= parseFloat(threshold))
-                        earnings = (parseInt(rate)/100) * parseFloat(data.total);
+                    if (parseFloat(data.total) >= parseFloat(threshold)){
+                        if (accelerator_type) {
+                            switch (accelerator_type) {
+                                case 'all': {
+                                    earnings = (parseInt(accelerator)/100) * parseFloat(data.total);
+                                    break;
+                                }
+                                case 'additional': {
+                                    let excess = parseFloat(data.total) - parseFloat(threshold),
+                                        earnings_ = (parseInt(rate)/100) * parseFloat(threshold),
+                                        earnings_excess = (parseInt(accelerator)/100) * excess;
+                                    earnings = earnings_ + earnings_excess;
+                                    break;
+                                }
+                            }
+                        } else {
+                            earnings = (parseInt(rate)/100) * parseFloat(data.total);
+                        }
+                    }
                     earned = earnings - parseFloat(paid);
                     $('#commission-earned').text('₦'+earned.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 }
