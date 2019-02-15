@@ -3553,7 +3553,7 @@ users.get('/commissions-list', function(req, res, next) {
     let type = req.query.type,
         target = req.query.target,
         commission = req.query.commission,
-        query = 'SELECT *,(SELECT CASE WHEN sum(amount) IS NULL THEN 0 ELSE sum(AMOUNT) END FROM commission_payments WHERE commissionID=c.ID AND status=1) AS value,(select u.fullname from users u where u.ID = c.userID) as user,' +
+        query = 'SELECT *,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,(select u.fullname from users u where u.ID = c.userID) as user,' +
             '(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type from user_commissions c, commissions m where c.status = 1 and c.commissionID=m.ID';
     if (type)
         query = query.concat(' AND c.type = "'+type+'"');
@@ -3561,6 +3561,7 @@ users.get('/commissions-list', function(req, res, next) {
         query = query.concat(' AND c.targetID = '+target);
     if (commission)
         query = query.concat(' AND c.commissionID = '+commission);
+    console.log(query)
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -3575,7 +3576,7 @@ users.get('/commissions-list/:officerID', function(req, res, next) {
         id = req.params.officerID,
         target = req.query.target,
         commission = req.query.commission,
-        query = 'SELECT *,(SELECT CASE WHEN sum(amount) IS NULL THEN 0 ELSE sum(AMOUNT) END FROM commission_payments WHERE commissionID=c.ID AND status=1) AS value,(select u.fullname from users u where u.ID = c.userID) as user,' +
+        query = 'SELECT *,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,(select u.fullname from users u where u.ID = c.userID) as user,' +
             '(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type from user_commissions c, commissions m where c.status = 1 and c.commissionID=m.ID',
         query2 = query.concat(' AND c.userID = '+id+' '),
         query3 = query.concat(' AND (select supervisor from users where users.id = c.userID) =  '+id+' ');
