@@ -1228,6 +1228,9 @@
             if (parseFloat(obj.threshold) > commission_target_value)
                 return swal('Commission threshold value ('+obj.threshold+') cannot be greater that the Total allocated Target ('+commission_target_value+')','','warning');
             obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
+            let target_type = ($.grep(targets, function(e){return e.ID === parseInt(obj.targetID);}))[0]['type'];
+            if (obj.type !== target_type)
+                return swal('Commission and Target must be of the same type','','warning');
             $('#wait').show();
             $.ajax({
                 'url': '/user/user-commissions',

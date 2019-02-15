@@ -3561,7 +3561,6 @@ users.get('/commissions-list', function(req, res, next) {
         query = query.concat(' AND c.targetID = '+target);
     if (commission)
         query = query.concat(' AND c.commissionID = '+commission);
-    console.log(query)
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
