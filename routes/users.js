@@ -2570,7 +2570,7 @@ users.post('/application/disburse/:id', function(req, res, next) {
 });
 
 users.get('/application/invoice-history/:id', function(req, res, next) {
-    db.query('SELECT s.ID, s.invoiceID, s.payment_amount, s.interest_amount, s.fees_amount, s.penalty_amount, s.date_created, s.status,' +
+    db.query('SELECT s.ID, s.invoiceID, s.payment_amount, s.interest_amount, s.fees_amount, s.penalty_amount, s.payment_date, s.date_created, s.status,' +
         's.applicationID, u.fullname AS agent FROM schedule_history AS s, users AS u WHERE s.agentID=u.ID AND invoiceID = ? ORDER BY ID desc', [req.params.id], function (error, history, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
