@@ -810,7 +810,7 @@
     </div>
 
     <div class="modal fade" id="invoiceHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
-        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="invoiceHistoryLabel">Repayment History</h4>
@@ -826,7 +826,8 @@
                             <th>Fees</th>
                             <th>Penalty</th>
                             <th>Paid By</th>
-                            <th>Date</th>
+                            <th>Payment Date</th>
+                            <th>Posted Date</th>
                         </tr>
                         </thead>
                         <tbody id="history">
@@ -1813,6 +1814,7 @@
                             v.fees_amount,
                             v.penalty_amount,
                             v.agent,
+                            v.payment_date,
                             v.date_created
                         ];
                         $('#invoice-history').dataTable().fnAddData(table);
