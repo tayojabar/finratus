@@ -2108,10 +2108,15 @@
                 return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
             }
         }
-        else {
+        if (frequency.value == 3){
             $('#dis-year').hide();
+            if (officer == '0'){
+                return swal('Incomplete Info', 'Please Choose a Loan Officer!', 'warning');
+            }
+            url = url.concat('officer='+officer+'&&freq='+frequency.value+'')
         }
         let d = [], categories = [], agent, xaxis;
+        console.log(url);
 
         $.ajax({
             'url': url,
@@ -2287,7 +2292,7 @@
                             "xAxisName": "Branches",
                             "yAxisName": "Amount Disbursed (Naira)",
                             "numberSuffix": " Naira",
-                            "theme": "fusion",
+//                            "theme": "fusion",
                         },
                         // Chart Data
                         "data": d
@@ -2564,7 +2569,7 @@
         let url = '/user/analytics?t=payments&&',
             freq = $('#payment-frequency').val(),
             year = $('#payment-year').val();
-        if (branch.value == 0 && freq == "-1"){
+        if (officer.value == 0 && freq == "-1"){
             return payments();
         }
         url = url.concat('officer='+officer.value+'&&');
@@ -2656,12 +2661,12 @@
                     if (v.officer)
                         d.push({label: v.officer , value: v.AmountPayed}, );
                     if (v.year){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.name;
                         xaxis = 'Years'
                         d.push({label: v.year , value: v.AmountPayed}, );
                     }
                     if (v.month){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.name;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.AmountPayed}, )
                     }
@@ -2823,7 +2828,7 @@
         let url = '/user/analytics?t=interest-received&&',
             freq = $('#ir-frequency').val(),
             year = $('#i-r-year').val();
-        if (branch.value == 0 && freq == "-1"){
+        if (officer.value == 0 && freq == "-1"){
             return interestreceived();
         }
         url = url.concat('officer='+officer.value+'&&');

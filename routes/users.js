@@ -3210,7 +3210,7 @@ users.get('/analytics', function(req, res, next) {
                 'group by officer\n'
             if (officer){
                 query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') year,\n' +
-                    '  (select fullname from users where users.id = '+officer+') officer,\n' +
+                    '  (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
                     'FROM     schedule_history\n' +
@@ -3220,7 +3220,7 @@ users.get('/analytics', function(req, res, next) {
             }
             if (officer !== "0" && freq == "3"){
                 query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') year,\n' +
-                    ' (select fullname from users where users.id = '+officer+') officer,\n' +
+                    ' (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As PaymentYearMonth\n' +
                     'FROM     schedule_history\n' +
@@ -3230,7 +3230,7 @@ users.get('/analytics', function(req, res, next) {
             }
             if (officer !== '0' && freq == '2'){
                 query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') month,\n' +
-                    '\t\t (select fullname from users where users.id = '+officer+') officer,\n' +
+                    '\t\t (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
                     'FROM     schedule_history\n' +
@@ -3247,6 +3247,7 @@ users.get('/analytics', function(req, res, next) {
                 '(select userid from applications where applications.id = applicationid))) officer\n' +
                 'from schedule_history \n' +
                 'where status = 1\n' +
+                'and applicationid in (select id from applications where status <> 0)\n'+
                 'group by officer'
             if (officer){
                 query = 'select sum(interest_amount) amount_received, \n' +
@@ -3255,6 +3256,7 @@ users.get('/analytics', function(req, res, next) {
                     '(select userid from applications where applications.id = applicationid))) officer\n' +
                     'from schedule_history \n' +
                     'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
                     'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'
                     'group by officer'
             }
@@ -3265,17 +3267,19 @@ users.get('/analytics', function(req, res, next) {
                     '(select userid from applications where applications.id = applicationid))) officer, DATE_FORMAT(payment_date, \'%Y\') year, \n' +
                     'from schedule_history \n' +
                     'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
                     'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
                     'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
                     'group by officer, Date_format(Payment_date, \'%Y\')'
             }
             if (officer !== '0' && freq == '2'){
-                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%M, %y\') PaymentMonth \n' +
+                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%M, %y\') PaymentMonth, \n' +
                     '(select fullname from users where users.id = \n' +
                     '(select loan_officer from clients where clients.id = \n' +
                     '(select userid from applications where applications.id = applicationid))) officer\n' +
                     'from schedule_history \n' +
                     'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
                     'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
                     'group by officer, DATE_FORMAT(Payment_date, \'%M%Y\')'
             }
