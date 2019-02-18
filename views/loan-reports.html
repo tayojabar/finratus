@@ -249,6 +249,37 @@
                                             </div>
                                             <div class="row">
                                                 <div id="disbursement-div" class="col-sm-12" >
+                                                    <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
+                                                        <div class="col-sm-4 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="chartfilterofficers" onchange="dFilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="dis-freq" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="disburse-frequency" onchange="dFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="-1">Frequency</option>
+                                                                        <option value="2">Monthly</option>
+                                                                        <option value="3">Yearly</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="dis-year" style="background-color: transparent; border-color: transparent; display: none">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="disburse-year" onchange="dFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="0">Select Year</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="chart-container" style="text-align: center">FusionCharts XT will load here!</div><hr/>
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
@@ -284,7 +315,6 @@
                                                             </div>
                                                         </div>
                                                         <div class="card-body">
-                                                            <!--<div id="chart-container" style="text-align: center">FusionCharts XT will load here!</div><hr/>-->
                                                             <table id="disbursed-table" class="table table-striped table-bordered" width="100%">
                                                                 <thead>
                                                                 <tr>
@@ -301,6 +331,37 @@
                                                     </div>
                                                 </div>
                                                 <div id="loan-by-branch-div" style="display: none" >
+                                                    <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
+                                                        <div class="col-sm-4 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="chartfilterbranches" onchange="bFilterBranch(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="brn-freq" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="branch-frequency" onchange="bFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="-1">Frequency</option>
+                                                                        <option value="2">Monthly</option>
+                                                                        <option value="3">Yearly</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="brn-year" style="background-color: transparent; border-color: transparent; display: none">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="branch-year" onchange="bFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="0">Select Year</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <div class="col-sm-5">
@@ -398,42 +459,73 @@
                                                     </div>
                                                 </div>
                                                 <div id="interests-received-div" style="display: none" class="col-sm-6">
-                                                        <div class="card">
-                                                            <div class="card-header">
-                                                                <div class="col-sm-5">
-                                                                    <strong>Interests Received</strong>
-                                                                    <span>Total: <span id="total-interests-earned"></span></span>
-                                                                </div>
-                                                                <div class="col-sm-7">
-                                                                    <form id="filterinterests" class="form-inline" style="float: right;">
-                                                                        <div class="form-group">
-                                                                            <label class="" for="startDate">Start date</label>
-                                                                            <input type="date" class="form-control" id="filterintereststart" placeholder="Start date">
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <label class="" for="endDate">End date</label>
-                                                                            <input type="date" class="form-control" id="filterinterestend" placeholder="End date">
-                                                                        </div>
-                                                                        <button type="submit" class="btn btn-success">Filter</button>
-                                                                    </form>
+                                                    <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
+                                                        <div class="col-sm-4 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="irchartfilterofficers" onchange="irFilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                    </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="card-body">
-                                                                <table id="interests-table" class="table table-striped table-bordered">
-                                                                    <thead>
-                                                                    <tr>
-                                                                        <th>Loan ID</th>
-                                                                        <th>Client Name</th>
-                                                                        <th>Interest Received</th>
-                                                                    </tr>
-                                                                    </thead>
-                                                                    <tbody></tbody>
-                                                                </table>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="ir-freq" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="ir-frequency" onchange="irFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="-1">Frequency</option>
+                                                                        <option value="2">Monthly</option>
+                                                                        <option value="3">Yearly</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="ir-year" style="background-color: transparent; border-color: transparent; ">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="i-r-year" onchange="irFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="0">Select Year</option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div id="interest-received-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <div class="col-sm-5">
+                                                                <strong>Interests Received</strong>
+                                                                <span>Total: <span id="total-interests-earned"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-7">
+                                                                <form id="filterinterests" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="filterintereststart" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="filterinterestend" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="interests-table" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Loan ID</th>
+                                                                    <th>Client Name</th>
+                                                                    <th>Interest Received</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <!--<div class="col-sm-12">-->
+                                            <div><!--<div class="col-sm-12">-->
                                                 <!--<div id="projected-interests-div" style="display: none" class="col-sm-6">-->
                                                     <!--<div class="card">-->
                                                         <!--<div class="card-header">-->
@@ -469,7 +561,7 @@
                                                         <!--</div>-->
                                                     <!--</div>-->
                                                 <!--</div>-->
-                                            <!--</div>-->
+                                            <!--</div>--></div>
                                         </div>
                                     </div>
                                 </div>
@@ -614,6 +706,37 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-sm-12">
+                                                    <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
+                                                        <div class="col-sm-4 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="pchartfilterofficers" onchange="pFilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="pay-freq" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="payment-frequency" onchange="pFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="-1">Frequency</option>
+                                                                        <option value="2">Monthly</option>
+                                                                        <option value="3">Yearly</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="pay-year" style="background-color: transparent; border-color: transparent; ">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="payment-year" onchange="pFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="0">Select Year</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="payments-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <strong>Payments</strong>
@@ -700,9 +823,20 @@
 <script type="text/javascript" src="fscharts/js/fusioncharts.js"></script>
 <script type="text/javascript" src="fscharts/integrations/jquery/js/jquery-fusioncharts.js"></script>
 <script type="text/javascript" src="fscharts/js/themes/fusioncharts.theme.fusion.js"></script>
+<script type="text/javascript" src="fscharts/js/themes/fusioncharts.theme.candy.js"></script>
+<script type="text/javascript" src="fscharts/js/themes/fusioncharts.theme.carbon.js"></script>
+<script type="text/javascript" src="fscharts/js/themes/fusioncharts.theme.gammel.js"></script>
+<script type="text/javascript" src="fscharts/js/themes/fusioncharts.theme.ocean.js"></script>
+<script type="text/javascript" src="fscharts/js/themes/fusioncharts.theme.fint.js"></script>
+<script type="text/javascript" src="fscharts/js/themes/fusioncharts.theme.zune.js"></script>
 <script>
     jQuery(document).ready(function() {
+        loadYears('disburse-year');
+        loadYears('branch-year');
+        loadYears('payment-year');
+        loadYears('i-r-year');
         getOfficers();
+        getBranches();
         loadInfo();
         loadDisbursed();
         loadGLP();
@@ -713,55 +847,27 @@
         loadBadLoans();
         loadOverdues();
         loadAggProjectedInterests();
+        disbursed();
+        branches();
+        payments();
+        interestreceived();
         var today = new Date().toISOString().split('T')[0];
         document.getElementsByName("filteraggprointend")[0].setAttribute('min', today);
         document.getElementsByName("filteraggprointstart")[0].setAttribute('min', today);
-        var chartConfigs = {
-            type: 'bubble', // The chart type
-            width: '100%', // Width of the chart
-            height: '400', // Height of the chart
-            dataFormat: 'json', // Data type
-            dataSource: {
-                // Chart Configuration
-                "chart": {
-                    "caption": "Countries With Most Oil Reserves [2017-18]",
-                    "subCaption": "In MMbbl = One Million barrels",
-                    "xAxisName": "Country",
-                    "yAxisName": "Reserves (MMbbl)",
-                    "numberSuffix": "K",
-                    "theme": "fusion",
-                },
-                // Chart Data
-                "data": [{
-                    "label": "Venezuela",
-                    "value": "290"
-                }, {
-                    "label": "Saudi",
-                    "value": "260"
-                }, {
-                    "label": "Canada",
-                    "value": "180"
-                }, {
-                    "label": "Iran",
-                    "value": "140"
-                }, {
-                    "label": "Russia",
-                    "value": "115"
-                }, {
-                    "label": "UAE",
-                    "value": "100"
-                }, {
-                    "label": "US",
-                    "value": "30"
-                }, {
-                    "label": "China",
-                    "value": "30"
-                }]
-            }
-        };
-        $("#chart-container").insertFusionCharts(chartConfigs);
-        $("#charts-container").insertFusionCharts(chartConfigs);
     });
+
+    function loadYears(id){
+        var max = new Date().getFullYear(),
+            min = max - 10,
+            select = document.getElementById(id);
+
+        for (var i = max; i>=min; i--){
+            var opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = i;
+            select.appendChild(opt);
+        }
+    }
 
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -1119,6 +1225,7 @@
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
+            let d = [];
             jQuery.each(dets.with_payments, function(k, v){
                 loa += v.loan_amount;
                 num_all++;
@@ -1231,7 +1338,9 @@
             type = $("#type-filter").val(),
             officer = $('#filter-officers').find('option:selected').attr('id'),
             url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
+        let urlAn;
         if (start && end && officer==0){
+            urlAn = 'user/analytics?t=disbursements&&start='+formatDate(start)+'&&end='+formatDate(end);
             url = '/user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end);
         }
         if ((!start || !end) && officer==0 ) {
@@ -1239,8 +1348,9 @@
         }
         if (officer != 0){
             url = url.concat('&&officer='+officer);
+            urlAn = 'user/analytics?t=disbursements&&start='+formatDate(start)+'&&end='+formatDate(end)+'&&officer='+officer;
         }
-
+        let d=[];
         $.ajax({
             'url': url,
             'type': 'get',
@@ -1251,6 +1361,43 @@
             },
             'error': function (err) {
                 console.log(err);
+            }
+        });
+        $.ajax({
+            'url': urlAn,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.name)
+                        d.push({label: v.name , value: v.amount_disbursed}, );
+                    if (v.DisburseYearMonth)
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, );
+
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Loan Officers",
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": "Loan Officers",
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#chart-container").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
             }
         });
     });
@@ -1767,24 +1914,34 @@
             success: function (response) {
                 var role = $("[id=filter-officers]");
                 role.empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#chartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#pchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#irchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#filter-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#chartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#pchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#irchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                 });
             }
         });
     }
 
     function filterOfficer(officer) {
+        let urlAn = '/user/analytics?t=disbursements&&';
         let start = $("#startDate").val(),
             end = $("#endDate").val(),
-            url = '/user/disbursements/filter?';
-        if (start && end)
+            url = '/user/disbursements/filter?',
+            d=[], agent;
+        if (start && end){
             url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
+            urlAn = urlAn.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
+        }
         if (officer.value == 0){
             return loadDisbursed();
         }
         url = url.concat('officer='+officer.value);
-        console.log(url);
+        urlAn = urlAn.concat('officer='+officer.value);
 
         $.ajax({
             'url': url,
@@ -1800,6 +1957,1055 @@
         });
     }
 
+    ///Disbursement Chart & Filters
+
+    function disbursed(){
+        let d = [];
+        let data = [
+            {
+                "label": "Venezuela",
+                "value": "290"
+            }, {
+                "label": "Saudi",
+                "value": "260"
+            }, {
+                "label": "Canada",
+                "value": "180"
+            }, {
+                "label": "Iran",
+                "value": "140"
+            }, {
+                "label": "Russia",
+                "value": "115"
+            }, {
+                "label": "UAE",
+                "value": "100"
+            }, {
+                "label": "US",
+                "value": "30"
+            }, {
+                "label": "China",
+                "value": "30"
+            }];
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': 'user/analytics?t=disbursements',
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    d.push({label: v.name , value: v.amount_disbursed}, );
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Loan Officers",
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": "Loan Officers",
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#chart-container").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function dFilterOfficer(officer){
+        let url = '/user/analytics?t=disbursements&&',
+            freq = $('#disburse-frequency').val(),
+            year = $('#disburse-year').val();
+        if (officer.value == 0 && freq == "-1"){
+            return disbursed();
+        }
+        url = url.concat('officer='+officer.value+'&&');
+        if (freq !== "-1"){
+            url = url.concat('freq='+freq);
+        }
+        if (freq === "2" && year !== "0"){
+            url = url.concat('&&year='+year);
+        }
+        else if (freq === "2" && year === "0"){
+            return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
+        }
+        let d = [], categories = [], agent, xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.name)
+                        d.push({label: v.name , value: v.amount_disbursed}, );
+                    if (v.DisburseYear){
+                        agent = ': '+v.agent;
+                        xaxis = 'Years'
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.Year){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Loan Officers"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#chart-container").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function dFrequencyChange(frequency){
+        let url ='user/analytics?t=disbursements&&',
+        year = $('#disburse-year').val(),
+        officer = $('#chartfilterofficers').val();
+        if (frequency.value == 2){
+            $('#dis-year').show();
+            if (officer == '0'){
+                return swal('Incomplete Info', 'Please Choose a Loan Officer!', 'warning');
+            }
+            if (year !== "0" ){
+                url = url.concat('officer='+officer+'&&year='+year);
+            }
+            else if (year == "0"){
+                return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
+            }
+        }
+        else {
+            $('#dis-year').hide();
+        }
+        let d = [], categories = [], agent, xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.name)
+                        d.push({label: v.name , value: v.amount_disbursed}, );
+                    if (v.DisburseYear){
+                        agent = ': '+v.agent;
+                        xaxis = 'Years'
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.Year){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Loan Officers"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#chart-container").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function dFilterYear(year) {
+        let urlAn = '/user/analytics?t=disbursements&&';
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            officer = $('#chartfilterofficers').val(),
+            url = '/user/disbursements/filter?',
+            d=[], agent, xaxis;
+        if (officer == 0){
+            return disbursed();
+        }
+        url = url.concat('officer='+officer);
+        urlAn = urlAn.concat('freq=2&&officer='+officer+'&&year='+year.value);
+
+        $.ajax({
+            'url': urlAn,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.name)
+                        d.push({label: v.name , value: v.amount_disbursed}, );
+                    if (v.DisburseYear){
+                        agent = ': '+v.agent;
+                        xaxis = 'Years'
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.Year){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Loan Officers"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#chart-container").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    // Loans By Branch Chart & Filters
+
+    function getBranches(){
+        $.ajax({
+            type: "GET",
+            url: "/user/branches/",
+            success: function (response) {
+                $("#chartfilterbranches").empty().append('<option id="0" value ="0">Select a Branch</option>');
+                $.each(JSON.parse(response), function (key, val) {
+                    $("#chartfilterbranches").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
+                });
+            }
+        });
+    }
+
+    function branches(){
+        let d = [];
+        let data = [
+            {
+                "label": "Venezuela",
+                "value": "290"
+            }, {
+                "label": "Saudi",
+                "value": "260"
+            }, {
+                "label": "Canada",
+                "value": "180"
+            }, {
+                "label": "Iran",
+                "value": "140"
+            }, {
+                "label": "Russia",
+                "value": "115"
+            }, {
+                "label": "UAE",
+                "value": "100"
+            }, {
+                "label": "US",
+                "value": "30"
+            }, {
+                "label": "China",
+                "value": "30"
+            }];
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': 'user/analytics?t=branches',
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    d.push({label: v.branch , value: v.amount_disbursed}, );
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements By Branches",
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": "Branches",
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function bFilterBranch(branch){
+        let url = '/user/analytics?t=branches&&',
+            freq = $('#branch-frequency').val(),
+            year = $('#branch-year').val();
+        if (branch.value == 0 && freq == "-1"){
+            return branches();
+        }
+        url = url.concat('branch='+branch.value+'&&');
+        if (freq !== "-1"){
+            url = url.concat('freq='+freq);
+        }
+        if (freq === "2" && year !== "0"){
+            url = url.concat('&&year='+year);
+        }
+        else if (freq === "2" && year === "0"){
+            return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.branch)
+                        d.push({label: v.branch , value: v.amount_disbursed}, );
+                    if (v.year){
+                        agent = ': '+v.branch;
+                        xaxis = 'Years'
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Branches"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function bFrequencyChange(frequency){
+        let url ='user/analytics?t=branches&&',
+            year = $('#branch-year').val(),
+            branch = $('#chartfilterbranches').val();
+        if (frequency.value == 2){
+            $('#brn-year').show();
+            if (branch == '0'){
+                return swal('Incomplete Info', 'Please Choose a Branch!', 'warning');
+            }
+            if (year !== "0" ){
+                url = url.concat('branch='+branch+'&&year='+year);
+            }
+            else if (year == "0"){
+                return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
+            }
+        }
+        else {
+            $('#brn-year').hide();
+            url = url.concat('branch='+branch+'&&freq='+frequency.value);
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.branch)
+                        d.push({label: v.name , value: v.amount_disbursed}, );
+                    if (v.year){
+                        agent = ': '+v.branch;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.AmountDisbursed}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Branch"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function bFilterYear(year) {
+        let urlAn = '/user/analytics?t=branches&&';
+        let branch = $('#chartfilterbranches').val(),
+            d=[], agent, xaxis;
+        if (branch == 0){
+            return branches();
+        }
+        urlAn = urlAn.concat('freq=2&&branch='+branch+'&&year='+year.value);
+
+        $.ajax({
+            'url': urlAn,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.branch)
+                        d.push({label: v.name , value: v.amount_disbursed}, );
+                    if (v.year){
+                        agent = ': '+v.branch;
+                        xaxis = 'Years'
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Disbursements by Branches"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount Disbursed (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    // Payments
+
+    function payments(){
+        let d = [];
+        let data = [
+            {
+                "label": "Venezuela",
+                "value": "290"
+            }, {
+                "label": "Saudi",
+                "value": "260"
+            }, {
+                "label": "Canada",
+                "value": "180"
+            }, {
+                "label": "Iran",
+                "value": "140"
+            }, {
+                "label": "Russia",
+                "value": "115"
+            }, {
+                "label": "UAE",
+                "value": "100"
+            }, {
+                "label": "US",
+                "value": "30"
+            }, {
+                "label": "China",
+                "value": "30"
+            }];
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': 'user/analytics?t=payments',
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    d.push({label: v.officer , value: v.amount_payed}, );
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Payments Received",
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": "Loan Officers",
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#payments-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+
+    }
+
+    function pFilterOfficer(officer){
+        let url = '/user/analytics?t=payments&&',
+            freq = $('#payment-frequency').val(),
+            year = $('#payment-year').val();
+        if (branch.value == 0 && freq == "-1"){
+            return payments();
+        }
+        url = url.concat('officer='+officer.value+'&&');
+        if (freq !== "-1"){
+            url = url.concat('freq='+freq);
+        }
+        if (freq === "2" && year !== "0"){
+            url = url.concat('&&year='+year);
+        }
+        else if (freq === "2" && year === "0"){
+            return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer)
+                        d.push({label: v.officer , value: v.AmountPayed}, );
+                    if (v.year){
+                        agent = ': '+v.officer;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.AmountPayed}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.AmountPayed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Payments Received"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function pFrequencyChange(frequency){
+        let url ='user/analytics?t=payments&&',
+            year = $('#payment-year').val(),
+            officer = $('#pchartfilterofficers').val();
+        if (frequency.value == 2){
+            $('#pay-year').show();
+            if (officer == '0'){
+                return swal('', 'Please Choose a Loan Officer!', 'warning');
+            }
+            if (year !== "0" ){
+                url = url.concat('officer='+officer+'&&year='+year);
+            }
+            else if (year == "0"){
+                return swal('', 'Please Choose a Year for Monthly Frequency', 'warning');
+            }
+        }
+        else {
+            $('#pay-year').hide();
+            url = url.concat('officer='+officer+'&&freq='+frequency.value);
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer)
+                        d.push({label: v.officer , value: v.AmountPayed}, );
+                    if (v.year){
+                        agent = ': '+v.branch;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.AmountPayed}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.AmountPayed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Payments Received"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#payments-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function pFilterYear(year) {
+        let urlAn = '/user/analytics?t=payments&&';
+        let officer = $('#pchartfilterofficers').val(),
+            d=[], agent, xaxis;
+        if (officer == 0){
+            return payments();
+        }
+        urlAn = urlAn.concat('freq=2&&officer='+officer+'&&year='+year.value);
+
+        $.ajax({
+            'url': urlAn,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer)
+                        d.push({label: v.officer , value: v.AmountPayed}, );
+                    if (v.year){
+                        agent = ': '+v.branch;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.AmountPayed}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.AmountPayed}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Payments Received"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    // Interests Received
+
+    function interestreceived(){
+        let d = [];
+        let data = [
+            {
+                "label": "Venezuela",
+                "value": "290"
+            }, {
+                "label": "Saudi",
+                "value": "260"
+            }, {
+                "label": "Canada",
+                "value": "180"
+            }, {
+                "label": "Iran",
+                "value": "140"
+            }, {
+                "label": "Russia",
+                "value": "115"
+            }, {
+                "label": "UAE",
+                "value": "100"
+            }, {
+                "label": "US",
+                "value": "30"
+            }, {
+                "label": "China",
+                "value": "30"
+            }];
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': 'user/analytics?t=interest-received',
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    d.push({label: v.officer , value: v.amount_received}, );
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Received",
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": "Loan Officers",
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#interest-received-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+
+    }
+
+    function irFilterOfficer(officer){
+        let url = '/user/analytics?t=interest-received&&',
+            freq = $('#ir-frequency').val(),
+            year = $('#i-r-year').val();
+        if (branch.value == 0 && freq == "-1"){
+            return interestreceived();
+        }
+        url = url.concat('officer='+officer.value+'&&');
+        if (freq !== "-1"){
+            url = url.concat('freq='+freq);
+        }
+        if (freq === "2" && year !== "0"){
+            url = url.concat('&&year='+year);
+        }
+        else if (freq === "2" && year === "0"){
+            return swal('', 'Please Choose a Year for Monthly Frequency', 'warning');
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer)
+                        d.push({label: v.officer , value: v.amount_received}, );
+                    if (v.year){
+                        agent = ': '+v.officer;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.amount_received}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.amount_received}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Received"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function irFrequencyChange(frequency){
+        let url ='user/analytics?t=payments&&',
+            year = $('#i-r-year').val(),
+            officer = $('#irchartfilterofficers').val();
+        if (frequency.value == 2){
+            $('#ir-year').show();
+            if (officer == '0'){
+                return swal('', 'Please Choose a Loan Officer!', 'warning');
+            }
+            if (year !== "0" ){
+                url = url.concat('officer='+officer+'&&year='+year);
+            }
+            else if (year == "0"){
+                return swal('', 'Please Choose a Year for Monthly Frequency', 'warning');
+            }
+        }
+        else {
+            $('#ir-year').hide();
+            url = url.concat('officer='+officer+'&&freq='+frequency.value);
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer)
+                        d.push({label: v.officer , value: v.amount_received}, );
+                    if (v.year){
+                        agent = ': '+v.branch;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.amount_received}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.amount_received}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Received"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#payments-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function irFilterYear(year) {
+        let urlAn = '/user/analytics?t=interest-received&&';
+        let officer = $('#irchartfilterofficers').val(),
+            d=[], agent, xaxis;
+        if (officer == 0){
+            return payments();
+        }
+        urlAn = urlAn.concat('freq=2&&officer='+officer+'&&year='+year.value);
+
+        $.ajax({
+            'url': urlAn,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer)
+                        d.push({label: v.officer , value: v.amount_received}, );
+                    if (v.year){
+                        agent = ': '+v.branch;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.amount_received}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.branch;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.amount_received}, )
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column3d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Received"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (Naira)",
+                            "numberSuffix": " Naira",
+//                            "theme": "candy",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#branch-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
 
 </script>
 
