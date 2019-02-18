@@ -2569,7 +2569,7 @@
         let url = '/user/analytics?t=payments&&',
             freq = $('#payment-frequency').val(),
             year = $('#payment-year').val();
-        if (branch.value == 0 && freq == "-1"){
+        if (officer.value == 0 && freq == "-1"){
             return payments();
         }
         url = url.concat('officer='+officer.value+'&&');
@@ -2661,12 +2661,12 @@
                     if (v.officer)
                         d.push({label: v.officer , value: v.AmountPayed}, );
                     if (v.year){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.name;
                         xaxis = 'Years'
                         d.push({label: v.year , value: v.AmountPayed}, );
                     }
                     if (v.month){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.name;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.AmountPayed}, )
                     }
