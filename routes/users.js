@@ -3273,7 +3273,7 @@ users.get('/analytics', function(req, res, next) {
                     'group by officer, Date_format(Payment_date, \'%Y\')'
             }
             if (officer !== '0' && freq == '2'){
-                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%M, %y\') PaymentMonth \n' +
+                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%M, %y\') PaymentMonth, \n' +
                     '(select fullname from users where users.id = \n' +
                     '(select loan_officer from clients where clients.id = \n' +
                     '(select userid from applications where applications.id = applicationid))) officer\n' +
