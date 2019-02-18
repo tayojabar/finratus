@@ -330,6 +330,13 @@ app.get('/all-periods', requireLogin, function(req, res) {
     res.sendFile('all-periods.html', {root: __dirname + '/views'});
 });
 
+app.get('/commission-profile', requireLogin, function(req, res) {
+    res.sendFile('commission-profile.html', {root: __dirname + '/views'});
+});
+
+app.get('/commission-dashboard', requireLogin, function(req, res) {
+    res.sendFile('commission-dashboard.html', {root: __dirname + '/views'});
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     let err = new Error('Not Found');

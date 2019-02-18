@@ -1807,4 +1807,27 @@ router.get('/target/sub_periods/:id', function(req, res, next) {
     });
 });
 
+router.post('/commissions', function(req, res, next) {
+    let commission = req.body,
+        query = 'INSERT INTO commissions SET ?';
+    commission.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query, commission, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission added successfully!"});
+        }
+    });
+});
+
+router.get('/commissions', function(req, res, next) {
+    db.query('SELECT * FROM commissions WHERE status = 1', function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commissions fetched successfully!", "response": results});
+        }
+    });
+});
+
 module.exports = router;
