@@ -726,7 +726,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-4 card" id="pay-year" style="background-color: transparent; border-color: transparent; ">
+                                                        <div class="col-sm-4 card" id="pay-year" style="display: none; background-color: transparent; border-color: transparent; ">
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="payment-year" onchange="pFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
@@ -2038,11 +2038,8 @@
         if (freq !== "-1"){
             url = url.concat('freq='+freq);
         }
-        if (freq === "2" && year !== "0"){
+        if (freq === "2" && year){
             url = url.concat('&&year='+year);
-        }
-        else if (freq === "2" && year === "0"){
-            return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
         }
         let d = [], categories = [], agent, xaxis;
 
@@ -2054,17 +2051,37 @@
                 jQuery.each(data.response, function(k, v){
                     if (v.name)
                         d.push({label: v.name , value: v.amount_disbursed}, );
-                    if (v.DisburseYear){
+                    if (v.agent){
                         agent = ': '+v.agent;
-                        xaxis = 'Years'
+                        d.push({label: v.agent , value: v.AmountDisbursed}, );
+                    }
+                    if (v.DisburseYear){
+                        agent = ': '+v.Agent;
+                        xaxis = 'Years';
                         d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
                     }
                     if (v.Year){
-                        agent = ': '+v.agent;
+                        agent = ': '+v.Agent;
                         xaxis = 'Months';
                         d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
                     }
+                    if (v.OfficersYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.OfficersMonth){
+                        agent = '';
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                    if (v.AYear){
+                        agent = '';
+                        xaxis = 'Months';
+                        d.push({label: v.Month , value: v.AmountDisbursed}, )
+                    }
                 });
+                console.log(d);
                 var chartConfigs = {
                     type: 'column3d', // The chart type
                     width: '100%', // Width of the chart
@@ -2098,25 +2115,15 @@
         officer = $('#chartfilterofficers').val();
         if (frequency.value == 2){
             $('#dis-year').show();
-            if (officer == '0'){
-                return swal('Incomplete Info', 'Please Choose a Loan Officer!', 'warning');
-            }
-            if (year !== "0" ){
-                url = url.concat('officer='+officer+'&&year='+year);
-            }
-            else if (year == "0"){
-                return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
+            if (officer && year){
+                url = url.concat('officer='+officer+'&&year='+year+'&&freq='+frequency.value);
             }
         }
         if (frequency.value == 3){
             $('#dis-year').hide();
-            if (officer == '0'){
-                return swal('Incomplete Info', 'Please Choose a Loan Officer!', 'warning');
-            }
             url = url.concat('officer='+officer+'&&freq='+frequency.value+'')
         }
         let d = [], categories = [], agent, xaxis;
-        console.log(url);
 
         $.ajax({
             'url': url,
@@ -2126,15 +2133,35 @@
                 jQuery.each(data.response, function(k, v){
                     if (v.name)
                         d.push({label: v.name , value: v.amount_disbursed}, );
-                    if (v.DisburseYear){
+
+                    if (v.agent){
                         agent = ': '+v.agent;
+                        d.push({label: v.agent , value: v.AmountDisbursed}, );
+                    }
+                    if (v.DisburseYear){
+                        agent = ': '+v.Agent;
                         xaxis = 'Years'
                         d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
                     }
                     if (v.Year){
-                        agent = ': '+v.agent;
+                        agent = ': '+v.Agent;
                         xaxis = 'Months';
                         d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                    if (v.OfficersYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.OfficersMonth){
+                        agent = '';
+                        xaxis = 'Months';
+                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                    if (v.AYear){
+                        agent = '';
+                        xaxis = 'Months';
+                        d.push({label: v.Month , value: v.AmountDisbursed}, )
                     }
                 });
                 var chartConfigs = {
@@ -2169,13 +2196,11 @@
         let start = $("#startDate").val(),
             end = $("#endDate").val(),
             officer = $('#chartfilterofficers').val(),
+            freq = $('#disburse-frequency').val(),
             url = '/user/disbursements/filter?',
             d=[], agent, xaxis;
-        if (officer == 0){
-            return disbursed();
-        }
         url = url.concat('officer='+officer);
-        urlAn = urlAn.concat('freq=2&&officer='+officer+'&&year='+year.value);
+        urlAn = urlAn.concat('freq='+freq+'&&officer='+officer+'&&year='+year.value);
 
         $.ajax({
             'url': urlAn,
@@ -2185,15 +2210,34 @@
                 jQuery.each(data.response, function(k, v){
                     if (v.name)
                         d.push({label: v.name , value: v.amount_disbursed}, );
-                    if (v.DisburseYear){
+                    if (v.agent){
                         agent = ': '+v.agent;
+                        d.push({label: v.agent , value: v.AmountDisbursed}, );
+                    }
+                    if (v.DisburseYear){
+                        agent = ': '+v.Agent;
                         xaxis = 'Years'
                         d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
                     }
                     if (v.Year){
-                        agent = ': '+v.agent;
+                        agent = ': '+v.Agent;
                         xaxis = 'Months';
                         d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                    }
+                    if (v.OfficersYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    }
+                    if (v.OfficersMonth){
+                        agent = '';
+                        xaxis = 'Months';
+                        d.push({label: v.OfficersMonth , value: v.AmountDisbursed}, )
+                    }
+                    if (v.AYear){
+                        agent = '';
+                        xaxis = 'Months';
+                        d.push({label: v.Month , value: v.AmountDisbursed}, )
                     }
                 });
                 var chartConfigs = {
@@ -2317,11 +2361,8 @@
         if (freq !== "-1"){
             url = url.concat('freq='+freq);
         }
-        if (freq === "2" && year !== "0"){
+        if (freq === "2" && year){
             url = url.concat('&&year='+year);
-        }
-        else if (freq === "2" && year === "0"){
-            return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
         }
         let d = [], agent = '', xaxis;
 
@@ -2334,9 +2375,9 @@
                     if (v.branch)
                         d.push({label: v.branch , value: v.amount_disbursed}, );
                     if (v.year){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.office;
                         xaxis = 'Years'
-                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                        d.push({label: v.year , value: v.AmountDisbursed}, );
                     }
                     if (v.month){
                         agent = ': '+v.branch;
@@ -2375,16 +2416,13 @@
         let url ='user/analytics?t=branches&&',
             year = $('#branch-year').val(),
             branch = $('#chartfilterbranches').val();
+        if (branch == 0){
+            return swal('Please select a branch!', '','warning');
+        }
         if (frequency.value == 2){
             $('#brn-year').show();
-            if (branch == '0'){
-                return swal('Incomplete Info', 'Please Choose a Branch!', 'warning');
-            }
-            if (year !== "0" ){
-                url = url.concat('branch='+branch+'&&year='+year);
-            }
-            else if (year == "0"){
-                return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
+            if (branch && year){
+                url = url.concat('branch='+branch+'&&year='+year+'&&freq='+frequency.value);
             }
         }
         else {
@@ -2444,7 +2482,7 @@
         let branch = $('#chartfilterbranches').val(),
             d=[], agent, xaxis;
         if (branch == 0){
-            return branches();
+            return swal('Please choose a branch!', '', 'warning');
         }
         urlAn = urlAn.concat('freq=2&&branch='+branch+'&&year='+year.value);
 
@@ -2576,11 +2614,8 @@
         if (freq !== "-1"){
             url = url.concat('freq='+freq);
         }
-        if (freq === "2" && year !== "0"){
+        if (freq === "2" && year){
             url = url.concat('&&year='+year);
-        }
-        else if (freq === "2" && year === "0"){
-            return swal('Incomplete Info', 'Please Choose a Year for Monthly Frequency', 'warning');
         }
         let d = [], agent = '', xaxis;
 
@@ -2591,9 +2626,10 @@
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
                     if (v.officer)
+                        agent = ': '+v.officer;
                         d.push({label: v.officer , value: v.AmountPayed}, );
                     if (v.year){
-                        agent = ': '+v.officer;
+                        agent = ': '+v.name;
                         xaxis = 'Years'
                         d.push({label: v.year , value: v.AmountPayed}, );
                     }
@@ -2601,6 +2637,10 @@
                         agent = ': '+v.branch;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.AmountPayed}, )
+                    }
+                    if (v.allpaymentyear){
+                        agent = '';
+                        d.push({label: v.allpaymentyear , value: v.AmountPayed}, );
                     }
                 });
                 var chartConfigs = {
@@ -2622,7 +2662,7 @@
                         "data": d
                     }
                 };
-                $("#branch-chart").insertFusionCharts(chartConfigs);
+                $("#payments-chart").insertFusionCharts(chartConfigs);
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2636,14 +2676,8 @@
             officer = $('#pchartfilterofficers').val();
         if (frequency.value == 2){
             $('#pay-year').show();
-            if (officer == '0'){
-                return swal('', 'Please Choose a Loan Officer!', 'warning');
-            }
-            if (year !== "0" ){
-                url = url.concat('officer='+officer+'&&year='+year);
-            }
-            else if (year == "0"){
-                return swal('', 'Please Choose a Year for Monthly Frequency', 'warning');
+            if (officer && year){
+                url = url.concat('officer='+officer+'&&year='+year+'&&freq='+frequency.value);
             }
         }
         else {
@@ -2669,6 +2703,10 @@
                         agent = ': '+v.name;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.AmountPayed}, )
+                    }
+                    if (v.allpaymentyear){
+                        agent = '';
+                        d.push({label: v.allpaymentyear , value: v.AmountPayed}, );
                     }
                 });
                 var chartConfigs = {
@@ -2701,11 +2739,9 @@
     function pFilterYear(year) {
         let urlAn = '/user/analytics?t=payments&&';
         let officer = $('#pchartfilterofficers').val(),
+            freq = $('#payment-frequency').val();
             d=[], agent, xaxis;
-        if (officer == 0){
-            return payments();
-        }
-        urlAn = urlAn.concat('freq=2&&officer='+officer+'&&year='+year.value);
+        urlAn = urlAn.concat('freq='+freq+'&&officer='+officer+'&&year='+year.value);
 
         $.ajax({
             'url': urlAn,
@@ -2835,11 +2871,8 @@
         if (freq !== "-1"){
             url = url.concat('freq='+freq);
         }
-        if (freq === "2" && year !== "0"){
+        if (freq === "2" && year){
             url = url.concat('&&year='+year);
-        }
-        else if (freq === "2" && year === "0"){
-            return swal('', 'Please Choose a Year for Monthly Frequency', 'warning');
         }
         let d = [], agent = '', xaxis;
 
@@ -2849,8 +2882,10 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.officer)
+                    if (v.officer){
+                        agent = ': '+v.officer;
                         d.push({label: v.officer , value: v.amount_received}, );
+                    }
                     if (v.year){
                         agent = ': '+v.officer;
                         xaxis = 'Years'
@@ -2860,6 +2895,11 @@
                         agent = ': '+v.branch;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.amount_received}, )
+                    }
+                    if (v.paymonth){
+                        agent = ': '+v.officer;
+                        xaxis = 'Months';
+                        d.push({label: v.paymentmonth , value: v.amount_received}, )
                     }
                 });
                 var chartConfigs = {
@@ -2881,7 +2921,7 @@
                         "data": d
                     }
                 };
-                $("#branch-chart").insertFusionCharts(chartConfigs);
+                $("#interest-received-chart").insertFusionCharts(chartConfigs);
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2895,14 +2935,8 @@
             officer = $('#irchartfilterofficers').val();
         if (frequency.value == 2){
             $('#ir-year').show();
-            if (officer == '0'){
-                return swal('', 'Please Choose a Loan Officer!', 'warning');
-            }
-            if (year !== "0" ){
-                url = url.concat('officer='+officer+'&&year='+year);
-            }
-            else if (year == "0"){
-                return swal('', 'Please Choose a Year for Monthly Frequency', 'warning');
+            if (officer && year){
+                url = url.concat('officer='+officer+'&&year='+year+'freq='+frequency.value);
             }
         }
         else {
@@ -2917,8 +2951,10 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.officer)
+                    if (v.officer){
+                        agent = ': '+v.officer;
                         d.push({label: v.officer , value: v.amount_received}, );
+                    }
                     if (v.year){
                         agent = ': '+v.branch;
                         xaxis = 'Years'
@@ -2928,6 +2964,12 @@
                         agent = ': '+v.branch;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.amount_received}, )
+                    }
+
+                    if (v.paymonth){
+                        agent = ': '+v.officer;
+                        xaxis = 'Months';
+                        d.push({label: v.paymentmonth , value: v.amount_received}, )
                     }
                 });
                 var chartConfigs = {
@@ -2949,7 +2991,7 @@
                         "data": d
                     }
                 };
-                $("#payments-chart").insertFusionCharts(chartConfigs);
+                $("#interest-received-chart").insertFusionCharts(chartConfigs);
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2960,11 +3002,9 @@
     function irFilterYear(year) {
         let urlAn = '/user/analytics?t=interest-received&&';
         let officer = $('#irchartfilterofficers').val(),
+            freq = $("#ir-frequency").val();
             d=[], agent, xaxis;
-        if (officer == 0){
-            return payments();
-        }
-        urlAn = urlAn.concat('freq=2&&officer='+officer+'&&year='+year.value);
+        urlAn = urlAn.concat('freq='+freq+'&&officer='+officer+'&&year='+year.value);
 
         $.ajax({
             'url': urlAn,
@@ -2972,8 +3012,10 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.officer)
+                    if (v.officer){
+                        agent = ': '+v.officer;
                         d.push({label: v.officer , value: v.amount_received}, );
+                    }
                     if (v.year){
                         agent = ': '+v.branch;
                         xaxis = 'Years'
@@ -2983,6 +3025,11 @@
                         agent = ': '+v.branch;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.amount_received}, )
+                    }
+                    if (v.paymonth){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.paymonth , value: v.amount_received}, )
                     }
                 });
                 var chartConfigs = {
@@ -3004,7 +3051,7 @@
                         "data": d
                     }
                 };
-                $("#branch-chart").insertFusionCharts(chartConfigs);
+                $("#interest-received-chart").insertFusionCharts(chartConfigs);
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
