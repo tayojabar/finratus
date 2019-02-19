@@ -1782,7 +1782,7 @@ users.get('/collections/filter', function(req, res, next) {
     let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
         "s.applicationID, s.status, s.payment_amount, s.payment_collect_date, s.payment_status, 'Principal' AS 'type' FROM application_schedules AS s " +
         "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
-        "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ";
+        "AND (select close_status from applications a where a.ID = s.applicationID) = 0 AND s.payment_amount > 0 ";
 
     collectionsQueryMiddleware(query, type, range, today, function (response) {
         if (response.status !== 200)
@@ -1790,7 +1790,7 @@ users.get('/collections/filter', function(req, res, next) {
         let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
             "s.applicationID, s.status, s.interest_amount as payment_amount, s.interest_collect_date as payment_collect_date, s.payment_status, 'Interest' AS 'type' FROM application_schedules AS s " +
             "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
-            "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ",
+            "AND (select close_status from applications a where a.ID = s.applicationID) = 0 AND s.interest_amount > 0 ",
             results_principal = response.response;
         collectionsQueryMiddleware(query, type, range, today, function (response) {
             if (response.status !== 200)
