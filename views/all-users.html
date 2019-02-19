@@ -500,7 +500,7 @@
     </div>
 
     <div class="modal fade" id="commissionsModal" role="dialog" aria-labelledby="commissionsModalLabel">
-        <div class="modal-dialog" role="document" style="max-width: 50%;">
+        <div class="modal-dialog" role="document" style="max-width: 70%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="commissionsModalLabel">User Commissions</h4>
@@ -522,13 +522,18 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-8">
+                        <div class="col-lg-6">
                             <div class="form-group">
-                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Value" />
+                                <select id="commission_period" class="form-control" required="required" disabled="disabled"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="1" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
                                 <small id="commission_target_value" class="form-text text-muted"></small>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <button type="button" class="btn btn-success pull-right" onclick="assignCommission()">Assign Commission</button>
                             </div>
@@ -542,6 +547,7 @@
                                 <tr>
                                     <th>Commission</th>
                                     <th>Target</th>
+                                    <th>Period</th>
                                     <th>Type</th>
                                     <th>Threshold</th>
                                     <th>Action</th>
@@ -1028,6 +1034,12 @@
             getLimit(target_id);
         });
 
+
+        $('#commission_target').on('change', function() {
+            let id = $("#commission_target").find("option:selected").val();
+            getCommissionPeriods(id);
+        });
+
         let targets;
         function getTargets(){
             $.ajax({
@@ -1065,7 +1077,7 @@
             let commission_target = $("#commission_target").find("option:selected").val();
             if (commission_target && commission_target !== '-- Select Target --'){
                 commission_target_value = parseFloat(($.grep(assigned_targets, function(e){return e.ID === parseInt(commission_target);}))[0]['value']);
-                $('#commission_target_value').text('Total target value is ₦'+(commission_target_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
+                $('#commission_target_value').text('Max rate is 100% (₦'+(commission_target_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+')');
             } else {
                 $('#commission_target_value').text('');
             }
@@ -1123,6 +1135,26 @@
             }
         }
 
+        $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
+        function getCommissionPeriods(id){
+            if (id && id !== '-- Select Target --'){
+                $('#wait').show();
+                $.ajax({
+                    type: "GET",
+                    url: "/target/sub_periods/"+id,
+                    success: function (data) {
+                        $('#wait').hide();
+                        $("#commission_period").prop('disabled',false);
+                        $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
+                        $.each(data.response, function (key, val) {
+                            $("#commission_period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        });
+                        $("#commission_period").select2();
+                    }
+                });
+            }
+        }
+
         function openTargetsModal(id) {
             localStorage.user_target_id = id;
             $.ajax({
@@ -1164,6 +1196,7 @@
                 $('#user_commissions').dataTable().fnAddData( [
                     v.commission,
                     v.target,
+                    v.period,
                     v.type,
                     v.threshold,
                     '<button type="button" class="btn btn-danger" onclick="removeCommission('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
@@ -1222,15 +1255,19 @@
             obj.userID = localStorage.user_commission_id;
             obj.targetID = $('#commission_target').val();
             obj.commissionID = $('#commission_list').val();
+            obj.sub_periodID = $('#commission_period').val();
             obj.threshold = $('#commission_threshold').val();
-            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || !obj.threshold)
+            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || obj.sub_periodID === '-- Select Commission Period --' || !obj.threshold)
                 return swal('Kindly fill all required field(s)','','warning');
-            if (parseFloat(obj.threshold) > commission_target_value)
-                return swal('Commission threshold value ('+obj.threshold+') cannot be greater that the Total allocated Target ('+commission_target_value+')','','warning');
+            if (parseFloat(obj.threshold) > 100)
+                return swal('Commission threshold rate ('+obj.threshold+'%) cannot be greater than 100%. (Total allocated target is valued at '+commission_target_value+')','','warning');
             obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
-            let target_type = ($.grep(targets, function(e){return e.ID === parseInt(obj.targetID);}))[0]['type'];
-            if (obj.type !== target_type)
+            let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0];
+            if (obj.type !== target.type)
                 return swal('Commission and Target must be of the same type','','warning');
+            obj.periodID = target.period;
+            obj.target_value = target.value;
+            obj.threshold = parseFloat(obj.threshold);
             $('#wait').show();
             $.ajax({
                 'url': '/user/user-commissions',
