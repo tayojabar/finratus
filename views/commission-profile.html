@@ -197,10 +197,10 @@
                                             <table id="commissions" class="table table-striped table-bordered">
                                                 <thead>
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Title</th>
                                                     <th>Type</th>
-                                                    <th>Rate (%)</th>
+                                                    <th>Rate(%)</th>
+                                                    <th>Accelerator(%)</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody></tbody>
@@ -311,11 +311,15 @@
         $("#commissions").dataTable().fnClearTable();
         $.each(data, function(k, v){
             let table = [
-                v.ID,
                 v.title,
                 v.type,
-                v.rate,
+                v.rate
             ];
+            if (v.accelerator){
+                table.push(v.accelerator+' ('+v.accelerator_type+')');
+            } else {
+                table.push('--');
+            }
             $('#commissions').dataTable().fnAddData(table);
         });
     }
