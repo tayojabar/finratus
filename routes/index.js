@@ -1723,16 +1723,22 @@ function generateSubPeriods(period, periodID, callback) {
     let code, dates, count,
         sub_periods = [];
     switch (period.type){
-        case 'half_yearly':{
-            dates = dateRangeArray(period, 6);
-            code = 'H';
-            count = 2;
+        case 'monthly':{
+            dates = dateRangeArray(period, 1);
+            code = 'M';
+            count = 12;
             break;
         }
         case 'quarterly':{
             dates = dateRangeArray(period, 3);
             code = 'Q';
             count = 4;
+            break;
+        }
+        case 'half_yearly':{
+            dates = dateRangeArray(period, 6);
+            code = 'H';
+            count = 2;
             break;
         }
     }

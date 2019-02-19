@@ -151,7 +151,7 @@
                                             <strong><label class=" form-control-label">Commission Rate</label></strong><strong style="color:red"> *</strong><span id="commission-rate-error" style="padding-left:50px; text-align: center"></span>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-percent"></i></div>
-                                                <input id="commission-rate" type="number" class="form-control" required="required">
+                                                <input id="commission-rate" type="number" class="form-control" required="required" min="1" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                                             </div>
                                         </div>
                                         <label>
@@ -161,7 +161,7 @@
                                             <strong><label class=" form-control-label">Accelerator Rate</label></strong><strong style="color:red"> *</strong><span id="accelerator-rate-error" style="padding-left:50px; text-align: center"></span>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-percent"></i></div>
-                                                <input id="accelerator-rate" type="number" class="form-control" required="required">
+                                                <input id="accelerator-rate" type="number" class="form-control" required="required" min="1" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                                             </div>
                                         </div>
                                         <div class="form-group accelerator" style="display: none;">
@@ -272,7 +272,9 @@
             commission.accelerator_type = $('#accelerator-type').val();
             if (!commission.accelerator || commission.accelerator_type === '-- Select Type --')
                 return swal('Kindly fill all required field(s)','','warning');
+            commission.accelerator = parseFloat(commission.accelerator);
         }
+        commission.rate = parseFloat(commission.rate);
         $('#wait').show();
         $.ajax({
             'url': '/commissions',
