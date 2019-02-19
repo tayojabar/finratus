@@ -267,6 +267,7 @@
                                 <thead>
                                   <tr>
                                       <th>Loan ID</th>
+                                      <th>Loan CirrusID</th>
                                       <th>Full Name</th>
                                       <th>Phone Number</th>
                                       <th>Loan Amount</th>
@@ -486,6 +487,7 @@
             $.each(data, function(k, v){
                 let table = [
                     padWithZeroes(v.ID,9),
+                    v.loanCirrusID || 'N/A',
                     v.fullname,
                     v.phone,
                     v.loan_amount,
@@ -497,24 +499,30 @@
                     if (v.status === 1){
                         switch (v.current_stage){
                             case 2: {
-                                table[5] = '<span class="badge badge-info">Pending Approval</span>';
+                                table[6] = '<span class="badge badge-info">Pending Approval</span>';
                                 break;
                             }
                             case 3: {
-                                table[5] = '<span class="badge badge-info">Pending Disbursal</span>';
+                                table[6] = '<span class="badge badge-info">Pending Disbursal</span>';
                                 break;
                             }
                             default: {
-                                table[5] = '<span class="badge badge-primary">Started</span>';
+                                table[6] = '<span class="badge badge-primary">Started</span>';
                             }
                         }
                     } else if (v.status === 2){
-                        table[5] = '<span class="badge badge-success">Active</span>';
+                        table[6] = '<span class="badge badge-success">Active</span>';
                     } else {
-                        table[5] = '<span class="badge badge-danger">Not Active</span>';
+                        table[6] = '<span class="badge badge-danger">Not Active</span>';
                     }
                 } else{
-                    table[5] = '<span class="badge badge-warning">Closed</span>';
+                    table[6] = '<span class="badge badge-warning">Closed</span>';
+                }
+                if (v.reschedule_amount){
+                    table[6] = table[6].concat('<span class="badge badge-pill badge-secondary">Rescheduled</span>');
+                } else {
+                    if (v.reschedule_status === 1)
+                        table[6] = table[6].concat('<span class="badge badge-pill badge-secondary">Pending Reschedule</span>');
                 }
                 if (v.comment){
                     let view_comment_button = ' <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#viewCommentModal" onclick="openViewCommentModal('+v.ID+')"><i class="fa fa-eye"></i> View Comment</button>';
@@ -536,7 +544,7 @@
                     table[table.length-1] = table[table.length-1].concat(add_workflow_button);
                 }
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
-                $('#bootstrap-data-table').dataTable().fnSort([[4,'desc']]);
+                $('#bootstrap-data-table').dataTable().fnSort([[5,'desc']]);
             });
         }
 

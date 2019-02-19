@@ -181,6 +181,7 @@
                                           <th>Paid</th>
                                           <th>Type</th>
                                           <th>Target</th>
+                                          <th>Period</th>
                                           <th>Details</th>
                                         </tr>
                                     </thead>
@@ -454,9 +455,10 @@
                     '₦'+(parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
                     v.type,
                     v.target,
+                    v.period,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
                     'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+
-                    ','+v.rate+','+v.threshold+','+v.accelerator+','+v.accelerator_type+'\')">' +
+                    ','+v.rate+','+v.threshold+','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.start+','+v.end+'\')">' +
                     '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#commissions').dataTable().fnAddData(table);
@@ -476,20 +478,24 @@
                 paid = values[3],
                 type = values[4],
                 rate = values[5],
-                threshold = values[6],
-                accelerator = values[7],
-                accelerator_type = values[8];
+                threshold_rate = values[6],
+                target_value = values[7],
+                accelerator = values[8],
+                accelerator_type = values[9],
+                start = values[10],
+                end = values[11];
             user_id = userID;
             commission_id = ID;
             amount_paid = paid;
             getPaymentHistory(ID);
             $.ajax({
                 type: "GET",
-                url: "/user/committals/user/"+type+"/"+userID+"/"+targetID,
+                url: "/user/committals/user/"+type+"/"+userID+"/"+targetID+"?start="+start+"&&end="+end,
                 success: function (response) {
                     $('#commission-paid').text('₦'+(parseFloat(paid)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     let data = response.response;
                     data.total = data.total || 0;
+                    let threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value);
                     if (parseFloat(data.total) >= parseFloat(threshold)){
                         if (accelerator_type !== 'null') {
                             switch (accelerator_type) {
