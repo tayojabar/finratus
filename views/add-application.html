@@ -189,17 +189,25 @@
                                             <input type="date" id="repayment-date" class="form-control" required="required">
                                         </div>
                                     </div>
-                                    <!--<div class="col-sm-6 form-group">-->
-                                        <!--<label class="col-form-label">Select Amortization Type <strong style="color:red"> *</strong></label>-->
-                                        <!--<div class="input-group">-->
-                                            <!--<div class="input-group-addon"><i class="fa fa-table"></i></div>-->
-                                            <!--<select id="amortization" class="form-control" required="required">-->
-                                                <!--<option selected="selected">&#45;&#45; Choose Workflow &#45;&#45;</option>-->
-                                            <!--</select>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
+                                    <div class="col-sm-6 form-group">
+                                        <label class="col-form-label">Select Amortization Type <strong style="color:red"> *</strong></label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-table"></i></div>
+                                            <select id="amortization" class="form-control" required="required">
+                                                <option value="custom" selected="selected">Custom (Manual)</option>
+                                                <option value="standard">Standard (Automatic)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 form-group amortization-div" style="display: none;">
+                                        <label class="form-control-label">Payment Amount (Monthly)</label><strong style="color:red"> *</strong><span id="payment-amount-error" style="padding-left:50px; text-align: center"></span>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                            <input type="number" id="payment-amount" class="form-control" required="required" disabled="disabled">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row">
+                                <div class="row amortization-div">
                                     <div class="col-sm-12">
                                         <div class="row">
                                             <div class="col-sm-8">
@@ -345,6 +353,76 @@
             });
         }
 
+        $('#amortization').change(function () {
+            $('.amortization-div').toggle();
+            if (this.value === 'standard'){
+                let loanAmount = $('#amount').val(),
+                    interestRate = $('#interest-rate').val(),
+                    duration = $('#term').val();
+                if (!loanAmount || !interestRate || !duration)
+                    return swal('Kindly fill all required fields!','','warning');
+                duration = parseFloat(duration);
+                loanAmount = parseFloat(loanAmount);
+                interestRate = parseFloat(interestRate);
+                if (duration < 1)
+                    return swal('Minimum tenor is 1 (month)','','warning');
+                if (interestRate < 3)
+                    return swal('Minimum interest rate is 3%','','warning');
+                if (loanAmount < 1)
+                    return swal('Minimum loan amount is ₦25,000','','warning');
+
+                let years = duration/12,
+                    paymentsPerYear = 12,
+                    rate_ = (interestRate/100)/paymentsPerYear,
+                    numberOfPayments = paymentsPerYear * years,
+                    payment = (pmt(rate_, numberOfPayments, -loanAmount)).toFixed(2),
+                    schedule_ = computeSchedule(loanAmount, interestRate, paymentsPerYear, years, parseFloat(payment));
+                schedule = processSchedule(schedule_);
+                $('#payment-amount').val(payment);
+                console.log(schedule)
+            }
+        });
+
+        function processSchedule(schedule) {
+            let result = [];
+            for (let i=-2; i< schedule.length; i++){
+                if (i === -2){
+                    result.push("PRINCIPAL,,,INTEREST,,,BALANCE");
+                } else if (i === -1){
+                    result.push("INVOICE DATE,COLLECTION DATE,AMOUNT,INVOICE DATE,COLLECTION DATE,AMOUNT,AMOUNT");
+                } else {
+                    let cells = ",,"+schedule[i][1]+",,,"+schedule[i][2]+","+schedule[i][3];
+                    result.push(cells);
+                }
+            }
+            return result;
+        }
+
+
+        function pmt(rate,nper,pv) {
+            let pvif, pmt;
+
+            pvif = Math.pow( 1 + rate, nper);
+            pmt = rate / (pvif - 1) * -(pv * pvif);
+
+            return pmt;
+        }
+
+        function computeSchedule(loan_amount, interest_rate, payments_per_year, years, payment) {
+            let schedule = [],
+                remaining = loan_amount,
+                number_of_payments = payments_per_year * years;
+
+            for (let i=0; i<=number_of_payments; i++) {
+                let interest = remaining * (interest_rate/100/payments_per_year),
+                    principle = (payment-interest),
+                    row = [i, principle>0?(principle<payment?principle:payment):0, interest>0?interest:0, remaining>0?remaining:0];
+                schedule.push(row);
+                remaining -= principle
+            }
+
+            return schedule;
+        }
 
         function initCSVUpload2() {
             let schedule = [],
