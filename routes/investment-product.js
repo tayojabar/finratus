@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.post('/new-client', function(req, res, next) {
+router.post('/investment-products', function(req, res, next) {
     let postData = req.body,
-        query =  'INSERT INTO clients Set ?',
+        query =  'INSERT INTO investment-products Set ?',
         query2 = 'select * from clients where username = ? or email = ? or phone = ?';
     postData.status = 1;
     postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
