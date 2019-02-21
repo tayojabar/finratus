@@ -152,6 +152,11 @@
         input.invalid, span.invalid {
             border: 2px dashed red;
         }
+        #schedule-error-message{
+            text-align: center;
+            font-style: italic;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -504,9 +509,54 @@
                                 <div class="row setup-content" id="generate-schedule-v2" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
-                                            <h2 class="text-center" style="margin-bottom: 15px;">Loan Reschedule
+                                            <h2 class="text-center" style="margin: 0 0 15px 200px;">Loan Reschedule
                                                 <span id="reschedule-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
+                                                <select id="amortization" class="form-control" style="width: 200px; float: right;">
+                                                    <option value="custom" selected="selected">Custom (Manual)</option>
+                                                    <option value="standard">Standard (Automatic)</option>
+                                                </select>
                                             </h2>
+                                            <p id="schedule-error-message" class="amortization-div" style="display: none;"></p>
+                                            <div class="row amortization-div" style="display: none;">
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Loan Requested</label><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                        <input type="number" id="amount" class="form-control" required="required" value="50000" min="1" max="250000">
+                                                    </div>
+                                                    <small class="form-text text-muted">Max: 250,000.00 (NGN)</small>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Interest Rate</label><strong style="color:red"> *</strong><span id="interest-rate-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-plus"></i></div>
+                                                        <input type="number" id="interest-rate" class="form-control" required="required" value="4" min="3" max="10">
+                                                    </div>
+                                                    <small class="form-text text-muted">Min: 3%  Max: 10% </small>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Tenor (monthly)</label><strong style="color:red"> *</strong><span id="term-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                        <input type="number" id="term" class="form-control" required="required" value="6" min="1" max="24">
+                                                    </div>
+                                                    <small class="form-text text-muted">Min: 1  Max: 24</small>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Payment Amount (Monthly)</label><strong style="color:red"> *</strong><span id="payment-amount-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                        <input type="number" id="payment-amount" class="form-control" required="required" disabled="disabled">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">First Repayment Date</label><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                        <input type="date" id="repayment-date" class="form-control" required="required">
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-sm-3">
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
@@ -810,7 +860,7 @@
     </div>
 
     <div class="modal fade" id="invoiceHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
-        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
+        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="invoiceHistoryLabel">Repayment History</h4>
@@ -826,8 +876,7 @@
                             <th>Fees</th>
                             <th>Penalty</th>
                             <th>Paid By</th>
-                            <th>Payment Date</th>
-                            <th>Posted Date</th>
+                            <th>Date</th>
                         </tr>
                         </thead>
                         <tbody id="history">
@@ -1814,7 +1863,6 @@
                             v.fees_amount,
                             v.penalty_amount,
                             v.agent,
-                            v.payment_date,
                             v.date_created
                         ];
                         $('#invoice-history').dataTable().fnAddData(table);
@@ -1855,36 +1903,31 @@
 
         let total_due_amount;
         function initLoanSummary(total_prinicipal) {
-            let total_principal = total_prinicipal;
+            let payment_history = [],
+                total_principal = total_prinicipal,
+                invoices = $.grep(application.schedule,function(e){return e.status===1});
             $('#loan-amount-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $('#principal-total-text').text('Disbursed Amount: ₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-            if (!application.payment_history || !application.payment_history[0]){
+            for (let i=0; i<invoices.length; i++){
+                let payments = $.grep(application.payment_history,function(e){return e.invoiceID===invoices[i]['ID']});
+                payment_history = payment_history.concat(payments);
+            }
+            if (!payment_history || !payment_history[0]){
                 total_due_amount = total_prinicipal;
                 $('#total-due-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 $('#last-payment-text').text('N/A');
             } else {
                 let count = 0,
-                    payment_history = [],
-                    amount = total_principal,
-                    invoices = $.grep(application.schedule,function(e){return e.status===1});
-                for (let i=0; i<invoices.length; i++){
-                    let payments = $.grep(application.payment_history,function(e){return e.invoiceID===invoices[i]['ID']});
-                    payment_history = payment_history.concat(payments);
-                }
-                if (payment_history[0]){
-                    payment_history.forEach(function (payment) {
-                        count++;
-                        amount = (amount - parseFloat(payment.payment_amount)).round(2);
-                        if (count === payment_history.length){
-                            total_due_amount = amount;
-                            $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                        }
-                    });
-                    $('#last-payment-text').text(((payment_history[0]['date_created']).split(' '))[0]);
-                } else {
-                    $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                    $('#last-payment-text').text('N/A');
-                }
+                    amount = total_principal;
+                payment_history.forEach(function (payment) {
+                    count++;
+                    amount = (amount - parseFloat(payment.payment_amount)).round(2);
+                    if (count === payment_history.length){
+                        total_due_amount = amount;
+                        $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    }
+                });
+                $('#last-payment-text').text(((payment_history[0]['date_created']).split(' '))[0]);
             }
             let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
             if (next_payment_date && next_payment_date[0]){
@@ -1956,6 +1999,84 @@
             });
         }
 
+        $('#term').keyup(function () {
+            triggerAmortization();
+        });
+        $('#amount').keyup(function () {
+            triggerAmortization();
+        });
+        $('#interest-rate').keyup(function () {
+            triggerAmortization();
+        });
+        $('#repayment-date').change(function () {
+            triggerAmortization();
+        });
+
+        function triggerAmortization() {
+            if ($('#amortization').val() === 'standard')
+                $('#amortization').val('standard').trigger('change');
+        }
+
+        function processSchedule(schedule) {
+            let result = [],
+                total_principal = 0,
+                amount = $('#amount').val(),
+                date = $('#repayment-date').val();
+            for (let i=-2; i<schedule.length-1; i++){
+                if (i === -2){
+                    result.push("PRINCIPAL,,,INTEREST,,,BALANCE");
+                } else if (i === -1){
+                    result.push("INVOICE DATE,COLLECTION DATE,AMOUNT,INVOICE DATE,COLLECTION DATE,AMOUNT,AMOUNT");
+                } else {
+                    total_principal = (total_principal + schedule[i][1]).round(2);
+                    amount = parseFloat(amount);
+                    if (i === schedule.length-2){
+                        let excess = (total_principal > amount)? (total_principal - amount).round(2) : (amount - total_principal).round(2);
+                        schedule[i][2] = (schedule[i][2] + schedule[i][3] + excess).round(2);
+                        schedule[i][1] = (schedule[i][1] - excess).round(2);
+                        schedule[i][3] = 0;
+                    }
+                    let cells;
+                    if (date){
+                        cells = date+","+date+","+schedule[i][1]+","+date+","+date+","+schedule[i][2]+","+schedule[i][3];
+                        let date_array = date.split('-');
+                        date = new Date(date_array[0], (parseInt(date_array[1])-1), date_array[2]);
+                        date.setMonth(date.getMonth()+1);
+                        date = formatDate(date);
+                    } else {
+                        cells = "0,0,"+schedule[i][1]+",0,0,"+schedule[i][2]+","+schedule[i][3];
+                    }
+                    result.push(cells);
+                }
+            }
+            return result;
+        }
+
+        function pmt(rate,nper,pv) {
+            let pvif, pmt;
+
+            pvif = Math.pow( 1 + rate, nper);
+            pmt = rate / (pvif - 1) * -(pv * pvif);
+
+            return pmt;
+        }
+
+        function computeSchedule(loan_amount, interest_rate, payments_per_year, years, payment) {
+            let schedule = [],
+                remaining = loan_amount,
+                number_of_payments = payments_per_year * years;
+
+            for (let i=0; i<=number_of_payments; i++) {
+                let interest = (remaining * (interest_rate/100/payments_per_year)).round(2),
+                    principle = (payment-interest).round(2);
+                remaining = (remaining - principle).round(2);
+                let row = [i, principle>0?(principle<payment?principle:payment):0, interest>0?interest:0, remaining>0?remaining:0];
+                schedule.push(row);
+            }
+
+            return schedule;
+        }
+
         function initCSVUpload2(application) {
             let schedule = [],
                 loan_amount = 0,
@@ -1965,7 +2086,100 @@
                 $uploadCSV = $("#uploadCSV2"),
                 $csvLoader = $("#csvLoader2"),
                 $rejectCSV = $("#rejectCSV2"),
-                $approveCSV = $("#approveCSV2");
+                $approveCSV = $("#approveCSV2"),
+                $message = $("#schedule-error-message");
+
+            $('#amortization').change(function () {
+                $dvCSV.html('');
+                schedule = [];
+                loan_amount = 0;
+                if (this.value === 'standard'){
+                    $('#uploadCSV2').hide();
+                    $('#csvUpload2').hide();
+                    $('.amortization-div').show();
+                    let loanAmount = $('#amount').val(),
+                        interestRate = $('#interest-rate').val(),
+                        duration = $('#term').val();
+                    if (!loanAmount || !interestRate || !duration)
+                        return $message.text('Kindly fill all required fields!','','warning');
+                    duration = parseFloat(duration);
+                    loanAmount = parseFloat(loanAmount);
+                    interestRate = parseFloat(interestRate);
+                    if (duration < 1 || duration > 24)
+                        return $message.text('Minimum tenor is 1 (month) and Maximum is 24 (months)','','warning');
+                    if (interestRate < 3 || interestRate > 10)
+                        return $message.text('Minimum interest rate is 3% and Maximum is 10%','','warning');
+                    if (loanAmount < 1 || loanAmount > 25000000)
+                        return $message.text('Minimum loan amount is ₦1 and Maximum is ₦25,000,000','','warning');
+                    $message.hide();
+
+                    let years = duration/12,
+                        paymentsPerYear = 12,
+                        rate_ = (interestRate/100)/paymentsPerYear,
+                        numberOfPayments = paymentsPerYear * years,
+                        payment = (pmt(rate_, numberOfPayments, -loanAmount)).toFixed(2),
+                        schedule_ = computeSchedule(loanAmount, interestRate, paymentsPerYear, years, parseFloat(payment)),
+                        table = $("<table border='1' style='text-align: center; width: 100%;'/>"),
+                        rows = processSchedule(schedule_);
+                    $('#payment-amount').val(payment);
+                    for (let i = 0; i < rows.length; i++) {
+                        let invoice = {},
+                            row = $("<tr />"),
+                            cells = rows[i].split(",");
+                        if (i === 0) {
+                            cells = ["PRINCIPAL","INTEREST","BALANCE"];
+                        } else if (i === 1) {
+                            cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
+                        }
+                        if (cells.join(' ').length > 10){
+                            for (let j = 0; j < cells.length; j++) {
+                                let cell = $("<td />");
+                                if (i === 0){
+                                    if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
+                                        cell = $("<td colspan='3' />");
+                                }
+                                if (cells[j]){
+                                    if (i > 1){
+                                        if (j === 0 || j === 1 || j === 3 || j === 4){
+                                            cell.html('<input id="invoice-'+i+'-'+j+'" type="date" value="'+cells[j]+'" />');
+                                        } else {
+                                            cell.html('<span id="invoice-'+i+'-'+j+'">'+cells[j]+'</span>');
+                                        }
+                                    } else {
+                                        cell.html(cells[j]);
+                                    }
+                                }
+                                row.append(cell);
+                                switch (j){
+                                    case 0:{ invoice.payment_create_date = cells[j]; break; }
+                                    case 1:{ invoice.payment_collect_date = cells[j]; break; }
+                                    case 2:{
+                                        if (i > 1)
+                                            loan_amount = (loan_amount + parseFloat(cells[j])).round(2);
+                                        invoice.payment_amount = cells[j];
+                                        break;
+                                    }
+                                    case 3:{ invoice.interest_create_date = cells[j]; break; }
+                                    case 4:{ invoice.interest_collect_date = cells[j]; break; }
+                                    case 5:{ invoice.interest_amount = cells[j]; break; }
+                                    case 6:{ invoice.balance = cells[j]; break; }
+                                }
+                            }
+                        }
+                        if (i>1 && cells.length === 7){
+                            if (Object.keys(invoice).length > 0)
+                                schedule.push(invoice);
+                        }
+                        table.append(row);
+                    }
+                    $dvCSV.html('');
+                    $dvCSV.append(table);
+                } else {
+                    $('#uploadCSV2').show();
+                    $('#csvUpload2').show();
+                    $('.amortization-div').hide();
+                }
+            });
 
             $uploadCSV.bind("click", function () {
                 schedule = [];
@@ -2114,6 +2328,7 @@
                 }
                 $dvCSV.html('');
                 $dvCSV.append(table);
+                $('#amortization').hide();
                 $('#reschedule-total-text').text('Disbursed Amount: ₦'+total_new_schedule.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             }
 
@@ -2353,6 +2568,18 @@
             z = z || '0';
             n = n + '';
             return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+
+        function formatDate(date) {
+            let d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
         }
     </script>
 </body>
