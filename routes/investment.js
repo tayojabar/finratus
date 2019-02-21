@@ -25,8 +25,9 @@ router.post('/products', function (req, res, next) {
 
 //Get Investment Product
 router.get('/products', function (req, res, next) {
-    const limit = req.query.start;
+    const limit = req.query.limit;
     const offset = limit * req.query.page;
+    console.log(limit, offset);
     let query = `SELECT * FROM investment_products LIMIT ${limit} OFFSET ${offset}`;
     db.query(query, function (error, results, fields) {
         if (error) {
