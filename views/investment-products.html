@@ -24,36 +24,50 @@
     <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
     <link rel="stylesheet" href="assets/scss/style.css">
     <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 
-    <style type="text/css">
-        .select2-container {
-            width: 92% !important;
-        }
-
-        .select2-selection {
-            height: 100% !important;
-            border: 1px solid #ced4da !important;
-            border-radius: .25rem !important;
-            color: #495057 !important;
-        }
-
-        input.invalid,
-        span.invalid {
-            border: 2px dashed red;
-        }
-    </style>
+    <!-- <script>
+        $(function () {
+            // when the modal is closed
+            $('#myModal').on('hidden.bs.modal', function () {
+                // remove the bs.modal data attribute from it
+                $(this).removeData('bs.modal');
+                // and empty the modal-content element
+                $('#myModal .modal-content span').empty();
+                $('#myModal .modal-footer span').empty();
+                $('#myModal input').val("");
+            });
+        });
+    </script> -->
 </head>
 
 <body>
     <!-- Left Panel -->
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            check();
+            loadMenus();
+            read_write();
+        });
+    </script>
+
+    <style>
+        #regForm {
+        background-color: rgba(255, 255, 255, 0.44);
+        /*margin: 100px auto;*/
+        padding: 20px;
+        /*width: 70%;*/
+        /*!*min-width: 300px;*!*/
+    }   
+</style>
 
     <aside id="left-panel" class="left-panel">
         <nav class="navbar navbar-expand-sm navbar-default">
@@ -68,9 +82,8 @@
             </div>
 
             <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul id="sidebar" class="nav navbar-nav">
-                </ul>
-            </div><!-- /.navbar-collapse -->
+                <ul id="sidebar" class="nav navbar-nav"></ul>
+            </div>
         </nav>
     </aside><!-- /#left-panel -->
 
@@ -99,7 +112,6 @@
                         </a>
 
                         <div class="user-menu dropdown-menu">
-
                             <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i>
                                 Logout</a>
                             <script type="text/javascript">
@@ -139,134 +151,198 @@
 
         <div class="content mt-3">
             <div class="animated fadeIn">
-
                 <div class="row">
 
                     <div id="user-form" class="col-xs-12 col-sm-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Add Product Data</strong> <small> Product Information</small>
+                                <strong id="new_edit">Add Investment Product Configuration</strong> <small id="def_name">
+                                    Investment Product Information</small>
                             </div>
                             <div class="card-body card-block">
-                                <div class="row">
-                                    <div class="col-sm-6 form-group">
-                                        <label class="col-form-label">Name <strong style="color:red"> *</strong></label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-tasks"></i></div>
-                                            <input type="text" id="product_name" placeholder="Product Name" class="form-control">
+                                <div id="regForm" action="user/new-client" method="post">
+
+                                    <!-- One "tab" for each step in the form: -->
+                                    <div class="tab">
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+                                                <div class="example-box-wrapper">
+                                                    <h6>Product</h6>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Name<span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_name" class="form-control imp"
+                                                                    placeholder="Product Name" tabindex="1" required="">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Code</label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_code" class="form-control"
+                                                                    placeholder="Product Code">
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="col-form-label">Investment Amount Range<strong style="color:red">
-                                                *</strong></label>
-                                        <div class="input-group">
-                                            <div class="row">
-                                                <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                                <input type="text" id="product_investment_amount_min" class="form-control"
-                                                    required="required" placeholder="Min. Value" min="0">
-                                                <input type="text" id="product_investment_amount_max" class="form-control"
-                                                    required="required" placeholder="Max. Value" min="0">
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Investment Amount</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Min. Amount <span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_investment_amount_min"
+                                                                    class="form-control imp" placeholder="Minimum Amount"
+                                                                    min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Max. Amount <span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_investment_amount_max"
+                                                                    class="form-control imp" placeholder="Maximum Amount"
+                                                                    min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Savings
+                                                                Charges <span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="saving_fees" class="form-control imp"
+                                                                    placeholder="Recurring. Savings Charges" min="0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Minimum Balance</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Amount </label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="minimum_bal" class="form-control imp"
+                                                                    placeholder="Minimum Amount" min="0.00">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Penalty Amount</label>
+                                                            <span class="text-danger" style="font-size: 1.0em">(below
+                                                                minimum balance)</span>
+                                                            <div class="input-group">
+                                                                <input type="text" id="minimum_bal_penalty_amount"
+                                                                    class="form-control imp" placeholder="Maximum Amount"
+                                                                    min="0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Interest</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Interest Rate(%)</label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="interest_rate" class="form-control imp"
+                                                                    placeholder="Maximum Amount" min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Interest Disbursement
+                                                                Time </label>
+                                                            <div class="input-group">
+                                                                <select id="condition_for_interest" class="form-control"
+                                                                    required="required">
+                                                                    <option value="0" selected="selected">-- Select --</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Forfeit Interest on
+                                                                Immature Investment</label>
+                                                            <div class="input-group">
+                                                                <input type="checkbox" id="forfeit_interest_on_withdrawal">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Freq. of Withdrawal</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Count (3 Times of)
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="number" id="withdrawal_conditions_value"
+                                                                    class="form-control imp" placeholder="Count" min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Duration
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <select id="withdrawal_charge_duration" class="form-control"
+                                                                    required="required">
+                                                                    <option value="0" selected="selected">-- Select --</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Charge for above freq.</label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="withdrawal_charge_freq" class="form-control imp"
+                                                                    placeholder="Maximum Amount" min="0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Freq. Redrawal</label><strong style="color:red">
-                                            *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-tasks"></i></div>
-                                            <select id="freq_redrawal" class="form-control" required="required">
-                                                <option value="0" selected="selected">-- Select --</option>
-                                            </select>
+                                    <div style="overflow:auto;">
+                                        <div style="float:right;">
+                                            <button class="btn btn-success" type="button" onclick="set_investment_product()">Add
+                                                New Product</button>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Saving Fees</label><strong style="color:red">
-                                            *</strong><span id="saving_fees_error" style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                            <input type="text" id="saving_fees" class="form-control" required="required"
-                                                min="0.00">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Withdrawal Fees</label><strong style="color:red">
-                                            *</strong><span id="withdrawal_fees_error" style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                            <input type="text" id="withdrawal_fees" class="form-control" min="0.00"
-                                                required="required">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Minimum Balance</label><span id="minimum_bal_error"
-                                            style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-bars"></i></div>
-                                            <input type="text" id="minimum_bal" class="form-control" min="0,00"
-                                                required="required">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Interest Rate(%)</label><span id="interest_rate_error"
-                                            style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-bars"></i></div>
-                                            <input type="number" id="interest_rate" class="form-control" min="0"
-                                                required="required">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Penalty Applies</label><span id="penalty_applies_error"
-                                            style="padding-left:50px; text-align: center"></span>
-                                        <input type="checkbox" id="penalty_applies" style="width:auto; text-align: center"
-                                            required="required">
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Forfeit Interest On Withdrawal</label><span
-                                            id="forfeit_interest_on_withdrawal_error" style="padding-left:50px; text-align: center"></span>
-                                        <input type="checkbox" id="forfeit_interest_on_withdrawal" style="width:auto; text-align: center"
-                                            required="required">
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Condition for Interest</label><span id="condition_for_interest_error"
-                                            style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-tasks"></i></div>
-                                            <select id="condition_for_interest" class="form-control" required="required">
-                                                <option value="0" selected="selected">-- Select --</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label class="form-control-label">Interest Calculation</label><span id="interest_calculation_error"
-                                            style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-tasks"></i></div>
-                                            <select id="interest_calculation" class="form-control" required="required">
-                                                <option value="0" selected="selected">-- Select --</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-6 form-group" id="schedule_tag">
-                                        <label class="form-control-label">Schedule</label><span id="schedule_error"
-                                            style="padding-left:50px; text-align: center"></span>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="fa fa-tasks"></i></div>
-                                            <select id="schedule" class="form-control" required="required">
-                                                <option value="0" selected="selected">-- Select --</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <input id="addNewProduct" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write"
-                                        value="Add New Product" /><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div><!-- .animated -->
             <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img
@@ -278,7 +354,7 @@
 
     <!-- Right Panel -->
 
-
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
@@ -286,569 +362,261 @@
     <script type="text/javascript" src="global-params.js"></script>
 
     <script>
-        (function ($) {
-            jQuery(document).ready(function () {
-                initCSVUpload2();
-                getWorkflows();
-                getUsers();
-                get_global_items();
-                check();
-                loadMenus();
-                read_write();
-            });
+        jQuery(document).ready(function () {
+            get_global_items();
+        });
 
-            $(document).ajaxStart(function () {
-                $("#wait").css("display", "block");
-            });
+        $(document).ajaxStart(function () {
+            $("#wait").css("display", "block");
+        });
 
-            $(document).ajaxComplete(function () {
-                $("#wait").css("display", "none");
-            });
+        $(document).ajaxComplete(function () {
+            $("#wait").css("display", "none");
+        });
 
-            function check() {
-                if (localStorage.getItem('role') !== 1) {
-                    jQuery('#car-models').hide();
-                    jQuery('#new-user').hide();
-                    jQuery('#models-card').hide();
-                    jQuery('#user').html(localStorage.getItem("name"));
-                } else {
-                    jQuery('#user').html(localStorage.getItem("name"));
-                }
+
+        function check() {
+            if (localStorage.getItem('role') !== 1) {
+                jQuery('#car-models').hide();
+                jQuery('#new-user').hide();
+                jQuery('#models-card').hide();
+                jQuery('#user').html(localStorage.getItem("name"));
+            } else {
+                jQuery('#user').html(localStorage.getItem("name"));
             }
+        }
 
-            function loadMenus() {
-                let modules = {};
-                modules = JSON.parse(localStorage.getItem("modules"));
-                modules.forEach(function (k, v) {
-                    if (k.menu_name === 'Sub Menu') {
-                        let main = $.grep(modules, function (e) {
-                            return e.id === parseInt(k.main_menu);
-                        });
-                        $('#' + $(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
-                    } else if (k.menu_name === 'Main Menu') {
-                        $('#sidebar').append(k.module_tag);
-                        $('#' + $(k.module_tag).attr('id')).append(
-                            '<ul class="sub-menu children dropdown-menu"></ul>');
-                    } else {
-                        $('#' + k.module_name).show();
-                    }
-                });
-                $.ajax({
-                    type: "GET",
-                    url: "/user/all-requests",
-                    success: function (response) {
-                        $.each(response, function (k, v) {
-                            $('#requests-badge').html(v.requests);
-                        });
-                    }
-                });
-                $.ajax({
-                    type: "GET",
-                    url: "/user/all-applications",
-                    success: function (response) {
-                        $.each(response, function (k, v) {
-                            $('#applications-badge').html(v.applications);
-                        });
-                    }
-                });
-            }
-
-            function read_write() {
-                let w;
-                var perms = JSON.parse(localStorage.getItem("permissions"));
-                var page = (window.location.pathname.split('/')[1].split('.'))[0];
-                perms.forEach(function (k, v) {
-                    if (k.module_name === page) {
-                        w = $.grep(perms, function (e) {
-                            return e.id === parseInt(k.id);
-                        });
-                    }
-                });
-                if (w && w[0] && (parseInt(w[0]['editable']) !== 1)) {
-                    $(".write").hide();
-                }
-            }
-
-            $("#product_investment_amount_min").on("keyup", function (event) {
-                var selection = window.getSelection().toString();
-                if (selection !== '') {
-                    return;
-                }
-                // When the arrow keys are pressed, abort.
-                if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
-                    return;
-                }
-                var $this = $(this);
-                // Get the value.
-                var input = $this.val();
-                var input = input.replace(/[\D\s\._\-]+/g, "");
-                input = input ? parseInt(input, 10) : 0;
-
-                $this.val(function () {
-                    return (input === 0) ? "0" : input.toLocaleString("en-US");
-                });
-            });
-
-            $("#product_investment_amount_max").on("keyup", function (event) {
-                //money_formater(event);
-                var selection = window.getSelection().toString();
-                if (selection !== '') {
-                    return;
-                }
-                // When the arrow keys are pressed, abort.
-                if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
-                    return;
-                }
-                var $this = $(this);
-                // Get the value.
-                var input = $this.val();
-                var input = input.replace(/[\D\s\._\-]+/g, "");
-                input = input ? parseInt(input, 10) : 0;
-
-                $this.val(function () {
-                    return (input === 0) ? "0" : input.toLocaleString("en-US");
-                });
-            });
-
-            $("#minimum_bal").on("keyup", function (event) {
-                //money_formater(event);
-                var selection = window.getSelection().toString();
-                if (selection !== '') {
-                    return;
-                }
-                // When the arrow keys are pressed, abort.
-                if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
-                    return;
-                }
-                var $this = $(this);
-                // Get the value.
-                var input = $this.val();
-                var input = input.replace(/[\D\s\._\-]+/g, "");
-                input = input ? parseInt(input, 10) : 0;
-
-                $this.val(function () {
-                    return (input === 0) ? "0" : input.toLocaleString("en-US");
-                });
-            });
-
-            $("#withdrawal_fees").on("keyup", function (event) {
-                //money_formater(event);
-                var selection = window.getSelection().toString();
-                if (selection !== '') {
-                    return;
-                }
-                // When the arrow keys are pressed, abort.
-                if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
-                    return;
-                }
-                var $this = $(this);
-                // Get the value.
-                var input = $this.val();
-                var input = input.replace(/[\D\s\._\-]+/g, "");
-                input = input ? parseInt(input, 10) : 0;
-
-                $this.val(function () {
-                    return (input === 0) ? "0" : input.toLocaleString("en-US");
-                });
-            });
-
-            $("#saving_fees").on("keyup", function (event) {
-                //money_formater(event);
-                var selection = window.getSelection().toString();
-                if (selection !== '') {
-                    return;
-                }
-                // When the arrow keys are pressed, abort.
-                if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
-                    return;
-                }
-                var $this = $(this);
-                // Get the value.
-                var input = $this.val();
-                var input = input.replace(/[\D\s\._\-]+/g, "");
-                input = input ? parseInt(input, 10) : 0;
-
-                $this.val(function () {
-                    return (input === 0) ? "0" : input.toLocaleString("en-US");
-                });
-            });
-
-            function get_global_items() {
-                for (var i = 0; i < interest_conditions.length; i++) {
-                    $('<option/>').val(interest_conditions[i].value).html(interest_conditions[i].value).appendTo(
-                        '#condition_for_interest');
-                }
-                for (var i = 0; i < interest_calculation.length; i++) {
-                    $('<option/>').val(interest_calculation[i].value).html(interest_calculation[i].value).appendTo(
-                        '#interest_calculation');
-                }
-                for (var i = 0; i < freq_withdrawal.length; i++) {
-                    $('<option/>').val(freq_withdrawal[i].value).html(freq_withdrawal[i].value).appendTo(
-                        '#freq_redrawal');
-                }
-                for (var i = 0; i < schedules.length; i++) {
-                    $('<option/>').val(schedules[i].value).html(schedules[i].value).appendTo(
-                        '#schedule');
-                }
-                jQuery('#schedule_tag').hide();
-            }
-
-            $("#interest_calculation").change(function () {
-                let selected_interest_calculation = this.value;
-                console.log(selected_interest_calculation, interest_calculation[1].value);
-                if (selected_interest_calculation === interest_calculation[1].value) {
-                    jQuery("#schedule_tag").show();
-                } else {
-                    jQuery("#schedule_tag").hide();
-                }
-            });
-
-            function set_investment_product() {
-                let product_obj = {};
-                product_obj.name = $('#product_name').val();
-                product_obj.investment_max = $('#product_investment_amount_min').val();
-                product_obj.investment_min = $('#product_investment_amount_max').val();
-                product_obj.freq_redrawal = $('#freq_redrawal').val();
-                product_obj.saving_fees = $('#saving_fees').val();
-                product_obj.widrawal_fees = $('#withdrawal_fees').val();
-                product_obj.minimum_bal = $('#minimum_bal').val();
-                product_obj.interest_rate = $('#interest_rate').val();
-                product_obj.is_forfeit = $('#forfeit_interest_on_withdrawal').is(':checked') ? true : false;
-                product_obj.is_penalty = $('#penalty_applies').is(':checked') ? true : false;
-                product_obj.interest_condition = $('#condition_for_interest').val();
-                product_obj.interest_calculation = $('#interest_calculation').val();
-                product_obj.schedule_opt = $('#schedule').val();
-                console.log(product_obj);
-            }
-
-            $("#addNewProduct").click(function () {
-                set_investment_product();
-            });
-
-            function getUsers() {
-                $.ajax({
-                    type: "GET",
-                    url: "/user/users-list-v2",
-                    success: function (response) {
-                        $.each(JSON.parse(response), function (key, val) {
-                            $("#user-list").append('<option value = "' + encodeURIComponent(
-                                    JSON.stringify(val)) + '">' + val.fullname +
-                                ' &nbsp; (' + val.username + ')</option>');
-                        });
-                        $("#user-list").select2();
-                    }
-                });
-            }
-
-            function getWorkflows() {
-                $.ajax({
-                    type: "GET",
-                    url: "/workflows",
-                    success: function (response) {
-                        $.each(response.response, function (key, val) {
-                            $("#workflows").append('<option value = "' + val.ID + '"">' + val.name +
-                                '</option>');
-                        });
-                    }
-                });
-            }
-
-
-            function initCSVUpload2() {
-                let schedule = [],
-                    loan_amount = 0,
-                    $dvCSV = $("#dvCSV2"),
-                    $csvUpload = $("#csvUpload2"),
-                    $uploadCSV = $("#uploadCSV2");
-
-                $uploadCSV.bind("click", function () {
-                    schedule = [];
-                    loan_amount = 0;
-                    let regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
-                    if (regex.test($csvUpload.val().toLowerCase())) {
-                        if (typeof (FileReader) !== "undefined") {
-                            let reader = new FileReader();
-                            reader.onload = function (e) {
-                                let table = $(
-                                        "<table border='1' style='text-align: center; width: 100%;'/>"),
-                                    rows = e.target.result.split("\n");
-                                for (let i = 0; i < rows.length; i++) {
-                                    let invoice = {},
-                                        row = $("<tr />"),
-                                        cells = rows[i].split(",");
-                                    if (i === 0) {
-                                        cells = ["PRINCIPAL", "INTEREST", "BALANCE"];
-                                    } else if (i === 1) {
-                                        cells = ["INVOICE DATE", "COLLECTION DATE", "AMOUNT",
-                                            "INVOICE DATE", "COLLECTION DATE", "AMOUNT", "AMOUNT"
-                                        ];
-                                    }
-                                    if (cells.join(' ').length > 20) {
-                                        for (let j = 0; j < cells.length; j++) {
-                                            let cell = $("<td />");
-                                            if (i === 0) {
-                                                if ((cells[j] === "PRINCIPAL") || cells[j] ===
-                                                    "INTEREST")
-                                                    cell = $("<td colspan='3' />");
-                                            }
-                                            if (cells[j]) {
-                                                if (i > 1) {
-                                                    if (j === 0 || j === 1 || j === 3 || j === 4) {
-                                                        cell.html('<input id="invoice-' + i + '-' + j +
-                                                            '" type="date" value="' + cells[j] +
-                                                            '" />');
-                                                    } else {
-                                                        cell.html('<span id="invoice-' + i + '-' + j +
-                                                            '">' + cells[j] + '</span>');
-                                                    }
-                                                } else {
-                                                    cell.html(cells[j]);
-                                                }
-                                            }
-                                            row.append(cell);
-                                            switch (j) {
-                                                case 0:
-                                                    {
-                                                        invoice.payment_create_date = cells[j];
-                                                        break;
-                                                    }
-                                                case 1:
-                                                    {
-                                                        invoice.payment_collect_date = cells[j];
-                                                        break;
-                                                    }
-                                                case 2:
-                                                    {
-                                                        if (i > 1)
-                                                            loan_amount = (loan_amount + parseFloat(
-                                                                cells[j])).round(2);
-                                                        invoice.payment_amount = cells[j];
-                                                        break;
-                                                    }
-                                                case 3:
-                                                    {
-                                                        invoice.interest_create_date = cells[j];
-                                                        break;
-                                                    }
-                                                case 4:
-                                                    {
-                                                        invoice.interest_collect_date = cells[j];
-                                                        break;
-                                                    }
-                                                case 5:
-                                                    {
-                                                        invoice.interest_amount = cells[j];
-                                                        break;
-                                                    }
-                                                case 6:
-                                                    {
-                                                        invoice.balance = cells[j];
-                                                        break;
-                                                    }
-                                            }
-                                        }
-                                    }
-                                    if (i > 1 && cells.length === 7) {
-                                        if (Object.keys(invoice).length > 0)
-                                            schedule.push(invoice);
-                                    }
-                                    table.append(row);
-                                }
-                                $dvCSV.html('');
-                                $dvCSV.append(table);
-                            };
-                            reader.readAsText($csvUpload[0].files[0]);
-                        } else {
-                            return swal('This browser does not support HTML5.', '', 'warning');
-                        }
-                    } else {
-                        return swal('Please select a valid CSV file.',
-                            'Note that symbols and special characters are not allowed in the filename!',
-                            'warning');
-                    }
-                });
-
-                $("#addApplication").click(function () {
-                    if (!schedule[0])
-                        return swal('Please upload a valid CSV file.', '', 'warning');
-
-                    validateSchedule(schedule, function (validation) {
-                        if (validation.status) {
-                            let obj = {},
-                                schedule = validation.data,
-                                $user_list = $('#user-list'),
-                                user = ($user_list.val() !== '-- Choose Client --') ? JSON.parse(
-                                    decodeURIComponent($user_list.val())) : false;
-
-                            obj.userID = user.ID;
-                            obj.email = user.email;
-                            obj.username = user.username;
-                            obj.workflowID = $('#workflows').val();
-                            obj.loan_amount = $('#amount').val();
-                            obj.interest_rate = $('#interest-rate').val();
-                            obj.duration = $('#term').val();
-                            obj.disbursement_date = $('#disbursement-date').val();
-                            obj.repayment_date = $('#repayment-date').val();
-                            obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
-                            if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate ||
-                                !obj.duration)
-                                return swal('Kindly fill all required fields!', '', 'warning');
-                            if (parseFloat(obj.duration) < 1)
-                                return swal('Minimum tenor is 1 (month)', '', 'warning');
-                            if (parseFloat(obj.interest_rate) < 3)
-                                return swal('Minimum interest rate is 3%', '', 'warning');
-                            if (parseFloat(obj.loan_amount) < 1)
-                                return swal('Minimum loan amount is ₦25,000', '', 'warning');
-                            if (loan_amount !== parseFloat(obj.loan_amount))
-                                return swal('Loan amount (' + parseFloat(obj.loan_amount) +
-                                    ') and schedule (' + loan_amount + ') mismatch', '',
-                                    'warning');
-
-                            $('#wait').show();
-                            $.ajax({
-                                'url': '/user/apply',
-                                'type': 'post',
-                                'data': obj,
-                                'success': function (data) {
-                                    $('#user-list').val("");
-                                    $('#workflows').val("");
-                                    $('#amount').val("");
-                                    $('#interest-rate').val("");
-                                    $('#term').val("");
-                                    $('#disbursement-date').val("");
-                                    $('#repayment-date').val("");
-                                    uploadSchedule(schedule, data.response.ID);
-                                },
-                                'error': function (err) {
-                                    console.log(err);
-                                    $('#wait').hide();
-                                    swal('No internet connection', '', 'error');
-                                }
-                            });
-                        } else {
-                            swal('There are error(s) in the uploaded schedule!', '', 'warning');
-                        }
+        function loadMenus() {
+            let modules = {};
+            modules = JSON.parse(localStorage.getItem("modules"));
+            modules.forEach(function (k, v) {
+                if (k.menu_name === 'Sub Menu') {
+                    let main = $.grep(modules, function (e) {
+                        return e.id === parseInt(k.main_menu);
                     });
-                });
-            }
+                    $('#' + $(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+                } else if (k.menu_name === 'Main Menu') {
+                    $('#sidebar').append(k.module_tag);
+                    $('#' + $(k.module_tag).attr('id')).append(
+                        '<ul class="sub-menu children dropdown-menu"></ul>');
+                } else {
+                    $('#' + k.module_name).show();
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-requests",
+                success: function (response) {
+                    $.each(response, function (k, v) {
+                        $('#requests-badge').html(v.requests);
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-applications",
+                success: function (response) {
+                    $.each(response, function (k, v) {
+                        $('#applications-badge').html(v.applications);
+                    });
+                }
+            });
+        }
 
-            function uploadSchedule(schedule, application_id) {
-                $.ajax({
-                    'url': '/user/application/schedule/' + application_id,
-                    'type': 'post',
-                    'data': {
-                        schedule: schedule
-                    },
-                    'success': function (data) {
+        function read_write() {
+            let w;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k, v) {
+                if (k.module_name === page) {
+                    w = $.grep(perms, function (e) {
+                        return e.id === parseInt(k.id);
+                    });
+                }
+            });
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)) {
+                $(".write").hide();
+            }
+        }
+
+
+        $("#product_investment_amount_min").on("keyup", function (event) {
+            var selection = window.getSelection().toString();
+            if (selection !== '') {
+                return;
+            }
+            // When the arrow keys are pressed, abort.
+            if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                return;
+            }
+            var $this = $(this);
+            // Get the value.
+            var input = $this.val();
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+
+            $this.val(function () {
+                return (input === 0) ? "0" : input.toLocaleString("en-US");
+            });
+        });
+
+        $("#minimum_bal_penalty_amount").on("keyup", function (event) {
+            var selection = window.getSelection().toString();
+            if (selection !== '') {
+                return;
+            }
+            // When the arrow keys are pressed, abort.
+            if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                return;
+            }
+            var $this = $(this);
+            // Get the value.
+            var input = $this.val();
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+
+            $this.val(function () {
+                return (input === 0) ? "0" : input.toLocaleString("en-US");
+            });
+        });
+
+        $("#product_investment_amount_max").on("keyup", function (event) {
+            //money_formater(event);
+            var selection = window.getSelection().toString();
+            if (selection !== '') {
+                return;
+            }
+            // When the arrow keys are pressed, abort.
+            if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                return;
+            }
+            var $this = $(this);
+            // Get the value.
+            var input = $this.val();
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+
+            $this.val(function () {
+                return (input === 0) ? "0" : input.toLocaleString("en-US");
+            });
+        });
+
+        $("#minimum_bal").on("keyup", function (event) {
+            //money_formater(event);
+            var selection = window.getSelection().toString();
+            if (selection !== '') {
+                return;
+            }
+            // When the arrow keys are pressed, abort.
+            if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                return;
+            }
+            var $this = $(this);
+            // Get the value.
+            var input = $this.val();
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+
+            $this.val(function () {
+                return (input === 0) ? "0" : input.toLocaleString("en-US");
+            });
+        });
+
+        $("#withdrawal_charge_freq").on("keyup", function (event) {
+            //money_formater(event);
+            var selection = window.getSelection().toString();
+            if (selection !== '') {
+                return;
+            }
+            // When the arrow keys are pressed, abort.
+            if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                return;
+            }
+            var $this = $(this);
+            // Get the value.
+            var input = $this.val();
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+
+            $this.val(function () {
+                return (input === 0) ? "0" : input.toLocaleString("en-US");
+            });
+        });
+
+        $("#saving_fees").on("keyup", function (event) {
+            //money_formater(event);
+            var selection = window.getSelection().toString();
+            if (selection !== '') {
+                return;
+            }
+            // When the arrow keys are pressed, abort.
+            if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                return;
+            }
+            var $this = $(this);
+            // Get the value.
+            var input = $this.val();
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+
+            $this.val(function () {
+                return (input === 0) ? "0" : input.toLocaleString("en-US");
+            });
+        });
+
+        function get_global_items() {
+            for (var i = 0; i < interest_conditions.length; i++) {
+                $('<option/>').val(interest_conditions[i].value).html(interest_conditions[i].value).appendTo(
+                    '#condition_for_interest');
+            }
+            for (var i = 0; i < freq_withdrawal.length; i++) {
+                $('<option/>').val(freq_withdrawal[i].value).html(freq_withdrawal[i].value).appendTo(
+                    '#withdrawal_charge_duration');
+            }
+        }
+
+        function set_investment_product() {
+            let product_obj = {};
+            product_obj.name = $('#product_name').val();
+            product_obj.investment_max = $('#product_investment_amount_min').val();
+            product_obj.investment_min = $('#product_investment_amount_max').val();
+            product_obj.freq_withdrawal = $('#withdrawal_conditions_value').val();
+            product_obj.saving_fees = $('#saving_fees').val();
+            product_obj.withdrawal_fees = $('#withdrawal_charge_freq').val();
+            product_obj.withdrawal_freq_duration = $('#withdrawal_charge_duration').val();
+            product_obj.minimum_bal = $('#minimum_bal').val();
+            product_obj.code = $('#product_code').val();
+            product_obj.interest_rate = $('#interest_rate').val();
+            product_obj.interest_disbursement_time = $('#condition_for_interest').val();
+            product_obj.is_forfeit = $('#forfeit_interest_on_withdrawal').is(':checked') ? 1 : 0;
+            product_obj.minimum_bal_charges = $('#minimum_bal_penalty_amount').val();
+            console.log(product_obj);
+            $.ajax({
+                'url': '/investment/products',
+                'type': 'post',
+                'data': product_obj,
+                'success': function (data) {
+                    if (data.status === 200) {
                         $('#wait').hide();
-                        swal('Loan Application created successfully!', '', 'success');
-                        window.location.href = '/application?id=' + application_id;
-                    },
-                    'error': function (err) {
+                        swal('Investment Product created successfully!', '', 'success');
+                        $('input').val("");
+                        $('input').prop("checked", false);
+                    } else {
                         $('#wait').hide();
-                        swal('Oops! An error occurred while saving schedule', '', 'error');
+                        swal('Oops! An error occurred while saving Investment Product; ' + data.error
+                            .sqlMessage,
+                            '', 'error');
                     }
-                });
-            }
-
-            function validateSchedule(schedule, callback) {
-                let errors = [],
-                    validated_schedule = [];
-                for (let i = 0; i < schedule.length; i++) {
-                    let invoice = {},
-                        $col0 = $('#invoice-' + (i + 2) + '-0'),
-                        $col1 = $('#invoice-' + (i + 2) + '-1'),
-                        $col2 = $('#invoice-' + (i + 2) + '-2'),
-                        $col3 = $('#invoice-' + (i + 2) + '-3'),
-                        $col4 = $('#invoice-' + (i + 2) + '-4'),
-                        $col5 = $('#invoice-' + (i + 2) + '-5'),
-                        $col6 = $('#invoice-' + (i + 2) + '-6'),
-                        a = $col0.val(),
-                        b = $col1.val(),
-                        c = schedule[i]['payment_amount'],
-                        d = $col3.val(),
-                        e = $col4.val(),
-                        f = schedule[i]['interest_amount'],
-                        g = schedule[i]['balance'];
-                    if (isValidDate(a)) {
-                        $col0.removeClass('invalid');
-                        invoice.payment_create_date = a;
-                    } else {
-                        $col0.addClass('invalid');
-                        errors.push(a + ' is not a valid date');
-                    }
-                    if (isValidDate(b)) {
-                        $col1.removeClass('invalid');
-                        invoice.payment_collect_date = b;
-                    } else {
-                        $col1.addClass('invalid');
-                        errors.push(b + ' is not a valid date');
-                    }
-                    if (!isNaN(c)) {
-                        $col2.removeClass('invalid');
-                        invoice.payment_amount = c;
-                    } else {
-                        $col2.addClass('invalid');
-                        errors.push(c + ' is not a valid number');
-                    }
-                    if (isValidDate(d)) {
-                        $col3.removeClass('invalid');
-                        invoice.interest_create_date = d;
-                    } else {
-                        $col3.addClass('invalid');
-                        errors.push(d + ' is not a valid date');
-                    }
-                    if (isValidDate(e)) {
-                        $col4.removeClass('invalid');
-                        invoice.interest_collect_date = e;
-                    } else {
-                        $col4.addClass('invalid');
-                        errors.push(e + ' is not a valid date');
-                    }
-                    if (!isNaN(f)) {
-                        $col5.removeClass('invalid');
-                        invoice.interest_amount = f;
-                    } else {
-                        $col5.addClass('invalid');
-                        errors.push(f + ' is not a valid number');
-                    }
-                    if (!isNaN(g)) {
-                        $col6.removeClass('invalid');
-                        invoice.balance = g;
-                    } else {
-                        $col6.addClass('invalid');
-                        errors.push(g + ' is not a valid number');
-                    }
-                    validated_schedule.push(invoice);
+                },
+                'error': function (err) {
+                    $('#wait').hide();
+                    swal('Oops! An error occurred while saving Investment Product; ' + data.error.sqlMessage,
+                        '', 'error');
                 }
-                if (errors[0]) {
-                    callback({
-                        status: false,
-                        data: errors
-                    });
-                } else {
-                    callback({
-                        status: true,
-                        data: validated_schedule
-                    });
-                }
-            }
-
-            function isValidDate(dateString) {
-                let regEx = /^\d{4}-\d{2}-\d{2}$/;
-                if (!dateString || !dateString.match(regEx)) return false;
-                let d = new Date(dateString);
-                if (Number.isNaN(d.getTime())) return false;
-                return d.toISOString().slice(0, 10) === dateString;
-            }
-
-            Number.prototype.round = function (p) {
-                p = p || 10;
-                return parseFloat(this.toFixed(p));
-            };
-
-        })(jQuery);
+            });
+        }
     </script>
+
 </body>
 
 </html>

@@ -44,7 +44,7 @@ if (fs.existsSync('./files')) {
 let app = express(),
     cors = require('cors'),
     user = require('./routes/users'),
-    investmentProducts = require('./routes/investment-products'),
+    investment = require('./routes/investment'),
     index = require('./routes/index');
 
 app.use(bodyParser.urlencoded({
@@ -204,7 +204,7 @@ app.get('/logout', function (req, res) {
 
 app.use('/', index);
 app.use('/user', user);
-app.use('/investment-products', investmentProducts);
+app.use('/investment', investment);
 app.use('/files', express.static(__dirname + '/files'));
 
 app.get('/logon', function (req, res) {
@@ -443,6 +443,12 @@ app.get('/commission-dashboard', requireLogin, function (req, res) {
 
 app.get('/investment-products', requireLogin, function (req, res) {
     res.sendFile('investment-products.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/all-investment-products', requireLogin, function (req, res) {
+    res.sendFile('all-investment-products.html', {
         root: __dirname + '/views'
     });
 });

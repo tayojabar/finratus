@@ -3,28 +3,9 @@ var interest_conditions = [{
     },
     {
         value: 'Up-Front'
-    }
-];
-
-var interest_calculation = [{
-        value: 'Daily'
     },
     {
-        value: 'Scheduler'
-    }
-];
-
-var schedules = [{
-        value: "Monthly"
-    },
-    {
-        value: 'Quaterly'
-    },
-    {
-        value: 'Half-Yearly'
-    },
-    {
-        value: 'Yearly'
+        value: 'End of Tenure'
     }
 ];
 
