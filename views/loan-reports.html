@@ -2141,8 +2141,10 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.name)
+                    if (v.name){
+                        agent = '';
                         d.push({label: v.name , value: v.amount_disbursed}, );
+                    }
                     if (v.agent){
                         agent = ': '+v.agent;
                         d.push({label: v.agent , value: v.AmountDisbursed}, );
@@ -2237,9 +2239,10 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.name)
+                    if (v.name){
+                        agent = '';
                         d.push({label: v.name , value: v.amount_disbursed}, );
-
+                    }
                     if (v.agent){
                         agent = ': '+v.agent;
                         d.push({label: v.agent , value: v.AmountDisbursed}, );
@@ -2329,8 +2332,10 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.name)
+                    if (v.name){
+                        agent = '';
                         d.push({label: v.name , value: v.amount_disbursed}, );
+                    }
                     if (v.agent){
                         agent = ': '+v.agent;
                         d.push({label: v.agent , value: v.AmountDisbursed}, );
@@ -2773,7 +2778,7 @@
             url = url.concat('branch='+branch+'&&freq='+frequency.value);
         }
         let d = [], agent = '', xaxis, yaxis, caption, categories = [], dataset = [];
-
+        url = 'user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&';
         $.ajax({
             'url': url,
             'type': 'get',
@@ -2848,33 +2853,41 @@
                     if ($('#branchreport').val() == '1') {
                         jQuery.each(data.response, function (k, v) {
                             let datar = [];
-                            jQuery.each(v, function (key, val) {
-                                yaxis = "Amount Disbursed (Naira)";
-                                caption = 'Disbursements by Branches: ';
-//                                if (v.branch){
-//                                    categories.push({label: val.DisburseMonth}, );
-//                                    datar.push({value: val.AmountDisbursed});
-//                                }
-                                if (val.year) {
-                                    agent = ': ' + val.office;
-                                    xaxis = 'Years';
-                                    categories.push({label: val.year},);
-                                    datar.push({value: val.AmountDisbursed});
-                                }
-                                if (val.month) {
-                                    agent = ': ' + val.branch;
-                                    xaxis = 'Months';
-                                    categories.push({label: val.DisburseMonth},);
-                                    datar.push({value: val.AmountDisbursed});
-                                }
-                                if (val.Quarter) {
-                                    agent = ': ' + val.office;
-                                    xaxis = 'Years';
-                                    categories.push({label: val.Quarter},);
-                                    datar.push({value: val.AmountDisbursed});
-                                }
-                            });
-                            dataset.push({seriesname: k.split('-')[1], data: datar},);
+                            yaxis = "Amount Disbursed (Naira)";
+                            caption = 'Disbursements by Branches: ';
+                            xaxis = 'Total';
+//                            categories.push({label: 'Total'});
+                            datar.push({value: v.amountdisbursed});
+                            dataset.push({seriesname: v.branch, data: [{value: v.amountdisbursed}]}, );
+//                            jQuery.each(v, function (key, val) {
+//                                yaxis = "Amount Disbursed (Naira)";
+//                                caption = 'Disbursements by Branches: ';
+//                                xaxis = 'Total';
+//                                categories.push(label)
+////                                if (v.branch){
+////                                    categories.push({label: val.DisburseMonth}, );
+////                                    datar.push({value: val.AmountDisbursed});
+////                                }
+////                                if (val.year) {
+////                                    agent = ': ' + val.office;
+////                                    xaxis = 'Years';
+////                                    categories.push({label: val.year},);
+////                                    datar.push({value: val.AmountDisbursed});
+////                                }
+////                                if (val.month) {
+////                                    agent = ': ' + val.branch;
+////                                    xaxis = 'Months';
+////                                    categories.push({label: val.DisburseMonth},);
+////                                    datar.push({value: val.AmountDisbursed});
+////                                }
+////                                if (val.Quarter) {
+////                                    agent = ': ' + val.office;
+////                                    xaxis = 'Years';
+////                                    categories.push({label: val.Quarter},);
+////                                    datar.push({value: val.AmountDisbursed});
+////                                }
+//                            });
+//                            dataset.push({seriesname: k.split('-')[1], data: datar},);
                         });
                     }
                     if ($('#branchreport').val() == '2') {
@@ -3436,12 +3449,12 @@
                         d.push({label: v.officer , value: v.amount_received}, );
                     }
                     if (v.year){
-                        agent = ': '+v.officer;
+                        agent = ': '+v.agent;
                         xaxis = 'Years'
                         d.push({label: v.year , value: v.amount_received}, );
                     }
                     if (v.month){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.agent;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.amount_received}, )
                     }
@@ -3464,6 +3477,16 @@
                         agent = '';
                         xaxis = 'Period';
                         d.push({label: v.Quarter , value: v.amount_received}, )
+                    }
+                    if (v.PaymentYear){
+                        agent = '';
+                        xaxis = 'Period';
+                        d.push({label: v.PaymentYear, value: v.amount_received}, );
+                    }
+                    if (v.OfficerYear){
+                        agent = '';
+                        xaxis = 'Period';
+                        d.push({label: v.OfficerYear, value: v.amount_received}, );
                     }
                 });
                 var chartConfigs = {
@@ -3520,19 +3543,19 @@
                         d.push({label: v.officer , value: v.amount_received}, );
                     }
                     if (v.year){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.agent;
                         xaxis = 'Years'
                         d.push({label: v.year , value: v.amount_received}, );
                     }
                     if (v.month){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.agent;
                         xaxis = 'Months';
                         d.push({label: v.PaymentMonth , value: v.amount_received}, )
                     }
                     if (v.paymonth){
-                        agent = ': '+v.officer;
+                        agent = ': '+v.agent;
                         xaxis = 'Months';
-                        d.push({label: v.paymentmonth , value: v.amount_received}, )
+                        d.push({label: v.paymonth , value: v.amount_received}, )
                     }
                     if (v.Monthyear){
                         agent = ' ';
@@ -3548,6 +3571,16 @@
                         agent = '';
                         xaxis = 'Period';
                         d.push({label: v.Quarter , value: v.amount_received}, )
+                    }
+                    if (v.PaymentYear){
+                        agent = '';
+                        xaxis = 'Period';
+                        d.push({label: v.PaymentYear, value: v.amount_received}, );
+                    }
+                    if (v.OfficerYear){
+                        agent = '';
+                        xaxis = 'Period';
+                        d.push({label: v.OfficerYear, value: v.amount_received}, );
                     }
                 });
                 var chartConfigs = {
@@ -3595,34 +3628,44 @@
                         d.push({label: v.officer , value: v.amount_received}, );
                     }
                     if (v.year){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.agent;
                         xaxis = 'Years'
                         d.push({label: v.year , value: v.amount_received}, );
                     }
                     if (v.month){
-                        agent = ': '+v.branch;
+                        agent = ': '+v.agent;
                         xaxis = 'Months';
-                        d.push({label: v.PaymentMonth , value: v.amount_received}, )
+                        d.push({label: v.PaymentMonth , value: v.amount_received}, );
                     }
                     if (v.paymonth){
                         agent = ': '+v.agent;
                         xaxis = 'Months';
-                        d.push({label: v.paymonth , value: v.amount_received}, )
+                        d.push({label: v.paymonth , value: v.amount_received}, );
                     }
                     if (v.Monthyear){
                         agent = ' ';
                         xaxis = 'Months';
-                        d.push({label: v.Monthyear , value: v.amount_received}, )
+                        d.push({label: v.Monthyear , value: v.amount_received}, );
                     }
                     if (v.OfficerQuarter){
                         agent = ': '+v.agent;
                         xaxis = 'Period';
-                        d.push({label: v.OfficerQuarter , value: v.amount_received}, )
+                        d.push({label: v.OfficerQuarter , value: v.amount_received}, );
                     }
                     if (v.Quarter){
                         agent = '';
                         xaxis = 'Period';
-                        d.push({label: v.Quarter , value: v.amount_received}, )
+                        d.push({label: v.Quarter , value: v.amount_received}, );
+                    }
+                    if (v.PaymentYear){
+                        agent = '';
+                        xaxis = 'Period';
+                        d.push({label: v.PaymentYear, value: v.amount_received}, );
+                    }
+                    if (v.OfficerYear){
+                        agent = '';
+                        xaxis = 'Period';
+                        d.push({label: v.OfficerYear, value: v.amount_received}, );
                     }
                 });
                 var chartConfigs = {

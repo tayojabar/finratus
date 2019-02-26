@@ -3146,7 +3146,7 @@ users.get('/analytics', function(req, res, next) {
                 'group by name'
             //An Officer
             if (officer){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS DisburseMonth, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, \n' +
                     '         SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') agent,\n' +
                     '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3169,7 +3169,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Yearly
             if (officer !== "0" && freq == "3"){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS DisburseYear, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS DisburseYear, \n' +
                     '                    SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent, \n' +
                     '                    EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     '    FROM     applications \n' +
@@ -3180,7 +3180,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Monthly In One Year
             if (officer !== "0" && freq == "2"){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS Year, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS Year, \n' +
                     'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
                     'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3192,7 +3192,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Monthly
             if (officer !== "0" && freq == "2" && y == '0'){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS Year, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS Year, \n' +
                     'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
                     'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3203,7 +3203,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Quarterly In One Year
             if (officer !== "0" && freq == "4"){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) quarter,\n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) quarter,\n' +
                     'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
                     'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3215,7 +3215,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Quarterly
             if (officer !== "0" && freq == "4" && y == '0'){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) quarter, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) quarter, \n' +
                     'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
                     'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3226,7 +3226,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Monthly In One Year
             if (officer == "0" && freq == "2"){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS OfficersMonth, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS OfficersMonth, \n' +
                     'SUM(loan_amount) AmountDisbursed, \n' +
                     'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3237,7 +3237,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Monthly
             if (officer == "0" && freq == "2" && y == "0"){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS Month, DATE_FORMAT(Disbursement_date, \'%Y\') AS AYear, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS Month, DATE_FORMAT(Disbursement_date, \'%Y\') AS AYear, \n' +
                     'SUM(loan_amount) AmountDisbursed, \n' +
                     'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3258,7 +3258,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Quarterly
             if (officer == "0" && freq == "4" && y == "0"){
-                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M %Y\') AS Month, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) AQuarter, \n' +
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS Month, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) AQuarter, \n' +
                     'SUM(loan_amount) AmountDisbursed, \n' +
                     'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
@@ -3270,6 +3270,7 @@ users.get('/analytics', function(req, res, next) {
         case 'branches':
             //Default
             if (bt == '1'){
+
                 query = 'select sum(loan_amount) amount_disbursed, \n' +
                     '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch\n' +
                     'from applications \n' +
@@ -3284,8 +3285,8 @@ users.get('/analytics', function(req, res, next) {
                         'and (select branch from clients where clients.id = userid) = '+b+'\n'+
                         'group by branch'
                 }
-                //Specific Branch, Monthly
-                if (b !== '0' && freq == "2"){
+                //Specific Branch, Monthly in a year
+                if (b != '0' && freq == "2"){
                     query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
                         '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
                         '         SUM(loan_amount) AmountDisbursed,\n' +
@@ -3297,8 +3298,20 @@ users.get('/analytics', function(req, res, next) {
                         'GROUP BY DisburseMonth, branch\n' +
                         'ORDER BY Disbursement_date'
                 }
-                //All Branches, Monthly
+                //All Branches, Monthly in a year
                 if (b == '0' && freq == "2"){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'AND   DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+'\n' +
+                        'GROUP BY branch, DisburseMonth\n' +
+                        'ORDER BY branch, Disbursement_date'
+                }
+                //All Branches, Monthly
+                if (b == '0' && freq == "2" && y == '0'){
                     query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
                         '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
                         '         SUM(loan_amount) AmountDisbursed,\n' +
@@ -3308,7 +3321,7 @@ users.get('/analytics', function(req, res, next) {
                         'GROUP BY branch, DisburseMonth\n' +
                         'ORDER BY Disbursement_date'
                 }
-                if (b !== '0' && freq == "2" && y == '0'){
+                if (b != '0' && freq == "2" && y == '0'){
                     query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
                         '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
                         '         SUM(loan_amount) AmountDisbursed,\n' +
@@ -3340,7 +3353,7 @@ users.get('/analytics', function(req, res, next) {
                 //         'ORDER BY Disbursement_date'
                 // }
                 //Specific Branch, Yearly
-                if (b !== '0' && freq == "3"){
+                if (b != '0' && freq == "3" && y == '0'){
                     query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') year,\n' +
                         '(select branch_name from branches where branches.id = '+b+') office,\n' +
                         '         SUM(loan_amount) AmountDisbursed,\n' +
@@ -3350,7 +3363,16 @@ users.get('/analytics', function(req, res, next) {
                         'AND     (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
                         'GROUP BY DATE_FORMAT(Disbursement_date, \'%Y\')'
                 }
-                if (b !== '0' && freq == "4"){
+                if (b == '0' && freq == "3" && y == '0'){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') year,\n' +
+                        '(select branch_name from branches where branches.id = '+b+') office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'GROUP BY office, DATE_FORMAT(Disbursement_date, \'%Y\')'
+                }
+                if (b != '0' && freq == "4"){
                     query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) Quarter,\n' +
                         '(select branch_name from branches where branches.id = '+b+') office,\n' +
                         '         SUM(loan_amount) AmountDisbursed,\n' +
@@ -3476,7 +3498,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Yearly
             if (officer !== "0" && freq == "3"){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') year,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') year,\n' +
                     ' (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As PaymentYearMonth\n' +
@@ -3488,7 +3510,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Yearly
             if (officer == "0" && freq == "3"){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') allpaymentyear,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') allpaymentyear,\n' +
                     '         SUM(payment_amount) AmountPayed\n' +
                     'FROM     schedule_history\n' +
                     'WHERE status = 1\n' +
@@ -3498,7 +3520,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Monthly in One Year
             if (officer !== '0' && freq == '2'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') month,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') month,\n' +
                     '\t\t (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
@@ -3511,7 +3533,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Monthly
             if (officer !== '0' && freq == '2' && y == '0'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') month,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') month,\n' +
                     ' (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
@@ -3523,7 +3545,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Quarterly in One Year
             if (officer !== '0' && freq == '4'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Officersquarter,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Officersquarter,\n' +
                     '\t\t (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
@@ -3536,7 +3558,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Quarterly
             if (officer !== '0' && freq == '4' && y == '0'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Officersquarter,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Officersquarter,\n' +
                     ' (select fullname from users where users.id = '+officer+') name,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
@@ -3548,7 +3570,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Monthly in One Year
             if (officer == '0' && freq == '2'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') Officersmonth,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') Officersmonth,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
                     'FROM     schedule_history\n' +
@@ -3560,7 +3582,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Monthly
             if (officer == '0' && freq == '2' && y == '0'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') Officersmonth,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') Officersmonth,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
                     'FROM     schedule_history\n' +
@@ -3571,7 +3593,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Monthly in One Year
             if (officer == '0' && freq == '4'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
                     'FROM     schedule_history\n' +
@@ -3582,7 +3604,7 @@ users.get('/analytics', function(req, res, next) {
             }
             //All Officers, Monthly
             if (officer == '0' && freq == '4' && y == '0'){
-                query = 'SELECT   DATE_FORMAT(payment_date, \'%M %y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter,\n' +
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter,\n' +
                     '         SUM(payment_amount) AmountPayed,\n' +
                     '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
                     'FROM     schedule_history\n' +
@@ -3617,7 +3639,7 @@ users.get('/analytics', function(req, res, next) {
             if (officer !== '0' && freq == '2'){
                 query = 'select sum(interest_amount) amount_received, \n' +
                     '(select fullname from users where users.id = '+officer+') agent, \n' +
-                    'DATE_FORMAT(payment_date, \'%M %Y\') paymonth\n'+
+                    'DATE_FORMAT(payment_date, \'%M, %Y\') paymonth\n'+
                     'from schedule_history \n' +
                     'where status = 1\n' +
                     'and applicationid in (select id from applications where status <> 0)\n'+
@@ -3628,7 +3650,7 @@ users.get('/analytics', function(req, res, next) {
             //One Officer, Monthly
             if (officer !== '0' && freq == '2' && y == '0'){
                 query = 'select sum(interest_amount) amount_received, \n' +
-                    '(select fullname from users where users.id = '+officer+') agent, DATE_FORMAT(payment_date, \'%M %Y\') paymonth\n' +
+                    '(select fullname from users where users.id = '+officer+') agent, DATE_FORMAT(payment_date, \'%M, %Y\') paymonth\n' +
                     'from schedule_history \n' +
                     'where status = 1\n' +
                     'and applicationid in (select id from applications where status <> 0)\n'+
@@ -3670,7 +3692,7 @@ users.get('/analytics', function(req, res, next) {
             //All Officers, Monthly
             if (officer == '0' && freq == '2' && y == '0'){
                 query = 'select sum(interest_amount) amount_received, \n' +
-                    'DATE_FORMAT(payment_date, \'%M %Y\') Monthyear  \n' +
+                    'DATE_FORMAT(payment_date, \'%M, %Y\') Monthyear  \n' +
                     'from schedule_history \n' +
                     'where status = 1\n' +
                     'and applicationid in (select id from applications where status <> 0)\n'+
@@ -3697,15 +3719,15 @@ users.get('/analytics', function(req, res, next) {
             }
             //One Officer, Yearly
             if (officer !== '0' && freq == '3'){
-                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear, \n' +
+                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') OfficerYear, \n' +
                     '(select fullname from users where users.id = \n' +
                     '(select loan_officer from clients where clients.id = \n' +
-                    '(select userid from applications where applications.id = applicationid))) officer\n' +
+                    '(select userid from applications where applications.id = applicationid))) agent\n' +
                     'from schedule_history \n' +
                     'where status = 1\n' +
                     'and applicationid in (select id from applications where status <> 0)\n'+
                     'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
-                    'group by officer, DATE_FORMAT(Payment_date, \'%Y\')'
+                    'group by agent, DATE_FORMAT(Payment_date, \'%Y\')'
             }
             //All Officers, Yearly
             if (officer == '0' && freq == '3'){
@@ -3724,7 +3746,7 @@ users.get('/analytics', function(req, res, next) {
             break;
         case 'overdue-loans':
             break;
-    }
+    }console.log(query)
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
