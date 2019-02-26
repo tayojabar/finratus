@@ -1196,8 +1196,7 @@
                     let count = 0,
                         workflow_stages = data.response;
                     workflow_stages.push({name:"Denied",stageID:4,stage_name:"Denied",workflowID:state.workflowID,approverID:1});
-console.log(workflow_stages)
-                    console.log(state.current_stage)
+
                     let ul = document.getElementById('workflow-ul-list'),
                         $last_btn = $("#btn-"+workflow_stages[workflow_stages.length-1]['stageID']),
                         stage = ($.grep(workflow_stages, function(e){ return e.stageID === state.current_stage; }))[0];
@@ -1425,7 +1424,6 @@ console.log(workflow_stages)
                 stage.previous_stage = state.current_stage;
                 stage.current_stage = parseInt(action_stage);
             }
-            return console.log(stage)
             if (stage_documents[0]){
                 for (let i=0; i<stage_documents.length; i++){
                     if (!(stage_documents[i].replace(/ /g, '_') in application.files))
