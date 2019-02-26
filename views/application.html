@@ -967,7 +967,6 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            loadApplication();
             loadComments();
         });
 
@@ -1230,6 +1229,7 @@
                         $('#stage-documents').append('<option value = "others">Others</option>');
                         fileUpload();
                     }
+                    console.log(stage.actions)
                     if (stage.actions){
                         let actions = stage.actions.split(',');
                         actions.forEach(function (id) {
@@ -1243,12 +1243,8 @@
 
                     $("#stage-actions").on('click', function (e) {
                         let id = (e.target.id.split('-'))[2];
-                        if (!id){
-                            nextStage(state);
-                        } else {
-                            if (id !== '0')
-                                nextStage(state, workflow_stages, id);
-                        }
+                        if (id && id !== '0')
+                            nextStage(state, workflow_stages, id);
                     });
 
                     workflow_stages.forEach(function (stage) {
@@ -2559,13 +2555,13 @@
             if (($.grep(perms, function(e){return e.module_name === 'close-loan';}))[0]['read_only'] === '0')
                 $('#close_loan').hide();
 
-            if (applicationView && applicationView['read_only'] === '1'){
-                loadApplication();
-            } else {
-                loadApplication((JSON.parse(localStorage.user_obj)).ID);
-            }
+//            if (applicationView && applicationView['read_only'] === '1'){
+//                loadApplication();
+//            } else {
+//                loadApplication((JSON.parse(localStorage.user_obj)).ID);
+//            }
         }
-
+        loadApplication();
         Number.prototype.roundTo = function(n) {
             return Math.ceil(this/n)*n;
         };
