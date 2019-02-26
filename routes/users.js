@@ -1639,9 +1639,8 @@ users.get('/application-id/:id', function(req, res, next) {
     let obj = {},
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
-        query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT sum(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow ' +
-            'FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
+        query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, cast(u.loan_officer as unsigned) loan_officer, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, ' +
+            '(SELECT l.supervisor FROM users l WHERE l.ID = u.loan_officer) AS supervisor, (SELECT sum(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID = ?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
 

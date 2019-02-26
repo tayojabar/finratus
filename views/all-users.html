@@ -42,6 +42,21 @@
         input.invalid, span.invalid {
             border: 2px dashed red;
         }
+        div.dataTables_wrapper div.dataTables_filter{
+            float: right;
+            margin-right: 15px;
+        }
+        div.dataTables_length{
+            float: left;
+        }
+        .dt-buttons.btn-group{
+            float: right;
+        }
+        .btn-default{
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #666e76;
+        }
     </style>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
@@ -720,7 +735,8 @@
         }
 
         function populateDataTable(data) {
-            $("#bootstrap-data-table").dataTable().fnClearTable();
+            $("#bootstrap-data-table").DataTable().clear();
+            let processed_data = [];
             $.each(data, function(k, v){
                 let actions;
                 if (v.status === "1"){
@@ -746,12 +762,23 @@
                 else {
                     actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable User</button>';
                 }
-                $('#bootstrap-data-table').dataTable().fnAddData( [
-                    v.username,
-                    v.fullname,
-                    v.Role,
-                    actions
-                ]);
+                v.actions = actions;
+                processed_data.push(v);
+            });
+            $('#bootstrap-data-table').DataTable({
+                dom: 'Blfrtip',
+                bDestroy: true,
+                data: processed_data,
+                search: {search: ' '},
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                columns: [
+                    { data: "username" },
+                    { data: "fullname" },
+                    { data: "Role" },
+                    { data: "actions" }
+                ]
             });
         }
 

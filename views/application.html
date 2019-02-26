@@ -1044,7 +1044,6 @@
             application;
 
         function loadApplication(user_id){
-            console.log(user_id)
             $.ajax({
                 'url': '/user/application-id/'+application_id,
                 'type': 'get',
@@ -1054,6 +1053,9 @@
                         files_count = file_names.length,
                         $carousel_inner = $('.carousel-inner'),
                         $carousel_indicators = $('.carousel-indicators');
+
+                    if (user_id && data.loan_officer !== user_id && data.supervisor !== user_id)
+                        return window.location.href = "/logon";
 
                     application = data;
                     getWorkflows(application);
