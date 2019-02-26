@@ -163,7 +163,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
 <!-- Left Panel -->
     <script type="text/javascript">
-        jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
+        jQuery(document).ready(function($){ check(); loadMenus(); read_write_1();});
     </script>
 
 <aside id="left-panel" class="left-panel">
@@ -281,7 +281,7 @@
                                         <i class="fa fa-forward"></i>
                                     </button>
                                     <div id="stage-actions" class="dropdown-menu">
-                                        <a class="dropdown-item next" href="#">Save & Proceed</a>
+                                        <a id="stage-action-default" class="dropdown-item next" href="#">Save & Proceed</a>
                                     </div>
                                 </div>
                                 <button id="current_stage" class ="btn btn-warning btn-lg" style="float: right;" disabled="disabled"></button>
@@ -1044,6 +1044,7 @@
             application;
 
         function loadApplication(user_id){
+            console.log(user_id)
             $.ajax({
                 'url': '/user/application-id/'+application_id,
                 'type': 'get',
@@ -1229,7 +1230,7 @@
                         $('#stage-documents').append('<option value = "others">Others</option>');
                         fileUpload();
                     }
-                    console.log(stage.actions)
+
                     if (stage.actions){
                         let actions = stage.actions.split(',');
                         actions.forEach(function (id) {
@@ -1243,8 +1244,13 @@
 
                     $("#stage-actions").on('click', function (e) {
                         let id = (e.target.id.split('-'))[2];
-                        if (id && id !== '0')
-                            nextStage(state, workflow_stages, id);
+                        if (id) {
+                            if (id === 'default'){
+                                nextStage(state);
+                            } else if (id !== '0'){
+                                nextStage(state, workflow_stages, id);
+                            }
+                        }
                     });
 
                     workflow_stages.forEach(function (stage) {
@@ -1321,7 +1327,6 @@
                                 }
                             }
                             checkTotalDue();
-                            read_write();
                         }
                         $('#disbursement-amount').val((parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                         $('#stage-actions').append('<a href="#" id="stage-action-0" class="dropdown-item" data-toggle="modal" data-target="#disburseModal">Disburse Loan</a>');
@@ -1410,6 +1415,8 @@
                             '    <p>Moved from '+previous_stage.stage_name+' to '+current_stage.stage_name+by+'</p>\n' +
                             '</li>');
                     });
+
+                    read_write_2();
                 },
                 'error': function (err) {
                     console.log('Error');
@@ -2530,11 +2537,21 @@
             });
         }
 
-        function read_write(){
+        function read_write_1(){
+            let perms = JSON.parse(localStorage.getItem("permissions")),
+                applicationView = ($.grep(perms, function(e){return e.module_name === 'app-page';}))[0];
+
+            if (applicationView && applicationView['read_only'] === '1'){
+                loadApplication();
+            } else {
+                loadApplication((JSON.parse(localStorage.user_obj)).ID);
+            }
+        }
+
+        function read_write_2(){
             let w,
                 perms = JSON.parse(localStorage.getItem("permissions")),
-                page = (window.location.pathname.split('/')[1].split('.'))[0],
-                applicationView = ($.grep(perms, function(e){return e.module_name === 'app-page';}))[0];
+                page = (window.location.pathname.split('/')[1].split('.'))[0];
             perms.forEach(function (k){
                 if (k.module_name === page)
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
@@ -2554,14 +2571,8 @@
                 $('#rejectCSV2').hide();
             if (($.grep(perms, function(e){return e.module_name === 'close-loan';}))[0]['read_only'] === '0')
                 $('#close_loan').hide();
-
-//            if (applicationView && applicationView['read_only'] === '1'){
-//                loadApplication();
-//            } else {
-//                loadApplication((JSON.parse(localStorage.user_obj)).ID);
-//            }
         }
-        loadApplication();
+
         Number.prototype.roundTo = function(n) {
             return Math.ceil(this/n)*n;
         };
