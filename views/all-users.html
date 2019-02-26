@@ -529,7 +529,7 @@
                         </div>
                         <div class="col-lg-3">
                             <div class="form-group">
-                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="1" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="50" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
                                 <small id="commission_target_value" class="form-text text-muted"></small>
                             </div>
                         </div>
@@ -1259,8 +1259,8 @@
             obj.threshold = $('#commission_threshold').val();
             if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || obj.sub_periodID === '-- Select Commission Period --' || !obj.threshold)
                 return swal('Kindly fill all required field(s)','','warning');
-            if (parseFloat(obj.threshold) > 100)
-                return swal('Commission threshold rate ('+obj.threshold+'%) cannot be greater than 100%. (Total allocated target is valued at '+commission_target_value+')','','warning');
+            if (parseFloat(obj.threshold) < 50 || parseFloat(obj.threshold) > 100)
+                return swal('Commission threshold rate ('+obj.threshold+'%) must be at least 50% and at most 100%. (Total allocated target is valued at '+commission_target_value+')','','warning');
             obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
             let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0];
             if (obj.type !== target.type)
