@@ -2555,13 +2555,13 @@
             if (($.grep(perms, function(e){return e.module_name === 'close-loan';}))[0]['read_only'] === '0')
                 $('#close_loan').hide();
 
-            if (applicationView && applicationView['read_only'] === '1'){
-                loadApplication();
-            } else {
-                loadApplication((JSON.parse(localStorage.user_obj)).ID);
-            }
+//            if (applicationView && applicationView['read_only'] === '1'){
+//                loadApplication();
+//            } else {
+//                loadApplication((JSON.parse(localStorage.user_obj)).ID);
+//            }
         }
-
+        loadApplication();
         Number.prototype.roundTo = function(n) {
             return Math.ceil(this/n)*n;
         };
