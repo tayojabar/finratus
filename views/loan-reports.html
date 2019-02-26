@@ -333,7 +333,27 @@
                                                 </div>
                                                 <div id="loan-by-branch-div" style="display: none" >
                                                     <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
-                                                        <div class="col-sm-4 card" style="background-color: transparent; border-color: transparent">
+                                                        <div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="reportview" onchange="changeview(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="1">Single Chart</option>
+                                                                        <option value="2">Comparison Chart</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="branchreport" onchange="changereport(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="1">Disbursements</option>
+                                                                        <option value="2">Interests</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 card" id="sel-brn" style="background-color: transparent; border-color: transparent">
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="chartfilterbranches" onchange="bFilterBranch(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
@@ -341,7 +361,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-4 card" id="brn-freq" style="background-color: transparent; border-color: transparent">
+                                                        <div class="col-sm-2 card" id="brn-freq" style="background-color: transparent; border-color: transparent">
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="branch-frequency" onchange="bFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
@@ -353,7 +373,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-4 card" id="brn-year" style="background-color: transparent; border-color: transparent; display: none">
+                                                        <div class="col-sm-3 card" id="brn-year" style="background-color: transparent; border-color: transparent; display: none">
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="branch-year" onchange="bFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
@@ -363,7 +383,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
+                                                    <!--<div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>-->
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <div class="col-sm-5">
@@ -594,7 +614,7 @@
                                                                 <strong>Bad Loans</strong>
                                                                 <span >Total: <span id="total-badloans"></span></span>
                                                             </div>
-                                                            <div class="col-sm-7">
+                                                            <div class="col-sm-4">
                                                                 <!--<form id="filterbadloans" class="form-inline" style="float: right;">-->
                                                                     <!--<div class="form-group">-->
                                                                         <!--<label class="" for="startDate">Start date</label>-->
@@ -606,6 +626,14 @@
                                                                     <!--</div>-->
                                                                     <!--<button type="submit" class="btn btn-success">Filter</button>-->
                                                                 <!--</form>-->
+                                                            </div>
+                                                            <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
+                                                                <div class="form-group">
+                                                                    <div class="input-group">
+                                                                        <select id="badloans-officers" onchange="blfilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="card-body">
@@ -627,11 +655,11 @@
                                                 <div id="overdue-loans-div" style="display: none" class="col-sm-6">
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <div class="col-sm-5">
+                                                            <div class="col-sm-3">
                                                                 <strong>Overdue Loans</strong>
                                                                 <span >Total: <span id="total-overdue"></span></span>
                                                             </div>
-                                                            <div class="col-sm-7">
+                                                            <div class="col-sm-6">
                                                                 <form id="filteroverdueloans" class="form-inline" style="float: right;">
                                                                     <div class="form-group">
                                                                         <label class="" for="startDate">Start date</label>
@@ -643,6 +671,14 @@
                                                                     </div>
                                                                     <button type="submit" class="btn btn-success">Filter</button>
                                                                 </form>
+                                                            </div>
+                                                            <div class="col-sm-3" style="background-color: transparent; border-color: transparent">
+                                                                <div class="form-group">
+                                                                    <div class="input-group">
+                                                                        <select id="overdue-officers" onchange="odfilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="card-body">
@@ -852,7 +888,7 @@
         loadOverdues();
         loadAggProjectedInterests();
         disbursed();
-        branches();
+        branches($('#branchreport').val());
         payments();
         interestreceived();
         var today = new Date().toISOString().split('T')[0];
@@ -1277,7 +1313,7 @@
                     v.fullname,
                     formatter.format(parseFloat(v.loan_amount)),
                     formatter.format(parseFloat(v.loan_amount)),
-                    formatDate(v.date_modified)
+                    formatDate(v.disbursement_date)
                 ]);
             });
             $('#total-disbursements').html(formatter.format(total));
@@ -1918,11 +1954,15 @@
             success: function (response) {
                 var role = $("[id=filter-officers]");
                 role.empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#overdue-officers").empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#badloans-officers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#chartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#pchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#irchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#filter-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#overdue-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#badloans-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#chartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#pchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#irchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
@@ -1954,6 +1994,57 @@
                 let applications = data.response;
                 results = applications;
                 populateDisbursed(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function blfilterOfficer(officer) {
+        let start = $("#startDate").val(),
+            end = $("#endDate").val(),
+            url = '/user/badloans?',
+            d=[], agent;
+        if (officer.value == 0){
+            return loadBadLoans();
+        }
+        url = url.concat('officer='+officer.value);
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateBadLoans(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function odfilterOfficer(officer) {
+        let start = $("#filteroverduestart").val(),
+            end = $("#filteroverdueend").val(),
+            url = '/user/overdues?',
+            d=[], agent;
+        if (start && end){
+            url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
+        }
+        if (officer.value == 0){
+            return loadOverdues();
+        }
+        url = url.concat('officer='+officer.value);
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateOverdues(applications);
             },
             'error': function (err) {
                 console.log(err);
@@ -2327,21 +2418,29 @@
         });
     }
 
-    function branches(){
-        let d = [];
+    function branches(type){
+        let d = [], url, report = $('#reportview').val();
+        url = ($('#reportview').val() == '1') ? 'user/analytics?t=branches&&bt='+type : 'user/multi-analytics?t=branches&&bt='+type;
         let start = $("#startDate").val(),
-            end = $("#endDate").val(),
-            url;
-        url = (start === "" || start === null || end === "" || end === null ) ? 'user/disbursements/filter' : 'user/disbursements/filter?start='+formatDate(start)+'&&end='+formatDate(end)
-
+            end = $("#endDate").val();
+        let yaxis, caption;
+        let c = [], dataset = [];
         $.ajax({
-            'url': 'user/analytics?t=branches',
+            'url': url,
             'type': 'get',
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
                     d.push({label: v.branch , value: v.amount_disbursed}, );
                 });
+                if (type == '1'){
+                    yaxis = 'Amount Disbursed (Naira)';
+                    caption = 'Disbursements by Branches'
+                }
+                if (type == '2'){
+                    yaxis = 'Interest Earned (Naira)';
+                    caption = 'Interest Earned by Branches'
+                }
                 var chartConfigs = {
                     type: 'column2d', // The chart type
                     width: '100%', // Width of the chart
@@ -2350,10 +2449,10 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements By Branches",
+                            "caption": caption,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": "Branches",
-                            "yAxisName": "Amount Disbursed (Naira)",
+                            "yAxisName": yaxis,
                             "numberSuffix": " Naira",
                             "theme": "fusion",
                         },
@@ -2370,7 +2469,8 @@
     }
 
     function bFilterBranch(branch){
-        let url = '/user/analytics?t=branches&&',
+        url = ($('#reportview'))
+        let url = '/user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&',
             freq = $('#branch-frequency').val(),
             year = $('#branch-year').val();
         if (branch.value == 0 && freq == "-1"){
@@ -2380,7 +2480,7 @@
         if (freq !== "-1"){
             url = url.concat('&&freq='+freq);
         }
-        let d = [], agent = '', xaxis;
+        let d = [], agent = '', xaxis, yaxis, caption, categories = [], dataset = [];
 
         $.ajax({
             'url': url,
@@ -2388,22 +2488,47 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.branch)
-                        d.push({label: v.branch , value: v.amount_disbursed}, );
-                    if (v.year){
-                        agent = ': '+v.office;
-                        xaxis = 'Years'
-                        d.push({label: v.year , value: v.AmountDisbursed}, );
+                    if ($('#branchreport').val() == '1'){
+                        yaxis = "Amount Disbursed (Naira)";
+                        caption = 'Disbursements by Branches: ';
+                        if (v.branch)
+                            d.push({label: v.branch , value: v.amount_disbursed}, );
+                        if (v.year){
+                            agent = ': '+v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.year , value: v.AmountDisbursed}, );
+                        }
+                        if (v.month){
+                            agent = ': '+v.branch;
+                            xaxis = 'Months';
+                            d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
+                        }
+                        if (v.Quarter){
+                            agent = ': '+v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.Quarter , value: v.AmountDisbursed}, );
+                        }
                     }
-                    if (v.month){
-                        agent = ': '+v.branch;
-                        xaxis = 'Months';
-                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
-                    }
-                    if (v.Quarter){
-                        agent = ': '+v.office;
-                        xaxis = 'Years'
-                        d.push({label: v.Quarter , value: v.AmountDisbursed}, );
+                    if ($('#branchreport').val() == '2'){
+                        yaxis = 'Interest Earned (Naira)';
+                        caption = 'Interest Earned by Branches: ';
+                        if (v.branch)
+                            d.push({label: v.branch , value: v.amount_received}, );
+                        if (v.PaymentYear){
+                            agent = ': '+v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.PaymentYear , value: v.amount_received}, );
+                        }
+                        if (v.monthpayed){
+                            agent = ': '+v.office;
+                            xaxis = 'Months';
+                            d.push({label: v.monthpayed , value: v.amount_received}, )
+                        }
+                        if (v.branchQuarter){
+                            agent = ': '+v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.branchQuarter , value: v.amount_received}, );
+                        }
                     }
                 });
                 var chartConfigs = {
@@ -2414,10 +2539,10 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements by Branches"+agent,
+                            "caption": caption+''+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount Disbursed (Naira)",
+                            "yAxisName": yaxis,
                             "numberSuffix": " Naira",
                             "theme": "fusion",
                         },
@@ -2433,13 +2558,210 @@
         });
     }
 
+//    function bFrequencyChange(frequency){
+//        let url = ($('#reportview').val() == '1') ? 'user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&' : 'user/multi-analytics?bt='+$('#branchreport').val()+'&&';
+//            year = $('#branch-year').val(), report = $('#reportview').val(),
+//            branch = $('#chartfilterbranches').val();
+////        if (branch == 0){
+////            return swal('Please select a branch!', '','warning');
+////        }
+//        if (frequency.value == 2 || frequency.value == 4){
+//            $('#brn-year').show();
+//            if (branch && year){
+//                url = url.concat('branch='+branch+'&&year='+year+'&&freq='+frequency.value);
+//            }
+//        }
+//        else {
+//            $('#brn-year').hide();
+//            url = url.concat('branch='+branch+'&&freq='+frequency.value);
+//        }
+//        let d = [], agent = '', xaxis, yaxis, caption, categories = [], dataset = [];
+//
+//        $.ajax({
+//            'url': url,
+//            'type': 'get',
+//            'success': function (data) {
+////                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+//                if (report == '1'){
+//                    jQuery.each(data.response, function(k, v){
+//                        if ($('#branchreport').val() == '1') {
+//                            yaxis = "Amount Disbursed (Naira)";
+//                            caption = 'Disbursements by Branches: ';
+//                            if (v.branch)
+//                                d.push({label: v.name, value: v.amount_disbursed},);
+//                            if (v.year) {
+//                                agent = ': ' + v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.year, value: v.AmountDisbursed},);
+//                            }
+//                            if (v.month) {
+//                                agent = ': ' + v.branch;
+//                                xaxis = 'Months';
+//                                d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
+//                            }
+//                            if (v.Quarter) {
+//                                agent = ': ' + v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.Quarter, value: v.AmountDisbursed},);
+//                            }
+//                        }
+//                        if ($('#branchreport').val() == '2'){
+//                            yaxis = 'Interest Earned (Naira)';
+//                            caption = 'Interest Earned by Branches: ';
+//                            if (v.branch)
+//                                d.push({label: v.branch , value: v.amount_received}, );
+//                            if (v.PaymentYear){
+//                                agent = ': '+v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+//                            }
+//                            if (v.monthpayed){
+//                                agent = ': '+v.office;
+//                                xaxis = 'Months';
+//                                d.push({label: v.monthpayed , value: v.amount_received}, )
+//                            }
+//                            if (v.branchQuarter){
+//                                agent = ': '+v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+//                            }
+//                        }
+//                    });
+//                    var chartConfigs = {
+//                        type: 'column2d', // The chart type
+//                        width: '100%', // Width of the chart
+//                        height: '400', // Height of the chart
+//                        dataFormat: 'json', // Data type
+//                        dataSource: {
+//                            // Chart Configuration
+//                            "chart": {
+//                                "caption": caption+''+agent,
+////                            "subCaption": "In MMbbl = One Million barrels",
+//                                "xAxisName": xaxis,
+//                                "yAxisName": yaxis,
+//                                "numberSuffix": " Naira",
+//                                "theme": "fusion",
+//                            },
+//                            // Chart Data
+//                            "data": d
+//                        }
+//                    };
+//                }
+//                else if (report == '2'){
+//                    console.log(data.response)
+//                    jQuery.each(data.response, function(k, v){
+//                        if ($('#branchreport').val() == '1') {
+//                            yaxis = "Amount Disbursed (Naira)";
+//                            caption = 'Disbursements by Branches: ';
+//                            if (v.branch)
+//                                d.push({label: v.name, value: v.amount_disbursed},);
+//                            if (v.year) {
+//                                agent = ': ' + v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.year, value: v.AmountDisbursed},);
+//                            }
+//                            if (v.month) {
+//                                agent = ': ' + v.branch;
+//                                xaxis = 'Months';
+//                                d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
+//                            }
+//                            if (v.Quarter) {
+//                                agent = ': ' + v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.Quarter, value: v.AmountDisbursed},);
+//                            }
+//                        }
+//                        if ($('#branchreport').val() == '2'){
+//                            yaxis = 'Interest Earned (Naira)';
+//                            caption = 'Interest Earned by Branches: ';
+//                            if (v.branch)
+//                                d.push({label: v.branch , value: v.amount_received}, );
+//                            if (v.PaymentYear){
+//                                agent = ': '+v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+//                            }
+//                            if (v.monthpayed){
+//                                agent = ': '+v.office;
+//                                xaxis = 'Months';
+//                                d.push({label: v.monthpayed , value: v.amount_received}, )
+//                            }
+//                            if (v.branchQuarter){
+//                                agent = ': '+v.office;
+//                                xaxis = 'Years'
+//                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+//                            }
+//                        }
+//                    });
+//                    var chartConfigs = {
+//                        type: 'mscolumn2d',
+////                        renderAt: 'chart-container',
+//                        width: '100%',
+//                        height: '400',
+//                        dataFormat: 'json',
+//                        dataSource: {
+//                            "chart": {
+//                                "theme": "fusion",
+//                                "caption": "Comparison of Branches",
+//                                "xAxisname": "Quarter",
+//                                "yAxisName": "Amount (In Naira)",
+//                                "plotFillAlpha": "80",
+//                                "divLineIsDashed": "1",
+//                                "divLineDashLen": "1",
+//                                "divLineGapLen": "1"
+//                            },
+//                            "categories": [{
+//                                "category": [{
+//                                    "label": "Q1"
+//                                }, {
+//                                    "label": "Q2"
+//                                }, {
+//                                    "label": "Q3"
+//                                }, {
+//                                    "label": "Q4"
+//                                }]
+//                            }],
+//                            "dataset": [{
+//                                "seriesname": "Previous Year",
+//                                "data": [{
+//                                    "value": "10000"
+//                                }, {
+//                                    "value": "11500"
+//                                }, {
+//                                    "value": "12500"
+//                                }, {
+//                                    "value": "15000"
+//                                }]
+//                            }, {
+//                                "seriesname": "Current Year",
+//                                "data": [{
+//                                    "value": "25400"
+//                                }, {
+//                                    "value": "29800"
+//                                }, {
+//                                    "value": "21800"
+//                                }, {
+//                                    "value": "26800"
+//                                }]
+//                            }]
+//                        }
+//                    };
+//                }
+//                $("#branch-chart").insertFusionCharts(chartConfigs);
+//            },
+//            'error': function (err) {
+//                swal('Error in Connection!','','error')
+//            }
+//        });
+//    }
+
     function bFrequencyChange(frequency){
-        let url ='user/analytics?t=branches&&',
-            year = $('#branch-year').val(),
+        let url = ($('#reportview').val() == '1') ? 'user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&' : 'user/multi-analytics?bt='+$('#branchreport').val()+'&&';
+        year = $('#branch-year').val(), report = $('#reportview').val(),
             branch = $('#chartfilterbranches').val();
-        if (branch == 0){
-            return swal('Please select a branch!', '','warning');
-        }
+//        if (branch == 0){
+//            return swal('Please select a branch!', '','warning');
+//        }
         if (frequency.value == 2 || frequency.value == 4){
             $('#brn-year').show();
             if (branch && year){
@@ -2450,52 +2772,164 @@
             $('#brn-year').hide();
             url = url.concat('branch='+branch+'&&freq='+frequency.value);
         }
-        let d = [], agent = '', xaxis;
+        let d = [], agent = '', xaxis, yaxis, caption, categories = [], dataset = [];
 
         $.ajax({
             'url': url,
             'type': 'get',
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
-                jQuery.each(data.response, function(k, v){
-                    if (v.branch)
-                        d.push({label: v.name , value: v.amount_disbursed}, );
-                    if (v.year){
-                        agent = ': '+v.office;
-                        xaxis = 'Years'
-                        d.push({label: v.year , value: v.AmountDisbursed}, );
-                    }
-                    if (v.month){
-                        agent = ': '+v.branch;
-                        xaxis = 'Months';
-                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
-                    }
-                    if (v.Quarter){
-                        agent = ': '+v.office;
-                        xaxis = 'Years'
-                        d.push({label: v.Quarter , value: v.AmountDisbursed}, );
-                    }
-                });
-                var chartConfigs = {
-                    type: 'column2d', // The chart type
-                    width: '100%', // Width of the chart
-                    height: '400', // Height of the chart
-                    dataFormat: 'json', // Data type
-                    dataSource: {
-                        // Chart Configuration
-                        "chart": {
-                            "caption": "Disbursements by Branch"+agent,
+                if (report == '1'){
+                    jQuery.each(data.response, function(k, v){
+                        if ($('#branchreport').val() == '1') {
+                            yaxis = "Amount Disbursed (Naira)";
+                            caption = 'Disbursements by Branches: ';
+                            if (v.branch)
+                                d.push({label: v.name, value: v.amount_disbursed},);
+                            if (v.year) {
+                                agent = ': ' + v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.year, value: v.AmountDisbursed},);
+                            }
+                            if (v.month) {
+                                agent = ': ' + v.branch;
+                                xaxis = 'Months';
+                                d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
+                            }
+                            if (v.Quarter) {
+                                agent = ': ' + v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.Quarter, value: v.AmountDisbursed},);
+                            }
+                        }
+                        if ($('#branchreport').val() == '2'){
+                            yaxis = 'Interest Earned (Naira)';
+                            caption = 'Interest Earned by Branches: ';
+                            if (v.branch)
+                                d.push({label: v.branch , value: v.amount_received}, );
+                            if (v.PaymentYear){
+                                agent = ': '+v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+                            }
+                            if (v.monthpayed){
+                                agent = ': '+v.office;
+                                xaxis = 'Months';
+                                d.push({label: v.monthpayed , value: v.amount_received}, )
+                            }
+                            if (v.branchQuarter){
+                                agent = ': '+v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+                            }
+                        }
+                    });
+                    var chartConfigs = {
+                        type: 'column2d', // The chart type
+                        width: '100%', // Width of the chart
+                        height: '400', // Height of the chart
+                        dataFormat: 'json', // Data type
+                        dataSource: {
+                            // Chart Configuration
+                            "chart": {
+                                "caption": caption+''+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
-                            "xAxisName": xaxis,
-                            "yAxisName": "Amount Disbursed (Naira)",
-                            "numberSuffix": " Naira",
-                            "theme": "fusion",
-                        },
-                        // Chart Data
-                        "data": d
+                                "xAxisName": xaxis,
+                                "yAxisName": yaxis,
+                                "numberSuffix": " Naira",
+                                "theme": "fusion",
+                            },
+                            // Chart Data
+                            "data": d
+                        }
+                    };
+                }
+                else if (report == '2'){
+                    if ($('#branchreport').val() == '1') {
+                        jQuery.each(data.response, function (k, v) {
+                            let datar = [];
+                            jQuery.each(v, function (key, val) {
+                                yaxis = "Amount Disbursed (Naira)";
+                                caption = 'Disbursements by Branches: ';
+//                                if (v.branch){
+//                                    categories.push({label: val.DisburseMonth}, );
+//                                    datar.push({value: val.AmountDisbursed});
+//                                }
+                                if (val.year) {
+                                    agent = ': ' + val.office;
+                                    xaxis = 'Years';
+                                    categories.push({label: val.year},);
+                                    datar.push({value: val.AmountDisbursed});
+                                }
+                                if (val.month) {
+                                    agent = ': ' + val.branch;
+                                    xaxis = 'Months';
+                                    categories.push({label: val.DisburseMonth},);
+                                    datar.push({value: val.AmountDisbursed});
+                                }
+                                if (val.Quarter) {
+                                    agent = ': ' + val.office;
+                                    xaxis = 'Years';
+                                    categories.push({label: val.Quarter},);
+                                    datar.push({value: val.AmountDisbursed});
+                                }
+                            });
+                            dataset.push({seriesname: k.split('-')[1], data: datar},);
+                        });
                     }
-                };
-                $("#branch-chart").insertFusionCharts(chartConfigs);
+                    if ($('#branchreport').val() == '2') {
+                        jQuery.each(data.response, function (k, v) {
+                            let datar = [];
+                            jQuery.each(v, function (key, val) {
+                                yaxis = 'Interest Earned (Naira)';
+                                caption = 'Interest Earned by Branches: ';
+//                                if (v.branch)
+//                                    d.push({label: v.branch , value: v.amount_received}, );
+                                if (val.PaymentYear) {
+                                    agent = ': ' + val.office;
+                                    xaxis = 'Years';
+                                    categories.push({label: val.PaymentYear},);
+                                    datar.push({value: val.amount_received});
+                                }
+                                if (val.monthpayed) {
+                                    agent = ': ' + val.office;
+                                    xaxis = 'Months';
+                                    categories.push({label: val.monthpayed},);
+                                    datar.push({value: val.amount_received});
+                                }
+                                if (val.branchQuarter) {
+                                    agent = ': ' + val.office;
+                                    xaxis = 'Years';
+                                    categories.push({label: val.branchQuarter},);
+                                    datar.push({value: val.amount_received});
+                                }
+                            });
+                            dataset.push({seriesname: k.split('-')[1], data: datar},);
+                        });
+                    }
+                    var dConfigs = {
+                        type: 'mscolumn2d',
+                        renderAt: 'chart-container',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "theme": "fusion",
+                                "caption": caption,
+                                "xAxisname": xaxis,
+                                "yAxisName": "Amount (In Naira)",
+                                "plotFillAlpha": "80",
+                                "divLineIsDashed": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1"
+                            },
+                            "categories": [{'category': categories}],
+                            "dataset": dataset
+                        }
+                    };
+                }
+                $("#branch-chart").insertFusionCharts(dConfigs);
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2504,10 +2938,10 @@
     }
 
     function bFilterYear(year) {
-        let urlAn = '/user/analytics?t=branches&&';
+        let urlAn = '/user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&';
         let branch = $('#chartfilterbranches').val(),
             freq = $('#branch-frequency').val(),
-            d=[], agent, xaxis;
+            d=[], agent, xaxis, yaxis, caption;
         if (branch == 0){
             return swal('Please choose a branch!', '', 'warning');
         }
@@ -2519,22 +2953,47 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    if (v.branch)
-                        d.push({label: v.name , value: v.amount_disbursed}, );
-                    if (v.year){
-                        agent = ': '+v.office;
-                        xaxis = 'Years'
-                        d.push({label: v.DisburseYear , value: v.AmountDisbursed}, );
+                    if ($('#branchreport').val() == '1') {
+                        yaxis = 'Interest Earned (Naira)';
+                        caption = 'Disbursements by Branches: ';
+                        if (v.branch)
+                            d.push({label: v.name, value: v.amount_disbursed},);
+                        if (v.year) {
+                            agent = ': ' + v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.DisburseYear, value: v.AmountDisbursed},);
+                        }
+                        if (v.month) {
+                            agent = ': ' + v.branch;
+                            xaxis = 'Months';
+                            d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
+                        }
+                        if (v.Quarter) {
+                            agent = ': ' + v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.Quarter, value: v.AmountDisbursed},);
+                        }
                     }
-                    if (v.month){
-                        agent = ': '+v.branch;
-                        xaxis = 'Months';
-                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
-                    }
-                    if (v.Quarter){
-                        agent = ': '+v.office;
-                        xaxis = 'Years'
-                        d.push({label: v.Quarter , value: v.AmountDisbursed}, );
+                    if ($('#branchreport').val() == '2'){
+                        yaxis = 'Interest Earned (Naira)';
+                        caption = 'Interest Earned by Branches: ';
+                        if (v.branch)
+                            d.push({label: v.branch , value: v.amount_received}, );
+                        if (v.PaymentYear){
+                            agent = ': '+v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.PaymentYear , value: v.amount_received}, );
+                        }
+                        if (v.monthpayed){
+                            agent = ': '+v.office;
+                            xaxis = 'Months';
+                            d.push({label: v.monthpayed , value: v.amount_received}, )
+                        }
+                        if (v.branchQuarter){
+                            agent = ': '+v.office;
+                            xaxis = 'Years'
+                            d.push({label: v.branchQuarter , value: v.amount_received}, );
+                        }
                     }
                 });
                 var chartConfigs = {
@@ -2545,10 +3004,10 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements by Branches"+agent,
+                            "caption": caption+''+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount Disbursed (Naira)",
+                            "yAxisName": yaxis,
                             "numberSuffix": " Naira",
                             "theme": "fusion",
                         },
@@ -2562,6 +3021,22 @@
                 swal('Error in Connection!','','error')
             }
         });
+    }
+
+    function changereport(type){
+        $('#chartfilterbranches').val(0);
+        $('#branch-frequency').val(-1);
+        $('#branch-year').val(0);
+        $('#brn-year').hide();
+        return branches(type.value);
+    }
+
+    function changeview(type){
+        if (type.value == '1'){
+            $('#sel-brn').show();
+        }else{
+            $('#sel-brn').hide();
+        }
     }
 
     // Payments
