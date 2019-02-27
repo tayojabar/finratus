@@ -1767,14 +1767,22 @@ function dateRangeArray(period, interval) {
             start = moment(dates_array[i-1]['end']).add(1, 'days').format("YYYY-MM-DD");
         }
         date_object.start = start;
-        if (i < count-1){
-            date_object.end = moment(date_object.start).add((30*interval), 'days').format("YYYY-MM-DD");
-        } else {
-            date_object.end = period.end;
+        let days = 0,
+            start_year = parseInt((start.split('-'))[0]),
+            start_month = parseInt((start.split('-'))[1]);
+        for (let j=0; j<interval; j++){
+            if (start_month > 12)
+                start_month = start_month % 12;
+            days += daysInMonth((start_month + j),(start_year + parseInt(start_month/12)));
         }
+        date_object.end = moment(date_object.start).add((days-1), 'days').format("YYYY-MM-DD");
         dates_array.push(date_object);
     }
     return dates_array;
+}
+
+function daysInMonth (month, year) {
+    return new Date(year, month, 0).getDate();
 }
 
 router.get('/periods', function(req, res, next) {
