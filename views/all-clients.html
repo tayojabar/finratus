@@ -828,7 +828,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#bootstrap-data-table-export').DataTable();
         checkForEdit();
         getOfficers();
         getBranches();
@@ -924,8 +923,6 @@
     });
 
     let results;
-
-    let table = $('#bootstrap-data-table-export').DataTable();
 
     function validate(){
         if ($('#new-password').val() == "" || $('#new-password').val() == null){

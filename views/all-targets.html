@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="assets/scss/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" />
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -36,6 +37,22 @@
         .zc-ref {
             display: none;
         }
+        #datepicker input {
+            display: block;
+            width: 100%;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        option.disabled {
+             background: #efefef;
+         }
     </style>
 </head>
 <body>
@@ -248,7 +265,11 @@
                                 <div class="form-group">
                                     <label class="form-control-label">Start Date</label><strong style="color:red"> *</strong><span id="new-period-start-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
-                                        <input id="new-period-start" type="date" class="form-control" placeholder="Start Date" required="required">
+                                        <input id="new-period-start" type="date" class="form-control" placeholder="Start Date" required="required" style="display: none;">
+                                        <div class="input-append date" id="datepicker" data-date-format="mm-yyyy">
+                                            <input type="text" id="new-period-start-2" placeholder="Start Date" readonly="readonly">
+                                            <span class="add-on"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -256,23 +277,11 @@
                                 <div class="form-group">
                                     <label class="form-control-label">End Date</label><strong style="color:red"> *</strong><span id="new-period-end-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
-                                        <input id="new-period-end" type="date" class="form-control" placeholder="End Date" disabled="disabled" required="required">
+                                        <input id="new-period-end" type="date" class="form-control" placeholder="End Date" disabled="disabled" required="required" style="display: none;">
+                                        <input id="new-period-end-2" type="text" class="form-control" placeholder="End Date" disabled="disabled" required="required">
                                     </div>
                                 </div>
                             </div>
-                            <script type="text/javascript">
-                                $('#new-period-start').change(function () {
-                                    Date.prototype.addDays = function(days) {
-                                        let date = new Date(this.valueOf());
-                                        date.setDate(date.getDate() + days);
-                                        return date;
-                                    };
-
-                                    let start = new Date(this.value),
-                                        end = (start.addDays(364)).toISOString().split('T')[0];
-                                    $('#new-period-end').val(end);
-                                });
-                            </script>
                         </div>
                         <div class="form-group">
                             <label class="form-control-label">Sub Period</label><strong style="color:red"> *</strong><span id="new-period-type-error" style="padding-left:50px; text-align: center"></span>
@@ -373,6 +382,7 @@
     <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
     <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
     <script src="assets/js/lib/data-table/datatables-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
 
 
     <script type="text/javascript">
@@ -381,6 +391,36 @@
             $('#bootstrap-data-table-export').DataTable();
             getTargets();
             getPeriods();
+            $("#datepicker").datepicker({
+                format: "mm-yyyy",
+                startView: "months",
+                minViewMode: "months"
+            }).on("change", function() {
+                Date.prototype.addDays = function(days) {
+                    let date = new Date(this.valueOf());
+                    date.setDate(date.getDate() + days);
+                    return date;
+                };
+
+                let start_ = ($('#new-period-start-2').val()).split('-'),
+                    start__ = start_[1]+'-'+start_[0]+'-01',
+                    start_month = parseInt(start_[0]),
+                    start_year = parseInt(start_[1]),
+                    start = new Date(start__),
+                    annual_days = 364;
+                if (isLeapYear(start_year) && start_month < 3)
+                    annual_days = 365;
+                if (isLeapYear((start_year + 1)) && start_month >= 3)
+                    annual_days = 365;
+
+                let end_ = (start.addDays(annual_days)).toISOString().split('T')[0],
+                    end__ = (end_).split('-'),
+                    end = end__[1]+'-'+end__[0];
+
+                $('#new-period-start').val(start__);
+                $('#new-period-end').val(end_);
+                $('#new-period-end-2').val(end);
+            });
         });
 
         $(document).ajaxStart(function(){
@@ -449,14 +489,14 @@
             }
         }
 
-        let results;
+        let results, targets;
 
         function getTargets(){
             $.ajax({
                 'url': '/targets',
                 'type': 'GET',
                 'success': function (data) {
-                    let targets = data.response;
+                    targets = data.response;
                     results = targets;
                     populateDataTable(targets);
                 },
@@ -472,7 +512,12 @@
                 type: 'GET',
                 success: function (response) {
                     $.each(response.response, function (key, val) {
-                        $("#new-target-period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        let assigned = ($.grep(targets, function(e){return e.period === val.ID;}))[0];
+                        if (assigned){
+                            $("#new-target-period").append('<option value = "' + val.ID + '" class="disabled" disabled="disabled">' + val.name + '</option>');
+                        } else {
+                            $("#new-target-period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        }
                     });
                 }
             });
@@ -514,15 +559,18 @@
             if (!period.name || !period.start || !period.end || period.type === '-- Select Sub Period --')
                 return swal('Kindly fill all required field(s)','','warning');
             $('#wait').show();
-            $('#addNewPeriodModal').modal('hide');
             $.ajax({
                 'url': '/periods',
                 'type': 'post',
                 'data': period,
                 'success': function (data) {
                     $('#wait').hide();
-                    swal('Period saved successfully','','success');
-                    window.location.reload();
+                    if (data.status === 200){
+                        swal('Period saved successfully','','success');
+                        window.location.reload();
+                    } else {
+                        swal(data.error,'','error');
+                    }
                 },
                 'error': function (err) {
                     $('#wait').hide();
@@ -786,6 +834,10 @@
                 id : 'allocationPiechart',
                 data : myConfig
             });
+        }
+
+        function isLeapYear(year) {
+            return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0);
         }
     </script>
 </body>
