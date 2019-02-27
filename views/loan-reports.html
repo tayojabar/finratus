@@ -383,7 +383,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <!--<div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>-->
+                                                    <div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <div class="col-sm-5">
@@ -1305,7 +1305,7 @@
                 totalhere += parseFloat(v.loan_amount);
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
-                console.log(v.loan_amount + ' -> ' + totalglp);
+//                console.log(v.loan_amount + ' -> ' + totalglp);
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
                 $("#disbursed-table").dataTable().fnAddData([
@@ -1353,7 +1353,7 @@
                 totalhere += parseFloat(v.loan_amount);
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
-                console.log(v.loan_amount + ' -> ' + totalglp);
+//                console.log(v.loan_amount + ' -> ' + totalglp);
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
                 $("#glp-table").dataTable().fnAddData([
@@ -1560,7 +1560,7 @@
                 ]);
                 collected = v.collected;
             });
-            console.log(collected);
+//            console.log(collected);
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
@@ -1934,6 +1934,8 @@
     });
 
     function formatDate(date) {
+        if (!date)
+            return '1970-01-01';
         let separator;
         if (date.indexOf('-') > -1){
             separator = '-';
@@ -2106,8 +2108,8 @@
                             "caption": "Disbursements by Loan Officers",
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": "Loan Officers",
-                            "yAxisName": "Amount Disbursed (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount Disbursed (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -2201,8 +2203,8 @@
                             "caption": "Disbursements by Loan Officers"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount Disbursed (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount Disbursed (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -2299,8 +2301,8 @@
                             "caption": "Disbursements by Loan Officers"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount Disbursed (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount Disbursed (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -2392,8 +2394,8 @@
                             "caption": "Disbursements by Loan Officers"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount Disbursed (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount Disbursed (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -2439,11 +2441,11 @@
                     d.push({label: v.branch , value: v.amount_disbursed}, );
                 });
                 if (type == '1'){
-                    yaxis = 'Amount Disbursed (Naira)';
+                    yaxis = 'Amount Disbursed (In Naira)';
                     caption = 'Disbursements by Branches'
                 }
                 if (type == '2'){
-                    yaxis = 'Interest Earned (Naira)';
+                    yaxis = 'Interest Earned (In Naira)';
                     caption = 'Interest Earned by Branches'
                 }
                 var chartConfigs = {
@@ -2458,7 +2460,7 @@
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": "Branches",
                             "yAxisName": yaxis,
-                            "numberSuffix": " Naira",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -2474,7 +2476,6 @@
     }
 
     function bFilterBranch(branch){
-        url = ($('#reportview'))
         let url = '/user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&',
             freq = $('#branch-frequency').val(),
             year = $('#branch-year').val();
@@ -2548,7 +2549,7 @@
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
                             "yAxisName": yaxis,
-                            "numberSuffix": " Naira",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -2764,9 +2765,9 @@
         let url = ($('#reportview').val() == '1') ? 'user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&' : 'user/multi-analytics?bt='+$('#branchreport').val()+'&&';
         year = $('#branch-year').val(), report = $('#reportview').val(),
             branch = $('#chartfilterbranches').val();
-//        if (branch == 0){
-//            return swal('Please select a branch!', '','warning');
-//        }
+        if (($('#reportview').val() == '1') && branch == 0){
+            return swal('Please select a branch!', '','warning');
+        }
         if (frequency.value == 2 || frequency.value == 4){
             $('#brn-year').show();
             if (branch && year){
@@ -2777,13 +2778,11 @@
             $('#brn-year').hide();
             url = url.concat('branch='+branch+'&&freq='+frequency.value);
         }
-        let d = [], agent = '', xaxis, yaxis, caption, categories = [], dataset = [];
-        url = 'user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&';
+        let d = [], series = '', agent = '', xaxis, yaxis, caption, categories = [], dataset = [], datar = [], chartTemp, values = [], diffSeries = [], countSeries, seriesNames = [], nondupSeriesNames = [];
         $.ajax({
             'url': url,
             'type': 'get',
             'success': function (data) {
-//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 if (report == '1'){
                     jQuery.each(data.response, function(k, v){
                         if ($('#branchreport').val() == '1') {
@@ -2841,84 +2840,75 @@
 //                            "subCaption": "In MMbbl = One Million barrels",
                                 "xAxisName": xaxis,
                                 "yAxisName": yaxis,
-                                "numberSuffix": " Naira",
+                                "numberSuffix": "",
                                 "theme": "fusion",
                             },
                             // Chart Data
                             "data": d
                         }
                     };
+                    $("#branch-chart").insertFusionCharts(chartConfigs);
                 }
                 else if (report == '2'){
                     if ($('#branchreport').val() == '1') {
                         jQuery.each(data.response, function (k, v) {
-                            let datar = [];
                             yaxis = "Amount Disbursed (Naira)";
-                            caption = 'Disbursements by Branches: ';
-                            xaxis = 'Total';
-//                            categories.push({label: 'Total'});
-                            datar.push({value: v.amountdisbursed});
-                            dataset.push({seriesname: v.branch, data: [{value: v.amountdisbursed}]}, );
-//                            jQuery.each(v, function (key, val) {
-//                                yaxis = "Amount Disbursed (Naira)";
-//                                caption = 'Disbursements by Branches: ';
-//                                xaxis = 'Total';
-//                                categories.push(label)
-////                                if (v.branch){
-////                                    categories.push({label: val.DisburseMonth}, );
-////                                    datar.push({value: val.AmountDisbursed});
-////                                }
-////                                if (val.year) {
-////                                    agent = ': ' + val.office;
-////                                    xaxis = 'Years';
-////                                    categories.push({label: val.year},);
-////                                    datar.push({value: val.AmountDisbursed});
-////                                }
-////                                if (val.month) {
-////                                    agent = ': ' + val.branch;
-////                                    xaxis = 'Months';
-////                                    categories.push({label: val.DisburseMonth},);
-////                                    datar.push({value: val.AmountDisbursed});
-////                                }
-////                                if (val.Quarter) {
-////                                    agent = ': ' + val.office;
-////                                    xaxis = 'Years';
-////                                    categories.push({label: val.Quarter},);
-////                                    datar.push({value: val.AmountDisbursed});
-////                                }
-//                            });
-//                            dataset.push({seriesname: k.split('-')[1], data: datar},);
+                            caption = 'Disbursements by Branches';
+                            xaxis = 'Period';
+                            categories.push({label: k});
+                            chartTemp = $.grep(v, function(e){return e.period === k.toString();});
+                            values.push(chartTemp);
+                            diffSeries.push(chartTemp.length);
+                            jQuery.each(v, function (key, val) {
+                                seriesNames.push(val.branch);
+                            });
                         });
+                        countSeries = Math.max.apply(Math, diffSeries);
+                        nondupSeriesNames = seriesNames.filter(function(elem, index, self) {
+                            return index === self.indexOf(elem);
+                        }).sort();
+                        for (let j = 0; j < nondupSeriesNames.length; j++) {
+                            let datum = [];
+                            for (let i = 0; i < values.length; i++) {
+                                let branch_series_value = ($.grep(values[i], function(e){return e.branch === nondupSeriesNames[j];}))[0];
+                                if (branch_series_value){
+                                    datum.push({value: branch_series_value.AmountDisbursed});
+                                } else {
+                                    datum.push({value: 0});
+                                }
+                            }
+                            dataset.push({seriesname: nondupSeriesNames[j], data: datum});
+                        }
                     }
                     if ($('#branchreport').val() == '2') {
                         jQuery.each(data.response, function (k, v) {
-                            let datar = [];
+                            yaxis = 'Interest Earned (Naira)';
+                            caption = 'Interest Earned by Branches';
+                            xaxis = 'Period';
+                            categories.push({label: k});
+                            chartTemp = $.grep(v, function(e){return e.period === k.toString();});
+                            values.push(chartTemp);
+                            diffSeries.push(chartTemp.length);
                             jQuery.each(v, function (key, val) {
-                                yaxis = 'Interest Earned (Naira)';
-                                caption = 'Interest Earned by Branches: ';
-//                                if (v.branch)
-//                                    d.push({label: v.branch , value: v.amount_received}, );
-                                if (val.PaymentYear) {
-                                    agent = ': ' + val.office;
-                                    xaxis = 'Years';
-                                    categories.push({label: val.PaymentYear},);
-                                    datar.push({value: val.amount_received});
-                                }
-                                if (val.monthpayed) {
-                                    agent = ': ' + val.office;
-                                    xaxis = 'Months';
-                                    categories.push({label: val.monthpayed},);
-                                    datar.push({value: val.amount_received});
-                                }
-                                if (val.branchQuarter) {
-                                    agent = ': ' + val.office;
-                                    xaxis = 'Years';
-                                    categories.push({label: val.branchQuarter},);
-                                    datar.push({value: val.amount_received});
-                                }
+                                seriesNames.push(val.office);
                             });
-                            dataset.push({seriesname: k.split('-')[1], data: datar},);
                         });
+                        countSeries = Math.max.apply(Math, diffSeries);
+                        nondupSeriesNames = seriesNames.filter(function(elem, index, self) {
+                            return index === self.indexOf(elem);
+                        }).sort();
+                        for (let j = 0; j < nondupSeriesNames.length; j++) {
+                            let datum = [];
+                            for (let i = 0; i < values.length; i++) {
+                                let branch_series_value = ($.grep(values[i], function(e){return e.office === nondupSeriesNames[j];}))[0];
+                                if (branch_series_value){
+                                    datum.push({value: branch_series_value.amount_received});
+                                } else {
+                                    datum.push({value: 0});
+                                }
+                            }
+                            dataset.push({seriesname: nondupSeriesNames[j], data: datum});
+                        }
                     }
                     var dConfigs = {
                         type: 'mscolumn2d',
@@ -2930,7 +2920,7 @@
                             "chart": {
                                 "theme": "fusion",
                                 "caption": caption,
-                                "xAxisname": xaxis,
+                                "xAxisname": 'Period',
                                 "yAxisName": "Amount (In Naira)",
                                 "plotFillAlpha": "80",
                                 "divLineIsDashed": "1",
@@ -2941,8 +2931,8 @@
                             "dataset": dataset
                         }
                     };
+                    $("#branch-chart").insertFusionCharts(dConfigs);
                 }
-                $("#branch-chart").insertFusionCharts(dConfigs);
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2951,11 +2941,11 @@
     }
 
     function bFilterYear(year) {
-        let urlAn = '/user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&';
-        let branch = $('#chartfilterbranches').val(),
+        let urlAn = ($('#reportview').val() == '1') ? '/user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&' : 'user/multi-analytics?bt='+$('#branchreport').val()+'&&';
+        let branch = $('#chartfilterbranches').val(), report = $('#reportview').val(),
             freq = $('#branch-frequency').val(),
-            d=[], agent, xaxis, yaxis, caption;
-        if (branch == 0){
+            d=[], agent, xaxis, yaxis, caption, categories = [], dataset = [], datar = [], chartTemp, values = [], diffSeries = [], countSeries, seriesNames = [], nondupSeriesNames = [];
+        if (($('#reportview').val() == '1') && branch == 0){
             return swal('Please choose a branch!', '', 'warning');
         }
         urlAn = urlAn.concat('freq='+freq+'&&branch='+branch+'&&year='+year.value);
@@ -2964,71 +2954,156 @@
             'url': urlAn,
             'type': 'get',
             'success': function (data) {
-//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
-                jQuery.each(data.response, function(k, v){
-                    if ($('#branchreport').val() == '1') {
-                        yaxis = 'Interest Earned (Naira)';
-                        caption = 'Disbursements by Branches: ';
-                        if (v.branch)
-                            d.push({label: v.name, value: v.amount_disbursed},);
-                        if (v.year) {
-                            agent = ': ' + v.office;
-                            xaxis = 'Years'
-                            d.push({label: v.DisburseYear, value: v.AmountDisbursed},);
+                if (report == '1'){
+                    jQuery.each(data.response, function(k, v){
+                        if ($('#branchreport').val() == '1') {
+                            yaxis = 'Interest Earned (Naira)';
+                            caption = 'Disbursements by Branches: ';
+                            if (v.branch)
+                                d.push({label: v.name, value: v.amount_disbursed},);
+                            if (v.year) {
+                                agent = ': ' + v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.DisburseYear, value: v.AmountDisbursed},);
+                            }
+                            if (v.month) {
+                                agent = ': ' + v.branch;
+                                xaxis = 'Months';
+                                d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
+                            }
+                            if (v.Quarter) {
+                                agent = ': ' + v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.Quarter, value: v.AmountDisbursed},);
+                            }
                         }
-                        if (v.month) {
-                            agent = ': ' + v.branch;
-                            xaxis = 'Months';
-                            d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
+                        if ($('#branchreport').val() == '2'){
+                            yaxis = 'Interest Earned (Naira)';
+                            caption = 'Interest Earned by Branches: ';
+                            if (v.branch)
+                                d.push({label: v.branch , value: v.amount_received}, );
+                            if (v.PaymentYear){
+                                agent = ': '+v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+                            }
+                            if (v.monthpayed){
+                                agent = ': '+v.office;
+                                xaxis = 'Months';
+                                d.push({label: v.monthpayed , value: v.amount_received}, )
+                            }
+                            if (v.branchQuarter){
+                                agent = ': '+v.office;
+                                xaxis = 'Years'
+                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+                            }
                         }
-                        if (v.Quarter) {
-                            agent = ': ' + v.office;
-                            xaxis = 'Years'
-                            d.push({label: v.Quarter, value: v.AmountDisbursed},);
-                        }
-                    }
-                    if ($('#branchreport').val() == '2'){
-                        yaxis = 'Interest Earned (Naira)';
-                        caption = 'Interest Earned by Branches: ';
-                        if (v.branch)
-                            d.push({label: v.branch , value: v.amount_received}, );
-                        if (v.PaymentYear){
-                            agent = ': '+v.office;
-                            xaxis = 'Years'
-                            d.push({label: v.PaymentYear , value: v.amount_received}, );
-                        }
-                        if (v.monthpayed){
-                            agent = ': '+v.office;
-                            xaxis = 'Months';
-                            d.push({label: v.monthpayed , value: v.amount_received}, )
-                        }
-                        if (v.branchQuarter){
-                            agent = ': '+v.office;
-                            xaxis = 'Years'
-                            d.push({label: v.branchQuarter , value: v.amount_received}, );
-                        }
-                    }
-                });
-                var chartConfigs = {
-                    type: 'column2d', // The chart type
-                    width: '100%', // Width of the chart
-                    height: '400', // Height of the chart
-                    dataFormat: 'json', // Data type
-                    dataSource: {
-                        // Chart Configuration
-                        "chart": {
-                            "caption": caption+''+agent,
+                    });
+                    var chartConfigs = {
+                        type: 'column2d', // The chart type
+                        width: '100%', // Width of the chart
+                        height: '400', // Height of the chart
+                        dataFormat: 'json', // Data type
+                        dataSource: {
+                            // Chart Configuration
+                            "chart": {
+                                "caption": caption+''+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
-                            "xAxisName": xaxis,
-                            "yAxisName": yaxis,
-                            "numberSuffix": " Naira",
-                            "theme": "fusion",
-                        },
-                        // Chart Data
-                        "data": d
+                                "xAxisName": xaxis,
+                                "yAxisName": yaxis,
+                                "numberSuffix": "",
+                                "theme": "fusion",
+                            },
+                            // Chart Data
+                            "data": d
+                        }
+                    };
+                    $("#branch-chart").insertFusionCharts(chartConfigs);
+                }
+                else if (report == '2'){
+                    if ($('#branchreport').val() == '1') {
+                        jQuery.each(data.response, function (k, v) {
+                            yaxis = "Amount Disbursed (Naira)";
+                            caption = 'Disbursements by Branches';
+                            xaxis = 'Period';
+                            categories.push({label: k});
+                            chartTemp = $.grep(v, function(e){return e.period === k.toString();});
+                            values.push(chartTemp);
+                            diffSeries.push(chartTemp.length);
+                            jQuery.each(v, function (key, val) {
+                                seriesNames.push(val.branch);
+                            });
+                        });
+                        countSeries = Math.max.apply(Math, diffSeries);
+                        nondupSeriesNames = seriesNames.filter(function(elem, index, self) {
+                            return index === self.indexOf(elem);
+                        }).sort();
+                        for (let j = 0; j < nondupSeriesNames.length; j++) {
+                            let datum = [];
+                            for (let i = 0; i < values.length; i++) {
+                                let branch_series_value = ($.grep(values[i], function(e){return e.branch === nondupSeriesNames[j];}))[0];
+                                if (branch_series_value){
+                                    datum.push({value: branch_series_value.AmountDisbursed});
+                                } else {
+                                    datum.push({value: 0});
+                                }
+                            }
+                            dataset.push({seriesname: nondupSeriesNames[j], data: datum});
+                        }
                     }
-                };
-                $("#branch-chart").insertFusionCharts(chartConfigs);
+                    if ($('#branchreport').val() == '2') {
+                        jQuery.each(data.response, function (k, v) {
+                            yaxis = 'Interest Earned (Naira)';
+                            caption = 'Interest Earned by Branches';
+                            xaxis = 'Period';
+                            categories.push({label: k});
+                            chartTemp = $.grep(v, function(e){return e.period === k.toString();});
+                            values.push(chartTemp);
+                            diffSeries.push(chartTemp.length);
+                            jQuery.each(v, function (key, val) {
+                                seriesNames.push(val.office);
+                            });
+                        });
+                        countSeries = Math.max.apply(Math, diffSeries);
+                        nondupSeriesNames = seriesNames.filter(function(elem, index, self) {
+                            return index === self.indexOf(elem);
+                        }).sort();
+                        for (let j = 0; j < nondupSeriesNames.length; j++) {
+                            let datum = [];
+                            for (let i = 0; i < values.length; i++) {
+                                let branch_series_value = ($.grep(values[i], function(e){return e.office === nondupSeriesNames[j];}))[0];
+                                if (branch_series_value){
+                                    datum.push({value: branch_series_value.amount_received});
+                                } else {
+                                    datum.push({value: 0});
+                                }
+                            }
+                            dataset.push({seriesname: nondupSeriesNames[j], data: datum});
+                        }
+                    }
+                    var dConfigs = {
+                        type: 'mscolumn2d',
+                        renderAt: 'chart-container',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "theme": "fusion",
+                                "caption": caption,
+                                "xAxisname": 'Period',
+                                "yAxisName": "Amount (In Naira)",
+                                "plotFillAlpha": "80",
+                                "divLineIsDashed": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1"
+                            },
+                            "categories": [{'category': categories}],
+                            "dataset": dataset
+                        }
+                    };
+                    $("#branch-chart").insertFusionCharts(dConfigs);
+                }
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -3106,8 +3181,8 @@
                             "caption": "Payments Received",
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": "Loan Officers",
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -3185,8 +3260,8 @@
                             "caption": "Payments Received"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -3266,8 +3341,8 @@
                             "caption": "Payments Received"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -3338,8 +3413,8 @@
                             "caption": "Payments Received"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -3408,8 +3483,8 @@
                             "caption": "Interest Received",
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": "Loan Officers",
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -3500,8 +3575,8 @@
                             "caption": "Interest Received"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -3594,8 +3669,8 @@
                             "caption": "Interest Received"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
@@ -3679,8 +3754,8 @@
                             "caption": "Interest Received"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
-                            "yAxisName": "Amount (Naira)",
-                            "numberSuffix": " Naira",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
                             "theme": "fusion",
                         },
                         // Chart Data
