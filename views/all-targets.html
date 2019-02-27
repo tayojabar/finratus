@@ -50,6 +50,9 @@
             border-radius: .25rem;
             transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
         }
+        option.disabled {
+             background: #efefef;
+         }
     </style>
 </head>
 <body>
@@ -486,14 +489,14 @@
             }
         }
 
-        let results;
+        let results, targets;
 
         function getTargets(){
             $.ajax({
                 'url': '/targets',
                 'type': 'GET',
                 'success': function (data) {
-                    let targets = data.response;
+                    targets = data.response;
                     results = targets;
                     populateDataTable(targets);
                 },
@@ -509,7 +512,12 @@
                 type: 'GET',
                 success: function (response) {
                     $.each(response.response, function (key, val) {
-                        $("#new-target-period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        let assigned = ($.grep(targets, function(e){return e.period === val.ID;}))[0];
+                        if (assigned){
+                            $("#new-target-period").append('<option value = "' + val.ID + '" class="disabled" disabled="disabled">' + val.name + '</option>');
+                        } else {
+                            $("#new-target-period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        }
                     });
                 }
             });
