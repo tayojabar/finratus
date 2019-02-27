@@ -608,7 +608,6 @@
 
         function archive(){
             $('#wait').show();
-            $('#myModal').modal('hide');
             $.ajax({
                 'url': '/user/applications/delete/'+localStorage.getItem("application_id"),
                 'type': 'get',
@@ -616,8 +615,8 @@
                     $('#wait').hide();
                     let applications = data.response;
                     results = applications;
-                    populateDataTable(applications);
                     swal('Application archived successfully');
+                    window.location.reload();
                 },
                 'error': function (err) {
                     $('#wait').hide();
@@ -632,7 +631,6 @@
             if (!comment || comment === "")
                 return swal('Kindly type a brief comment');
             $('#wait').show();
-            $('#addCommentModal').modal('hide');
             $.ajax({
                 'url': '/user/applications/comment/'+localStorage.getItem("application_id"),
                 'type': 'post',
@@ -641,7 +639,6 @@
                     $('#wait').hide();
                     let applications = data.response;
                     results = applications;
-                    populateDataTable(applications);
                     $comment.val("");
                     swal('Comment saved successfully');
                     window.location.reload();
@@ -650,7 +647,6 @@
                     $('#wait').hide();
                     $comment.val("");
                     swal('Oops! An error occurred while saving comment');
-                    window.location.reload();
                 }
             });
         }
