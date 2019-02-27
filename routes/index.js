@@ -1685,6 +1685,17 @@ router.get('/targets', function(req, res, next) {
     });
 });
 
+router.delete('/target/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE targets SET status=0,date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Target deleted successfully!"});
+        }
+    });
+});
+
 router.post('/periods', function(req, res, next) {
     let period = req.body,
         query = 'INSERT INTO periods SET ?';
@@ -1793,7 +1804,7 @@ function daysInMonth (month, year) {
 }
 
 router.get('/periods', function(req, res, next) {
-    db.query('SELECT * FROM periods', function (error, results, fields) {
+    db.query('SELECT * FROM periods WHERE status = 1', function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
@@ -1808,6 +1819,17 @@ router.get('/period/sub_periods/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Sub periods fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.delete('/period/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE periods SET status=0,date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Period deleted successfully!"});
         }
     });
 });
