@@ -551,15 +551,18 @@
             if (!period.name || !period.start || !period.end || period.type === '-- Select Sub Period --')
                 return swal('Kindly fill all required field(s)','','warning');
             $('#wait').show();
-            $('#addNewPeriodModal').modal('hide');
             $.ajax({
                 'url': '/periods',
                 'type': 'post',
                 'data': period,
                 'success': function (data) {
                     $('#wait').hide();
-                    swal('Period saved successfully','','success');
-                    window.location.reload();
+                    if (data.status === 200){
+                        swal('Period saved successfully','','success');
+                        window.location.reload();
+                    } else {
+                        swal(data.error,'','error');
+                    }
                 },
                 'error': function (err) {
                     $('#wait').hide();

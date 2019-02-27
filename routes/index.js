@@ -1689,29 +1689,36 @@ router.post('/periods', function(req, res, next) {
     let period = req.body,
         query = 'INSERT INTO periods SET ?';
     period.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query(query, period, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
+    db.query('SELECT * FROM periods WHERE status = 1 AND (TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end) OR TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end))',
+        [period.start,period.end], function (error, period_obj, fields) {
+        if(period_obj && period_obj[0]){
+            res.send({"status": 500, "error": "Similar period ("+period_obj[0]['name']+") has already been assigned!", "response": period_obj});
         } else {
-            db.query('SELECT MAX(ID) AS ID from periods', function(err, period_id, fields) {
-                if (err){
-                    res.send({"status": 200, "error": err, "response": null});
-                } else{
-                    generateSubPeriods(period, period_id[0]['ID'], function (sub_periods) {
-                        db.getConnection(function(err, connection) {
-                            if (err) throw err;
+            db.query(query, period, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    db.query('SELECT MAX(ID) AS ID from periods', function(err, period_id, fields) {
+                        if (err){
+                            res.send({"status": 200, "error": err, "response": null});
+                        } else{
+                            generateSubPeriods(period, period_id[0]['ID'], function (sub_periods) {
+                                db.getConnection(function(err, connection) {
+                                    if (err) throw err;
 
-                            async.forEach(sub_periods, function (sub_period, callback) {
-                                connection.query('INSERT INTO sub_periods SET ?', sub_period, function (error, results, fields) {
-                                    if(error)
-                                        console.log(error);
-                                    callback();
+                                    async.forEach(sub_periods, function (sub_period, callback) {
+                                        connection.query('INSERT INTO sub_periods SET ?', sub_period, function (error, results, fields) {
+                                            if(error)
+                                                console.log(error);
+                                            callback();
+                                        });
+                                    }, function (data) {
+                                        connection.release();
+                                        res.send({"status": 200, "message": "Period added successfully!"});
+                                    });
                                 });
-                            }, function (data) {
-                                connection.release();
-                                res.send({"status": 200, "message": "Period added successfully!"});
                             });
-                        });
+                        }
                     });
                 }
             });
