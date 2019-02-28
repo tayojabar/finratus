@@ -447,7 +447,9 @@
                     v.end,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
                     'onclick="openSubPeriodsModal('+v.ID+')">' +
-                    '<i class="fa fa-eye"></i> View Sub Periods</button>'
+                    '<i class="fa fa-eye"></i> View Sub Periods</button>'+
+                    '<button type="button" class="btn btn-danger" onclick="deletePeriod('+v.ID+')">' +
+                    '<i class="fa fa-trash"></i> Delete</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
             });
@@ -470,6 +472,23 @@
                         ];
                         $('#sub_periods').dataTable().fnAddData(table);
                     });
+                }
+            });
+        }
+
+        function deletePeriod(id) {
+            $('#wait').show();
+            $.ajax({
+                type: "DELETE",
+                url: "/period/delete/"+id,
+                success: function (data) {
+                    $('#wait').hide();
+                    if (data.status === 200){
+                        swal('Period deleted successfully!','','success');
+                        window.location.reload();
+                    } else {
+                        swal(data.error,'','error');
+                    }
                 }
             });
         }

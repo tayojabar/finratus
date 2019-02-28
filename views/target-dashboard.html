@@ -475,7 +475,9 @@
                     v.end,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
                     'onclick="openCommittalsModal(\''+v.userID+','+v.user_type+','+v.start+','+v.end+','+v.value+','+v.type+'\')">' +
-                    '<i class="fa fa-eye"></i> View Details</button>'
+                    '<i class="fa fa-eye"></i> View Details</button>'+
+                    '<button type="button" class="btn btn-danger" onclick="deleteTargetAssigned('+v.ID+')">' +
+                    '<i class="fa fa-trash"></i> Delete</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
             });
@@ -505,6 +507,24 @@
                 }
             });
         }
+
+        function deleteTargetAssigned(id) {
+            $('#wait').show();
+            $.ajax({
+                type: "DELETE",
+                url: "/user/targets-list/delete/"+id,
+                success: function (data) {
+                    $('#wait').hide();
+                    if (data.status === 200){
+                        swal('Assigned target deleted successfully!','','success');
+                        window.location.reload();
+                    } else {
+                        swal(data.error,'','error');
+                    }
+                }
+            });
+        }
+
 
         function populateCommittals(data){
             $("#committals").dataTable().fnClearTable();

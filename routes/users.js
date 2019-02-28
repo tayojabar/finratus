@@ -628,6 +628,17 @@ users.get('/targets-list/:officerID', function(req, res, next) {
     }
 });
 
+users.delete('/targets-list/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_targets SET status=0, date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Assigned target deleted successfully!"});
+        }
+    });
+});
+
 
 users.get('/committals/user/disbursement/:userID/:targetID', function(req, res, next) {
     let start = req.query.start,

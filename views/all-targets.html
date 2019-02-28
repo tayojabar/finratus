@@ -591,9 +591,28 @@
                     v.end,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
                     'onclick="openDetailsModal(\''+v.ID+','+v.start+','+v.end+','+v.value+','+v.type+'\')">' +
-                    '<i class="fa fa-eye"></i> View Details</button>'
+                    '<i class="fa fa-eye"></i> View Details</button>'+
+                    '<button type="button" class="btn btn-danger" onclick="deleteTarget('+v.ID+')">' +
+                    '<i class="fa fa-trash"></i> Delete</button>'
                 ];
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
+            });
+        }
+
+        function deleteTarget(id) {
+            $('#wait').show();
+            $.ajax({
+                type: "DELETE",
+                url: "/target/delete/"+id,
+                success: function (data) {
+                    $('#wait').hide();
+                    if (data.status === 200){
+                        swal('Target deleted successfully!','','success');
+                        window.location.reload();
+                    } else {
+                        swal(data.error,'','error');
+                    }
+                }
             });
         }
 
