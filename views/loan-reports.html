@@ -2229,7 +2229,8 @@
                 url = url.concat('officer='+officer+'&&year='+year+'&&freq='+frequency.value);
             }
         }
-        if (frequency.value == 3){
+//        if (frequency.value == 3){
+        else{
             $('#dis-year').hide();
             url = url.concat('officer='+officer+'&&freq='+frequency.value+'')
         }
@@ -2787,16 +2788,16 @@
                     jQuery.each(data.response, function(k, v){
                         if ($('#branchreport').val() == '1') {
                             yaxis = "Amount Disbursed (Naira)";
-                            caption = 'Disbursements by Branches: ';
+                            caption = 'Disbursements by Branches';
                             if (v.branch)
-                                d.push({label: v.name, value: v.amount_disbursed},);
+                                d.push({label: v.branch, value: v.amount_disbursed},);
                             if (v.year) {
                                 agent = ': ' + v.office;
                                 xaxis = 'Years'
                                 d.push({label: v.year, value: v.AmountDisbursed},);
                             }
                             if (v.month) {
-                                agent = ': ' + v.branch;
+                                agent = ': ' + v.office;
                                 xaxis = 'Months';
                                 d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
                             }
@@ -2808,7 +2809,7 @@
                         }
                         if ($('#branchreport').val() == '2'){
                             yaxis = 'Interest Earned (Naira)';
-                            caption = 'Interest Earned by Branches: ';
+                            caption = 'Interest Earned by Branches';
                             if (v.branch)
                                 d.push({label: v.branch , value: v.amount_received}, );
                             if (v.PaymentYear){
@@ -2958,16 +2959,16 @@
                     jQuery.each(data.response, function(k, v){
                         if ($('#branchreport').val() == '1') {
                             yaxis = 'Interest Earned (Naira)';
-                            caption = 'Disbursements by Branches: ';
+                            caption = 'Disbursements by Branches';
                             if (v.branch)
-                                d.push({label: v.name, value: v.amount_disbursed},);
+                                d.push({label: v.branch, value: v.amount_disbursed},);
                             if (v.year) {
                                 agent = ': ' + v.office;
                                 xaxis = 'Years'
                                 d.push({label: v.DisburseYear, value: v.AmountDisbursed},);
                             }
                             if (v.month) {
-                                agent = ': ' + v.branch;
+                                agent = ': ' + v.office;
                                 xaxis = 'Months';
                                 d.push({label: v.DisburseMonth, value: v.AmountDisbursed},)
                             }
@@ -2979,7 +2980,7 @@
                         }
                         if ($('#branchreport').val() == '2'){
                             yaxis = 'Interest Earned (Naira)';
-                            caption = 'Interest Earned by Branches: ';
+                            caption = 'Interest Earned by Branches';
                             if (v.branch)
                                 d.push({label: v.branch , value: v.amount_received}, );
                             if (v.PaymentYear){
