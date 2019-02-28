@@ -1423,7 +1423,7 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements by Loan Officers",
+                            "caption": "Disbursements by Loan Officer(s)",
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": "Loan Officers",
                             "yAxisName": "Amount Disbursed (Naira)",
@@ -2105,7 +2105,7 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements by Loan Officers",
+                            "caption": "Disbursements by Loan Officer(s)",
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": "Loan Officers",
                             "yAxisName": "Amount Disbursed (In Naira)",
@@ -2200,7 +2200,7 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements by Loan Officers"+agent,
+                            "caption": "Disbursements by Loan Officer(s)"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
                             "yAxisName": "Amount Disbursed (In Naira)",
@@ -2299,7 +2299,7 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements by Loan Officers"+agent,
+                            "caption": "Disbursements by Loan Officer(s)"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
                             "yAxisName": "Amount Disbursed (In Naira)",
@@ -2392,7 +2392,7 @@
                     dataSource: {
                         // Chart Configuration
                         "chart": {
-                            "caption": "Disbursements by Loan Officers"+agent,
+                            "caption": "Disbursements by Loan Officer(s)"+agent,
 //                            "subCaption": "In MMbbl = One Million barrels",
                             "xAxisName": xaxis,
                             "yAxisName": "Amount Disbursed (In Naira)",
@@ -2480,11 +2480,18 @@
         let url = '/user/analytics?t=branches&&bt='+$('#branchreport').val()+'&&',
             freq = $('#branch-frequency').val(),
             year = $('#branch-year').val();
-        if (branch.value == 0 && freq == "-1"){
-            return branches();
+        if (branch.value == 0){
+            swal('', 'You have to choose a branch to continue!', 'warning');
+            $('#branch-frequency').val(-1);
+            year = $('#branch-year').val(0);
+            $('#brn-year').hide();
+            return branches($('#branchreport').val());
         }
         url = url.concat('branch='+branch.value+'&&year='+year);
-        if (freq !== "-1"){
+        if (freq == "-1"){
+            $('#brn-year').hide();
+        }
+        else {
             url = url.concat('&&freq='+freq);
         }
         let d = [], agent = '', xaxis, yaxis, caption, categories = [], dataset = [];

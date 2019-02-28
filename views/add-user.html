@@ -335,6 +335,17 @@
                                                 <small class="form-text text-muted">Client(s) and Target(s) can be assigned to this user</small>
                                             </div>
                                         </div>
+                                        <!--<div class="form-group col-lg-6">-->
+                                            <!--<label class="form-control-label">-->
+                                                <!--<i class="fa fa-cloud-upload"></i> Upload User Image-->
+                                            <!--</label>-->
+                                            <!--<div class="input-group">-->
+                                                <!--<input id="file-upload" class="image admin-img " type="file" tabindex="6">-->
+                                                <!--<label id="path"></label><br>-->
+                                                <!--<small>Image must be JPG/JPEG or PNG format, maximum 2MB</small>-->
+
+                                            <!--</div>-->
+                                        <!--</div>-->
                                         <div class ="form-group col-lg-12">
                                             <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Add New User"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                         </div>
@@ -506,33 +517,6 @@
         }
 
         function validate(){
-//            if ($('#fullname').val() == "" || $('#fullname').val() == null){
-//                $('#fullname-error').html("Enter user's full name");
-//                $('#fullname-error').css("color", "red");
-//                $('#submit-error').css("color", "red");
-//                $('#submit-error').html("Unable to submit. Check information entered.");
-//            }
-//            else if ($('#password').val() == "" || $('#password').val() == null){
-//                $('#password-error').html("Enter password");
-//                $('#password-error').css("color", "red");
-//                $('#submit-error').css("color", "red");
-//                $('#submit-error').html("Unable to submit. Check information entered.");
-//            }
-//            else if ($('#role').find('option:selected').attr('id') == 0){
-//                $('#role_error').html("Choose a user role for the new user");
-//                $('#role_error').css("color", "red");
-//                $('#submit-error').css("color", "red");
-//                $('#submit-error').html("Unable to submit. Check information entered.");
-//            }
-//            else if ($('#email').val() == "" || $('#email').val() == null){
-//                $('#email-error').html("Enter user's email address");
-//                $('#email-error').css("color", "red");
-//                $('#submit-error').css("color", "red");
-//                $('#submit-error').html("Unable to submit. Check information entered.");
-//            }
-//            else{
-//                createUser();
-//            }
             if ($('#fullname').val() == "" || $('#fullname').val() == null)
                 return swal('Kindly enter a valid fullname','','warning');
             if ($('#email').val() == "" || $('#email').val() == null)
