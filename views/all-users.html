@@ -545,7 +545,7 @@
                         <div class="col-lg-3">
                             <div class="form-group">
                                 <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="50" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
-                                <small id="commission_target_value" class="form-text text-muted"></small>
+                                <small id="commission_period_value" class="form-text text-muted"></small>
                             </div>
                         </div>
                         <div class="col-lg-3">
@@ -1061,12 +1061,6 @@
             getLimit(target_id);
         });
 
-
-        $('#commission_target').on('change', function() {
-            let id = $("#commission_target").find("option:selected").val();
-            getCommissionPeriods(id);
-        });
-
         let targets;
         function getTargets(){
             $.ajax({
@@ -1098,16 +1092,9 @@
             });
         }
 
-        let commission_target_value;
-        $('#commission_target_value').text('');
         $('#commission_target').on('change', function() {
-            let commission_target = $("#commission_target").find("option:selected").val();
-            if (commission_target && commission_target !== '-- Select Target --'){
-                commission_target_value = parseFloat(($.grep(assigned_targets, function(e){return e.ID === parseInt(commission_target);}))[0]['value']);
-                $('#commission_target_value').text('Max rate is 100% (₦'+(commission_target_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+')');
-            } else {
-                $('#commission_target_value').text('');
-            }
+            let id = $("#commission_target").find("option:selected").val();
+            getCommissionPeriods(id);
         });
 
         let commissions;
@@ -1162,18 +1149,20 @@
             }
         }
 
+        let assigned_periods;
         $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
         function getCommissionPeriods(id){
             if (id && id !== '-- Select Target --'){
                 $('#wait').show();
                 $.ajax({
                     type: "GET",
-                    url: "/target/sub_periods/"+id,
+                    url: "/user/user-assigned-period/"+localStorage.user_commission_id+"/"+id,
                     success: function (data) {
                         $('#wait').hide();
+                        assigned_periods = data.response;
                         $("#commission_period").prop('disabled',false);
                         $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
-                        $.each(data.response, function (key, val) {
+                        $.each(assigned_periods, function (key, val) {
                             $("#commission_period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
                         });
                         $("#commission_period").select2();
@@ -1181,6 +1170,18 @@
                 });
             }
         }
+
+        let commission_period_value;
+        $('#commission_period_value').text('');
+        $('#commission_period').on('change', function() {
+            let commission_period = $("#commission_period").find("option:selected").val();
+            if (commission_period && commission_period !== '-- Select Commission Period --'){
+                commission_period_value = parseFloat(($.grep(assigned_periods, function(e){return e.ID === parseInt(commission_period);}))[0]['value']);
+                $('#commission_period_value').text('Max rate is 100% (₦'+(commission_period_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+')');
+            } else {
+                $('#commission_period_value').text('');
+            }
+        });
 
         function openTargetsModal(id) {
             localStorage.user_target_id = id;
@@ -1287,13 +1288,14 @@
             if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || obj.sub_periodID === '-- Select Commission Period --' || !obj.threshold)
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.threshold) < 50 || parseFloat(obj.threshold) > 100)
-                return swal('Commission threshold rate ('+obj.threshold+'%) must be at least 50% and at most 100%. (Total allocated target is valued at '+commission_target_value+')','','warning');
+                return swal('Commission threshold rate ('+obj.threshold+'%) must be at least 50% and at most 100%. (Total allocated target is valued at '+commission_period_value+')','','warning');
             obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
-            let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0];
+            let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0],
+                period = ($.grep(assigned_periods, function(e){return e.ID === parseInt(obj.sub_periodID);}))[0];
             if (obj.type !== target.type)
                 return swal('Commission and Target must be of the same type','','warning');
             obj.periodID = target.period;
-            obj.target_value = target.value;
+            obj.target_value = period.value;
             obj.threshold = parseFloat(obj.threshold);
             $('#wait').show();
             $.ajax({

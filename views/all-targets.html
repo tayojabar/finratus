@@ -390,7 +390,6 @@
             check(); loadMenus(); read_write;
             $('#bootstrap-data-table-export').DataTable();
             getTargets();
-            getPeriods();
             $("#datepicker").datepicker({
                 format: "mm-yyyy",
                 startView: "months",
@@ -496,6 +495,7 @@
                 'url': '/targets',
                 'type': 'GET',
                 'success': function (data) {
+                    getPeriods();
                     targets = data.response;
                     results = targets;
                     populateDataTable(targets);
@@ -512,8 +512,9 @@
                 type: 'GET',
                 success: function (response) {
                     $.each(response.response, function (key, val) {
-                        let assigned = ($.grep(targets, function(e){return e.period === val.ID;}))[0];
-                        if (assigned){
+                        let assigned_interest = ($.grep(targets, function(e){return (e.period === val.ID && e.type === "interest");}))[0],
+                            assigned_disbursement = ($.grep(targets, function(e){return (e.period === val.ID && e.type === "disbursement");}))[0];
+                        if (assigned_interest && assigned_disbursement){
                             $("#new-target-period").append('<option value = "' + val.ID + '" class="disabled" disabled="disabled">' + val.name + '</option>');
                         } else {
                             $("#new-target-period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
@@ -533,15 +534,18 @@
             if (!target.title || !target.description || !target.value || target.period === '-- Select Target Period --' || target.type === '-- Select Target Type --')
                 return swal('Kindly fill all required field(s)','','warning');
             $('#wait').show();
-            $('#addNewTargetModal').modal('hide');
             $.ajax({
                 'url': '/targets',
                 'type': 'post',
                 'data': target,
                 'success': function (data) {
                     $('#wait').hide();
-                    swal('Target saved successfully','','success');
-                    window.location.reload();
+                    if (data.status === 200){
+                        swal('Target saved successfully','','success');
+                        window.location.reload();
+                    } else {
+                        swal(data.error,'','error');
+                    }
                 },
                 'error': function (err) {
                     $('#wait').hide();
@@ -600,20 +604,31 @@
         }
 
         function deleteTarget(id) {
-            $('#wait').show();
-            $.ajax({
-                type: "DELETE",
-                url: "/target/delete/"+id,
-                success: function (data) {
-                    $('#wait').hide();
-                    if (data.status === 200){
-                        swal('Target deleted successfully!','','success');
-                        window.location.reload();
-                    } else {
-                        swal(data.error,'','error');
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, this process is not reversible!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((yes) => {
+                    if (yes) {
+                        $('#wait').show();
+                        $.ajax({
+                            type: "DELETE",
+                            url: "/target/delete/"+id,
+                            success: function (data) {
+                                $('#wait').hide();
+                                if (data.status === 200){
+                                    swal('Target deleted successfully!','','success');
+                                    window.location.reload();
+                                } else {
+                                    swal(data.error,'','error');
+                                }
+                            }
+                        });
                     }
-                }
-            });
+                });
         }
 
         function openDetailsModal(owner) {

@@ -477,20 +477,31 @@
         }
 
         function deletePeriod(id) {
-            $('#wait').show();
-            $.ajax({
-                type: "DELETE",
-                url: "/period/delete/"+id,
-                success: function (data) {
-                    $('#wait').hide();
-                    if (data.status === 200){
-                        swal('Period deleted successfully!','','success');
-                        window.location.reload();
-                    } else {
-                        swal(data.error,'','error');
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, this process is not reversible!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((yes) => {
+                    if (yes) {
+                        $('#wait').show();
+                        $.ajax({
+                            type: "DELETE",
+                            url: "/period/delete/"+id,
+                            success: function (data) {
+                                $('#wait').hide();
+                                if (data.status === 200){
+                                    swal('Period deleted successfully!','','success');
+                                    window.location.reload();
+                                } else {
+                                    swal(data.error,'','error');
+                                }
+                            }
+                        });
                     }
-                }
-            });
+                });
         }
 
         function isLeapYear(year) {

@@ -1665,11 +1665,17 @@ router.post('/targets', function(req, res, next) {
     let target = req.body,
         query = 'INSERT INTO targets SET ?';
     target.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query(query, target, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
+    db.query('SELECT * FROM targets WHERE status=1 AND type=? AND period=?', [target.type, target.period], function (error, target_obj, fields) {
+        if(target_obj && target_obj[0]){
+            res.send({"status": 500, "error": "Similar target ("+target_obj[0]['title']+") with same period already exists!", "response": target_obj});
         } else {
-            res.send({"status": 200, "message": "Target added successfully!"});
+            db.query(query, target, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Target added successfully!"});
+                }
+            });
         }
     });
 });

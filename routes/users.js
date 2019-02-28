@@ -511,6 +511,17 @@ users.get('/user-assigned-target/:id', function(req, res, next) {
     });
 });
 
+users.get('/user-assigned-period/:id/:targetID', function(req, res, next) {
+    let query = 'SELECT t.sub_periodID AS ID,sum(t.value) AS value,u.name,u.type,u.periodID from user_targets t, sub_periods u where t.status = 1 and t.userID = ? and t.targetID = ? and u.ID = t.sub_periodID group by t.sub_periodID order by t.sub_periodID desc';
+    db.query(query, [req.params.id,req.params.targetID], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User assigned period fetched successfully", "response": results});
+        }
+    });
+});
+
 
 users.get('/user-targets/:id', function(req, res, next) {
     let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
