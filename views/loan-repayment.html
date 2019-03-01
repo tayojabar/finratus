@@ -1035,25 +1035,32 @@
         }
 
         $('#source').change(function () {
-            let $payment = $('#payment');
+            let $payment = $('#payment'),
+                $message2 = $('#overpayment-message');
+            validation();
             if (this.value === 'escrow'){
                 $payment.val(0);
+                $message2.text('');
                 $payment.prop('disabled',true);
             } else {
                 $payment.prop('disabled',false);
             }
         });
 
-        $('.validate').change(function () {
+        $('.validate').keyup(function () {
+            validation();
+        });
+
+        function validation() {
             let invoice = {},
                 $message = $('#message'),
                 $interest = $('#interest'),
                 $principal = $('#principal'),
                 $message2 = $('#overpayment-message'),
                 $button = $('#confirm-payment-button'),
-                payment = parseFloat($('#payment').val());
-            invoice.actual_payment_amount = parseFloat($('#principal').val());
-            invoice.actual_interest_amount = parseFloat($('#interest').val());
+                payment = ($('#payment').val())? parseFloat($('#payment').val()) : 0;
+            invoice.actual_payment_amount = ($('#principal').val())? parseFloat($('#principal').val()) : 0;
+            invoice.actual_interest_amount = ($('#interest').val())? parseFloat($('#interest').val()) : 0;
 
             if (invoice.actual_payment_amount > (parseFloat(expected_invoice.payment_amount)).round(2)){
                 $message.text('Principal cannot be greater than '+expected_invoice.payment_amount);
@@ -1077,10 +1084,12 @@
             let overpayment = (payment - (invoice.actual_payment_amount + invoice.actual_interest_amount)).round(2);
             if (overpayment > 0){
                 $message2.text('Overpayment = ₦'+(parseFloat(overpayment).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
+            } else if (overpayment < 0){
+                $message2.text('Underpayment = ₦'+((-1*parseFloat(overpayment)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
             } else {
                 $message2.text('');
             }
-        });
+        }
 
         Date.prototype.toDateInputValue = (function() {
             let local = new Date(this);

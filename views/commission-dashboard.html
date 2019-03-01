@@ -182,6 +182,7 @@
                                           <th>Type</th>
                                           <th>Target</th>
                                           <th>Period</th>
+                                          <th>Threshold(%)</th>
                                           <th>Details</th>
                                         </tr>
                                     </thead>
@@ -456,6 +457,7 @@
                     v.type,
                     v.target,
                     v.period,
+                    v.threshold,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
                     'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+
                     ','+v.rate+','+v.threshold+','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.start+','+v.end+'\')">' +
