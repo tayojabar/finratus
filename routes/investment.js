@@ -26,9 +26,9 @@ router.post('/products', function (req, res, next) {
 //Get Investment Product
 router.get('/products', function (req, res, next) {
     const limit = req.query.limit;
-    const offset = limit * req.query.page;
-    console.log(limit, offset);
-    let query = `SELECT * FROM investment_products LIMIT ${limit} OFFSET ${offset}`;
+    const offset = req.query.offset;
+
+    let query = `SELECT SQL_CALC_FOUND_ROWS * FROM investment_products ORDER BY name LIMIT ${limit} OFFSET ${offset}`;
     db.query(query, function (error, results, fields) {
         if (error) {
             res.send({
@@ -37,7 +37,81 @@ router.get('/products', function (req, res, next) {
                 "response": null
             });
         } else {
+            query = 'SELECT COUNT(*) as total FROM investment_products';
+            db.query(query, function (error, response, fields) {
+                if (error) {
+                    res.send({
+                        status: 500,
+                        error: error,
+                        total: 0,
+                        data: results
+                    });
+                } else {
+                    res.send({
+                        total: response[0].total,
+                        data: results
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+router.get('/products/:id', function (req, res, next) {
+    let query = 'SELECT * FROM investment_products where id = ?';
+    db.query(query, req.params.id, function (error, results, fields) {
+        if (error) {
+            res.send(JSON.stringify({
+                "status": 500,
+                "error": error,
+                "response": null
+            }));
+        } else {
             res.send(results);
+        }
+    });
+});
+
+router.post('/products/:id', function (req, res, next) {
+    var dt = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    data = req.body;
+    data.histories[data.histories.length - 1].date_created = dt;
+    data.date_modified = dt;
+    data.histories = JSON.stringify(data.histories);
+    delete data.ID;
+    db.query('UPDATE investment_products SET ? WHERE ID = ' + req.params.id, data, function (error, result, fields) {
+        if (error) {
+            res.send({
+                "status": 500,
+                "error": error,
+                "response": null
+            });
+        } else {
+            res.send({
+                "status": 200,
+                "message": "Investment product updated successfully",
+                "response": result
+            });
+        }
+    });
+});
+
+router.post('/products-status/:id', function (req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE investment_products SET status = ?, date_modified = ? WHERE ID = ?', [req.body.status, date, req.params.id], function (error, result, fields) {
+        if (error) {
+            res.send({
+                "status": 500,
+                "error": error,
+                "response": null
+            });
+        } else {
+            res.send({
+                "status": 200,
+                "message": "Investment product updated successfully",
+                "response": result
+            });
         }
     });
 });

@@ -255,7 +255,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#bootstrap-data-table-export').DataTable();
-            getInvestmentProducts(10, 0);
+            getInvestmentProducts($("[name*=bootstrap-data-table_length]").val(), 0, 1);
         });
 
         let client_id;
@@ -326,7 +326,6 @@
             }
         }
 
-
         function loadMenus() {
             let modules = {};
             modules = JSON.parse(localStorage.getItem("modules"));
@@ -364,20 +363,19 @@
             });
         }
 
-        function getInvestmentProducts(limit, page) {
+        function getInvestmentProducts(limit, offset, selectedIndex) {
+            console.log(limit, offset, selectedIndex);
             $.ajax({
                 type: "GET",
                 url: "/investment/products",
                 data: {
                     limit: limit,
-                    page: page
+                    offset: offset
                 },
                 success: function (data) {
                     console.log(data);
                     if (data.status === undefined) {
-                        if (data.length > 0) {
-                            populateDataTable(data);
-                        }
+                        populateDataTable(data, selectedIndex);
                         $('#wait').hide();
                     } else {
                         $('#wait').hide();
@@ -389,64 +387,219 @@
             });
         }
 
+        function getInvestmentProductTotalRowsCount() {
+            $.ajax({
+                type: "GET",
+                url: "/investment/product-counts",
+                success: function (data) {
+                    console.log(data);
+                    if (data.status === undefined) {
+                        return data;
+                        $('#wait').hide();
+                    } else {
+                        $('#wait').hide();
+                        swal(
+                            'Oops! An error occurred while geting total number of added Investment Products; ' +
+                            data.error
+                            .sqlMessage,
+                            '', 'error');
+                        return 0;
+                    }
+                }
+            });
+        }
+
         let paging = 0;
 
-        function populateDataTable(data) {
+        // $("select").on('change', function () {
+        //     console.log("tjhgjkgjk jkgjhgjh");
+        // });
+
+        // $("[name*=bootstrap-data-table_length]").on('click', function () {
+        //     alert(this.value);
+        // });
+
+
+
+
+        function doPaging(current, {
+            range,
+            pages,
+            start = 1
+        }) {
+            const paging = [];
+            var i = Math.min(pages + start - range, Math.max(start, current - (range / 2 | 0)));
+            const end = i + range;
+            while (i < end) {
+                paging.push(i === current ? `${i++}` : `${i++}`)
+            }
+            return paging;
+        }
+
+
+        function bindPagination(limit, record, selectedIndex) {
+            let divMath = record.total / limit;
+            console.log(divMath);
+            let roundedNumb = Math.ceil(divMath);
+            let results = [];
+            if (roundedNumb > 1) {
+                console.log(roundedNumb, divMath);
+                let _paging = {
+                    range: 7,
+                    pages: roundedNumb
+                }
+                results = doPaging(selectedIndex, _paging);
+                console.log(results);
+            } else {
+                results = ['1'];
+            }
+            console.log(results.length);
+
+            $('.pagination').html("");
+            for (var i = 0; i < results.length; i++) {
+                console.log(results[i], selectedIndex);
+                let opts = '';
+                if (parseInt(results[i]) > 0) {
+                    if (results[i].toString() === selectedIndex.toString()) {
+                        opts =
+                            `<li class="paginate_button page-item active" id="btnpaging"><a href="#" aria-controls="bootstrap-data-table" data-dt-idx="${parseInt(results[i])}" tabindex="0" class="page-link">${results[i]}</a></li>`;
+                    } else {
+                        opts =
+                            `<li class="paginate_button page-item" id="btnpaging"><a href="#" aria-controls="bootstrap-data-table" data-dt-idx="${parseInt(results[i])}" tabindex="0" class="page-link">${results[i]}</a></li>`;
+                    }
+                }
+                $(opts).val(i).appendTo(
+                    '.pagination');
+            }
+            $('.dataTables_info').html(`Showing ${selectedIndex} to ${record.data.length} of ${record.total} entries`);
+        }
+
+        $("#bootstrap-data-table").on("click", function (event) {
+            console.log("Calling here");
+        })
+
+        function updateStatus(id, status) {
+            $.ajax({
+                url: `/investment/products-status/${id}`,
+                'type': 'post',
+                'data': {
+                    status: status
+                },
+                'success': function (data) {
+                    if (data.status === 200) {
+                        $('#wait').hide();
+                        swal('Investment Product updated successfully!', '', 'success');
+                        var url = "./all-investment-products";
+                        $(location).attr('href', url);
+                    } else {
+                        $('#wait').hide();
+                        swal('Oops! An error occurred while updating Investment Product; ' + data.error
+                            .sqlMessage,
+                            '', 'error');
+                    }
+                },
+                'error': function (err) {
+                    $('#wait').hide();
+                    swal('Oops! An error occurred while updating Investment Product; ' + data.error.sqlMessage,
+                        '', 'error');
+                }
+            });
+        }
+
+
+
+        function populateDataTable(data, selectedIndex) {
+            console.log(data);
             $("#bootstrap-data-table").DataTable().clear();
             let processed_data = [];
-            $.each(data, function (k, v) {
+
+            $.each(data.data, function (k, v) {
                 let actions;
-                if (v.status === "1") {
-                    actions = '<a href="./client-info?id=' + v.ID +
-                        '" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>' +
-                        '<button onclick="confirm(' + v.ID +
-                        ')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
+                if (v.status.toString() === "1") {
+                    console.log(v);
+                    actions =
+                        `<div class="row">
+                            <a href="./investment-products?id=${v.ID}" class="write btn btn-primary col-sm-6 col-md-6" style="font-size:1.0rem">
+                                <i class="fa fa-edit"></i></a>
+                                <button onclick="updateStatus(${v.ID},${0})" class="write btn btn-danger col-sm-6 col-md-6" style="font-size:1.0rem">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                        </div>`
                 } else {
-                    actions = '<button id="' + v.ID + '" name="' + v.ID + '" onclick="confirmEnable(' + v.ID +
-                        ')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable Client</button>';
+                    console.log("false");
+                    actions =
+                        `<button id="${v.ID}" name="${v.ID}" onclick="updateStatus(${v.ID},${1})" class="write btn btn-success" style="font-size:1.0rem">
+                                    <i class="fa fa-check"></i>
+                                </button>`
                 }
                 v.actions = actions;
                 processed_data.push(v);
-            });
 
-            $('#bootstrap-data-table').DataTable({
+            });
+            console.log(processed_data);
+
+            var table = $('#bootstrap-data-table').DataTable({
                 dom: 'Blfrtip',
                 bDestroy: true,
                 data: processed_data,
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                drawCallback: function () {
-                    $('.paginate_button.next', this.api().table().container())
-                        .on('click', function () {
-                            paging += 1;
-                            getInvestmentProducts(10, paging);
+                initComplete: function () {
+                    let _selectedLimit = parseInt($("[name*=bootstrap-data-table_length]").val());
+                    bindPagination(_selectedLimit, data, selectedIndex);
+                },
+                drawCallback: function (item) {
+                    console.log(item);
+                    $('.pagination', this.api().table().container())
+                        .on('click', "li", function () {
+                            console.log(item);
+                            console.log("Calling click event");
+                            console.log($(this));
+                            let _selectedPage = parseInt($(this).context.innerText);
+                            let _selectedLimit = parseInt($("[name*=bootstrap-data-table_length]").val());
+                            let offsetValue = (_selectedPage - 1) * _selectedLimit;
+                            console.log(offsetValue);
+                            getInvestmentProducts(_selectedLimit,
+                                offsetValue, _selectedPage);
                         });
                     $('.paginate_button.previous', this.api().table().container())
                         .on('click', function () {
-                            if (paging !== 0) {
-                                paging -= 1;
-                                getInvestmentProducts(10, paging);
-                            }
+                            console.log("we are here");
+                        });
+                    $("[name*=bootstrap-data-table_length]", this.api().table().container()).on('change',
+                        function () {
+                            let _selectedLimit = parseInt(this.value);
+                            $("[name*=bootstrap-data-table_length]").val(
+                                _selectedLimit);
+                            getInvestmentProducts(_selectedLimit, 0, 1);
                         });
                 },
                 columns: [{
-                        data: "code"
+                        data: "code",
+                        width: "15%"
                     },
                     {
-                        data: "name"
+                        data: "name",
+                        width: "30%"
                     },
                     {
-                        data: "investment_min"
+                        data: "investment_min",
+                        width: "auto",
+                        className: "text-right"
                     },
                     {
-                        data: "investment_max"
+                        data: "investment_max",
+                        width: "auto",
+                        className: "text-right"
                     },
                     {
-                        data: "date_created"
+                        data: "date_created",
+                        width: "30%"
                     },
                     {
-                        data: "actions"
+                        data: "actions",
+                        width: "auto"
                     }
                 ]
             });

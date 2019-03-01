@@ -45,6 +45,10 @@ let app = express(),
     cors = require('cors'),
     user = require('./routes/users'),
     investment = require('./routes/investment'),
+    core_service = require('./routes/service/core-service'),
+    client_service = require('./routes/service/custom-services/client-service'),
+    investment_product_service = require('./routes/service/custom-services/investment-product.service'),
+    investment_service = require('./routes/service/custom-services/investment.service'),
     index = require('./routes/index');
 
 app.use(bodyParser.urlencoded({
@@ -205,6 +209,10 @@ app.get('/logout', function (req, res) {
 app.use('/', index);
 app.use('/user', user);
 app.use('/investment', investment);
+app.use('/core-service', core_service);
+app.use('/client-service', client_service);
+app.use('/investment-service', investment_service);
+app.use('/investment-products', investment_product_service);
 app.use('/files', express.static(__dirname + '/files'));
 
 app.get('/logon', function (req, res) {
@@ -449,6 +457,18 @@ app.get('/investment-products', requireLogin, function (req, res) {
 
 app.get('/all-investment-products', requireLogin, function (req, res) {
     res.sendFile('all-investment-products.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/add-investments', requireLogin, function (req, res) {
+    res.sendFile('investment/add-investment/add-investment.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/all-investments', requireLogin, function (req, res) {
+    res.sendFile('investment/all-investment/all-investment.html', {
         root: __dirname + '/views'
     });
 });
