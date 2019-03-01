@@ -262,7 +262,7 @@
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="disburse-frequency" onchange="dFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="-1">Period</option>
+                                                                        <option value="-1"> -- Select Period --</option>
                                                                         <option value="2">Monthly</option>
                                                                         <option value="4">Quarterly</option>
                                                                         <option value="3">Yearly</option>
@@ -365,7 +365,7 @@
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="branch-frequency" onchange="bFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="-1">Period</option>
+                                                                        <option value="-1"> -- Select Period --</option>
                                                                         <option value="2">Monthly</option>
                                                                         <option value="4">Quarterly</option>
                                                                         <option value="3">Yearly</option>
@@ -494,7 +494,7 @@
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="ir-frequency" onchange="irFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="-1">Period</option>
+                                                                        <option value="-1"> -- Select Period --</option>
                                                                         <option value="2">Monthly</option>
                                                                         <option value="4">Quarterly</option>
                                                                         <option value="3">Yearly</option>
@@ -758,7 +758,7 @@
                                                             <div class="form-group">
                                                                 <div class="input-group">
                                                                     <select id="payment-frequency" onchange="pFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="-1">Period</option>
+                                                                        <option value="-1"> -- Select Period --</option>
                                                                         <option value="2">Monthly</option>
                                                                         <option value="4">Quarterly</option>
                                                                         <option value="3">Yearly</option>
@@ -2178,17 +2178,17 @@
                     }
                     if (v.quarter){
                         agent = ': '+v.Agent;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.quarter , value: v.AmountDisbursed}, )
                     }
                     if (v.OfficersQuarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.OfficersQuarter , value: v.AmountDisbursed}, )
                     }
                     if (v.AQuarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.AQuarter , value: v.AmountDisbursed}, )
                     }
                 });
@@ -2277,17 +2277,17 @@
                     }
                     if (v.quarter){
                         agent = ': '+v.Agent;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.quarter , value: v.AmountDisbursed}, )
                     }
                     if (v.OfficersQuarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.OfficersQuarter , value: v.AmountDisbursed}, )
                     }
                     if (v.AQuarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.AQuarter , value: v.AmountDisbursed}, )
                     }
                 });
@@ -2370,17 +2370,17 @@
                     }
                     if (v.quarter){
                         agent = ': '+v.Agent;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.quarter , value: v.AmountDisbursed}, )
                     }
                     if (v.OfficersQuarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.OfficersQuarter , value: v.AmountDisbursed}, )
                     }
                     if (v.AQuarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.AQuarter , value: v.AmountDisbursed}, )
                     }
                 });
@@ -2483,13 +2483,15 @@
         if (branch.value == 0){
             swal('', 'You have to choose a branch to continue!', 'warning');
             $('#branch-frequency').val(-1);
-            year = $('#branch-year').val(0);
+            ('#branch-year').val(0);
             $('#brn-year').hide();
             return branches($('#branchreport').val());
         }
         url = url.concat('branch='+branch.value+'&&year='+year);
-        if (freq == "-1"){
+        if (freq != "2" || freq != '4'){
             $('#brn-year').hide();
+            $('#branch-year').val(0);
+            url = url.concat('&&freq='+freq);
         }
         else {
             url = url.concat('&&freq='+freq);
@@ -2504,7 +2506,7 @@
                 jQuery.each(data.response, function(k, v){
                     if ($('#branchreport').val() == '1'){
                         yaxis = "Amount Disbursed (Naira)";
-                        caption = 'Disbursements by Branches: ';
+                        caption = 'Disbursements by Branches';
                         if (v.branch)
                             d.push({label: v.branch , value: v.amount_disbursed}, );
                         if (v.year){
@@ -2513,13 +2515,13 @@
                             d.push({label: v.year , value: v.AmountDisbursed}, );
                         }
                         if (v.month){
-                            agent = ': '+v.branch;
+                            agent = ': '+v.office;
                             xaxis = 'Months';
                             d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, )
                         }
                         if (v.Quarter){
                             agent = ': '+v.office;
-                            xaxis = 'Years'
+                            xaxis = 'Quarters'
                             d.push({label: v.Quarter , value: v.AmountDisbursed}, );
                         }
                     }
@@ -2530,17 +2532,17 @@
                             d.push({label: v.branch , value: v.amount_received}, );
                         if (v.PaymentYear){
                             agent = ': '+v.office;
-                            xaxis = 'Years'
+                            xaxis = 'Period'
                             d.push({label: v.PaymentYear , value: v.amount_received}, );
                         }
                         if (v.monthpayed){
                             agent = ': '+v.office;
-                            xaxis = 'Months';
+                            xaxis = 'Period';
                             d.push({label: v.monthpayed , value: v.amount_received}, )
                         }
                         if (v.branchQuarter){
                             agent = ': '+v.office;
-                            xaxis = 'Years'
+                            xaxis = 'Period'
                             d.push({label: v.branchQuarter , value: v.amount_received}, );
                         }
                     }
@@ -2784,7 +2786,8 @@
         }
         else {
             $('#brn-year').hide();
-            url = url.concat('branch='+branch+'&&freq='+frequency.value);
+            $('#branch-year').val(0);
+            url = url.concat('branch='+branch+'&&freq='+frequency.value+'&&year='+$('#branch-year').val());
         }
         let d = [], series = '', agent = '', xaxis, yaxis, caption, categories = [], dataset = [], datar = [], chartTemp, values = [], diffSeries = [], countSeries, seriesNames = [], nondupSeriesNames = [];
         $.ajax({
@@ -2810,7 +2813,7 @@
                             }
                             if (v.Quarter) {
                                 agent = ': ' + v.office;
-                                xaxis = 'Years'
+                                xaxis = 'Quarters'
                                 d.push({label: v.Quarter, value: v.AmountDisbursed},);
                             }
                         }
@@ -2831,7 +2834,7 @@
                             }
                             if (v.branchQuarter){
                                 agent = ': '+v.office;
-                                xaxis = 'Years'
+                                xaxis = 'Quarters'
                                 d.push({label: v.branchQuarter , value: v.amount_received}, );
                             }
                         }
@@ -2981,7 +2984,7 @@
                             }
                             if (v.Quarter) {
                                 agent = ': ' + v.office;
-                                xaxis = 'Years'
+                                xaxis = 'Quarters'
                                 d.push({label: v.Quarter, value: v.AmountDisbursed},);
                             }
                         }
@@ -3002,7 +3005,7 @@
                             }
                             if (v.branchQuarter){
                                 agent = ': '+v.office;
-                                xaxis = 'Years'
+                                xaxis = 'Quarters'
                                 d.push({label: v.branchQuarter , value: v.amount_received}, );
                             }
                         }
@@ -3210,11 +3213,19 @@
         let url = '/user/analytics?t=payments&&',
             freq = $('#payment-frequency').val(),
             year = $('#payment-year').val();
-        if (officer.value == 0 && freq == "-1"){
+        if (officer.value == 0){
+            $('#payment-frequency').val(-1);
+            $('#payment-year').val(0);
+            $('#pay-year').hide();
             return payments();
         }
         url = url.concat('officer='+officer.value+'&&year='+year);
-        if (freq !== "-1"){
+        if (freq != "2" || freq != '4'){
+            $('#pay-year').hide();
+            $('#payment-year').val(0);
+            url = url.concat('&&freq='+freq);
+        }
+        else {
             url = url.concat('&&freq='+freq);
         }
         let d = [], agent = '', xaxis;
@@ -3248,12 +3259,12 @@
                         d.push({label: v.allpaymentyear , value: v.AmountPayed}, );
                     }
                     if (v.Quarter){
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Quarter , value: v.AmountPayed}, );
                     }
                     if (v.Officersquarter){
                         agent = ': '+v.name;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Officersquarter , value: v.AmountPayed}, );
                     }
                 });
@@ -3296,7 +3307,8 @@
         }
         else {
             $('#pay-year').hide();
-            url = url.concat('officer='+officer+'&&freq='+frequency.value);
+            $('#payment-year').val(0);
+            url = url.concat('officer='+officer+'&&freq='+frequency.value+'&&year='+$('#payment-year').val());
         }
         let d = [], agent = '', xaxis;
 
@@ -3326,15 +3338,16 @@
                     }
                     if (v.allpaymentyear){
                         agent = '';
+                        xaxis = 'Years';
                         d.push({label: v.allpaymentyear , value: v.AmountPayed}, );
                     }
                     if (v.Quarter){
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Quarter , value: v.AmountPayed}, );
                     }
                     if (v.Officersquarter){
                         agent = ': '+v.name;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Officersquarter , value: v.AmountPayed}, );
                     }
                 });
@@ -3398,15 +3411,16 @@
                     }
                     if (v.allpaymentyear){
                         agent = '';
+                        xaxis = 'Years';
                         d.push({label: v.allpaymentyear , value: v.AmountPayed}, );
                     }
                     if (v.Quarter){
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Quarter , value: v.AmountPayed}, );
                     }
                     if (v.Officersquarter){
                         agent = ': '+v.name;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Officersquarter , value: v.AmountPayed}, );
                     }
                 });
@@ -3516,7 +3530,12 @@
             return interestreceived();
         }
         url = url.concat('officer='+officer.value+'&&year='+year);
-        if (freq !== "-1"){
+        if (freq != "2" || freq != '4'){
+            $('#ir-year').hide();
+            $('#i-r-year').val(0);
+            url = url.concat('&&freq='+freq);
+        }
+        else{
             url = url.concat('&&freq='+freq);
         }
         let d = [], agent = '', xaxis;
@@ -3558,17 +3577,17 @@
                     }
                     if (v.Quarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Quarter , value: v.amount_received}, )
                     }
                     if (v.PaymentYear){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Years';
                         d.push({label: v.PaymentYear, value: v.amount_received}, );
                     }
                     if (v.OfficerYear){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Years';
                         d.push({label: v.OfficerYear, value: v.amount_received}, );
                     }
                 });
@@ -3611,7 +3630,8 @@
         }
         else {
             $('#ir-year').hide();
-            url = url.concat('officer='+officer+'&&freq='+frequency.value);
+            $('#i-r-year').val(0);
+            url = url.concat('officer='+officer+'&&freq='+frequency.value+'&&year='+$('#i-r-year').val());
         }
         let d = [], agent = '', xaxis;
 
@@ -3647,22 +3667,22 @@
                     }
                     if (v.OfficerQuarter){
                         agent = ': '+v.agent;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.OfficerQuarter , value: v.amount_received}, )
                     }
                     if (v.Quarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Quarter , value: v.amount_received}, )
                     }
                     if (v.PaymentYear){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Years';
                         d.push({label: v.PaymentYear, value: v.amount_received}, );
                     }
                     if (v.OfficerYear){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Years';
                         d.push({label: v.OfficerYear, value: v.amount_received}, );
                     }
                 });
@@ -3732,22 +3752,22 @@
                     }
                     if (v.OfficerQuarter){
                         agent = ': '+v.agent;
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.OfficerQuarter , value: v.amount_received}, );
                     }
                     if (v.Quarter){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Quarters';
                         d.push({label: v.Quarter , value: v.amount_received}, );
                     }
                     if (v.PaymentYear){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Years';
                         d.push({label: v.PaymentYear, value: v.amount_received}, );
                     }
                     if (v.OfficerYear){
                         agent = '';
-                        xaxis = 'Period';
+                        xaxis = 'Years';
                         d.push({label: v.OfficerYear, value: v.amount_received}, );
                     }
                 });

@@ -3355,6 +3355,16 @@ users.get('/analytics', function(req, res, next) {
                         'ORDER BY Disbursement_date'
                 }
                 //Specific Branch, Yearly
+                if (b != '0' && freq == "3"){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') year,\n' +
+                        '(select branch_name from branches where branches.id = '+b+') office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2 and date_format(disbursement_date, \'%Y\') = '+y+'\n' +
+                        'AND     (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
+                        'GROUP BY DATE_FORMAT(Disbursement_date, \'%Y\')'
+                }
                 if (b != '0' && freq == "3" && y == '0'){
                     query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') year,\n' +
                         '(select branch_name from branches where branches.id = '+b+') office,\n' +
@@ -3364,15 +3374,6 @@ users.get('/analytics', function(req, res, next) {
                         'WHERE  status = 2\n' +
                         'AND     (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
                         'GROUP BY DATE_FORMAT(Disbursement_date, \'%Y\')'
-                }
-                if (b == '0' && freq == "3" && y == '0'){
-                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') year,\n' +
-                        '(select branch_name from branches where branches.id = '+b+') office,\n' +
-                        '         SUM(loan_amount) AmountDisbursed,\n' +
-                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
-                        'FROM     applications\n' +
-                        'WHERE  status = 2\n' +
-                        'GROUP BY office, DATE_FORMAT(Disbursement_date, \'%Y\')'
                 }
                 if (b != '0' && freq == "4"){
                     query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) Quarter,\n' +
