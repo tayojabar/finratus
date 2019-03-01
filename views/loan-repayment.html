@@ -501,7 +501,7 @@
     </div>
 
     <div class="modal fade" id="editHistory" tabindex="-1" role="dialog" aria-labelledby="editHistoryLabel">
-        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="editHistoryLabel">Edit Schedule History</h4>
@@ -967,8 +967,6 @@
                                         '        <i class="fa fa-list"></i>\n' +
                                         '    </button>\n' +
                                         '    <div class="dropdown-menu">\n' +
-                                        '        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirmPayment" onclick="confirmPaymentModal('+application.schedule[i - 2]['ID']+')">Confirm Payment</a>\n' +
-                                        '        <div class="dropdown-divider"></div>\n' +
                                         '        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#invoiceHistory" onclick="invoiceHistory('+application.schedule[i - 2]['ID']+')">Payment History</a>\n' +
                                         '        <a class="dropdown-item" data-toggle="modal" data-target="#editHistory" href="#" onclick="editHistory('+application.schedule[i - 2]['ID']+')">Edit History</a>\n' +
                                         '    </div>\n' +
@@ -1106,7 +1104,7 @@
                 return swal('Kindly select a payment source to proceed','','warning');
             application.escrow = application.escrow || "0";
             if (invoice.payment_source === 'escrow' && (total_payment > (parseFloat(application.escrow)).round(2)))
-                return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+parseFloat(application.escrow).round(2)+')','','warning');
+                return swal('Insufficient escrow funds ('+parseFloat(application.escrow).round(2)+')','','warning');
             $('#wait').show();
             $('#confirmPayment').modal('hide');
             updateEscrow(invoice.payment_source, total_payment, function () {

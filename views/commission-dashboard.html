@@ -529,7 +529,7 @@
             if (!obj.amount)
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.amount) > earned)
-                return swal('Amount paid ('+obj.amount+') cannot be greater that the Total Commission Earned ('+earned+')','','warning');
+                return swal('Insufficient commission earned ('+earned+')','','warning');
             $('#wait').show();
             $.ajax({
                 'url': '/user/commission/payments',

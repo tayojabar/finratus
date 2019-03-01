@@ -1306,6 +1306,7 @@
                         if (application.status === 2){
                             $('#collect-payment-button').show();
                             $('#generate-schedule-v2').show();
+                            $('#principal-total-text').hide();
                             $('#disbursement-cards').show();
                             $('#disburse-alert').show();
                             $("#current_stage").hide();
@@ -1321,11 +1322,19 @@
                                 $('#collect-payment-button').text('View Collection');
                                 $('#collect-payment-button').addClass('btn-secondary');
                                 $('#collect-payment-button').removeClass('btn-primary');
-                                $('#generate-schedule-v2').hide();
-                                if (application.close_status === 1){
-                                    $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
-                                } else if (application.close_status === 2){
-                                    $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
+                                switch (application.close_status){
+                                    case 1: {
+                                        $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
+                                        break;
+                                    }
+                                    case 2: {
+                                        $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
+                                        break;
+                                    }
+                                    case 3: {
+                                        $('#loan_closed').html('<strong>CLOSED </strong>');
+                                        break;
+                                    }
                                 }
                             }
                             checkTotalDue();
@@ -1954,8 +1963,8 @@
                 $('#collect-payment-button').addClass('btn-secondary');
                 $('#collect-payment-button').removeClass('btn-primary');
                 $('#generate-schedule-v2').hide();
-                $('#loan_closed').html('<strong>CLOSED</strong>');
                 if (application.close_status === 0){
+                    $('#loan_closed').html('<strong>REPAYMENT COMPLETED</strong>');
                     swal({
                         title: "Would you like to close this loan?",
                         text: "All repayments for this loan application has been made",

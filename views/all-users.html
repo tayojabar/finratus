@@ -458,7 +458,7 @@
     </div>
 
     <div class="modal fade" id="targetsModal" role="dialog" aria-labelledby="targetsModalLabel">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="targetsModalLabel">User Targets</h4>
@@ -1201,7 +1201,7 @@
                     v.target,
                     v.period,
                     '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
-                    '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+                    '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+','+v.targetID+')"><i class="fa fa-remove"></i> Remove</button>'
                 ]);
             });
         }
@@ -1241,7 +1241,7 @@
             if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.value) > target_limit)
-                return swal('Target value ('+obj.value+') cannot be greater that the Total unallocated Target ('+target_limit+')','','warning');
+                return swal('Insufficient unallocated target ('+target_limit+')','','warning');
             obj.periodID = ($.grep(targets, function(e){return e.ID === parseInt(target_id);}))[0]['period'];
             $('#wait').show();
             $.ajax({
@@ -1261,7 +1261,7 @@
             });
         }
 
-        function removeTarget(id) {
+        function removeTarget(id,targetID) {
             $('#wait').show();
             $.ajax({
                 'url': '/user/user-targets/'+id+'/'+localStorage.user_target_id,
@@ -1273,6 +1273,7 @@
                     } else{
                         swal("Target deleted successfully!","","success");
                         populateTargets(response);
+                        getLimit(targetID);
                     }
                 }
             });
