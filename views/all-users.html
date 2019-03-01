@@ -1251,9 +1251,9 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal(response.error,"","error");
+                        notification(response.error,"","error");
                     } else{
-                        swal("Target assigned successfully!","","success");
+                        notification("Target assigned successfully!","","success");
                         populateTargets(response);
                         getLimit(obj.targetID);
                     }
@@ -1269,9 +1269,9 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal("No internet connection","","error");
+                        notification("No internet connection","","error");
                     } else{
-                        swal("Target deleted successfully!","","success");
+                        notification("Target deleted successfully!","","success");
                         populateTargets(response);
                         getLimit(targetID);
                     }
@@ -1306,9 +1306,9 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal(response.error,"","error");
+                        notification(response.error,"","error");
                     } else{
-                        swal("Commission assigned successfully!","","success");
+                        notification("Commission assigned successfully!","","success");
                         populateCommissions(response);
                     }
                 }
@@ -1323,9 +1323,9 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal("No internet connection","","error");
+                        notification("No internet connection","","error");
                     } else{
-                        swal("Commission deleted successfully!","","success");
+                        notification("Commission deleted successfully!","","success");
                         populateCommissions(response);
                     }
                 }
@@ -1341,6 +1341,9 @@
             return re.test(email);
         }
 
+        function notification(title,text,type) {
+            return swal({title: title, text: text, icon: type, timer: 1000});
+        }
     </script>
 
 
