@@ -2816,7 +2816,7 @@ users.get('/disbursements/filter', function(req, res, next) {
             'END as valid_payment '+
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
-            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
+            '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
             'and status = 1 '
             ;
     queryPart2 = 'select \n' +
@@ -2832,7 +2832,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         'END as valid_payment '+
         'from schedule_history \n' +
         'where applicationID in (select applicationID from application_schedules\n' +
-        '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'
+        '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
         'and status = 0 '
         ;
     group = 'group by applicationID';
@@ -2857,7 +2857,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         query = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query3 = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query2 = query2.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
-    }
+    }console.log(query3)
     db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
         db.query(query3, [loan_officer], function (error, results, fields) {
