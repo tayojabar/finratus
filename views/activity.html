@@ -858,6 +858,8 @@
         }
 
         var getInitials = function (name) {
+            if (name == null)
+                return null;
             var parts = name.split(' ')
             var initials = ''
             for (var i = 0; i < parts.length; i++) {
@@ -865,7 +867,7 @@
                     initials += parts[i][0]
                 }
             }
-            return initials
+            return initials;
         }
 
         function savecomment(id){
@@ -1104,7 +1106,7 @@
 //                        swal("An Activity  already exists!","","error");
 //                    }
                     if(test.status == 500){
-                        swal("Error","Unable to submit","error");
+                        return -swal("Error","Unable to submit","error");
                     }
                     else{
                         for (var i = 0; i < $('#activity-files')[0].files.length; i++){

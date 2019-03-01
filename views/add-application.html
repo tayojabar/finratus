@@ -41,6 +41,11 @@
         input.invalid, span.invalid {
             border: 2px dashed red;
         }
+        #schedule-error-message{
+            text-align: center;
+            font-style: italic;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -139,6 +144,7 @@
                                 <strong>Add Application Data</strong> <small> Loan Information</small>
                             </div>
                             <div class="card-body card-block">
+                                <p id="schedule-error-message" style="display: none;"></p>
                                 <div class="row">
                                     <div class="col-sm-6 form-group">
                                         <label class="col-form-label">Select Client <strong style="color:red"> *</strong></label>
@@ -162,25 +168,25 @@
                                         <label class="form-control-label">Loan Requested</label><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
                                         <div class="input-group">
                                             <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                            <input type="number" id="amount" class="form-control" required="required" value="50000" min="1" max="250000">
+                                            <input type="number" id="amount" class="form-control" required="required" value="50000" min="1" max="100000000">
                                         </div>
-                                        <small class="form-text text-muted">Max: 250,000.00 (NGN)</small>
+                                        <small class="form-text text-muted">Min: 1.00(NGN) Max: 100,000,000.00(NGN)</small>
                                     </div>
                                     <div class="col-sm-6 form-group">
                                         <label class="form-control-label">Interest Rate</label><strong style="color:red"> *</strong><span id="interest-rate-error" style="padding-left:50px; text-align: center"></span>
                                         <div class="input-group">
                                             <div class="input-group-addon"><i class="fa fa-plus"></i></div>
-                                            <input type="number" id="interest-rate" class="form-control" required="required" value="4" min="3" max="10">
+                                            <input type="number" id="interest-rate" class="form-control" required="required" value="12" min="1" max="1000">
                                         </div>
-                                        <small class="form-text text-muted">Min: 3%  Max: 10% </small>
+                                        <small class="form-text text-muted">Min: 1%  Max: 1000% </small>
                                     </div>
                                     <div class="col-sm-6 form-group">
                                         <label class="form-control-label">Tenor (monthly)</label><strong style="color:red"> *</strong><span id="term-error" style="padding-left:50px; text-align: center"></span>
                                         <div class="input-group">
                                             <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                            <input type="number" id="term" class="form-control" required="required" value="6" min="1" max="24">
+                                            <input type="number" id="term" class="form-control" required="required" value="12" min="1" max="60">
                                         </div>
-                                        <small class="form-text text-muted">Min: 1  Max: 24</small>
+                                        <small class="form-text text-muted">Min: 1  Max: 60</small>
                                     </div>
                                     <div class="col-sm-6 form-group">
                                         <label class="form-control-label">First Repayment Date</label><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
@@ -199,7 +205,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6 form-group amortization-div" style="display: none;">
+                                    <div id="payment-amount-div" class="col-sm-6 form-group" style="display: none;">
                                         <label class="form-control-label">Payment Amount (Monthly)</label><strong style="color:red"> *</strong><span id="payment-amount-error" style="padding-left:50px; text-align: center"></span>
                                         <div class="input-group">
                                             <div class="input-group-addon"><i class="fa fa-money"></i></div>
@@ -362,6 +368,9 @@
         $('#interest-rate').keyup(function () {
             triggerAmortization();
         });
+        $('#repayment-date').change(function () {
+            triggerAmortization();
+        });
 
         function triggerAmortization() {
             if ($('#amortization').val() === 'standard')
@@ -369,20 +378,39 @@
         }
 
         function processSchedule(schedule) {
-            let result = [];
-            for (let i=-2; i< schedule.length-1; i++){
+            let result = [],
+                total_principal = 0,
+                amount = $('#amount').val(),
+                date = $('#repayment-date').val();
+            for (let i=-2; i<schedule.length-1; i++){
                 if (i === -2){
                     result.push("PRINCIPAL,,,INTEREST,,,BALANCE");
                 } else if (i === -1){
                     result.push("INVOICE DATE,COLLECTION DATE,AMOUNT,INVOICE DATE,COLLECTION DATE,AMOUNT,AMOUNT");
                 } else {
-                    let cells = "0,0,"+schedule[i][1].toFixed(2)+",0,0,"+schedule[i][2].toFixed(2)+","+schedule[i][3].toFixed(2);
+                    total_principal = (total_principal + schedule[i][1]).round(2);
+                    amount = parseFloat(amount);
+                    if (i === schedule.length-2){
+                        let excess = (total_principal > amount)? (total_principal - amount).round(2) : (amount - total_principal).round(2);
+                        schedule[i][2] = (schedule[i][2] + schedule[i][3] + excess).round(2);
+                        schedule[i][1] = (schedule[i][1] - excess).round(2);
+                        schedule[i][3] = 0;
+                    }
+                    let cells;
+                    if (date){
+                        cells = date+","+date+","+schedule[i][1]+","+date+","+date+","+schedule[i][2]+","+schedule[i][3];
+                        let date_array = date.split('-');
+                        date = new Date(date_array[0], (parseInt(date_array[1])-1), date_array[2]);
+                        date.setMonth(date.getMonth()+1);
+                        date = formatDate(date);
+                    } else {
+                        cells = "0,0,"+schedule[i][1]+",0,0,"+schedule[i][2]+","+schedule[i][3];
+                    }
                     result.push(cells);
                 }
             }
             return result;
         }
-
 
         function pmt(rate,nper,pv) {
             let pvif, pmt;
@@ -399,9 +427,9 @@
                 number_of_payments = payments_per_year * years;
 
             for (let i=0; i<=number_of_payments; i++) {
-                let interest = remaining * (interest_rate/100/payments_per_year),
-                    principle = (payment-interest);
-                remaining -= principle
+                let interest = (remaining * (interest_rate/100/payments_per_year)).round(2),
+                    principle = (payment-interest).round(2);
+                remaining = (remaining - principle).round(2);
                 let row = [i, principle>0?(principle<payment?principle:payment):0, interest>0?interest:0, remaining>0?remaining:0];
                 schedule.push(row);
             }
@@ -414,28 +442,32 @@
                 loan_amount = 0,
                 $dvCSV = $("#dvCSV2"),
                 $csvUpload = $("#csvUpload2"),
-                $uploadCSV = $("#uploadCSV2");
+                $uploadCSV = $("#uploadCSV2"),
+                $message = $("#schedule-error-message");
 
             $('#amortization').change(function () {
                 $dvCSV.html('');
                 schedule = [];
                 loan_amount = 0;
                 if (this.value === 'standard'){
+                    $message.show();
                     $('.amortization-div').hide();
+                    $('#payment-amount-div').show();
                     let loanAmount = $('#amount').val(),
                         interestRate = $('#interest-rate').val(),
                         duration = $('#term').val();
                     if (!loanAmount || !interestRate || !duration)
-                        return swal('Kindly fill all required fields!','','warning');
+                        return $message.text('Kindly fill all required fields!','','warning');
                     duration = parseFloat(duration);
                     loanAmount = parseFloat(loanAmount);
                     interestRate = parseFloat(interestRate);
-                    if (duration < 1 || duration > 24)
-                        return swal('Minimum tenor is 1 (month) and Maximum is 24 (months)','','warning');
-                    if (interestRate < 3 || interestRate > 10)
-                        return swal('Minimum interest rate is 3% and Maximum is 10%','','warning');
-                    if (loanAmount < 1 || loanAmount > 25000000)
-                        return swal('Minimum loan amount is ₦1 and Maximum is ₦25,000,000','','warning');
+                    if (duration < 1 || duration > 60)
+                        return $message.text('Minimum tenor is 1 (month) and Maximum is 60 (months)','','warning');
+                    if (interestRate < 1 || interestRate > 1000)
+                        return $message.text('Minimum interest rate is 1% and Maximum is 1000%','','warning');
+                    if (loanAmount < 1 || loanAmount > 100000000)
+                        return $message.text('Minimum loan amount is ₦1 and Maximum is ₦100,000,000','','warning');
+                    $message.hide();
 
                     let years = duration/12,
                         paymentsPerYear = 12,
@@ -455,7 +487,7 @@
                         } else if (i === 1) {
                             cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
                         }
-                        if (cells.join(' ').length > 20){
+                        if (cells.join(' ').length > 10){
                             for (let j = 0; j < cells.length; j++) {
                                 let cell = $("<td />");
                                 if (i === 0){
@@ -499,7 +531,9 @@
                     $dvCSV.html('');
                     $dvCSV.append(table);
                 } else {
+                    $message.hide();
                     $('.amortization-div').show();
+                    $('#payment-amount-div').hide();
                 }
             });
 
@@ -522,7 +556,7 @@
                                 } else if (i === 1) {
                                     cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
                                 }
-                                if (cells.join(' ').length > 20){
+                                if (cells.join(' ').length > 10){
                                     for (let j = 0; j < cells.length; j++) {
                                         let cell = $("<td />");
                                         if (i === 0){
@@ -597,12 +631,12 @@
                         obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
                         if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
                             return swal('Kindly fill all required fields!','','warning');
-                        if (parseFloat(obj.duration) < 1 || parseFloat(obj.duration) > 24)
-                            return swal('Minimum tenor is 1 (month) and Maximum is 24 (months)','','warning');
-                        if (parseFloat(obj.interest_rate) < 3 || parseFloat(obj.interest_rate) > 10)
-                            return swal('Minimum interest rate is 3% and Maximum is 10%','','warning');
-                        if (parseFloat(obj.loan_amount) < 1 || parseFloat(obj.loan_amount) > 25000000)
-                            return swal('Minimum loan amount is ₦1 and Maximum is ₦25,000,000','','warning');
+                        if (parseFloat(obj.duration) < 1 || parseFloat(obj.duration) > 60)
+                            return swal('Minimum tenor is 1 (month) and Maximum is 60 (months)','','warning');
+                        if (parseFloat(obj.interest_rate) < 1 || parseFloat(obj.interest_rate) > 1000)
+                            return swal('Minimum interest rate is 1% and Maximum is 1000%','','warning');
+                        if (parseFloat(obj.loan_amount) < 1 || parseFloat(obj.loan_amount) > 100000000)
+                            return swal('Minimum loan amount is ₦1 and Maximum is ₦100,000,000','','warning');
                         if (loan_amount !== parseFloat(obj.loan_amount))
                             return swal('Loan amount ('+parseFloat(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch','','warning');
 
@@ -740,6 +774,24 @@
             p = p || 10;
             return parseFloat( this.toFixed(p) );
         };
+
+        Number.prototype.trunc = function(p) {
+            p = p || 2;
+            let d = Math.pow(10,p);
+            return parseFloat((parseInt(this*d)/d).toFixed(p));
+        };
+
+        function formatDate(date) {
+            let d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
 
     })(jQuery);
     </script>

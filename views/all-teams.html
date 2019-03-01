@@ -655,7 +655,7 @@
             if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.value) > target_limit)
-                return swal('Target value ('+obj.value+') cannot be greater that the Total unallocated Target ('+target_limit+')','','warning');
+                return swal('Insufficient unallocated target ('+target_limit+')','','warning');
             obj.periodID = ($.grep(targets, function(e){return e.ID === parseInt(target_id);}))[0]['period'];
             $('#wait').show();
             $.ajax({

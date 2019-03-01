@@ -152,13 +152,18 @@
         input.invalid, span.invalid {
             border: 2px dashed red;
         }
+        #schedule-error-message{
+            text-align: center;
+            font-style: italic;
+            color: red;
+        }
     </style>
 </head>
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
 <!-- Left Panel -->
     <script type="text/javascript">
-        jQuery(document).ready(function($){ check(); loadMenus(); read_write();});
+        jQuery(document).ready(function($){ check(); loadMenus(); read_write_1();});
     </script>
 
 <aside id="left-panel" class="left-panel">
@@ -259,7 +264,7 @@
                             <div class="card-header">
                                 <div style="float: left; margin: 0 15px;">
                                     <strong id="workflow-div-title" class="card-title">Workflow</strong>
-                                    <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span></p>
+                                    <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span> | L-CIRRUS ID#: <span id="loancirrus-id"></span></p>
                                 </div>
                                 <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
                                 <div id="close_loan" class="btn-group" style="float: right; display: none; margin-top: 5px;">
@@ -276,7 +281,7 @@
                                         <i class="fa fa-forward"></i>
                                     </button>
                                     <div id="stage-actions" class="dropdown-menu">
-                                        <a class="dropdown-item next" href="#">Save & Proceed</a>
+                                        <a id="stage-action-default" class="dropdown-item next" href="#">Save & Proceed</a>
                                     </div>
                                 </div>
                                 <button id="current_stage" class ="btn btn-warning btn-lg" style="float: right;" disabled="disabled"></button>
@@ -504,9 +509,54 @@
                                 <div class="row setup-content" id="generate-schedule-v2" style="display: none;">
                                     <div class="col-xs-12">
                                         <div class="col-md-12 well">
-                                            <h2 class="text-center" style="margin-bottom: 15px;">Loan Reschedule
+                                            <h2 class="text-center" style="margin: 0 0 15px 200px;">Loan Reschedule
                                                 <span id="reschedule-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
+                                                <select id="amortization" class="form-control" style="width: 200px; float: right;">
+                                                    <option value="custom" selected="selected">Custom (Manual)</option>
+                                                    <option value="standard">Standard (Automatic)</option>
+                                                </select>
                                             </h2>
+                                            <p id="schedule-error-message" class="amortization-div" style="display: none;"></p>
+                                            <div class="row amortization-div" style="display: none;">
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Loan Requested</label><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                        <input type="number" id="amount" class="form-control" required="required" value="50000" min="1" max="100000000">
+                                                    </div>
+                                                    <small class="form-text text-muted">Min: 1.00(NGN) Max: 100,000,000.00(NGN)</small>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Interest Rate</label><strong style="color:red"> *</strong><span id="interest-rate-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-plus"></i></div>
+                                                        <input type="number" id="interest-rate" class="form-control" required="required" value="12" min="1" max="1000">
+                                                    </div>
+                                                    <small class="form-text text-muted">Min: 1%  Max: 1000% </small>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Tenor (monthly)</label><strong style="color:red"> *</strong><span id="term-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                        <input type="number" id="term" class="form-control" required="required" value="12" min="1" max="60">
+                                                    </div>
+                                                    <small class="form-text text-muted">Min: 1  Max: 60</small>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Payment Amount (Monthly)</label><strong style="color:red"> *</strong><span id="payment-amount-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                        <input type="number" id="payment-amount" class="form-control" required="required" disabled="disabled">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">First Repayment Date</label><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                        <input type="date" id="repayment-date" class="form-control" required="required">
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-sm-3">
                                                     <input type="file" id="csvUpload2" style="display: inline-block"/>
@@ -810,7 +860,7 @@
     </div>
 
     <div class="modal fade" id="invoiceHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
-        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
+        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="invoiceHistoryLabel">Repayment History</h4>
@@ -826,8 +876,7 @@
                             <th>Fees</th>
                             <th>Penalty</th>
                             <th>Paid By</th>
-                            <th>Payment Date</th>
-                            <th>Posted Date</th>
+                            <th>Date</th>
                         </tr>
                         </thead>
                         <tbody id="history">
@@ -918,7 +967,6 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            loadUsers();
             loadComments();
         });
 
@@ -995,7 +1043,7 @@
         let workflow,
             application;
 
-        function loadUsers(){
+        function loadApplication(user_id){
             $.ajax({
                 'url': '/user/application-id/'+application_id,
                 'type': 'get',
@@ -1005,6 +1053,9 @@
                         files_count = file_names.length,
                         $carousel_inner = $('.carousel-inner'),
                         $carousel_indicators = $('.carousel-indicators');
+
+                    if (user_id && data.loan_officer !== user_id && data.supervisor !== user_id)
+                        return window.location.href = "/logon";
 
                     application = data;
                     getWorkflows(application);
@@ -1017,6 +1068,9 @@
                         $('#reschedule-info').text('Reschedule Add-on amount is ₦'+(parseFloat(application.reschedule_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')+
                             ' last updated on '+application.date_modified);
                     }
+
+                    application.loanCirrusID = application.loanCirrusID || 'N/A';
+                    $('#loancirrus-id').text(application.loanCirrusID);
 
                     if (application.schedule && application.schedule[0]){
                         $("#generate-schedule").hide();
@@ -1178,6 +1232,7 @@
                         $('#stage-documents').append('<option value = "others">Others</option>');
                         fileUpload();
                     }
+
                     if (stage.actions){
                         let actions = stage.actions.split(',');
                         actions.forEach(function (id) {
@@ -1191,11 +1246,12 @@
 
                     $("#stage-actions").on('click', function (e) {
                         let id = (e.target.id.split('-'))[2];
-                        if (!id){
-                            nextStage(state);
-                        } else {
-                            if (id !== '0')
+                        if (id) {
+                            if (id === 'default'){
+                                nextStage(state);
+                            } else if (id !== '0'){
                                 nextStage(state, workflow_stages, id);
+                            }
                         }
                     });
 
@@ -1250,6 +1306,7 @@
                         if (application.status === 2){
                             $('#collect-payment-button').show();
                             $('#generate-schedule-v2').show();
+                            $('#principal-total-text').hide();
                             $('#disbursement-cards').show();
                             $('#disburse-alert').show();
                             $("#current_stage").hide();
@@ -1265,15 +1322,22 @@
                                 $('#collect-payment-button').text('View Collection');
                                 $('#collect-payment-button').addClass('btn-secondary');
                                 $('#collect-payment-button').removeClass('btn-primary');
-                                $('#generate-schedule-v2').hide();
-                                if (application.close_status === 1){
-                                    $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
-                                } else if (application.close_status === 2){
-                                    $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
+                                switch (application.close_status){
+                                    case 1: {
+                                        $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
+                                        break;
+                                    }
+                                    case 2: {
+                                        $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
+                                        break;
+                                    }
+                                    case 3: {
+                                        $('#loan_closed').html('<strong>CLOSED </strong>');
+                                        break;
+                                    }
                                 }
                             }
                             checkTotalDue();
-                            read_write();
                         }
                         $('#disbursement-amount').val((parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                         $('#stage-actions').append('<a href="#" id="stage-action-0" class="dropdown-item" data-toggle="modal" data-target="#disburseModal">Disburse Loan</a>');
@@ -1362,6 +1426,8 @@
                             '    <p>Moved from '+previous_stage.stage_name+' to '+current_stage.stage_name+by+'</p>\n' +
                             '</li>');
                     });
+
+                    read_write_2();
                 },
                 'error': function (err) {
                     console.log('Error');
@@ -1717,9 +1783,9 @@
                             row = $("<tr style='background-color: #aaaaaa; text-decoration: line-through;' />");
                     }
                     if (i === 0) {
-                        cells = ["PRINCIPAL","INTEREST","BALANCE","COLLECTION"];
+                        cells = ["PRINCIPAL","INTEREST","BALANCE","COLLECTION","TOTAL"];
                     } else if (i === 1) {
-                        cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT","STATUS","ACTION"];
+                        cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT","STATUS","ACTION","AMOUNT"];
                     } else {
                         cells[0] = application.schedule[i - 2]['payment_create_date'];
                         cells[1] = application.schedule[i - 2]['payment_collect_date'];
@@ -1729,6 +1795,7 @@
                         cells[5] = application.schedule[i - 2]['interest_amount'];
                         cells[6] = application.schedule[i - 2]['balance'];
                         cells[7] = cells[8] = application.schedule[i - 2]['payment_status'];
+                        cells[9] = (parseFloat(cells[2]) + parseFloat(cells[5])).round(2);
                         let amount_paid = 0,
                             interest_paid = 0,
                             payment_history = $.grep(application.payment_history,function(e) {return (e.invoiceID===application.schedule[i - 2]['ID'] && e.status===1)});
@@ -1758,7 +1825,7 @@
                             if (cells[j] === "COLLECTION")
                                 cell = $("<td colspan='2' />");
                         }
-                        if (j === cells.length-1 && i>1){
+                        if (j === cells.length-2 && i>1){
                             cell.html('<div class="btn-group">\n' +
                                 '    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
                                 '        <i class="fa fa-list"></i>\n' +
@@ -1768,7 +1835,7 @@
                                 '        <a class="dropdown-item" data-toggle="modal" data-target="#editHistory" href="#" onclick="editHistory('+application.schedule[i - 2]['ID']+')">Edit History</a>\n' +
                                 '    </div>\n' +
                                 '</div>');
-                        } else if (j === cells.length-2 && i>1){
+                        } else if (j === cells.length-3 && i>1){
                             switch (cells[j]){
                                 case 0: {
                                     cell.html('<span class="badge badge-danger">Not Paid</span>');
@@ -1814,7 +1881,6 @@
                             v.fees_amount,
                             v.penalty_amount,
                             v.agent,
-                            v.payment_date,
                             v.date_created
                         ];
                         $('#invoice-history').dataTable().fnAddData(table);
@@ -1855,36 +1921,31 @@
 
         let total_due_amount;
         function initLoanSummary(total_prinicipal) {
-            let total_principal = total_prinicipal;
+            let payment_history = [],
+                total_principal = total_prinicipal,
+                invoices = $.grep(application.schedule,function(e){return e.status===1});
             $('#loan-amount-text').text('₦'+(parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             $('#principal-total-text').text('Disbursed Amount: ₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-            if (!application.payment_history || !application.payment_history[0]){
+            for (let i=0; i<invoices.length; i++){
+                let payments = $.grep(application.payment_history,function(e){return e.invoiceID===invoices[i]['ID']});
+                payment_history = payment_history.concat(payments);
+            }
+            if (!payment_history || !payment_history[0]){
                 total_due_amount = total_prinicipal;
                 $('#total-due-text').text('₦'+total_principal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 $('#last-payment-text').text('N/A');
             } else {
                 let count = 0,
-                    payment_history = [],
-                    amount = total_principal,
-                    invoices = $.grep(application.schedule,function(e){return e.status===1});
-                for (let i=0; i<invoices.length; i++){
-                    let payments = $.grep(application.payment_history,function(e){return e.invoiceID===invoices[i]['ID']});
-                    payment_history = payment_history.concat(payments);
-                }
-                if (payment_history[0]){
-                    payment_history.forEach(function (payment) {
-                        count++;
-                        amount = (amount - parseFloat(payment.payment_amount)).round(2);
-                        if (count === payment_history.length){
-                            total_due_amount = amount;
-                            $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                        }
-                    });
-                    $('#last-payment-text').text(((payment_history[0]['date_created']).split(' '))[0]);
-                } else {
-                    $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                    $('#last-payment-text').text('N/A');
-                }
+                    amount = total_principal;
+                payment_history.forEach(function (payment) {
+                    count++;
+                    amount = (amount - parseFloat(payment.payment_amount)).round(2);
+                    if (count === payment_history.length){
+                        total_due_amount = amount;
+                        $('#total-due-text').text('₦'+amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    }
+                });
+                $('#last-payment-text').text(((payment_history[0]['date_created']).split(' '))[0]);
             }
             let next_payment_date = $.grep(application.schedule,function(e){return (e.payment_status===0 && e.status===1)});
             if (next_payment_date && next_payment_date[0]){
@@ -1902,8 +1963,8 @@
                 $('#collect-payment-button').addClass('btn-secondary');
                 $('#collect-payment-button').removeClass('btn-primary');
                 $('#generate-schedule-v2').hide();
-                $('#loan_closed').html('<strong>CLOSED</strong>');
                 if (application.close_status === 0){
+                    $('#loan_closed').html('<strong>REPAYMENT COMPLETED</strong>');
                     swal({
                         title: "Would you like to close this loan?",
                         text: "All repayments for this loan application has been made",
@@ -1956,6 +2017,84 @@
             });
         }
 
+        $('#term').keyup(function () {
+            triggerAmortization();
+        });
+        $('#amount').keyup(function () {
+            triggerAmortization();
+        });
+        $('#interest-rate').keyup(function () {
+            triggerAmortization();
+        });
+        $('#repayment-date').change(function () {
+            triggerAmortization();
+        });
+
+        function triggerAmortization() {
+            if ($('#amortization').val() === 'standard')
+                $('#amortization').val('standard').trigger('change');
+        }
+
+        function processSchedule(schedule) {
+            let result = [],
+                total_principal = 0,
+                amount = $('#amount').val(),
+                date = $('#repayment-date').val();
+            for (let i=-2; i<schedule.length-1; i++){
+                if (i === -2){
+                    result.push("PRINCIPAL,,,INTEREST,,,BALANCE");
+                } else if (i === -1){
+                    result.push("INVOICE DATE,COLLECTION DATE,AMOUNT,INVOICE DATE,COLLECTION DATE,AMOUNT,AMOUNT");
+                } else {
+                    total_principal = (total_principal + schedule[i][1]).round(2);
+                    amount = parseFloat(amount);
+                    if (i === schedule.length-2){
+                        let excess = (total_principal > amount)? (total_principal - amount).round(2) : (amount - total_principal).round(2);
+                        schedule[i][2] = (schedule[i][2] + schedule[i][3] + excess).round(2);
+                        schedule[i][1] = (schedule[i][1] - excess).round(2);
+                        schedule[i][3] = 0;
+                    }
+                    let cells;
+                    if (date){
+                        cells = date+","+date+","+schedule[i][1]+","+date+","+date+","+schedule[i][2]+","+schedule[i][3];
+                        let date_array = date.split('-');
+                        date = new Date(date_array[0], (parseInt(date_array[1])-1), date_array[2]);
+                        date.setMonth(date.getMonth()+1);
+                        date = formatDate(date);
+                    } else {
+                        cells = "0,0,"+schedule[i][1]+",0,0,"+schedule[i][2]+","+schedule[i][3];
+                    }
+                    result.push(cells);
+                }
+            }
+            return result;
+        }
+
+        function pmt(rate,nper,pv) {
+            let pvif, pmt;
+
+            pvif = Math.pow( 1 + rate, nper);
+            pmt = rate / (pvif - 1) * -(pv * pvif);
+
+            return pmt;
+        }
+
+        function computeSchedule(loan_amount, interest_rate, payments_per_year, years, payment) {
+            let schedule = [],
+                remaining = loan_amount,
+                number_of_payments = payments_per_year * years;
+
+            for (let i=0; i<=number_of_payments; i++) {
+                let interest = (remaining * (interest_rate/100/payments_per_year)).round(2),
+                    principle = (payment-interest).round(2);
+                remaining = (remaining - principle).round(2);
+                let row = [i, principle>0?(principle<payment?principle:payment):0, interest>0?interest:0, remaining>0?remaining:0];
+                schedule.push(row);
+            }
+
+            return schedule;
+        }
+
         function initCSVUpload2(application) {
             let schedule = [],
                 loan_amount = 0,
@@ -1965,7 +2104,100 @@
                 $uploadCSV = $("#uploadCSV2"),
                 $csvLoader = $("#csvLoader2"),
                 $rejectCSV = $("#rejectCSV2"),
-                $approveCSV = $("#approveCSV2");
+                $approveCSV = $("#approveCSV2"),
+                $message = $("#schedule-error-message");
+
+            $('#amortization').change(function () {
+                $dvCSV.html('');
+                schedule = [];
+                loan_amount = 0;
+                if (this.value === 'standard'){
+                    $('#uploadCSV2').hide();
+                    $('#csvUpload2').hide();
+                    $('.amortization-div').show();
+                    let loanAmount = $('#amount').val(),
+                        interestRate = $('#interest-rate').val(),
+                        duration = $('#term').val();
+                    if (!loanAmount || !interestRate || !duration)
+                        return $message.text('Kindly fill all required fields!','','warning');
+                    duration = parseFloat(duration);
+                    loanAmount = parseFloat(loanAmount);
+                    interestRate = parseFloat(interestRate);
+                    if (duration < 1 || duration > 60)
+                        return $message.text('Minimum tenor is 1 (month) and Maximum is 60 (months)','','warning');
+                    if (interestRate < 1 || interestRate > 1000)
+                        return $message.text('Minimum interest rate is 1% and Maximum is 1000%','','warning');
+                    if (loanAmount < 1 || loanAmount > 100000000)
+                        return $message.text('Minimum loan amount is ₦1 and Maximum is ₦100,000,000','','warning');
+                    $message.hide();
+
+                    let years = duration/12,
+                        paymentsPerYear = 12,
+                        rate_ = (interestRate/100)/paymentsPerYear,
+                        numberOfPayments = paymentsPerYear * years,
+                        payment = (pmt(rate_, numberOfPayments, -loanAmount)).toFixed(2),
+                        schedule_ = computeSchedule(loanAmount, interestRate, paymentsPerYear, years, parseFloat(payment)),
+                        table = $("<table border='1' style='text-align: center; width: 100%;'/>"),
+                        rows = processSchedule(schedule_);
+                    $('#payment-amount').val(payment);
+                    for (let i = 0; i < rows.length; i++) {
+                        let invoice = {},
+                            row = $("<tr />"),
+                            cells = rows[i].split(",");
+                        if (i === 0) {
+                            cells = ["PRINCIPAL","INTEREST","BALANCE"];
+                        } else if (i === 1) {
+                            cells = ["INVOICE DATE","COLLECTION DATE","AMOUNT","INVOICE DATE","COLLECTION DATE","AMOUNT","AMOUNT"];
+                        }
+                        if (cells.join(' ').length > 10){
+                            for (let j = 0; j < cells.length; j++) {
+                                let cell = $("<td />");
+                                if (i === 0){
+                                    if ((cells[j] === "PRINCIPAL") || cells[j] === "INTEREST")
+                                        cell = $("<td colspan='3' />");
+                                }
+                                if (cells[j]){
+                                    if (i > 1){
+                                        if (j === 0 || j === 1 || j === 3 || j === 4){
+                                            cell.html('<input id="invoice-'+i+'-'+j+'" type="date" value="'+cells[j]+'" />');
+                                        } else {
+                                            cell.html('<span id="invoice-'+i+'-'+j+'">'+cells[j]+'</span>');
+                                        }
+                                    } else {
+                                        cell.html(cells[j]);
+                                    }
+                                }
+                                row.append(cell);
+                                switch (j){
+                                    case 0:{ invoice.payment_create_date = cells[j]; break; }
+                                    case 1:{ invoice.payment_collect_date = cells[j]; break; }
+                                    case 2:{
+                                        if (i > 1)
+                                            loan_amount = (loan_amount + parseFloat(cells[j])).round(2);
+                                        invoice.payment_amount = cells[j];
+                                        break;
+                                    }
+                                    case 3:{ invoice.interest_create_date = cells[j]; break; }
+                                    case 4:{ invoice.interest_collect_date = cells[j]; break; }
+                                    case 5:{ invoice.interest_amount = cells[j]; break; }
+                                    case 6:{ invoice.balance = cells[j]; break; }
+                                }
+                            }
+                        }
+                        if (i>1 && cells.length === 7){
+                            if (Object.keys(invoice).length > 0)
+                                schedule.push(invoice);
+                        }
+                        table.append(row);
+                    }
+                    $dvCSV.html('');
+                    $dvCSV.append(table);
+                } else {
+                    $('#uploadCSV2').show();
+                    $('#csvUpload2').show();
+                    $('.amortization-div').hide();
+                }
+            });
 
             $uploadCSV.bind("click", function () {
                 schedule = [];
@@ -2114,6 +2346,7 @@
                 }
                 $dvCSV.html('');
                 $dvCSV.append(table);
+                $('#amortization').hide();
                 $('#reschedule-total-text').text('Disbursed Amount: ₦'+total_new_schedule.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             }
 
@@ -2278,7 +2511,7 @@
 
         function writeOffLoan() {
             $.ajax({
-                'url': '/user/application/write-off/'+application_id,
+                'url': '/user/application/write-off/'+application_id+'/'+(JSON.parse(localStorage.user_obj)).ID,
                 'type': 'post',
                 'data': {close_comment:$('#writeoff-notes').val()},
                 'success': function (data) {
@@ -2302,7 +2535,7 @@
             if (!payoff.close_interest || !payoff.close_date || !payoff.close_channel)
                 return swal('Kindly fill all required inputs to close loan','','warning');
             $.ajax({
-                'url': '/user/application/pay-off/'+application_id,
+                'url': '/user/application/pay-off/'+application_id+'/'+(JSON.parse(localStorage.user_obj)).ID,
                 'type': 'post',
                 'data': payoff,
                 'success': function (data) {
@@ -2315,7 +2548,18 @@
             });
         }
 
-        function read_write(){
+        function read_write_1(){
+            let perms = JSON.parse(localStorage.getItem("permissions")),
+                applicationView = ($.grep(perms, function(e){return e.module_name === 'app-page';}))[0];
+
+            if (applicationView && applicationView['read_only'] === '1'){
+                loadApplication();
+            } else {
+                loadApplication((JSON.parse(localStorage.user_obj)).ID);
+            }
+        }
+
+        function read_write_2(){
             let w,
                 perms = JSON.parse(localStorage.getItem("permissions")),
                 page = (window.location.pathname.split('/')[1].split('.'))[0];
@@ -2353,6 +2597,18 @@
             z = z || '0';
             n = n + '';
             return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+
+        function formatDate(date) {
+            let d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
         }
     </script>
 </body>

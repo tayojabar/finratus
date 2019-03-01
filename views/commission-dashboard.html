@@ -182,6 +182,7 @@
                                           <th>Type</th>
                                           <th>Target</th>
                                           <th>Period</th>
+                                          <th>Threshold(%)</th>
                                           <th>Details</th>
                                         </tr>
                                     </thead>
@@ -456,6 +457,7 @@
                     v.type,
                     v.target,
                     v.period,
+                    v.threshold,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
                     'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+
                     ','+v.rate+','+v.threshold+','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.start+','+v.end+'\')">' +
@@ -529,7 +531,7 @@
             if (!obj.amount)
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.amount) > earned)
-                return swal('Amount paid ('+obj.amount+') cannot be greater that the Total Commission Earned ('+earned+')','','warning');
+                return swal('Insufficient commission earned ('+earned+')','','warning');
             $('#wait').show();
             $.ajax({
                 'url': '/user/commission/payments',

@@ -42,6 +42,21 @@
         input.invalid, span.invalid {
             border: 2px dashed red;
         }
+        div.dataTables_wrapper div.dataTables_filter{
+            float: right;
+            margin-right: 15px;
+        }
+        div.dataTables_length{
+            float: left;
+        }
+        .dt-buttons.btn-group{
+            float: right;
+        }
+        .btn-default{
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #666e76;
+        }
     </style>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
@@ -443,7 +458,7 @@
     </div>
 
     <div class="modal fade" id="targetsModal" role="dialog" aria-labelledby="targetsModalLabel">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="targetsModalLabel">User Targets</h4>
@@ -529,8 +544,8 @@
                         </div>
                         <div class="col-lg-3">
                             <div class="form-group">
-                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="1" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
-                                <small id="commission_target_value" class="form-text text-muted"></small>
+                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="50" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+                                <small id="commission_period_value" class="form-text text-muted"></small>
                             </div>
                         </div>
                         <div class="col-lg-3">
@@ -720,7 +735,8 @@
         }
 
         function populateDataTable(data) {
-            $("#bootstrap-data-table").dataTable().fnClearTable();
+            $("#bootstrap-data-table").DataTable().clear();
+            let processed_data = [];
             $.each(data, function(k, v){
                 let actions;
                 if (v.status === "1"){
@@ -746,12 +762,23 @@
                 else {
                     actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable User</button>';
                 }
-                $('#bootstrap-data-table').dataTable().fnAddData( [
-                    v.username,
-                    v.fullname,
-                    v.Role,
-                    actions
-                ]);
+                v.actions = actions;
+                processed_data.push(v);
+            });
+            $('#bootstrap-data-table').DataTable({
+                dom: 'Blfrtip',
+                bDestroy: true,
+                data: processed_data,
+                search: {search: ' '},
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                columns: [
+                    { data: "username" },
+                    { data: "fullname" },
+                    { data: "Role" },
+                    { data: "actions" }
+                ]
             });
         }
 
@@ -1034,12 +1061,6 @@
             getLimit(target_id);
         });
 
-
-        $('#commission_target').on('change', function() {
-            let id = $("#commission_target").find("option:selected").val();
-            getCommissionPeriods(id);
-        });
-
         let targets;
         function getTargets(){
             $.ajax({
@@ -1071,16 +1092,9 @@
             });
         }
 
-        let commission_target_value;
-        $('#commission_target_value').text('');
         $('#commission_target').on('change', function() {
-            let commission_target = $("#commission_target").find("option:selected").val();
-            if (commission_target && commission_target !== '-- Select Target --'){
-                commission_target_value = parseFloat(($.grep(assigned_targets, function(e){return e.ID === parseInt(commission_target);}))[0]['value']);
-                $('#commission_target_value').text('Max rate is 100% (₦'+(commission_target_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+')');
-            } else {
-                $('#commission_target_value').text('');
-            }
+            let id = $("#commission_target").find("option:selected").val();
+            getCommissionPeriods(id);
         });
 
         let commissions;
@@ -1135,18 +1149,20 @@
             }
         }
 
+        let assigned_periods;
         $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
         function getCommissionPeriods(id){
             if (id && id !== '-- Select Target --'){
                 $('#wait').show();
                 $.ajax({
                     type: "GET",
-                    url: "/target/sub_periods/"+id,
+                    url: "/user/user-assigned-period/"+localStorage.user_commission_id+"/"+id,
                     success: function (data) {
                         $('#wait').hide();
+                        assigned_periods = data.response;
                         $("#commission_period").prop('disabled',false);
                         $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
-                        $.each(data.response, function (key, val) {
+                        $.each(assigned_periods, function (key, val) {
                             $("#commission_period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
                         });
                         $("#commission_period").select2();
@@ -1154,6 +1170,18 @@
                 });
             }
         }
+
+        let commission_period_value;
+        $('#commission_period_value').text('');
+        $('#commission_period').on('change', function() {
+            let commission_period = $("#commission_period").find("option:selected").val();
+            if (commission_period && commission_period !== '-- Select Commission Period --'){
+                commission_period_value = parseFloat(($.grep(assigned_periods, function(e){return e.ID === parseInt(commission_period);}))[0]['value']);
+                $('#commission_period_value').text('Max rate is 100% (₦'+(commission_period_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+')');
+            } else {
+                $('#commission_period_value').text('');
+            }
+        });
 
         function openTargetsModal(id) {
             localStorage.user_target_id = id;
@@ -1173,7 +1201,7 @@
                     v.target,
                     v.period,
                     '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
-                    '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+                    '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+','+v.targetID+')"><i class="fa fa-remove"></i> Remove</button>'
                 ]);
             });
         }
@@ -1213,7 +1241,7 @@
             if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
                 return swal('Kindly fill all required field(s)','','warning');
             if (parseFloat(obj.value) > target_limit)
-                return swal('Target value ('+obj.value+') cannot be greater that the Total unallocated Target ('+target_limit+')','','warning');
+                return swal('Insufficient unallocated target ('+target_limit+')','','warning');
             obj.periodID = ($.grep(targets, function(e){return e.ID === parseInt(target_id);}))[0]['period'];
             $('#wait').show();
             $.ajax({
@@ -1223,9 +1251,9 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal(response.error,"","error");
+                        notification(response.error,"","error");
                     } else{
-                        swal("Target assigned successfully!","","success");
+                        notification("Target assigned successfully!","","success");
                         populateTargets(response);
                         getLimit(obj.targetID);
                     }
@@ -1233,7 +1261,7 @@
             });
         }
 
-        function removeTarget(id) {
+        function removeTarget(id,targetID) {
             $('#wait').show();
             $.ajax({
                 'url': '/user/user-targets/'+id+'/'+localStorage.user_target_id,
@@ -1241,10 +1269,11 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal("No internet connection","","error");
+                        notification("No internet connection","","error");
                     } else{
-                        swal("Target deleted successfully!","","success");
+                        notification("Target deleted successfully!","","success");
                         populateTargets(response);
+                        getLimit(targetID);
                     }
                 }
             });
@@ -1259,14 +1288,15 @@
             obj.threshold = $('#commission_threshold').val();
             if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || obj.sub_periodID === '-- Select Commission Period --' || !obj.threshold)
                 return swal('Kindly fill all required field(s)','','warning');
-            if (parseFloat(obj.threshold) > 100)
-                return swal('Commission threshold rate ('+obj.threshold+'%) cannot be greater than 100%. (Total allocated target is valued at '+commission_target_value+')','','warning');
+            if (parseFloat(obj.threshold) < 50 || parseFloat(obj.threshold) > 100)
+                return swal('Commission threshold rate ('+obj.threshold+'%) must be at least 50% and at most 100%. (Total allocated target is valued at '+commission_period_value+')','','warning');
             obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
-            let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0];
+            let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0],
+                period = ($.grep(assigned_periods, function(e){return e.ID === parseInt(obj.sub_periodID);}))[0];
             if (obj.type !== target.type)
                 return swal('Commission and Target must be of the same type','','warning');
             obj.periodID = target.period;
-            obj.target_value = target.value;
+            obj.target_value = period.value;
             obj.threshold = parseFloat(obj.threshold);
             $('#wait').show();
             $.ajax({
@@ -1276,9 +1306,9 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal(response.error,"","error");
+                        notification(response.error,"","error");
                     } else{
-                        swal("Commission assigned successfully!","","success");
+                        notification("Commission assigned successfully!","","success");
                         populateCommissions(response);
                     }
                 }
@@ -1293,9 +1323,9 @@
                 'success': function (response) {
                     $('#wait').hide();
                     if(response.status === 500){
-                        swal("No internet connection","","error");
+                        notification("No internet connection","","error");
                     } else{
-                        swal("Commission deleted successfully!","","success");
+                        notification("Commission deleted successfully!","","success");
                         populateCommissions(response);
                     }
                 }
@@ -1311,6 +1341,9 @@
             return re.test(email);
         }
 
+        function notification(title,text,type) {
+            return swal({title: title, text: text, icon: type, timer: 1000});
+        }
     </script>
 
 

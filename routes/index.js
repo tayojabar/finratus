@@ -1665,11 +1665,17 @@ router.post('/targets', function(req, res, next) {
     let target = req.body,
         query = 'INSERT INTO targets SET ?';
     target.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query(query, target, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
+    db.query('SELECT * FROM targets WHERE status=1 AND type=? AND period=?', [target.type, target.period], function (error, target_obj, fields) {
+        if(target_obj && target_obj[0]){
+            res.send({"status": 500, "error": "Similar target ("+target_obj[0]['title']+") with same period already exists!", "response": target_obj});
         } else {
-            res.send({"status": 200, "message": "Target added successfully!"});
+            db.query(query, target, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Target added successfully!"});
+                }
+            });
         }
     });
 });
@@ -1685,33 +1691,51 @@ router.get('/targets', function(req, res, next) {
     });
 });
 
+router.delete('/target/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE targets SET status=0,date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Target deleted successfully!"});
+        }
+    });
+});
+
 router.post('/periods', function(req, res, next) {
     let period = req.body,
         query = 'INSERT INTO periods SET ?';
     period.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query(query, period, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
+    db.query('SELECT * FROM periods WHERE status = 1 AND (name=? OR (TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end) OR TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end)))',
+        [period.name,period.start,period.end], function (error, period_obj, fields) {
+        if(period_obj && period_obj[0]){
+            res.send({"status": 500, "error": "Similar period ("+period_obj[0]['name']+") already exist!", "response": period_obj});
         } else {
-            db.query('SELECT MAX(ID) AS ID from periods', function(err, period_id, fields) {
-                if (err){
-                    res.send({"status": 200, "error": err, "response": null});
-                } else{
-                    generateSubPeriods(period, period_id[0]['ID'], function (sub_periods) {
-                        db.getConnection(function(err, connection) {
-                            if (err) throw err;
+            db.query(query, period, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    db.query('SELECT MAX(ID) AS ID from periods', function(err, period_id, fields) {
+                        if (err){
+                            res.send({"status": 200, "error": err, "response": null});
+                        } else{
+                            generateSubPeriods(period, period_id[0]['ID'], function (sub_periods) {
+                                db.getConnection(function(err, connection) {
+                                    if (err) throw err;
 
-                            async.forEach(sub_periods, function (sub_period, callback) {
-                                connection.query('INSERT INTO sub_periods SET ?', sub_period, function (error, results, fields) {
-                                    if(error)
-                                        console.log(error);
-                                    callback();
+                                    async.forEach(sub_periods, function (sub_period, callback) {
+                                        connection.query('INSERT INTO sub_periods SET ?', sub_period, function (error, results, fields) {
+                                            if(error)
+                                                console.log(error);
+                                            callback();
+                                        });
+                                    }, function (data) {
+                                        connection.release();
+                                        res.send({"status": 200, "message": "Period added successfully!"});
+                                    });
                                 });
-                            }, function (data) {
-                                connection.release();
-                                res.send({"status": 200, "message": "Period added successfully!"});
                             });
-                        });
+                        }
                     });
                 }
             });
@@ -1767,18 +1791,26 @@ function dateRangeArray(period, interval) {
             start = moment(dates_array[i-1]['end']).add(1, 'days').format("YYYY-MM-DD");
         }
         date_object.start = start;
-        if (i < count-1){
-            date_object.end = moment(date_object.start).add((30*interval), 'days').format("YYYY-MM-DD");
-        } else {
-            date_object.end = period.end;
+        let days = 0,
+            start_year = parseInt((start.split('-'))[0]),
+            start_month = parseInt((start.split('-'))[1]);
+        for (let j=0; j<interval; j++){
+            if (start_month > 12)
+                start_month = start_month % 12;
+            days += daysInMonth((start_month + j),(start_year + parseInt(start_month/12)));
         }
+        date_object.end = moment(date_object.start).add((days-1), 'days').format("YYYY-MM-DD");
         dates_array.push(date_object);
     }
     return dates_array;
 }
 
+function daysInMonth (month, year) {
+    return new Date(year, month, 0).getDate();
+}
+
 router.get('/periods', function(req, res, next) {
-    db.query('SELECT * FROM periods', function (error, results, fields) {
+    db.query('SELECT * FROM periods WHERE status = 1', function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
@@ -1793,6 +1825,17 @@ router.get('/period/sub_periods/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Sub periods fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.delete('/period/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE periods SET status=0,date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Period deleted successfully!"});
         }
     });
 });
