@@ -2858,7 +2858,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         query = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query3 = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query2 = query2.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
-    }console.log(query3)
+    }
     db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
         db.query(query3, [loan_officer], function (error, results, fields) {
