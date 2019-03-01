@@ -2511,7 +2511,7 @@
 
         function writeOffLoan() {
             $.ajax({
-                'url': '/user/application/write-off/'+application_id,
+                'url': '/user/application/write-off/'+application_id+'/'+(JSON.parse(localStorage.user_obj)).ID,
                 'type': 'post',
                 'data': {close_comment:$('#writeoff-notes').val()},
                 'success': function (data) {
@@ -2535,7 +2535,7 @@
             if (!payoff.close_interest || !payoff.close_date || !payoff.close_channel)
                 return swal('Kindly fill all required inputs to close loan','','warning');
             $.ajax({
-                'url': '/user/application/pay-off/'+application_id,
+                'url': '/user/application/pay-off/'+application_id+'/'+(JSON.parse(localStorage.user_obj)).ID,
                 'type': 'post',
                 'data': payoff,
                 'success': function (data) {
