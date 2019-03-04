@@ -4389,14 +4389,20 @@ users.delete('/user-commissions/:id/:userID', function(req, res, next) {
 
 users.get('/commissions-list', function(req, res, next) {
     let type = req.query.type,
+        user = req.query.user,
         target = req.query.target,
+        sub_period = req.query.sub_period,
         commission = req.query.commission,
         query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
             '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID';
+    if (user)
+        query = query.concat(' AND c.userID = "'+user+'"');
     if (type)
         query = query.concat(' AND c.type = "'+type+'"');
     if (target)
         query = query.concat(' AND c.targetID = '+target);
+    if (sub_period)
+        query = query.concat(' AND c.sub_periodID = '+sub_period);
     if (commission)
         query = query.concat(' AND c.commissionID = '+commission);
     db.query(query, function (error, results, fields) {
@@ -4410,8 +4416,10 @@ users.get('/commissions-list', function(req, res, next) {
 
 users.get('/commissions-list/:officerID', function(req, res, next) {
     let type = req.query.type,
+        user = req.query.user,
         id = req.params.officerID,
         target = req.query.target,
+        sub_period = req.query.sub_period,
         commission = req.query.commission,
         query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
             '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID',
@@ -4419,10 +4427,14 @@ users.get('/commissions-list/:officerID', function(req, res, next) {
         query3 = query.concat(' AND (select supervisor from users where users.id = c.userID) =  '+id+' ');
     if (id)
         query = query2;
+    if (user)
+        query = query.concat(' AND c.userID = "'+user+'"');
     if (type)
         query = query.concat(' AND c.type = "'+type+'"');
     if (target)
         query = query.concat(' AND c.targetID = '+target);
+    if (sub_period)
+        query = query.concat(' AND c.sub_periodID = '+sub_period);
     if (commission)
         query = query.concat(' AND c.commissionID = '+commission);
     if (id){
