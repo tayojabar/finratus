@@ -2642,7 +2642,7 @@ users.post('/application/loancirrus-id/:application_id', function(req, res, next
     });
 });
 
-users.post('/application/pay-off/:id', function(req, res, next) {
+users.post('/application/pay-off/:id/:agentID', function(req, res, next) {
     let data = req.body;
     data.close_status = 1;
     db.getConnection(function(err, connection) {
@@ -2664,6 +2664,7 @@ users.post('/application/pay-off/:id', function(req, res, next) {
                             invoice.interest_amount = invoice_obj.interest_amount;
                             invoice.fees_amount = invoice_obj.fees_amount;
                             invoice.penalty_amount = invoice_obj.penalty_amount;
+                            invoice.agentID = req.params.agentID;
                             invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
                             connection.query('UPDATE application_schedules SET payment_status=1 WHERE ID = ?', [invoice_obj.ID], function (error, result, fields) {
                                 connection.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
@@ -2672,7 +2673,7 @@ users.post('/application/pay-off/:id', function(req, res, next) {
                             });
                         }, function (data) {
                             connection.release();
-                            res.send({"status": 200, "message": "Application write off successful!"});
+                            res.send({"status": 200, "message": "Application pay off successful!"});
                         });
                     }
                 });
@@ -2681,7 +2682,7 @@ users.post('/application/pay-off/:id', function(req, res, next) {
     });
 });
 
-users.post('/application/write-off/:id', function(req, res, next) {
+users.post('/application/write-off/:id/:agentID', function(req, res, next) {
     let data = req.body;
     data.close_status = 2;
     db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
@@ -2857,7 +2858,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         query = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query3 = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query2 = query2.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
-    }console.log(query3)
+    }
     db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
         db.query(query3, [loan_officer], function (error, results, fields) {

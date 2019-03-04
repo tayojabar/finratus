@@ -1706,10 +1706,10 @@ router.post('/periods', function(req, res, next) {
     let period = req.body,
         query = 'INSERT INTO periods SET ?';
     period.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('SELECT * FROM periods WHERE status = 1 AND (TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end) OR TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end))',
-        [period.start,period.end], function (error, period_obj, fields) {
+    db.query('SELECT * FROM periods WHERE status = 1 AND (name=? OR (TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end) OR TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end)))',
+        [period.name,period.start,period.end], function (error, period_obj, fields) {
         if(period_obj && period_obj[0]){
-            res.send({"status": 500, "error": "Similar period ("+period_obj[0]['name']+") has already been assigned!", "response": period_obj});
+            res.send({"status": 500, "error": "Similar period ("+period_obj[0]['name']+") already exist!", "response": period_obj});
         } else {
             db.query(query, period, function (error, results, fields) {
                 if(error){
