@@ -480,7 +480,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="interests-received-div" style="display: none" class="col-sm-6">
+                                                <div id="interests-received-div" style="display: none" class="col-sm-12">
                                                     <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
                                                         <div class="col-sm-4 card" style="background-color: transparent; border-color: transparent">
                                                             <div class="form-group">
@@ -515,11 +515,19 @@
                                                     <div id="interest-received-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
                                                     <div class="card">
                                                         <div class="card-header">
-                                                            <div class="col-sm-5">
+                                                            <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
                                                                 <strong>Interests Received</strong>
                                                                 <span>Total: <span id="total-interests-earned"></span></span>
                                                             </div>
-                                                            <div class="col-sm-7">
+                                                            <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
+                                                                <div class="form-group">
+                                                                    <div class="input-group">
+                                                                        <select id="interest-officers" onchange="intFilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 card" style="background-color: transparent; border-color: transparent">
                                                                 <form id="filterinterests" class="form-inline" style="float: right;">
                                                                     <div class="form-group">
                                                                         <label class="" for="startDate">Start date</label>
@@ -540,6 +548,7 @@
                                                                     <th>Loan ID</th>
                                                                     <th>Client Name</th>
                                                                     <th>Interest Received</th>
+                                                                    <th>Loan Officer</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody></tbody>
@@ -987,7 +996,7 @@
             bAutoWidth: true,
             "aoColumns": [
                 { "bSortable": false },
-                { "bSortable": true }, { "bSortable": true }
+                { "bSortable": true }, { "bSortable": true }, null
                 // , null, { "bSortable": false },
             ],
             "aaSorting": [],
@@ -1732,7 +1741,8 @@
                 $("#interests-table").dataTable().fnAddData([
                     padWithZeroes(parseInt(v.applicationID),6),
                     v.fullname,
-                    formatter.format(parseFloat(v.paid))
+                    formatter.format(parseFloat(v.paid)),
+                    v.loan_officer
                 ]);
             });
             $('#total-interests-earned').html(formatter.format(total));
@@ -1742,12 +1752,19 @@
     $("#filterinterests").submit(function (e) {
         e.preventDefault();
 
-        let start = $("#startDate").val(),
-            end = $("#endDate").val(),
-            type = $("#type-filter").val(),
+        let start = $("#filterintereststart").val(),
+            end = $("#filterinterestend").val(),
+            officer = $('#interest-officers').find('option:selected').attr('id')
             url = '/user/interests?start='+formatDate(start)+'&&end='+formatDate(end);
-        if (!start || !end)
+        if (start && end && officer==0){
+            url = '/user/interests?start='+formatDate(start)+'&&end='+formatDate(end);
+        }
+        if ((!start || !end) && officer==0 ) {
             return loadInterestReceived();
+        }
+        if (officer != 0){
+            url = url.concat('&&officer='+officer);
+        }
 
         $.ajax({
             'url': url,
@@ -1961,6 +1978,7 @@
                 $("#chartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#pchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#irchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#interest-officers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#filter-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#overdue-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
@@ -1968,6 +1986,7 @@
                     $("#chartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#pchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#irchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#interest-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                 });
             }
         });
@@ -1996,6 +2015,34 @@
                 let applications = data.response;
                 results = applications;
                 populateDisbursed(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function intFilterOfficer(officer) {
+        let start = $("#filterintereststart").val(),
+            end = $("#filterinterestend").val(),
+            url = '/user/interests?',
+            d=[], agent;
+        if (start && end){
+            url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
+            urlAn = urlAn.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
+        }
+        if (officer.value == 0){
+            return loadInterestReceived();
+        }
+        url = url.concat('officer='+officer.value);
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateInterestReceived(applications);
             },
             'error': function (err) {
                 console.log(err);
@@ -2483,7 +2530,7 @@
         if (branch.value == 0){
             swal('', 'You have to choose a branch to continue!', 'warning');
             $('#branch-frequency').val(-1);
-            ('#branch-year').val(0);
+            $('#branch-year').val(0);
             $('#brn-year').hide();
             return branches($('#branchreport').val());
         }

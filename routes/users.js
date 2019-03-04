@@ -2878,7 +2878,8 @@ users.get('/disbursements/filter', function(req, res, next) {
 /* Interest Received  */
 users.get('/interests/', function(req, res, next) {
     let start = req.query.start,
-        end = req.query.end
+        end = req.query.end,
+        officer = req.query.officer
     // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
@@ -2886,8 +2887,9 @@ users.get('/interests/', function(req, res, next) {
     queryPart = 'select \n' +
         '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, \n' +
         'applicationID, sum(interest_amount) as paid, \n' +
-        '(select date_modified from applications where ID = applicationID) as date\n' +
-        'from schedule_history \n' +
+        '(select date_modified from applications where ID = applicationID) as date,\n' +
+        '(select fullname from users where users.id = (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid))) loan_officer\n'+
+        'from schedule_history sh \n' +
         'where applicationID in (select applicationID from application_schedules\n' +
         '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n' +
         'and status = 1\n';
@@ -2899,6 +2901,10 @@ users.get('/interests/', function(req, res, next) {
         end = "'"+end+"'"
         // query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query = (queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+    }
+    if (officer){
+        queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = '+officer+' ')
+        query = queryPart.concat(group)
     }
     db.query(query, function (error, results, fields) {
         if(error){
