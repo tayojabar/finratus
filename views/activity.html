@@ -933,8 +933,8 @@
                     let pro = '<i class="fa fa-lock"></i> Prospective Client';
                     clients = JSON.parse(response);
                     $('#client-list').empty();
-//                    $('#client-list').append('<option value="-1" id="-1"><span class="text-danger">*</span> Choose Client</option>');
-//                    $('#client-list').append('<option value="0" id="0"> &#xf17b; Prospective Client </option>');
+                    $('#client-list').append('<option value="-1" id="-1"><span class="text-danger">*</span> Choose Client</option>');
+                    $('#client-list').append('<option value="0" id="0"> &#xf17b; Prospective Client </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#client-list").append('<option value = "'+val.ID+'" id="'+val.ID+'" phone="'+val.phone+'" email="'+val.email+'">' + val.fullname + '</option>');
                     });
@@ -1203,14 +1203,14 @@
 
 //    })(jQuery);
 </script>
-<style>
+<!--<style>-->
 
-    .inp select {
-        color: red; !important;
-    }
-    .inp option:not(:first-of-type) {
-        color: black;
-    }
-</style>
+    <!--.inp select {-->
+        <!--color: red; !important;-->
+    <!--}-->
+    <!--.inp option:not(:first-of-type) {-->
+        <!--color: black;-->
+    <!--}-->
+<!--</style>-->
 </body>
 </html>
