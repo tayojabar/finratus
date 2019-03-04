@@ -1541,7 +1541,7 @@ router.post('/submitPermission/:role', function(req, res, next) {
                     status = false;
                     callback({"status": 500, "error": error, "response": null});
                 } else {
-                    console.log("Permissions for module "+module_id+ " added!");
+                    // console.log("Permissions for module "+module_id+ " added!");
                     count++;
                 }
                 callback();
