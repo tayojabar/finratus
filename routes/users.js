@@ -2770,7 +2770,7 @@ users.post('/forgot-password', function(req, res) {
 users.get('/report-cards', function(req, res, next) {
     let query, query1, query2, query3;
     query = 'select count(*) as branches from branches'
-    query1 = 'select count(*) as loan_officers from users where ID not in (3, 4)'
+    query1 = 'select count(*) as loan_officers from users where ID in (select loan_officer from clients where clients.id in (select userid from applications where applications.status = 2))'
     query2 = 'select count(*) as all_applications from applications where status = 2'
     query3 = 'select count(*) as apps from applications'
     var items = {}; var num;
@@ -2878,7 +2878,7 @@ users.get('/disbursements/filter', function(req, res, next) {
 users.get('/interests/', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         group

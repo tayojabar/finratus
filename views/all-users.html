@@ -626,14 +626,7 @@
 
         function confirmPassword(){
             if ($('#cpassword').val() === "" || $('#cpassword').val() != $('#new-password').val()){
-                $('#cpassword').css('border-color', 'red');
-                $('#cpassword-error').html("Passwords don't match");
-                $('#cpassword-error').css("color", 'red');
-            }
-            else{
-                $('#cpassword').css('border-color', 'green');
-                $('#cpassword-error').html("Passwords are a match!");
-                $('#cpassword-error').css("color", 'green');
+                return swal('Password Mismatch', 'Passwords Must Match', 'error');
             }
         }
 
@@ -850,13 +843,17 @@
 
         function changePassword(){
             let obj = {};
-            obj.password = $('#new-password').val();
+            if ($('#cpassword').val() !== $('#new-password').val())
+                return swal('Password Mismatch', 'Passwords Must Match', 'error');
+            obj.password = $('#cpassword').val();
             $.ajax({
                 'url': '/user/changePassword/'+localStorage.getItem("id"),
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {
                     swal('User password updated successfully!','','success');
+                    $('#cpassword').val('');
+                    $('#new-password').val('');
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred. Try Again.','','error');

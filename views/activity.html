@@ -159,6 +159,9 @@
         #client-list{
             font-family: 'FontAwesome', 'Second Font name';
         }
+        .inp option span {
+             color: red; !important;
+         }
     </style>
 
 </head>
@@ -264,6 +267,7 @@
                                 <!--</select>-->
                                 <label for="team-list" class="inp">
                                     <select id="team-list" class="fields" required="required">
+                                        <option id="-1">* Choose Team</option>
                                         <option value="0" id="0">Personal</option>
                                     </select>
                                     <span class="label"></span>
@@ -277,7 +281,7 @@
                                 <!--<select id="client-list" class="form-control select fields" required="required">-->
                                     <!--<option value="-1">Client</option>-->
                                 <!--</select>-->
-                                <label for="activity-date" class="inp">
+                                <label for="client-list" class="inp">
                                     <select id="client-list" class="fields" required="required">
                                         <option value="-1">&#xf17b; Client</option>
                                     </select>
@@ -308,7 +312,7 @@
                                 <!--<input type="date" id="activity-date" class="form-control fields" required="required"/>-->
                                 <label for="activity-date" class="inp">
                                     <input type="date" class="fields" id="activity-date">
-                                    <span class="label">Date</span>
+                                    <span class="label"><span class="text-danger">*</span>Date</span>
                                     <span class="border"></span>
                                 </label>
                             </div>
@@ -319,7 +323,7 @@
                                 <!--<input type="number" id="activity-duration" class="form-control fields col-sm-4" placeholder="Duration" required="required" min=0 >-->
                                 <label for="activity-duration" class="inp">
                                     <input type="number" class="fields" min=1 id="activity-duration">
-                                    <span class="label">Duration(Min)</span>
+                                    <span class="label"><span class="text-danger">*</span>Duration(Min)</span>
                                     <span class="border"></span>
                                 </label>
                             </div>
@@ -929,8 +933,8 @@
                     let pro = '<i class="fa fa-lock"></i> Prospective Client';
                     clients = JSON.parse(response);
                     $('#client-list').empty();
-                    $('#client-list').append('<option value="-1" id="-1">-- Choose Client --</option>');
-                    $('#client-list').append('<option value="0" id="0"> &#xf17b; Prospective Client </option>');
+//                    $('#client-list').append('<option value="-1" id="-1"><span class="text-danger">*</span> Choose Client</option>');
+//                    $('#client-list').append('<option value="0" id="0"> &#xf17b; Prospective Client </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#client-list").append('<option value = "'+val.ID+'" id="'+val.ID+'" phone="'+val.phone+'" email="'+val.email+'">' + val.fullname + '</option>');
                     });
@@ -975,7 +979,7 @@
                 url: "/user/activity-types/",
                 success: function (response) {
                     var role = $("[id=activity-type]");
-                    role.empty().append('<option id="0"> Type </option>');
+                    role.empty().append('<option id="0"><span class="text-danger" style="color: red">*</span> Type </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         role.append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.activity_name + '</option>');
                     });
@@ -1102,9 +1106,6 @@
                     $.each(JSON.parse(data), function (key, val) {
                         test[key] = val;
                     });
-//                    if(test.message){
-//                        swal("An Activity  already exists!","","error");
-//                    }
                     if(test.status == 500){
                         return -swal("Error","Unable to submit","error");
                     }
@@ -1114,7 +1115,8 @@
                             upload(test.result, $('#activity-files')[0].files[i], i+1);
                         }
                         swal("Activity Submitted!","","success");
-                        $('.emoji-wysiwyg-editor').empty();
+                        $('.emoji-wysiwyg-editor').empty(); $('#client-list').val(0); $('#activity-duration').val(''); $('#activity-date').val(''); $('#activity-type').val(0); $('#team-list').val(0);
+                        $('#activity-files').val('');
                         loadActivities();
                     }
 
@@ -1201,5 +1203,14 @@
 
 //    })(jQuery);
 </script>
+<style>
+
+    .inp select {
+        color: red; !important;
+    }
+    .inp option:not(:first-of-type) {
+        color: black;
+    }
+</style>
 </body>
 </html>
