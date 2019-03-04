@@ -541,6 +541,7 @@
                 target_value = values[7],
                 accelerator = values[8],
                 accelerator_type = values[9],
+                accelerator_threshold = 100,
                 start = values[10],
                 end = values[11];
             user_id = userID;
@@ -554,9 +555,10 @@
                     $('#commission-paid').text('₦'+(parseFloat(paid)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     let data = response.response;
                     data.total = data.total || 0;
-                    let threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value);
+                    let threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value),
+                        progress = (parseFloat(data.total)/parseFloat(target_value)) * 100;
                     if (parseFloat(data.total) >= parseFloat(threshold)){
-                        if (accelerator_type !== 'null') {
+                        if ((progress >= accelerator_threshold) && (accelerator_type !== 'null')) {
                             switch (accelerator_type) {
                                 case 'all': {
                                     earnings = (parseInt(accelerator)/100) * parseFloat(data.total);
