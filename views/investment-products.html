@@ -1,0 +1,716 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+    <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+
+    <!-- <script>
+        $(function () {
+            // when the modal is closed
+            $('#myModal').on('hidden.bs.modal', function () {
+                // remove the bs.modal data attribute from it
+                $(this).removeData('bs.modal');
+                // and empty the modal-content element
+                $('#myModal .modal-content span').empty();
+                $('#myModal .modal-footer span').empty();
+                $('#myModal input').val("");
+            });
+        });
+    </script> -->
+</head>
+
+<body>
+    <!-- Left Panel -->
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            check();
+            loadMenus();
+            read_write();
+        });
+    </script>
+
+    <style>
+        #regForm {
+        background-color: rgba(255, 255, 255, 0.44);
+        /*margin: 100px auto;*/
+        padding: 20px;
+        /*width: 70%;*/
+        /*!*min-width: 300px;*!*/
+    }   
+</style>
+
+    <aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+
+            <div class="navbar-header">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu"
+                    aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="/dashboard">Loanratus</a>
+                <a class="navbar-brand hidden" href="/dashboard">35</a>
+            </div>
+
+            <div id="main-menu" class="main-menu collapse navbar-collapse">
+                <ul id="sidebar" class="nav navbar-nav"></ul>
+            </div>
+        </nav>
+    </aside><!-- /#left-panel -->
+
+    <!-- Left Panel -->
+
+    <!-- Right Panel -->
+
+    <div id="right-panel" class="right-panel">
+
+        <!-- Header-->
+        <header id="header" class="header">
+
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                    <div class="header-left">
+                    </div>
+                </div>
+
+                <div class="col-sm-5">
+                    <div class="user-area dropdown float-right">
+                        <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                        </a>
+
+                        <div class="user-menu dropdown-menu">
+                            <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i>
+                                Logout</a>
+                            <script type="text/javascript">
+                                function logout() {
+                                    localStorage.login = "0";
+                                    window.location.href = "/logout";
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </header><!-- /header -->
+        <!-- Header-->
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Add New Product</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Investment</a></li>
+                            <li class="active">New Product</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+
+                    <div id="user-form" class="col-xs-12 col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong id="new_edit">Add Investment Product Configuration</strong> <small id="def_name">
+                                    Investment Product Information</small>
+                            </div>
+                            <div class="card-body card-block">
+                                <div id="regForm" action="user/new-client" method="post">
+
+                                    <!-- One "tab" for each step in the form: -->
+                                    <div class="tab">
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+                                                <div class="example-box-wrapper">
+                                                    <h6>Product</h6>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Name<span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_name" class="form-control imp"
+                                                                    placeholder="Product Name" tabindex="1" required="">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Code</label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_code" class="form-control"
+                                                                    placeholder="Product Code">
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Investment Amount</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Min. Amount <span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_investment_amount_min"
+                                                                    class="form-control imp" placeholder="Minimum Amount"
+                                                                    min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Max. Amount <span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="product_investment_amount_max"
+                                                                    class="form-control imp" placeholder="Maximum Amount"
+                                                                    min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Charges on Deposit
+                                                                Account
+                                                                <span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <div class="row">
+                                                                    <input type="text" id="saving_fees" class="form-control imp"
+                                                                        placeholder="Deposit Charge" min="0">
+                                                                    <select id="opt_on_deposit" class="form-control"
+                                                                        required="required">
+                                                                        <option value="Fixed" selected="selected">Fixed</option>
+                                                                        <option value="Percentage">Percentage</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Minimum Balance</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Amount </label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="minimum_bal" class="form-control imp"
+                                                                    placeholder="Minimum Amount" min="0.00">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Penalty Amount</label>
+                                                            <span class="text-danger" style="font-size: 1.0em">(below
+                                                                minimum balance)</span>
+                                                            <div class="input-group">
+                                                                <div class="row">
+                                                                    <input type="text" id="minimum_bal_penalty_amount"
+                                                                        name="minimum_bal_penalty_amount" class="form-control imp"
+                                                                        placeholder="Penalty Charge" min="0">
+                                                                    <select id="opt_on_minimum_bal_penalty_amount"
+                                                                        class="form-control" required="required">
+                                                                        <option value="Fixed" selected="selected">Fixed</option>
+                                                                        <option value="Percentage">Percentage</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+                                                <div class="example-box-wrapper">
+                                                    <h6>Interest <input type="checkbox" id="chk_interest_rate"></h6>
+                                                    <hr><br>
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Interest Rate(%)</label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="interest_rate" class="form-control imp"
+                                                                    placeholder="Maximum Amount" min="0" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Interest Payment Circle</label>
+                                                            <div class="input-group">
+                                                                <select id="condition_for_interest" class="form-control"
+                                                                    required="required" disabled>
+                                                                    <option value="0" selected="selected">-- Select --</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <input type="checkbox" id="forfeit_interest_on_withdrawal"
+                                                                disabled>
+                                                            <label class="form-control-label">Penalty for Premature
+                                                                Investment</label>
+                                                            <div class="input-group">
+                                                                <div class="row">
+                                                                    <input type="text" id="charge_interest_on_withdrawal"
+                                                                        class="form-control imp" placeholder="Penalty Charge"
+                                                                        min="0" disabled>
+                                                                    <select id="opt_on_charge_interest_on_withdrawal"
+                                                                        class="form-control" required="required"
+                                                                        disabled>
+                                                                        <option value="Fixed" selected="selected">Fixed</option>
+                                                                        <option value="Percentage">Percentage</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Freq. of Withdrawal</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Count (e.g: 3 Times of)
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="number" id="withdrawal_conditions_value"
+                                                                    class="form-control imp" placeholder="Count" min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Duration
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <select id="withdrawal_charge_duration" class="form-control"
+                                                                    required="required">
+                                                                    <option value="0" selected="selected">-- Select --</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label">Charge for Above Freq.</label>
+                                                            <div class="input-group">
+                                                                <div class="row">
+                                                                    <input type="text" id="withdrawal_charge_freq"
+                                                                        class="form-control imp" placeholder="Freq. Charge"
+                                                                        data-mask="#,##0.00">
+                                                                    <select id="opt_on_freq_charge" class="form-control"
+                                                                        required="required">
+                                                                        <option value="Fixed" selected="selected">Fixed</option>
+                                                                        <option value="Percentage">Percentage</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="overflow:auto;">
+                                        <div style="float:right;">
+                                            <button class="btn btn-success" id="btnSaveProduct" type="button" onclick="set_investment_product()">Add
+                                                New Product</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- .animated -->
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img
+                    src='spinner.gif' width="100" height="100" style="background-color: transparent" /></div>
+        </div><!-- .content -->
+
+
+    </div><!-- /#right-panel -->
+
+    <!-- Right Panel -->
+
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
+    <script type="text/javascript" src="global-params.js"></script>
+    <script src="./js/money-formater.js"></script>
+
+    <script>
+        var product_obj = {};
+        jQuery(document).ready(function () {
+            get_global_items();
+        });
+
+        $(document).ajaxStart(function () {
+            $("#wait").css("display", "block");
+        });
+
+        $(document).ajaxComplete(function () {
+            $("#wait").css("display", "none");
+        });
+
+
+        function check() {
+            if (localStorage.getItem('role') !== 1) {
+                jQuery('#car-models').hide();
+                jQuery('#new-user').hide();
+                jQuery('#models-card').hide();
+                jQuery('#user').html(localStorage.getItem("name"));
+            } else {
+                jQuery('#user').html(localStorage.getItem("name"));
+            }
+        }
+
+        function loadMenus() {
+            let modules = {};
+            modules = JSON.parse(localStorage.getItem("modules"));
+            modules.forEach(function (k, v) {
+                if (k.menu_name === 'Sub Menu') {
+                    let main = $.grep(modules, function (e) {
+                        return e.id === parseInt(k.main_menu);
+                    });
+                    $('#' + $(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+                } else if (k.menu_name === 'Main Menu') {
+                    $('#sidebar').append(k.module_tag);
+                    $('#' + $(k.module_tag).attr('id')).append(
+                        '<ul class="sub-menu children dropdown-menu"></ul>');
+                } else {
+                    $('#' + k.module_name).show();
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-requests",
+                success: function (response) {
+                    $.each(response, function (k, v) {
+                        $('#requests-badge').html(v.requests);
+                    });
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/user/all-applications",
+                success: function (response) {
+                    $.each(response, function (k, v) {
+                        $('#applications-badge').html(v.applications);
+                    });
+                }
+            });
+        }
+
+        function read_write() {
+            let w;
+            var perms = JSON.parse(localStorage.getItem("permissions"));
+            var page = (window.location.pathname.split('/')[1].split('.'))[0];
+            perms.forEach(function (k, v) {
+                if (k.module_name === page) {
+                    w = $.grep(perms, function (e) {
+                        return e.id === parseInt(k.id);
+                    });
+                }
+            });
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)) {
+                $(".write").hide();
+            }
+        }
+
+
+        $("#product_investment_amount_min").on("keyup", function (event) {
+            let val = $("#product_investment_amount_min").val();
+            $("#product_investment_amount_min").val(formater(val));
+        });
+
+        $("#minimum_bal_penalty_amount").on("keyup", function (event) {
+            let val = $("#minimum_bal_penalty_amount").val();
+            $("#minimum_bal_penalty_amount").val(formater(val));
+        });
+
+        $("#product_investment_amount_max").on("keyup", function (event) {
+            let val = $("#product_investment_amount_max").val();
+            $("#product_investment_amount_max").val(formater(val));
+        });
+
+        $("#minimum_bal").on("keyup", function (event) {
+            let val = $("#minimum_bal").val();
+            $("#minimum_bal").val(formater(val));
+        });
+
+        $("#withdrawal_charge_freq").on("keyup", function (event) {
+            let val = $("#withdrawal_charge_freq").val();
+            $("#withdrawal_charge_freq").val(formater(val));
+        });
+
+        $("#charge_interest_on_withdrawal").on("keyup", function (event) {
+            let val = $("#charge_interest_on_withdrawal").val();
+            $("#charge_interest_on_withdrawal").val(formater(val));
+        });
+
+        // $("#withdrawal_charge_freq").on("keyup", function (event) {
+        //     //money_formater(event);
+        //     var selection = window.getSelection().toString();
+        //     if (selection !== '') {
+        //         return;
+        //     }
+        //     // When the arrow keys are pressed, abort.
+        //     if (jQuery.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+        //         return;
+        //     }
+        //     var $this = $(this);
+        //     // Get the value.
+        //     var input = $this.val();
+        //     var input = input.replace(/[\D\s\._\-]+/g, "");
+        //     input = input ? parseInt(input, 10) : 0;
+
+        //     $this.val(function () {
+        //         return (input === 0) ? "0" : input.toLocaleString("en-US");
+        //     });
+        // });
+
+        $("#saving_fees").on("keyup", function (event) {
+            let val = $("#saving_fees").val();
+            $("#saving_fees").val(formater(val));
+        });
+
+        function get_global_items() {
+            var sPageURL = window.location.search.substring(1);
+            console.log(sPageURL);
+            if (sPageURL !== "") {
+                var sURLVariables = sPageURL.split('=')[1];
+                console.log(sURLVariables);
+                if (sURLVariables !== "") {
+                    getInvestmentProducts(sURLVariables);
+                }
+            }
+            for (var i = 0; i < interest_conditions.length; i++) {
+                $('<option/>').val(interest_conditions[i].value).html(interest_conditions[i].value).appendTo(
+                    '#condition_for_interest');
+            }
+            for (var i = 0; i < freq_withdrawal.length; i++) {
+                $('<option/>').val(freq_withdrawal[i].value).html(freq_withdrawal[i].value).appendTo(
+                    '#withdrawal_charge_duration');
+            }
+        }
+
+        function getInvestmentProducts(id) {
+            $.ajax({
+                type: "GET",
+                url: `/investment/products/${id}`,
+                success: function (data) {
+                    if (data.status === undefined) {
+                        product_obj = data[0];
+                        console.log(product_obj.saving_charge_opt);
+                        product_obj.histories = JSON.parse(product_obj.histories);
+                        $('#product_name').val(product_obj.name);
+                        $('#product_investment_amount_min').val(product_obj.investment_min);
+                        $('#product_investment_amount_max').val(product_obj.investment_max);
+                        $('#withdrawal_conditions_value').val(product_obj.freq_withdrawal);
+                        $('#saving_fees').val(product_obj.saving_fees);
+                        $('#opt_on_deposit').val((product_obj.saving_charge_opt === null) ? $(
+                            '#opt_on_deposit').val() : product_obj.saving_charge_opt);
+                        $('#withdrawal_charge_freq').val(product_obj.withdrawal_fees);
+                        $('#withdrawal_charge_duration').val(product_obj.withdrawal_freq_duration);
+                        $('#minimum_bal').val(product_obj.minimum_bal);
+                        $('#product_code').val(product_obj.code);
+                        $('#interest_rate').val(product_obj.interest_rate);
+                        $('#condition_for_interest').val(product_obj.interest_disbursement_time);
+                        $('#forfeit_interest_on_withdrawal').prop('checked', true);
+                        $('#minimum_bal_penalty_amount').val(product_obj.minimum_bal_charges);
+                        $('#opt_on_minimum_bal_penalty_amount').val((product_obj.minimum_bal_charges_opt ===
+                            null) ? $(
+                            '#opt_on_minimum_bal_penalty_amount').val() : product_obj.minimum_bal_charges_opt);
+
+                        $('#charge_interest_on_withdrawal').val(product_obj.interest_forfeit_charge);
+                        $('#opt_on_charge_interest_on_withdrawal').val((product_obj.interest_forfeit_charge_opt ===
+                            null) ? $(
+                            '#opt_on_charge_interest_on_withdrawal').val() : product_obj.interest_forfeit_charge_opt);
+
+                        $('#opt_on_freq_charge').val((product_obj.withdrawal_freq_fees_opt ===
+                            null) ? $(
+                            '#opt_on_freq_charge').val() : product_obj.withdrawal_freq_fees_opt);
+                        $('#btnSaveProduct').html('Update');
+                        $('#wait').hide();
+                    } else {
+                        $('#wait').hide();
+                        swal('Oops! An error occurred while geting Investment Product; ' + data.error
+                            .sqlMessage,
+                            '', 'error');
+                    }
+                }
+            });
+        }
+
+        $("#chk_interest_rate").on('change',
+            function () {
+                let status = $('#chk_interest_rate').is(':checked');
+                activate_interest_controls(!status);
+            });
+
+        function activate_interest_controls(status) {
+            $('#interest_rate').attr('disabled', status);
+            $('#condition_for_interest').attr('disabled', status);
+            $('#forfeit_interest_on_withdrawal').attr('disabled', status);
+        }
+
+        $("#forfeit_interest_on_withdrawal").on('change',
+            function () {
+                let _status = $('#forfeit_interest_on_withdrawal').is(':checked');
+                activate_interest_penalty_controls(!_status);
+            });
+
+        function activate_interest_penalty_controls(status) {
+            $('#charge_interest_on_withdrawal').attr('disabled', status);
+            $('#opt_on_charge_interest_on_withdrawal').attr('disabled', status);
+        }
+
+
+
+        function set_investment_product() {
+            console.log(product_obj.histories);
+            product_obj.name = $('#product_name').val();
+            product_obj.investment_max = $('#product_investment_amount_max').val();
+            product_obj.investment_min = $('#product_investment_amount_min').val();
+            product_obj.freq_withdrawal = $('#withdrawal_conditions_value').val();
+            product_obj.saving_fees = $('#saving_fees').val();
+            product_obj.saving_charge_opt = $('#opt_on_deposit').val();
+            product_obj.withdrawal_fees = $('#withdrawal_charge_freq').val();
+            product_obj.withdrawal_freq_duration = $('#withdrawal_charge_duration').val();
+            product_obj.minimum_bal = $('#minimum_bal').val();
+            product_obj.code = $('#product_code').val();
+            product_obj.interest_rate = $('#interest_rate').val();
+            product_obj.interest_disbursement_time = $('#condition_for_interest').val();
+            product_obj.is_forfeit = $('#forfeit_interest_on_withdrawal').is(':checked') ? 1 : 0;
+            product_obj.interest_forfeit_charge = $('#charge_interest_on_withdrawal').val();
+            product_obj.interest_forfeit_charge_opt = $('#opt_on_charge_interest_on_withdrawal').val();
+            product_obj.minimum_bal_charges = $('#minimum_bal_penalty_amount').val();
+            product_obj.minimum_bal_charges_opt = $('#opt_on_minimum_bal_penalty_amount').val();
+            product_obj.withdrawal_freq_fees_opt = $('#opt_on_freq_charge').val();
+
+            product_obj.histories = (product_obj.histories == null) ? [] : product_obj.histories;
+            console.log(product_obj.histories);
+            product_obj.createdBy = (JSON.parse(localStorage.getItem("user_obj"))).ID;
+
+            console.log(product_obj);
+            if (product_obj.ID === undefined) {
+                $.ajax({
+                    'url': '/investment/products',
+                    'type': 'post',
+                    'data': product_obj,
+                    'success': function (data) {
+                        if (data.status === 200) {
+                            $('#wait').hide();
+                            swal('Investment Product created successfully!', '', 'success');
+                            var url = "./all-investment-products";
+                            $(location).attr('href', url);
+                            $('input').val("");
+                            $('input').prop("checked", false);
+                        } else {
+                            $('#wait').hide();
+                            swal('Oops! An error occurred while saving Investment Product; ' + data.error
+                                .sqlMessage,
+                                '', 'error');
+                        }
+                    },
+                    'error': function (err) {
+                        $('#wait').hide();
+                        swal('Oops! An error occurred while saving Investment Product; ' + data.error.sqlMessage,
+                            '', 'error');
+                    }
+                });
+            } else {
+                product_obj.histories.push({
+                    createdBy: (JSON.parse(localStorage.getItem("user_obj"))).ID,
+                    rate: product_obj.interest_rate
+                });
+                $.ajax({
+                    url: `/investment/products/${product_obj.ID}`,
+                    'type': 'post',
+                    'data': product_obj,
+                    'success': function (data) {
+                        if (data.status === 200) {
+                            console.log(product_obj);
+                            $('#wait').hide();
+                            swal('Investment Product updated successfully!', '', 'success');
+                            var url = "./all-investment-products";
+                            $(location).attr('href', url);
+                            $('input').val("");
+                            $('input').prop("checked", false);
+                        } else {
+                            $('#wait').hide();
+                            swal('Oops! An error occurred while updating Investment Product; ' + data.error
+                                .sqlMessage,
+                                '', 'error');
+                        }
+                    },
+                    'error': function (err) {
+                        $('#wait').hide();
+                        swal('Oops! An error occurred while updating Investment Product; ' + data.error.sqlMessage,
+                            '', 'error');
+                    }
+                });
+            }
+        }
+    </script>
+
+</body>
+
+</html>
