@@ -28,11 +28,8 @@
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script>
         $(function () {
-            // when the modal is closed
             $('#myModal1').on('hidden.bs.modal', function () {
-                // remove the bs.modal data attribute from it
                 $(this).removeData('bs.modal');
-                // and empty the modal-content element
                 $('#myModal1 .modal-content span').empty();
                 $('#myModal1 input').val("");
             });
@@ -48,7 +45,7 @@
 
 <script type="text/javascript">
     jQuery(document).ready(function($){
-        loadUsers(); check(); loadMenus(); read_write();});
+        check(); loadMenus(); read_write();});
 </script>
 
 <style>
@@ -162,25 +159,25 @@
                     </div>
                 </div>
 
-                <!-- <div class="language-select dropdown" id="language-select">
-                    <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
-                        <i class="flag-icon flag-icon-us"></i>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="language" >
-                        <div class="dropdown-item">
-                            <span class="flag-icon flag-icon-fr"></span>
-                        </div>
-                        <div class="dropdown-item">
-                            <i class="flag-icon flag-icon-es"></i>
-                        </div>
-                        <div class="dropdown-item">
-                            <i class="flag-icon flag-icon-us"></i>
-                        </div>
-                        <div class="dropdown-item">
-                            <i class="flag-icon flag-icon-it"></i>
-                        </div>
-                    </div>
-                </div> -->
+                <!--<div class="language-select dropdown" id="language-select">-->
+                    <!--<a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">-->
+                        <!--<i class="flag-icon flag-icon-us"></i>-->
+                    <!--</a>-->
+                    <!--<div class="dropdown-menu" aria-labelledby="language" >-->
+                        <!--<div class="dropdown-item">-->
+                            <!--<span class="flag-icon flag-icon-fr"></span>-->
+                        <!--</div>-->
+                        <!--<div class="dropdown-item">-->
+                            <!--<i class="flag-icon flag-icon-es"></i>-->
+                        <!--</div>-->
+                        <!--<div class="dropdown-item">-->
+                            <!--<i class="flag-icon flag-icon-us"></i>-->
+                        <!--</div>-->
+                        <!--<div class="dropdown-item">-->
+                            <!--<i class="flag-icon flag-icon-it"></i>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
 
             </div>
         </div>
@@ -243,6 +240,7 @@
                                     <th>ID</th>
                                     <th>Username</th>
                                     <th>Full Name</th>
+                                    <th>Loan Officer</th>
                                     <th>Date Created</th>
                                     <th>Action</th>
                                 </tr>
@@ -262,8 +260,6 @@
                         </div>
                         <div class="card-body card-block">
                             <div id="regForm" action="user/new-client" method="post">
-
-                                <!-- One "tab" for each step in the form: -->
                                 <div class="tab">
                                     <div class="panel push-down">
                                         <div class="panel-body">
@@ -353,10 +349,6 @@
                                                         <label class="form-control-label">Branch</label>
                                                         <div class="input-group">
                                                             <select id="branch" class="form-control" tabindex="5.2" >
-                                                                <!--<option id="0"> &#45;&#45; Select a branch &#45;&#45;</option>-->
-                                                                <!--<option id="Lagos">Lagos</option>-->
-                                                                <!--<option id="Abuja">Abuja</option>-->
-                                                                <!--<option id="PH">Port - Harcourt</option>-->
                                                             </select>
                                                             <!-- ngIf: idForm.user.$dirty -->
                                                         </div>
@@ -452,9 +444,6 @@
                                                 <h3>Uploads</h3><hr><br>
                                                 <div class="row">
                                                     <div class="form-group col-sm-4">
-                                                        <!-- <label class="col-sm-3 control-label">Upload Customer Image</label> -->
-
-                                                        <!-- <input type="file" name="customer_image" class="form-control" tabindex="6"> -->
                                                         <div class="form-control">
                                                             <label for="file-upload" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Customer Image
@@ -470,11 +459,7 @@
                                                     </div>
 
                                                     <div class="form-group col-sm-4">
-                                                        <!-- <label class="col-sm-3 control-label">Upload Customer Signature</label> -->
-
                                                         <div class="form-control">
-                                                            <!-- <input type="file" name="cust_signature_image" class="form-control" tabindex="7"> -->
-
                                                             <label for="file-upload-signature" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload ID Card
                                                             </label>
@@ -490,11 +475,7 @@
                                                     </div>
 
                                                     <div class="form-group col-sm-4">
-                                                        <!-- <label class="col-sm-3 control-label">Upload Customer Signature</label> -->
-
                                                         <div class="form-control">
-                                                            <!-- <input type="file" name="cust_signature_image" class="form-control" tabindex="7"> -->
-
                                                             <label for="file-upload-signature" class="custom-file-upload">
                                                                 <i class="fa fa-cloud-upload"></i> Upload Signature
                                                             </label>
@@ -512,15 +493,9 @@
                                                 <div class="row setup-content" id="files">
                                                     <div class="col-xs-12">
                                                         <div class="col-md-12 well">
-                                                            <!--<h2 class="text-center" style="margin-bottom: 15px;">Uploaded Images</h2>-->
                                                             <div id="Carousel" class="carousel slide">
                                                                 <ol class="carousel-indicators"></ol>
-
-                                                                <!-- Carousel items -->
                                                                 <div class="carousel-inner" style="margin-left: 150px"></div>
-
-                                                                <!--<a data-slide="prev" href="#Carousel" class="left carousel-control">‹</a>-->
-                                                                <!--<a data-slide="next" href="#Carousel" class="right carousel-control">›</a>-->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -743,19 +718,13 @@
                                     </div>
                                 </div>
 
-                                <!--<div class="tab">-->
-                                <!--<p><input placeholder="Username..." oninput="this.className = ''"></p>-->
-                                <!--<p><input placeholder="Password..." oninput="this.className = ''"></p>-->
-                                <!--</div>-->
-
                                 <div style="overflow:auto;">
                                     <div style="float:right;">
                                         <button class="btn btn-danger write" type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
                                         <button class="btn btn-success write" type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
                                     </div>
                                 </div>
-
-                                <!-- Circles which indicates the steps of the form: -->
+\
                                 <div style="text-align:center;margin-top:40px;">
                                     <span class="step"></span>
                                     <span class="step"></span>
@@ -770,7 +739,7 @@
 
             </div>
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 
 
@@ -808,21 +777,21 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <strong><label class=" form-control-label">User</label></strong>
+                    <strong><label class="form-control-label">User</label></strong>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
                         <input id="username" type="text" class="form-control" required="required" readonly="readonly">
                     </div>
                 </div>
                 <div class="form-group">
-                    <strong><label class=" form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
+                    <strong><label class="form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                         <input id="new-password" type="password" class="form-control" required="required">
                     </div>
                 </div>
                 <div class="form-group">
-                    <strong><label class=" form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                    <strong><label class="form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                         <input id="cpassword" type="password" class="form-control" required="required">
@@ -859,7 +828,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#bootstrap-data-table-export').DataTable();
         checkForEdit();
         getOfficers();
         getBranches();
@@ -869,37 +837,31 @@
 
     let client_id;
 
-    var currentTab = 0; // Current tab is set to be the first tab (0)
-    showTab(currentTab); // Display the current tab
+    let currentTab = 0;
+    showTab(currentTab);
 
     function showTab(n) {
-        // This function will display the specified tab of the form ...
-        var x = document.getElementsByClassName("tab");
+        let x = document.getElementsByClassName("tab");
         x[n].style.display = "block";
-        // ... and fix the Previous/Next buttons:
-        if (n == 0) {
+        if (n === 0) {
             document.getElementById("prevBtn").style.display = "none";
         } else {
             document.getElementById("prevBtn").style.display = "inline";
         }
-        if (n == (x.length - 1)) {
+        if (n === (x.length - 1)) {
             document.getElementById("nextBtn").innerHTML = "Submit";
         } else {
             document.getElementById("nextBtn").innerHTML = "Next";
         }
-        // ... and run a function that displays the correct step indicator:
         fixStepIndicator(n)
     }
 
     function nextPrev(n) {
-        // This function will figure out which tab to display
-        var x = document.getElementsByClassName("tab");
-        // Exit the function if any field in the current tab is invalid:
-
+        let x = document.getElementsByClassName("tab");
         if (!($('#loan_officer').find('option:selected').attr('id') === '0') && !($('#branch').find('option:selected').attr('id') === '0')){
 
             if(validateEmail($('#email').val())){
-                if (n == 1 && !validateForm()){
+                if (n === 1 && !validateForm()){
                     swal('Fill all required fields');
                     return false;
                 }
@@ -913,58 +875,42 @@
             return false;
         }
 
-        //return false;
-//        if (n == 1) return false;
-        // Hide the current tab:
         x[currentTab].style.display = "none";
-        // Increase or decrease the current tab by 1:
         currentTab = currentTab + n;
-        // if you have reached the end of the form... :
         if (currentTab >= x.length) {
-            //...the form gets submitted:
-//            document.getElementById("regForm").submit();
             submitDetails();
             return false;
         }
-        // Otherwise, display the correct tab:
         showTab(currentTab);
     }
 
     function validateForm() {
-        // This function deals with validation of the form fields
-        var x, y, i, valid = true;
+        let x, y, i, valid = true;
         x = document.getElementsByClassName("tab");
         y = x[currentTab].getElementsByClassName("imp");
-//        y = x[currentTab].getElementsByTagName("input");
-        // A loop that checks every input field in the current tab:
         for (i = 0; i < y.length; i++) {
-            // If a field is empty...
-            if (y[i].value == "") {
-                // add an "invalid" class to the field:
+            if (y[i].value === "") {
                 y[i].className += " invalid";
-                // and set the current valid status to false:
                 valid = false;
             }
         }
-        // If the valid status is true, mark the step as finished and valid:
+
         if (valid) {
             document.getElementsByClassName("step")[currentTab].className += " finish";
         }
-        return valid; // return the valid status
+        return valid;
     }
 
     function fixStepIndicator(n) {
-        // This function removes the "active" class of all steps...
-        var i, x = document.getElementsByClassName("step");
+        let i, x = document.getElementsByClassName("step");
         for (i = 0; i < x.length; i++) {
             x[i].className = x[i].className.replace(" active", "");
         }
-        //... and adds the "active" class to the current step:
         x[n].className += " active";
     }
 
     function validateEmail(email) {
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
     }
 
@@ -977,8 +923,6 @@
     });
 
     let results;
-
-    var table = $('#bootstrap-data-table-export').DataTable();
 
     function validate(){
         if ($('#new-password').val() == "" || $('#new-password').val() == null){
@@ -1005,22 +949,24 @@
         }
     }
 
-    function loadUsers(){
+    function loadUsers(id){
         let start = $("#startDate").val(),
             end = $("#endDate").val(),
+            uid = id || '',
             url;
-        url = (start === "" || start === null || end === "" || end === null ) ? 'user/clients-list-full' : 'user/clients-list-full?start='+start+'&&end='+end
-
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/clients-list-full/'+uid : 'user/clients-list-full/'+uid+'?start='+start+'&&end='+end;
+        $('#wait').show();
         $.ajax({
             'url': url,
             'type': 'get',
             'success': function (data) {
-                var users = JSON.parse(data);
+                $('#wait').hide();
+                let users = JSON.parse(data);
                 results = users;
                 populateDataTable(users);
             },
             'error': function (err) {
-                //alert ('Error');
+                $('#wait').hide();
                 console.log('Error');
             }
         });
@@ -1028,16 +974,24 @@
     }
 
     function read_write(){
-        let w;
-        var perms = JSON.parse(localStorage.getItem("permissions"));
-        var page = (window.location.pathname.split('/')[1].split('.'))[0];
-        perms.forEach(function (k,v){
-            if (k.module_name === page){
+        let w,
+            perms = JSON.parse(localStorage.getItem("permissions")),
+            page = (window.location.pathname.split('/')[1].split('.'))[0],
+            clientsList = ($.grep(perms, function(e){return e.module_name === 'clientsList';}))[0],
+            editLoanOfficer = ($.grep(perms, function(e){return e.module_name === 'editLoanOfficer';}))[0];
+        perms.forEach(function (k){
+            if (k.module_name === page)
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-            }
         });
-        if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
+        if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
             $(".write").hide();
+
+        if (!editLoanOfficer || editLoanOfficer['read_only'] !== '1')
+            $('#loan_officer').prop('disabled', true);
+        if (clientsList && clientsList['read_only'] === '1'){
+            loadUsers();
+        } else {
+            loadUsers((JSON.parse(localStorage.user_obj)).ID);
         }
     }
 
@@ -1104,15 +1058,12 @@
     }
 
     function populateDataTable(data) {
-        // clear the table before populating it with more data
         $("#bootstrap-data-table").DataTable().clear();
-        //var action = '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>';
         let processed_data = [];
         $.each(data, function(k, v){
             let actions;
             if (v.status === "1"){
-//                actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View Details</button>'+
-                    actions = '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
+                actions = '<a href="./client-info?id='+v.ID+'" class="write btn btn-primary "><i class="fa fa-tasks"></i> View Profile</a>'+
                     '<button onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Client</button>'
             }
             else {
@@ -1125,6 +1076,7 @@
             dom: 'Blfrtip',
             bDestroy: true,
             data: processed_data,
+            search: {search: ' '},
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
@@ -1132,6 +1084,7 @@
                 { data: "ID" },
                 { data: "username" },
                 { data: "fullname" },
+                { data: "loan_officer_name" },
                 { data: "date_created" },
                 { data: "actions" }
             ]
@@ -1139,12 +1092,9 @@
     }
 
     function confirm(id) {
-        // approveInspection(status, "Passed");
         swal({
             title: "Disable this client?",
             text: "Click OK to continue",
-            //icon: "input",
-            //content: "input",
             buttons: true,
             closeModal: false
         }).then(
@@ -1156,12 +1106,9 @@
     }
 
     function confirmEnable(id) {
-        // approveInspection(status, "Passed");
         swal({
             title: "Reactivate this client?",
             text: "Click OK to continue",
-            //icon: "input",
-            //content: "input",
             buttons: true,
             closeModal: false
         }).then(
@@ -1173,14 +1120,14 @@
     }
 
     function disableClient(id){
-        var test = {};
+        let test = {};
         $.ajax({
             'url': '/user/del-client/'+id,
             'type': 'post',
             'data': {},
             'success': function (data) {
-                test = JSON.parse(data); console.log(test.status);
-                if(test.status == 500){
+                test = JSON.parse(data);
+                if(test.status === 500){
                     swal("Please Retry Action!");
                 }
                 else{
@@ -1195,14 +1142,14 @@
     }
 
     function enableClient(id){
-        var test = {};
+        let test = {};
         $.ajax({
             'url': '/user/en-client/'+id,
             'type': 'post',
             'data': {},
             'success': function (data) {
-                test = JSON.parse(data); console.log(test.status);
-                if(test.status == 500){
+                test = JSON.parse(data);
+                if(test.status === 500){
                     swal("Please Retry Action!");
                 }
                 else{
@@ -1243,9 +1190,8 @@
         $.ajax({
             type: "GET",
             url: "/user/users-list/",
-            data: '{}',
             success: function (response) {
-                var role = $("[id=loan_officer]");
+                let role = $("[id=loan_officer]");
                 role.empty().append('<option selected="selected" id="0">-- Choose Loan Officer --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#loan_officer").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
@@ -1259,7 +1205,7 @@
             type: "GET",
             url: "/user/branches/",
             success: function (response) {
-                var branch = $("[id=branch]");
+                let branch = $("[id=branch]");
                 branch.empty().append('<option id="0" value ="0">-- Select a Branch --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
@@ -1271,10 +1217,9 @@
     function getCountries(){
         $.ajax({
             type: "GET",
-            url: "/user/countries/",
-            data: '{}',
+            url: "/user/countries",
             success: function (response) {
-                var country = $("[id*=country]");
+                let country = $("[id*=country]");
                 country.empty().append('<option id="0" value="0">-- Select Country --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     country.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.country_name + '</option>');
@@ -1286,10 +1231,9 @@
     function getStates(){
         $.ajax({
             type: "GET",
-            url: "/user/states/",
-            data: '{}',
+            url: "/user/states",
             success: function (response) {
-                var state = $("[id*=state]");
+                let state = $("[id*=state]");
                 state.empty().append('<option id="0" value="0">-- Select State --</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     state.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.state + '</option>');
@@ -1363,12 +1307,10 @@
                 'url': '/user/client-dets/'+client_id,
                 'type': 'get',
                 'success': function (data) {
-                    //console.log(data);
                     $('#client_name').html(data[0].fullname);
                     $('#user-form').slideDown();
                     $('#user-table').slideToggle();
-                    //console.log(data[0]);
-                    var fullname = data[0].fullname;
+                    let fullname = data[0].fullname;
                     $('#first_name').val(fullname.split(' ')[0]);
                     $('#middle_name').val(fullname.split(' ')[1]);
                     $('#last_name').val(fullname.split(' ')[2]);
@@ -1403,10 +1345,6 @@
                     $("#email").prop("readonly", true);
                     $("#phone").prop("readonly", true);
                     loadImages(data[0].phone);
-                    // var applications = data.message;
-                    // results = applications;
-                    // populateDataTable(applications);
-                    // swal('Application archived successfully');
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred while retrieving details.');
@@ -1451,8 +1389,7 @@
         obj.guarantor_email = $("#guarantor_email").val();
         obj.guarantor_address = $("#guarantor_address").val();
         obj.gua_country = $('#gua_country').find('option:selected').attr('id');
-//        obj.user_role = $('#role').find('option:selected').attr('id');
-        var test={};
+        let test={};
         $.ajax({
             'url': '/user/edit-client/'+ed,
             'type': 'post',
@@ -1461,8 +1398,7 @@
                 $.each(JSON.parse(data), function (key, val) {
                     test[key] = val;
                 });
-                console.log(test);
-                if(test.response == null){
+                if(test.response === null){
                     swal("Communication Error! Please try again");
                 }
                 else
@@ -1476,14 +1412,14 @@
     }
 
     function upload(i){
-        var name = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val(); var folder_name = " ";
+        let name = $('#first_name').val() + ' '+ $('#middle_name').val() + ' ' +$('#last_name').val(); let folder_name = " ";
         if ($('#email').val() === "" || $('#email').val() === "null"){
             swal('Please Enter Client Email!');
         }
         else {
             folder_name = $('#phone').val();
         }
-        var file; var item;
+        let file; let item;
         if (i === 1){
             file = $('#file-upload')[0].files[0];
             item ="Image";
@@ -1497,7 +1433,7 @@
         if (file === "undefined") {
             swal ("Choose file to upload");
         }else{
-            var formData = new FormData();
+            let formData = new FormData();
             formData.append('file', file); formData.append('type', i);
             $.ajax({
                 url: "user/upload-file/"+folder_name+'/'+item,
@@ -1516,15 +1452,13 @@
     }
 
     function loadImages(phone){
-        let $carousel_inner = $('.carousel-inner'),
-            $carousel_indicators = $('.carousel-indicators');
-        var test = {};
+        let $carousel_inner = $('.carousel-inner');
         $.ajax({
-            'url': '/profile-images/'+phone+'/',
+            'url': '/profile-images/'+phone,
             'type': 'get',
             'success': function (data) {
                 let res = JSON.parse(data);
-                if(res.status == 500){
+                if(res.status === 500){
                     swal({"icon": "info", "text": "No Image Uploaded!"});
                 }
                 else{
@@ -1538,14 +1472,9 @@
                         $carousel_inner.append(image);
                     });
                 }
-            },
-            'error': function (data){
-
             }
         });
-
     }
-
 </script>
 
 

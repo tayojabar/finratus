@@ -2,6 +2,7 @@ const express = require('express');
 let token,
     fs = require('fs'),
     db = require('../db'),
+    _ = require('lodash'),
     path = require('path'),
     users = express.Router(),
     async = require('async'),
@@ -23,7 +24,7 @@ let token,
 		extName: '.hbs'
 	};
 	transporter = nodemailer.createTransport(smtpConfig);
-transporter.use('compile', hbs(options));
+    transporter.use('compile', hbs(options));
 
 users.get('/import-bulk-clients', function(req, res) {
 let clients = [],
@@ -171,7 +172,7 @@ users.post('/new-user', function(req, res, next) {
     db.getConnection(function(err, connection) {
         if (err) throw err;
 
-        connection.query(query2,data, function (error, results, fields) {
+        connection.query(query2,[req.body.username, req.body.email], function (error, results, fields) {
             if (results && results[0]){
                 res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "User already exists!"}));
             }
@@ -212,13 +213,34 @@ users.post('/new-client', function(req, res, next) {
             }
             connection.query(query,postData, function (error, re, fields) {
                 if(error){
-                    console.log(error);
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                 } else {
                     res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
                 }
             });
         });
+    });
+});
+
+/* Add New Team*/
+users.post('/new-team', function(req, res, next) {
+    let postData = req.body,
+        query =  'SELECT * FROM teams WHERE name = ? AND status = 1';
+        query2 =  'INSERT INTO teams Set ?';
+    postData.status = 1;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query,[postData.name], function (error, team, fields) {
+        if(team && team[0]){
+            res.send({"status": 500, "error": "Team already exists!"});
+        } else {
+            db.query(query2,postData, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "error": null, "response": "New Team Added!"});
+                }
+            });
+        }
     });
 });
 
@@ -391,8 +413,636 @@ users.get('/users-list', function(req, res, next) {
   	});
 });
 
+users.get('/teams-list', function(req, res, next) {
+    let query = 'SELECT *, (select u.fullname from users u where u.ID = t.supervisor) as supervisor, (select count(*) from team_members m where m.teamID = t.ID and m.status = 1) as members, ' +
+        '(select count(*) from user_targets m where m.userID = t.ID and m.status = 1) as targets from teams t where t.status = 1 order by t.ID desc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Teams fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/team/members/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Team members fetched successfully", "response": results});
+        }
+    });
+});
+
+users.post('/team/members', function(req, res, next) {
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM team_members WHERE teamID=? AND memberID=? AND status = 1', [req.body.teamID,req.body.memberID], function (error, result, fields) {
+        if (result && result[0]) {
+            res.send({"status": 500, "error": "User has already been assigned to this team"});
+        } else {
+            db.query('INSERT INTO team_members SET ?', req.body, function (error, result, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    db.query('SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc', [req.body.teamID], function (error, results, fields) {
+                        if(error){
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            res.send({"status": 200, "message": "Team member assigned successfully", "response": results});
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+users.delete('/team/members/:id/:teamID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE team_members SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('SELECT *,(select u.fullname from users u where u.ID = t.memberID) as member from team_members t where t.status = 1 and t.teamID = ? order by t.ID desc', [req.params.teamID], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Team member deleted successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/team/targets/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Team targets fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/user-targets/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User targets fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/user-assigned-target/:id', function(req, res, next) {
+    let query = 'SELECT t.targetID AS ID,sum(t.value) AS value,u.title as target,u.type,u.period from user_targets t, targets u where t.status = 1 and t.userID = ? and u.ID = t.targetID group by t.targetID order by t.targetID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User assigned target fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/user-assigned-period/:id/:targetID', function(req, res, next) {
+    let query = 'SELECT t.sub_periodID AS ID,sum(t.value) AS value,u.name,u.type,u.periodID from user_targets t, sub_periods u where t.status = 1 and t.userID = ? and t.targetID = ? and u.ID = t.sub_periodID group by t.sub_periodID order by t.sub_periodID desc';
+    db.query(query, [req.params.id,req.params.targetID], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User assigned period fetched successfully", "response": results});
+        }
+    });
+});
+
+
+users.get('/user-targets/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User targets fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/targets-list', function(req, res, next) {
+    let type = req.query.type,
+        target = req.query.target,
+        sub_period = req.query.sub_period,
+        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "team"',
+        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "user"';
+    if (type){
+        query = query.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+        query2 = query2.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+    }
+    if (target){
+        query = query.concat(' AND t.targetID = '+target);
+        query2 = query2.concat(' AND t.targetID = '+target);
+    }
+    if (sub_period){
+        query = query.concat(' AND t.sub_periodID = '+sub_period);
+        query2 = query2.concat(' AND t.sub_periodID = '+sub_period);
+    }
+    db.query(query, function (error, team_targets, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, function (error, user_targets, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    results = team_targets.concat(user_targets);
+                    res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/targets-list/:officerID', function(req, res, next) {
+    let type = req.query.type,
+        id = req.params.officerID,
+        target = req.query.target,
+        sub_period = req.query.sub_period,
+        query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "team"',
+        query2 = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as owner,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+            '(select u.start from sub_periods u where u.ID = t.sub_periodID) as start,(select u.end from sub_periods u where u.ID = t.sub_periodID) as end,' +
+            '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.user_type = "user"',
+        query3 = query2.concat(' AND t.userID = '+id+' '),
+        query4 = query2.concat(' AND (select supervisor from users where users.id = t.userID) =  '+id+' ');
+    if (id)
+        query2 = query3;
+    if (type){
+        query = query.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+        query2 = query2.concat(' AND (select u.type from targets u where u.ID = t.targetID) = "'+type+'"');
+    }
+    if (target){
+        query = query.concat(' AND t.targetID = '+target);
+        query2 = query2.concat(' AND t.targetID = '+target);
+    }
+    if (sub_period){
+        query = query.concat(' AND t.sub_periodID = '+sub_period);
+        query2 = query2.concat(' AND t.sub_periodID = '+sub_period);
+    }
+    if (id){
+        db.query(query, function (error, team_targets, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query2, function (error, user_targets, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        db.query(query4, function (error, user_targets2, fields) {
+                            if(error){
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                results = team_targets.concat(user_targets,user_targets2);
+                                res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, team_targets, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query2, function (error, user_targets, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        results = team_targets.concat(user_targets);
+                        res.send({"status": 200, "message": "Targets list fetched successfully", "response": results});
+                    }
+                });
+            }
+        });
+    }
+});
+
+users.delete('/targets-list/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_targets SET status=0, date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Assigned target deleted successfully!"});
+        }
+    });
+});
+
+
+users.get('/committals/user/disbursement/:userID/:targetID', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c,' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2',
+        query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c,' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    } else {
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+    }
+    db.query(query, [req.params.userID,req.params.targetID], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.userID,req.params.targetID], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/user/interest/:userID/:targetID', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(s.interest_amount) total FROM schedule_history AS s, (SELECT ID application_id FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
+            'WHERE a.userID = c.client_id AND a.status = 2) AS apps,(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0',
+        query2 = 'SELECT *, s.interest_amount amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
+            'WHERE a.userID = c.client_id AND a.status = 2) AS apps,(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    } else {
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+    }
+    db.query(query, [req.params.userID,req.params.targetID], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.userID,req.params.targetID], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/user/disbursement/:id', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2',
+        query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    }
+    db.query(query, [req.params.id], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/user/interest/:id', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(s.interest_amount) total FROM schedule_history AS s, (SELECT ID application_id FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
+        'WHERE a.userID = c.client_id AND a.status = 2) AS apps WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0',
+        query2 = 'SELECT *, s.interest_amount amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
+            'WHERE a.userID = c.client_id AND a.status = 2) AS apps WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    }
+    db.query(query, [req.params.id], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/team/disbursement/:id', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t ' +
+        'WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2',
+        query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
+            'WHERE a.userID = c.client_id AND a.status = 2';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    }
+    db.query(query, [req.params.id], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/team/interest/:id', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT count(*) count, sum(s.interest_amount) total FROM schedule_history AS s, (SELECT ID application_id FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
+        'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0',
+        query2 = 'SELECT *, s.interest_amount amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
+            'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    }
+    db.query(query, [req.params.id], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/disbursement/:id', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT *, cast(a.loan_amount as unsigned) amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client ' +
+            'FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer in (SELECT t.userID FROM user_targets t WHERE t.status = 1 AND t.user_type = "user" AND t.targetID = ?) AND status = 1) AS c, ' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2',
+        query2 = 'SELECT *, cast(a.loan_amount as unsigned) amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, ' +
+            '(SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE status = 1 AND teamID in (SELECT t.userID FROM user_targets t WHERE t.status = 1 AND t.user_type = "team" AND t.targetID = ?)) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c, ' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    } else {
+        query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+        query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+    }
+    db.query(query, [req.params.id,req.params.id], function (error, result_user, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id,req.params.id], function (error, result_team, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = {};
+                    results.data = _.unionBy(result_team,result_user,'ID');
+                    results.count = results.data.length;
+                    results.total = _.sumBy(results.data,'amount');
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/committals/interest/:id', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        query = 'SELECT *, cast(s.interest_amount as unsigned) amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, ' +
+            '(SELECT ID client_id FROM clients WHERE loan_officer in (SELECT t.userID FROM user_targets t WHERE t.status = 1 AND t.user_type = "user" AND t.targetID = ?) AND status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps, ' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0',
+        query2 = 'SELECT *, cast(s.interest_amount as unsigned) amount, s.payment_source channel, s.payment_date date, (SELECT userID FROM applications WHERE ID = s.applicationID) AS userID, (SELECT fullname FROM clients where ID = userID) AS client ' +
+            'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, ' +
+            '(SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE status = 1 AND teamID in (SELECT t.userID FROM user_targets t WHERE t.status = 1 AND t.user_type = "team" AND t.targetID = ?)) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps, ' +
+            '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
+    if (start && end){
+        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
+    } else {
+        query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+        query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP(ranges.start) AND TIMESTAMP(ranges.end)');
+    }
+    db.query(query, [req.params.id,req.params.id], function (error, result_user, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id,req.params.id], function (error, result_team, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = {};
+                    results.data = _.unionBy(result_team,result_user,'ID');
+                    results.count = results.data.length;
+                    results.total = _.sumBy(results.data,'amount');
+                    res.send({"status": 200, "message": "Committals fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/target/details/:id', function(req, res, next) {
+    let query = 'SELECT count(*) count, sum(t.value) total FROM user_targets AS t WHERE targetID = ? AND status = 1',
+        query2 = 'SELECT userID, sum(value) as value, (SELECT name FROM sub_periods WHERE ID = t.sub_periodID) AS period, ' +
+            '(CASE WHEN t.user_type = "user" THEN (SELECT fullname FROM users WHERE ID = userID) WHEN t.user_type = "team" THEN (SELECT name FROM teams WHERE ID = userID) END) AS owner ' +
+            'FROM user_targets AS t WHERE t.targetID = ? AND t.status = 1 GROUP BY owner';
+    db.query(query, [req.params.id], function (error, aggregate, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query(query2, [req.params.id], function (error, list, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let results = aggregate[0];
+                    results.data = list;
+                    res.send({"status": 200, "message": "Target details fetched successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/target/limit/:id', function(req, res, next) {
+    let query = 'SELECT (CASE WHEN sum(t.value) IS NULL THEN 0 ELSE sum(t.value) END) allocated, (SELECT value FROM targets WHERE ID = ?) target, ' +
+        '((SELECT value FROM targets WHERE ID = ?) - (CASE WHEN sum(t.value) IS NULL THEN 0 ELSE sum(t.value) END)) unallocated FROM user_targets AS t WHERE targetID = ? AND status = 1';
+    db.query(query, [req.params.id,req.params.id,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Target limit fetched successfully", "response": results[0]});
+        }
+    });
+});
+
+users.post('/team/targets', function(req, res, next) {
+    req.body.user_type = "team";
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM user_targets WHERE userID=? AND targetID=? AND periodID=? AND sub_periodID=? AND status = 1',
+        [req.body.userID,req.body.targetID,req.body.periodID,req.body.sub_periodID], function (error, result, fields) {
+        if (result && result[0]) {
+            res.send({"status": 500, "error": "Target has already been assigned to this team"});
+        } else {
+            db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+                        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                    db.query(query, [req.body.userID], function (error, results, fields) {
+                        if(error){
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            res.send({"status": 200, "message": "Team target assigned successfully", "response": results});
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+users.post('/user-targets', function(req, res, next) {
+    req.body.user_type = "user";
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM user_targets WHERE userID=? AND targetID=? AND periodID=? AND sub_periodID=? AND status = 1',
+        [req.body.userID,req.body.targetID,req.body.periodID,req.body.sub_periodID], function (error, result, fields) {
+        if (result && result[0]) {
+            res.send({"status": 500, "error": "Target has already been assigned to this user"});
+        } else {
+            db.query('SELECT * FROM users WHERE ID=?', [req.body.userID], function (error, user, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    if (user[0]['loan_officer_status'] !== 1)
+                        return res.send({"status": 500, "error": "User must be a loan officer"});
+                    db.query('INSERT INTO user_targets SET ?', req.body, function (error, result, fields) {
+                        if(error){
+                            res.send({"status": 500, "error": error, "response": null});
+                        } else {
+                            let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+                                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                            db.query(query, [req.body.userID], function (error, results, fields) {
+                                if(error){
+                                    res.send({"status": 500, "error": error, "response": null});
+                                } else {
+                                    res.send({"status": 200, "message": "User target assigned successfully", "response": results});
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+users.delete('/team/targets/:id/:userID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_targets SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT *,(select u.name from teams u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+            db.query(query, [req.params.userID], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Team target deleted successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.delete('/user-targets/:id/:userID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_targets SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
+                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+            db.query(query, [req.params.userID], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "User target deleted successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
 users.get('/users-list-full', function(req, res, next) {
-    let query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where user_role not in (3, 4) order by ID desc';
+    let query = 'SELECT *, (select u.fullname from users u where u.ID = s.supervisor) as supervisor, (select u.role_name from user_roles u where u.ID = s.user_role) as Role ' +
+        'from users s where s.user_role not in (3, 4) order by s.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -449,12 +1099,10 @@ users.get('/clients-list', function(req, res, next) {
 users.get('/clients-list-full', function(req, res, next) {
     let start = req.query.start,
         end = req.query.end,
-        loan_officer = req.query.officer
-    let query = 'select * from clients ';
+        query = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients ';
     if (start && end){
-        console.log("Here");
-        start = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'"
-        end = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'"
+        start = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'";
+        end = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'";
         query = query.concat('where TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')')
     }
     db.query(query, function (error, results, fields) {
@@ -464,6 +1112,46 @@ users.get('/clients-list-full', function(req, res, next) {
             res.send(JSON.stringify(results));
         }
     });
+});
+
+users.get('/clients-list-full/:officerID', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        id = req.params.officerID,
+        query = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients ',
+        query2 = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients where loan_officer = '+id,
+        query3 = 'select *, (select l.fullname from users l where l.ID = loan_officer) as loan_officer_name from clients where (select supervisor from users where users.id = clients.loan_officer) = '+id;
+    if (id)
+        query = query2;
+    if (start && end){
+        let start_query = "'"+moment(start).utcOffset('+0100').format("YYYY-MM-DD")+"'";
+        let end_query = "'"+moment(end).add(1, 'days').format("YYYY-MM-DD")+"'";
+        query = query.concat(' where TIMESTAMP(date_created) between TIMESTAMP('+start_query+') and TIMESTAMP('+end_query+')')
+    }
+    if (id){
+        db.query(query, function (error, results1, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                db.query(query3, function (error, results2, fields) {
+                    if(error){
+                        res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    } else {
+                        let results = results1.concat(results2);
+                        res.send(JSON.stringify(results));
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify(results));
+            }
+        });
+    }
 });
 
 users.get('/users-list-v2', function(req, res, next) {
@@ -489,7 +1177,7 @@ users.get('/user-dets/:id', function(req, res, next) {
 });
 
 users.get('/client-dets/:id', function(req, res, next) {
-    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer, (select branch_name from branches b where b.ID = clients.branch) as branchname, (SELECT SUM(amount) FROM escrow WHERE clientID=clients.ID AND status=1) AS escrow   from clients where id = ? order by id desc ';
+    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer, (select branch_name from branches b where b.ID = clients.branch) as branchname, (SELECT sum(amount) FROM escrow WHERE clientID=clients.ID AND status=1) AS escrow   from clients where id = ? order by id desc ';
     db.query(query, req.params.id, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -589,8 +1277,8 @@ users.post('/edit-user/:id', function(req, res, next) {
 	let date = Date.now(),
         postData = req.body;
 	postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    let payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.user_role, postData.email, postData.branch, postData.date_modified, req.params.id],
-        query = 'Update users SET username = ?, fullname=?, phone=?, address = ?, user_role=?, email=?, branch =?, date_modified = ? where id=?';
+    let payload = [postData.fullname, postData.user_role, postData.email, postData.branch, postData.supervisor, postData.loan_officer_status, postData.date_modified, req.params.id],
+        query = 'Update users SET fullname=?, user_role=?, email=?, branch =?, supervisor =?, loan_officer_status =?, date_modified = ? where id=?';
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -884,9 +1572,46 @@ users.post('/sendmail', function(req, res) {
 
 /* GET User Applications. */
 users.get('/applications', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        type = req.query.type;
+    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+
     let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-        'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w WHERE u.ID=a.userID AND a.status <> 0 ' +
-        'AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ORDER BY a.ID desc';
+        'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.close_status, a.loanCirrusID, a.reschedule_amount, w.current_stage,' +
+        '(SELECT (CASE WHEN (sum(s.payment_amount) > 0) THEN 1 ELSE 0 END) FROM application_schedules s WHERE s.applicationID=a.ID AND status = 2) AS reschedule_status FROM clients AS u, applications AS a, workflow_processes AS w WHERE u.ID=a.userID AND a.status <> 0 ' +
+        'AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ';
+    if (type){
+        switch (type){
+            case '1': {
+                //do nothing
+                break;
+            }
+            case '2': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage<>2  AND w.current_stage<>3 ");
+                break;
+            }
+            case '3': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=2 ");
+                break;
+            }
+            case '4': {
+                query = query.concat("AND a.status = 1 AND a.close_status = 0 AND w.current_stage=3 ");
+                break;
+            }
+            case '5': {
+                query = query.concat("AND a.status = 2  AND a.close_status = 0 ");
+                break;
+            }
+            case '6': {
+                query = query.concat("AND a.close_status <> 0 ");
+                break;
+            }
+        }
+    }
+    if (start && end)
+        query = query.concat("AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ");
+    query = query.concat("ORDER BY a.ID desc");
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -936,9 +1661,8 @@ users.get('/application-id/:id', function(req, res, next) {
     let obj = {},
         application_id = req.params.id,
         path = 'files/application-'+application_id+'/',
-        query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-            'a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, (SELECT SUM(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow ' +
-            'FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID =?';
+        query = 'SELECT u.ID AS userID, u.fullname, u.phone, u.email, u.address, cast(u.loan_officer as unsigned) loan_officer, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, a.workflowID, a.reschedule_amount, a.loanCirrusID, a.loan_amount, a.date_modified, a.comment, a.close_status, ' +
+            '(SELECT l.supervisor FROM users l WHERE l.ID = u.loan_officer) AS supervisor, (SELECT sum(amount) FROM escrow WHERE clientID=u.ID AND status=1) AS escrow FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.ID = ?';
     db.getConnection(function(err, connection) {
         if (err) throw err;
 
@@ -999,15 +1723,21 @@ users.get('/application-id/:id', function(req, res, next) {
 });
 
 /* GET User Applications. */
-users.get('/applications/filter', function(req, res, next) {
+users.get('/applications/:officerID', function(req, res, next) {
     let start = req.query.start,
 		end = req.query.end,
-		type = req.query.type;
+		type = req.query.type,
+        id = req.params.officerID;
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
 
 	let query = "SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, " +
-        "a.loan_amount, a.date_modified, a.comment, a.close_status, a.workflowID, w.current_stage FROM clients AS u, applications AS a, workflow_processes AS w " +
-        "WHERE u.ID=a.userID AND a.status <> 0 AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ";
+        "a.loan_amount, a.date_modified, a.comment, a.close_status, a.workflowID, a.loanCirrusID, a.reschedule_amount, w.current_stage," +
+        "(SELECT (CASE WHEN (sum(s.payment_amount) > 0) THEN 1 ELSE 0 END) FROM application_schedules s WHERE s.applicationID=a.ID AND status = 2) AS reschedule_status FROM clients AS u, applications AS a, workflow_processes AS w " +
+        "WHERE u.ID=a.userID AND a.status <> 0 AND w.ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=a.ID AND status=1) ",
+        query2 = query.concat('AND loan_officer = '+id+' '),
+        query3 = query.concat('AND (select supervisor from users where users.id = u.loan_officer) =  '+id+' ');
+    if (id)
+        query = query2;
     if (type){
 	    switch (type){
             case '1': {
@@ -1039,13 +1769,30 @@ users.get('/applications/filter', function(req, res, next) {
     if (start && end)
         query = query.concat("AND TIMESTAMP(a.date_created) < TIMESTAMP('"+end+"') AND TIMESTAMP(a.date_created) >= TIMESTAMP('"+start+"') ");
     query = query.concat("ORDER BY a.ID desc");
-    db.query(query, function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
-        }
-    });
+    if (id){
+        db.query(query, function (error, results1, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query3, function (error, results2, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        results = results1.concat(results2);
+                        res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, results, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                res.send({"status": 200, "message": "User applications fetched successfully!", "response": results});
+            }
+        });
+    }
 });
 
 users.get('/collections/filter', function(req, res, next) {
@@ -1056,7 +1803,7 @@ users.get('/collections/filter', function(req, res, next) {
     let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
         "s.applicationID, s.status, s.payment_amount, s.payment_collect_date, s.payment_status, 'Principal' AS 'type' FROM application_schedules AS s " +
         "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
-        "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ";
+        "AND (select close_status from applications a where a.ID = s.applicationID) = 0 AND s.payment_amount > 0 ";
 
     collectionsQueryMiddleware(query, type, range, today, function (response) {
         if (response.status !== 200)
@@ -1064,7 +1811,7 @@ users.get('/collections/filter', function(req, res, next) {
         let query = "SELECT s.ID, (select fullname from clients c where c.ID = (select userID from applications a where a.ID = s.applicationID)) AS client, " +
             "s.applicationID, s.status, s.interest_amount as payment_amount, s.interest_collect_date as payment_collect_date, s.payment_status, 'Interest' AS 'type' FROM application_schedules AS s " +
             "WHERE s.status = 1 AND s.payment_status = 0 AND (select status from applications a where a.ID = s.applicationID) = 2 " +
-            "AND (select close_status from applications a where a.ID = s.applicationID) = 0 ",
+            "AND (select close_status from applications a where a.ID = s.applicationID) = 0 AND s.interest_amount > 0 ",
             results_principal = response.response;
         collectionsQueryMiddleware(query, type, range, today, function (response) {
             if (response.status !== 200)
@@ -1182,7 +1929,8 @@ users.get('/applications/delete/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
+                'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.loanCirrusID, a.reschedule_amount,' +
+                '(SELECT (CASE WHEN (sum(s.payment_amount) > 0) THEN 1 ELSE 0 END) FROM application_schedules s WHERE s.applicationID=a.ID AND status = 2) AS reschedule_status FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
             db.query(query, function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
@@ -1225,7 +1973,8 @@ users.post('/applications/comment/:id', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-                'a.workflowID, a.loan_amount, a.date_modified, a.comment FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
+                'a.workflowID, a.loan_amount, a.date_modified, a.comment, a.loanCirrusID, a.reschedule_amount,' +
+                '(SELECT (CASE WHEN (sum(s.payment_amount) > 0) THEN 1 ELSE 0 END) FROM application_schedules s WHERE s.applicationID=a.ID AND status = 2) AS reschedule_status FROM clients AS u, applications AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
             db.query(query, function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
@@ -1846,7 +2595,7 @@ users.post('/application/disburse/:id', function(req, res, next) {
 });
 
 users.get('/application/invoice-history/:id', function(req, res, next) {
-    db.query('SELECT s.ID, s.invoiceID, s.payment_amount, s.interest_amount, s.fees_amount, s.penalty_amount, s.date_created, s.status,' +
+    db.query('SELECT s.ID, s.invoiceID, s.payment_amount, s.interest_amount, s.fees_amount, s.penalty_amount, s.payment_date, s.date_created, s.status,' +
         's.applicationID, u.fullname AS agent FROM schedule_history AS s, users AS u WHERE s.agentID=u.ID AND invoiceID = ? ORDER BY ID desc', [req.params.id], function (error, history, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -1893,7 +2642,7 @@ users.post('/application/loancirrus-id/:application_id', function(req, res, next
     });
 });
 
-users.post('/application/pay-off/:id', function(req, res, next) {
+users.post('/application/pay-off/:id/:agentID', function(req, res, next) {
     let data = req.body;
     data.close_status = 1;
     db.getConnection(function(err, connection) {
@@ -1915,6 +2664,7 @@ users.post('/application/pay-off/:id', function(req, res, next) {
                             invoice.interest_amount = invoice_obj.interest_amount;
                             invoice.fees_amount = invoice_obj.fees_amount;
                             invoice.penalty_amount = invoice_obj.penalty_amount;
+                            invoice.agentID = req.params.agentID;
                             invoice.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
                             connection.query('UPDATE application_schedules SET payment_status=1 WHERE ID = ?', [invoice_obj.ID], function (error, result, fields) {
                                 connection.query('INSERT INTO schedule_history SET ?', invoice, function (error, response, fields) {
@@ -1923,7 +2673,7 @@ users.post('/application/pay-off/:id', function(req, res, next) {
                             });
                         }, function (data) {
                             connection.release();
-                            res.send({"status": 200, "message": "Application write off successful!"});
+                            res.send({"status": 200, "message": "Application pay off successful!"});
                         });
                     }
                 });
@@ -1932,7 +2682,7 @@ users.post('/application/pay-off/:id', function(req, res, next) {
     });
 });
 
-users.post('/application/write-off/:id', function(req, res, next) {
+users.post('/application/write-off/:id/:agentID', function(req, res, next) {
     let data = req.body;
     data.close_status = 2;
     db.query('UPDATE applications SET ? WHERE ID = '+req.params.id, data, function (error, result, fields) {
@@ -2013,7 +2763,7 @@ users.post('/forgot-password', function(req, res) {
     });
 });
 
-/////// REPORTS
+///////////////////////////////////////////////////////////////// REPORTS
 
 
 
@@ -2042,7 +2792,6 @@ users.get('/report-cards', function(req, res, next) {
             });
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Disbursements  */
@@ -2058,7 +2807,7 @@ users.get('/disbursements/filter', function(req, res, next) {
     queryPart = 'select \n' +
             '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, payment_amount, \n' +
             'applicationID, (select loan_amount from applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
-            '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select date_modified from applications where ID = applicationID) as date, \n' +
+            '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select disbursement_date from applications where ID = applicationID) as date, \n' +
             '(select date_created from applications ap where ap.ID = applicationID) as created_date, ' +
             'CASE\n' +
             '    WHEN status = 0 THEN sum(payment_amount)\n' +
@@ -2069,39 +2818,61 @@ users.get('/disbursements/filter', function(req, res, next) {
             'from schedule_history \n' +
             'where applicationID in (select applicationID from application_schedules\n' +
             '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
-             'and status = 1 '
+            'and status = 1 '
             ;
+    queryPart2 = 'select \n' +
+        '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, payment_amount, \n' +
+        'applicationID, (select loan_amount from applications where ID = applicationID) as loan_amount, sum(payment_amount) as paid, \n' +
+        '((select loan_amount from applications where ID = applicationID) - sum(payment_amount)) as balance, (select disbursement_date from applications where ID = applicationID) as date, \n' +
+        '(select date_created from applications ap where ap.ID = applicationID) as created_date, ' +
+        'CASE\n' +
+        '    WHEN status = 0 THEN sum(payment_amount)\n' +
+        'END as invalid_payment,\n' +
+        'CASE\n' +
+        '    WHEN status = 1 THEN sum(payment_amount)\n' +
+        'END as valid_payment '+
+        'from schedule_history \n' +
+        'where applicationID in (select applicationID from application_schedules\n' +
+        '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
+        'and status = 0 '
+        ;
     group = 'group by applicationID';
     query = queryPart.concat(group);
+    query3 = queryPart2.concat(group);
 
-    let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, date_modified, date_created ' +
+    let query2 = 'select ID, (select fullname from clients where ID = userID) as fullname, loan_amount, disbursement_date, date_created ' +
                  'from applications where status = 2 and ID not in (select applicationID from schedule_history) '
 
     var items = {};
     if (loan_officer){
         queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
+        queryPart2 = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
         query = queryPart.concat(group);
-
+        query3 = queryPart.concat(group);
         query2 = query2.concat('and (select loan_officer from clients where clients.ID = userID) = '+loan_officer+' ');
     }
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP((select date_modified from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query2 = query2.concat('AND (TIMESTAMP(date_modified) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
+        // query = (queryPart.concat('AND (TIMESTAMP((select date_modified from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query3 = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query2 = query2.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
     db.query(query, [loan_officer], function (error, results, fields) {
         items.with_payments = results;
-        db.query(query2, [loan_officer],  function (error, results, fields) {
-            if(error){
-                res.send({"status": 500, "error": error, "response": null});
-            } else {
-                items.without_pay = results;
-                res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
-            }
+        db.query(query3, [loan_officer], function (error, results, fields) {
+            items.with_invalid_payments = results;
+            db.query(query2, [loan_officer], function (error, results, fields) {
+                if (error) {
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    items.without_pay = results;
+                    res.send({"status": 200, "error": null, "response": items, "message": "All Disbursements pulled!"});
+                }
+            });
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Interest Received  */
@@ -2126,7 +2897,8 @@ users.get('/interests/', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        // query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = (queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
     }
     db.query(query, function (error, results, fields) {
         if(error){
@@ -2169,7 +2941,8 @@ users.get('/bad-loans/', function(req, res, next) {
 /* Overdue Loans  */
 users.get('/overdues/', function(req, res, next) {
     let start = req.query.start,
-        end = req.query.end
+        end = req.query.end,
+        officer = req.query.officer;
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
@@ -2183,6 +2956,10 @@ users.get('/overdues/', function(req, res, next) {
         'and payment_collect_date < (select curdate()) ';
     group = 'group by applicationID';
     query = queryPart.concat(group);
+    if (officer){
+        queryPart = queryPart.concat('and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationID)) = '+officer+'\n');
+        query = queryPart.concat(group);
+    }
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
@@ -2200,7 +2977,8 @@ users.get('/overdues/', function(req, res, next) {
 /* Bad Loans  */
 users.get('/badloans/', function(req, res, next) {
     let start = req.query.start,
-        end = req.query.end
+        end = req.query.end,
+        officer = req.query.officer;
     end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
@@ -2217,6 +2995,9 @@ users.get('/badloans/', function(req, res, next) {
         start = "'"+start+"'"
         end = "'"+end+"'"
         query = (queryPart.concat('AND (TIMESTAMP(payment_collect_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+    }
+    if (officer){
+        query = (queryPart.concat('and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationID)) = '+officer+'\n')).concat(group);
     }
     db.query(query, function (error, results, fields) {
         if(error){
@@ -2238,7 +3019,7 @@ users.get('/payments', function(req, res, next) {
     queryPart = 'select \n' +
         '(select fullname from clients where ID = (select userID from applications where ID = applicationID)) as fullname,\n' +
         '(select userID from applications where ID = applicationID) as clientid,\n' +
-        'applicationID, sum(payment_amount) as paid, sum(interest_amount) as interest, max(date_created) as date\n' +
+        'applicationID, sum(payment_amount) as paid, sum(interest_amount) as interest, max(payment_date) as date\n' +
         'from schedule_history \n' +
         'where applicationID in (select ID from applications) and status = 1\n ';
     group = 'group by applicationID';
@@ -2250,8 +3031,8 @@ users.get('/payments', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query2 = query2.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
+        query = (queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query2 = query2.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
     db.query(query, function (error, results, fields) {
         items.payment = results;
@@ -2264,7 +3045,6 @@ users.get('/payments', function(req, res, next) {
             }
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Loans by Branches */
@@ -2291,7 +3071,7 @@ users.get('/loans-by-branches', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
-        query = (queryPart.concat('AND (TIMESTAMP(date_created) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = (queryPart.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
     }
     db.query(query, function (error, results, fields) {
         if(error){
@@ -2341,7 +3121,6 @@ users.get('/projected-interests', function(req, res, next) {
             }
         });
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
 });
 
 /* Aggregate Projected Interests */
@@ -2368,7 +3147,1362 @@ users.get('/agg-projected-interests', function(req, res, next) {
             res.send({"status": 200, "error": null, "response": results, "message": "Success!"});
         }
     });
-    // den = items.loan_officers[0]["loan_officers"]; console.log(den)
+});
+
+users.get('/analytics', function(req, res, next) {
+    let start = req.query.start,
+        end = req.query.end,
+        t = req.query.t,
+        y = req.query.year,
+        b = req.query.branch,
+        freq = req.query.freq,
+        officer = req.query.officer,
+        bt = req.query.bt
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+    let query, load = [];
+    switch (t){
+        case 'disbursements':
+            //Default
+            query = 'select sum(loan_amount) amount_disbursed, (select fullname from users where users.id = (select loan_officer from clients where clients.id = userID)) name\n' +
+                'from applications where status = 2\n' +
+                'group by name'
+            //An Officer
+            if (officer){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, \n' +
+                    '         SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') agent,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    EXTRACT(YEAR_MONTH FROM Disbursement_date) >= EXTRACT(YEAR_MONTH FROM CURDATE())-102\n' +
+                    'AND      status =2\n'+
+                    'AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
+                    'GROUP BY agent\n' +
+                    'ORDER BY DisburseYearMonth';
+                load = [officer]
+            }
+            //All Officers, Yearly
+            if (officer == '0' && freq == '3'){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%Y\') AS OfficersYear, \n' +
+                    'SUM(loan_amount) AmountDisbursed, \n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'GROUP BY DATE_FORMAT(Disbursement_date, \'%Y\')\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //One Officer, Yearly
+            if (officer !== "0" && freq == "3"){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS DisburseYear, \n' +
+                    '                    SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent, \n' +
+                    '                    EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    '    FROM     applications \n' +
+                    '    WHERE    status =2\n' +
+                    '    AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
+                    '    GROUP BY DATE_FORMAT(Disbursement_date, \'%Y\')\n' +
+                    '    ORDER BY DisburseYearMonth'
+            }
+            //One Officer, Monthly In One Year
+            if (officer !== "0" && freq == "2"){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS Year, \n' +
+                    'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'and      DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+'\n'+
+                    'AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
+                    'GROUP BY DATE_FORMAT(Disbursement_date, \'%M%Y\')\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //One Officer, Monthly
+            if (officer !== "0" && freq == "2" && y == '0'){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') AS Year, \n' +
+                    'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
+                    'GROUP BY DATE_FORMAT(Disbursement_date, \'%M%Y\')\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //One Officer, Quarterly In One Year
+            if (officer !== "0" && freq == "4"){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) quarter,\n' +
+                    'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'and      DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+'\n'+
+                    'AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
+                    'GROUP BY quarter\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //One Officer, Quarterly
+            if (officer !== "0" && freq == "4" && y == '0'){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) quarter, \n' +
+                    'SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') Agent,\n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
+                    'GROUP BY quarter\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //All Officers, Monthly In One Year
+            if (officer == "0" && freq == "2"){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS OfficersMonth, \n' +
+                    'SUM(loan_amount) AmountDisbursed, \n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'and      DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+'\n'+
+                    'GROUP BY DATE_FORMAT(Disbursement_date, \'%M%Y\')\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //All Officers, Monthly
+            if (officer == "0" && freq == "2" && y == "0"){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS Month, DATE_FORMAT(Disbursement_date, \'%Y\') AS AYear, \n' +
+                    'SUM(loan_amount) AmountDisbursed, \n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'GROUP BY DATE_FORMAT(Disbursement_date, \'%M%Y\')\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //All Officers, Quarterly In One Year
+            if (officer == "0" && freq == "4"){
+                query = 'SELECT   concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) OfficersQuarter, \n' +
+                    'SUM(loan_amount) AmountDisbursed, \n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'and      DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+'\n'+
+                    'GROUP BY OfficersQuarter\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            //All Officers, Quarterly
+            if (officer == "0" && freq == "4" && y == "0"){
+                query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS Month, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) AQuarter, \n' +
+                    'SUM(loan_amount) AmountDisbursed, \n' +
+                    'EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications \n' +
+                    'WHERE    status =2\n' +
+                    'GROUP BY AQuarter\n' +
+                    'ORDER BY DisburseYearMonth'
+            }
+            break;
+        case 'branches':
+            //Default
+            if (bt == '1'){
+
+                query = 'select sum(loan_amount) amount_disbursed, \n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch\n' +
+                    'from applications \n' +
+                    'where status = 2\n' +
+                    'group by branch'
+                //Specific Branch
+                if (b){
+                    query = 'select sum(loan_amount) amount_disbursed, \n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch\n' +
+                        'from applications \n' +
+                        'where status = 2\n' +
+                        'and (select branch from clients where clients.id = userid) = '+b+'\n'+
+                        'group by branch'
+                }
+                //Specific Branch, Monthly in a year
+                if (b != '0' && freq == "2"){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'AND   (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
+                        'AND   DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+'\n' +
+                        'GROUP BY DisburseMonth, office\n' +
+                        'ORDER BY Disbursement_date'
+                }
+                //All Branches, Monthly in a year
+                if (b == '0' && freq == "2"){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'AND   DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+'\n' +
+                        'GROUP BY office, DisburseMonth\n' +
+                        'ORDER BY office, Disbursement_date'
+                }
+                //All Branches, Monthly
+                if (b == '0' && freq == "2" && y == '0'){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'GROUP BY office, DisburseMonth\n' +
+                        'ORDER BY Disbursement_date'
+                }
+                if (b != '0' && freq == "2" && y == '0'){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'AND   (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
+                        'GROUP BY DisburseMonth, office\n' +
+                        'ORDER BY Disbursement_date'
+                }
+                //Specific Branch, Yearly
+                if (b != '0' && freq == "3"){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') year,\n' +
+                        '(select branch_name from branches where branches.id = '+b+') office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2 and date_format(disbursement_date, \'%Y\') = '+y+'\n' +
+                        'AND     (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
+                        'GROUP BY DATE_FORMAT(Disbursement_date, \'%Y\')'
+                }
+                if (b != '0' && freq == "3" && y == '0'){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') year,\n' +
+                        '(select branch_name from branches where branches.id = '+b+') office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'AND     (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
+                        'GROUP BY DATE_FORMAT(Disbursement_date, \'%Y\')'
+                }
+                if (b != '0' && freq == "4"){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) Quarter,\n' +
+                        '(select branch_name from branches where branches.id = '+b+') office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'AND     (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
+                        'GROUP BY Quarter order by DisburseYearMonth'
+                }
+                if (b != '0' && freq == "4" && y != '0'){
+                    query = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) Quarter,\n' +
+                        '(select branch_name from branches where branches.id = '+b+') office,\n' +
+                        '         SUM(loan_amount) AmountDisbursed,\n' +
+                        '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                        'FROM     applications\n' +
+                        'WHERE  status = 2\n' +
+                        'AND     (select branches.id from branches where branches.id = (select branch from clients where clients.id = userid)) = '+b+'\n' +
+                        'and date_format(Disbursement_date, \'%Y\') = '+y+'\n'+
+                        'GROUP BY Quarter order by DisburseYearMonth'
+                }
+            }
+            if (bt == '2'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) branch\n' +
+                    'from schedule_history \n' +
+                    'where status = 1 and applicationid in (select id from applications where applications.status <> 0)\n' +
+                    'group by branch'
+                //Specific Branch
+                if (b){
+                    query = 'select sum(interest_amount) amount_received, \n' +
+                            '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) branch\n' +
+                            'from schedule_history \n' +
+                            'where status = 1 and applicationid in (select id from applications where applications.status <> 0)\n' +
+                            'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                            'group by branch'
+                }
+                //Specific Branch, Monthly, Specific Year
+                if (b !== '0' && freq == "2"){
+                    query = 'select sum(interest_amount) amount_received, \n' +
+                        'DATE_FORMAT(payment_date, \'%M %Y\') monthpayed, \n'+
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                        'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                if (b !== '0' && freq == "2" && y == '0'){
+                    query = 'select sum(interest_amount) amount_received, \n' +
+                        'DATE_FORMAT(payment_date, \'%M %Y\') monthpayed, \n'+
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                //Specific Branch, Yearly
+                if (b !== '0' && freq == "3"){
+                    query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office \n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and date_format(payment_date, \'%Y\') = '+y+'\n'+
+                        'group by officer, DATE_FORMAT(Payment_date, \'%Y\')'
+                }
+                if (b !== '0' && freq == "3" && y == '0'){
+                    query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office \n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by officer, DATE_FORMAT(Payment_date, \'%Y\')'
+                }
+                if (b !== '0' && freq == "4"){
+                    query = 'select sum(interest_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office, \n'+
+                        'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) branchQuarter\n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                        'group by branchQuarter order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                if (b !== '0' && freq == "4" && y == '0'){
+                    query = 'select sum(interest_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office, \n'+
+                        'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) branchQuarter\n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by branchQuarter order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+            }
+            break;
+        case 'payments':
+            //Default
+            query = 'select sum(payment_amount) amount_payed, \n' +
+                '(select fullname from users where users.id = \n' +
+                '(select loan_officer from clients where clients.id = \n' +
+                ' (select userid from applications where applications.id = applicationid))) officer\n' +
+                'from schedule_history \n' +
+                'where status = 1\n' +
+                'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                'group by officer\n'
+            //One officer
+            if (officer){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth,\n' +
+                    '  (select fullname from users where users.id = '+officer+') officer,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE  status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'
+                load = [officer]
+            }
+            //One Officer, Yearly
+            if (officer !== "0" && freq == "3"){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') year,\n' +
+                    ' (select fullname from users where users.id = '+officer+') name,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As PaymentYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n' +
+                    'group by year'
+            }
+            //All Officers, Yearly
+            if (officer == "0" && freq == "3"){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%Y\') allpaymentyear,\n' +
+                    '         SUM(payment_amount) AmountPayed\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'and  DATE_FORMAT(Payment_date, \'%Y\') is not null\n'+
+                    'group by allpaymentyear'
+            }
+            //One Officer, Monthly in One Year
+            if (officer !== '0' && freq == '2'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') month,\n' +
+                    '\t\t (select fullname from users where users.id = '+officer+') name,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE\t\t status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n' +
+                    'AND DATE_FORMAT(Payment_date, \'%Y\') = '+y+'\n'+
+                    'GROUP BY DATE_FORMAT(Payment_date, \'%M%Y\') order by DisburseYearMonth'
+            }
+            //One Officer, Monthly
+            if (officer !== '0' && freq == '2' && y == '0'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') month,\n' +
+                    ' (select fullname from users where users.id = '+officer+') name,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n' +
+                'GROUP BY DATE_FORMAT(Payment_date, \'%M%Y\') order by DisburseYearMonth'
+            }
+            //One Officer, Quarterly in One Year
+            if (officer !== '0' && freq == '4'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Officersquarter,\n' +
+                    '\t\t (select fullname from users where users.id = '+officer+') name,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE\t\t status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n' +
+                    'AND DATE_FORMAT(Payment_date, \'%Y\') = '+y+'\n'+
+                    'GROUP BY Officersquarter'
+            }
+            //One Officer, Quarterly
+            if (officer !== '0' && freq == '4' && y == '0'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Officersquarter,\n' +
+                    ' (select fullname from users where users.id = '+officer+') name,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n' +
+                    'GROUP BY Officersquarter'
+            }
+            //All Officers, Monthly in One Year
+            if (officer == '0' && freq == '2'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') Officersmonth,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE  status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND DATE_FORMAT(Payment_date, \'%Y\') = '+y+'\n'+
+                    'GROUP BY DATE_FORMAT(Payment_date, \'%M%Y\')\n'+
+                    'ORDER BY DisburseYearMonth'
+            }
+            //All Officers, Monthly
+            if (officer == '0' && freq == '2' && y == '0'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, DATE_FORMAT(Payment_date, \'%M\') Officersmonth,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE  status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'GROUP BY DATE_FORMAT(Payment_date, \'%M%Y\')\n'+
+                    'ORDER BY DisburseYearMonth'
+            }
+            //All Officers, Monthly in One Year
+            if (officer == '0' && freq == '4'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE  status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'AND DATE_FORMAT(Payment_date, \'%Y\') = '+y+'\n'+
+                    'GROUP BY Quarter'
+            }
+            //All Officers, Monthly
+            if (officer == '0' && freq == '4' && y == '0'){
+                query = 'SELECT   DATE_FORMAT(payment_date, \'%M, %Y\') AS PaymentMonth, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter,\n' +
+                    '         SUM(payment_amount) AmountPayed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM payment_date) As DisburseYearMonth\n' +
+                    'FROM     schedule_history\n' +
+                    'WHERE  status = 1\n' +
+                    'and applicationid in (select id from applications where applications.status <> 0)\n'+
+                    'GROUP BY Quarter'
+            }
+            break;
+        case 'interest-received':
+            //Default
+            query = 'select sum(interest_amount) amount_received, \n' +
+                '(select fullname from users where users.id = \n' +
+                '(select loan_officer from clients where clients.id = \n' +
+                '(select userid from applications where applications.id = applicationid))) officer\n' +
+                'from schedule_history \n' +
+                'where status = 1\n' +
+                'and applicationid in (select id from applications where status <> 0)\n'+
+                'group by officer'
+            //One Officer
+            if (officer){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    '(select fullname from users where users.id = \n' +
+                    '(select loan_officer from clients where clients.id = \n' +
+                    '(select userid from applications where applications.id = applicationid))) officer\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'
+                    'group by officer'
+            }
+            //One Officer, Monthly in Specific Year
+            if (officer !== '0' && freq == '2'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    '(select fullname from users where users.id = '+officer+') agent, \n' +
+                    'DATE_FORMAT(payment_date, \'%M, %Y\') paymonth\n'+
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
+                    'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                    'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+            }
+            //One Officer, Monthly
+            if (officer !== '0' && freq == '2' && y == '0'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    '(select fullname from users where users.id = '+officer+') agent, DATE_FORMAT(payment_date, \'%M, %Y\') paymonth\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
+                    'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+            }
+            //One Officer, Quarterly in Specific Year
+            if (officer !== '0' && freq == '4'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    '(select fullname from users where users.id = '+officer+') agent, \n' +
+                    'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) OfficerQuarter\n'+
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
+                    'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                    'group by OfficerQuarter'
+            }
+            //One Officer, Quarterly
+            if (officer !== '0' && freq == '4' && y == '0'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    '(select fullname from users where users.id = '+officer+') agent, concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) OfficerQuarter\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
+                    'group by OfficerQuarter'
+            }
+            //All Officers, Monthly in Specific Year
+            if (officer == '0' && freq == '2'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    'DATE_FORMAT(payment_date, \'%M, %Y\') Monthyear  \n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                    'group by Date_format(Payment_date, \'%M, %Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+            }
+            //All Officers, Monthly
+            if (officer == '0' && freq == '2' && y == '0'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    'DATE_FORMAT(payment_date, \'%M, %Y\') Monthyear  \n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'group by Date_format(Payment_date, \'%M %Y\')  order by EXTRACT(YEAR_MONTH FROM payment_date)'
+            }
+            //All Officers, Quarterly in Specific Year
+            if (officer == '0' && freq == '4'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter  \n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                    'group by Quarter'
+            }
+            //All Officers, Quarterly
+            if (officer == '0' && freq == '4' && y == '0'){
+                query = 'select sum(interest_amount) amount_received, \n' +
+                    'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) Quarter \n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'group by Quarter'
+            }
+            //One Officer, Yearly
+            if (officer !== '0' && freq == '3'){
+                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') OfficerYear, \n' +
+                    '(select fullname from users where users.id = \n' +
+                    '(select loan_officer from clients where clients.id = \n' +
+                    '(select userid from applications where applications.id = applicationid))) agent\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+officer+'\n'+
+                    'group by agent, DATE_FORMAT(Payment_date, \'%Y\')'
+            }
+            //All Officers, Yearly
+            if (officer == '0' && freq == '3'){
+                query = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear \n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'group by DATE_FORMAT(Payment_date, \'%Y\')'
+            }
+            break;
+        case 'projected-interest':
+            break;
+        case 'glp':
+            break;
+        case 'bad-loans':
+            break;
+        case 'overdue-loans':
+            break;
+    }
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "error": null, "response": results, "message": "Success!"});
+        }
+    });
+});
+
+users.get('/multi-analytics', function (req, res, next){
+    let bt = req.query.bt,
+        freq = req.query.freq,
+        y = req.query.year;
+    let query1;
+    // let query1 = 'select distinct((select branch from clients where clients.id = userid and clients.status = 1 and branch is not null )) branch\n' +
+    //     'from applications\n' +
+    //     'where status <> 0';
+    let query2;
+    switch (bt){
+        case '1':
+            // query2 = 'select sum(loan_amount) amount_disbursed, \n' +
+            //     '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch\n' +
+            //     'from applications \n' +
+            //     'where status = 2\n' +
+            //     'and (select branch from clients where clients.id = userid) = ?\n' +
+            //     'group by branch';
+            if (freq == '2' && y == '0'){
+                query1 = 'select distinct(DATE_FORMAT(Disbursement_date, \'%M, %Y\')) periods from applications where status = 2 ' +
+                    ' order by EXTRACT(YEAR_MONTH FROM Disbursement_date)';
+                query2 = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS period, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
+                    '         SUM(loan_amount) AmountDisbursed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications\n' +
+                    'WHERE  status = 2\n' +
+                    'and DATE_FORMAT(Disbursement_date, \'%M, %Y\') = ?\n' +
+                    'GROUP BY branch, period\n' +
+                    'ORDER BY branch, Disbursement_date'
+            }
+            if (freq == '2' && y != '0'){
+                query1 = 'select distinct(DATE_FORMAT(Disbursement_date, \'%M, %Y\')) periods from applications where status = 2 ' +
+                    ' and DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+' order by EXTRACT(YEAR_MONTH FROM Disbursement_date)';
+                query2 = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS period, DATE_FORMAT(Disbursement_date, \'%M\') month,\n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
+                    '         SUM(loan_amount) AmountDisbursed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications\n' +
+                    'WHERE  status = 2\n' +
+                    'and DATE_FORMAT(Disbursement_date, \'%M, %Y\') = ?\n' +
+                    'GROUP BY branch, period\n' +
+                    'ORDER BY branch, Disbursement_date'
+            }
+            if (freq == '3' && y == '0'){
+                query1 = 'select distinct(DATE_FORMAT(Disbursement_date, \'%Y\')) periods from applications where status = 2 ' +
+                    ' order by EXTRACT(YEAR_MONTH FROM Disbursement_date)';
+                query2 = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') period,\n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
+                    '         SUM(loan_amount) AmountDisbursed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications\n' +
+                    'WHERE  status = 2\n' +
+                    'and DATE_FORMAT(Disbursement_date, \'%Y\') = ?\n' +
+                    'GROUP BY branch, DATE_FORMAT(Disbursement_date, \'%Y\') order by branch'
+            }
+            if (freq == '3' && y != '0'){
+                query1 = 'select distinct(DATE_FORMAT(Disbursement_date, \'%Y\')) periods from applications where status = 2 ' +
+                    ' and DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+' order by EXTRACT(YEAR_MONTH FROM Disbursement_date)';
+                query2 = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, DATE_FORMAT(Disbursement_date, \'%Y\') period,\n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
+                    '         SUM(loan_amount) AmountDisbursed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications\n' +
+                    'WHERE  status = 2\n' +
+                    'and DATE_FORMAT(Disbursement_date, \'%Y\') = ?\n' +
+                    'GROUP BY branch, DATE_FORMAT(Disbursement_date, \'%Y\') order by branch'
+            }
+            if (freq == '4' && y == '0'){
+                query1 = 'select distinct(concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date))) periods from applications where status = 2 ' +
+                    ' order by EXTRACT(YEAR_MONTH FROM Disbursement_date)';
+                query2 = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) period,\n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
+                    '         SUM(loan_amount) AmountDisbursed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications\n' +
+                    'WHERE  status = 2\n' +
+                    'and concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) = ?\n' +
+                    'GROUP BY branch, period'
+            }
+            if (freq == '4' && y != '0'){
+                query1 = 'select distinct(concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date))) periods from applications where status = 2 ' +
+                    ' and DATE_FORMAT(Disbursement_date, \'%Y\') = '+y+' order by EXTRACT(YEAR_MONTH FROM Disbursement_date)';
+                query2 = 'SELECT   DATE_FORMAT(Disbursement_date, \'%M, %Y\') AS DisburseMonth, concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) period,\n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = userid)) branch,\n' +
+                    '         SUM(loan_amount) AmountDisbursed,\n' +
+                    '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
+                    'FROM     applications\n' +
+                    'WHERE  status = 2\n' +
+                    'and concat(\'Q\',quarter(disbursement_date),\'-\', year(disbursement_date)) = ?\n' +
+                    'GROUP BY branch, period'
+            }
+            break;
+        case '2':
+            // query2 = 'select sum(interest_amount) amount_received, \n' +
+            //     '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) branch\n' +
+            //     'from schedule_history \n' +
+            //     'where status = 1 and applicationid in (select id from applications where applications.status <> 0)\n' +
+            //     'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationID)) = ?\n' +
+            //     'group by branch'
+            if (freq == '2' && y == '0'){
+                query1 = 'select distinct(DATE_FORMAT(payment_date, \'%M, %Y\')) periods from schedule_history where status = 1 and payment_date is not null and applicationid in (select id from applications where status <> 0)' +
+                    ' order by EXTRACT(YEAR_MONTH FROM payment_date)';
+                query2 = 'select sum(interest_amount) amount_received, \n' +
+                    'DATE_FORMAT(payment_date, \'%M, %Y\') period, \n'+
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and DATE_FORMAT(payment_date, \'%M, %Y\') = ?\n'+
+                    'group by office, Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)';
+            }
+            if (freq == '2' && y != '0'){
+                query1 = 'select distinct(DATE_FORMAT(payment_date, \'%M, %Y\')) periods from schedule_history where status = 1 and payment_date is not null and applicationid in (select id from applications where status <> 0)' +
+                    ' and date_format(payment_date, \'%Y\') = '+y+' order by EXTRACT(YEAR_MONTH FROM payment_date)';
+                query2 = 'select sum(interest_amount) amount_received, \n' +
+                    'DATE_FORMAT(payment_date, \'%M, %Y\') period, \n'+
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and DATE_FORMAT(payment_date, \'%M, %Y\') = ?\n'+
+                    'group by office, Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)';
+            }
+            if (freq == '3' && y == '0'){
+                query1 = 'select distinct(DATE_FORMAT(payment_date, \'%Y\')) periods from schedule_history where status = 1 and payment_date is not null and applicationid in (select id from applications where status <> 0)' +
+                    ' order by EXTRACT(YEAR_MONTH FROM payment_date)';
+                query2 = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') period, \n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and DATE_FORMAT(payment_date, \'%Y\') = ?\n'+
+                    'group by office, DATE_FORMAT(Payment_date, \'%Y\')'
+            }
+            if (freq == '3' && y != '0'){
+                query1 = 'select distinct(DATE_FORMAT(payment_date, \'%Y\')) periods from schedule_history where status = 1 and payment_date is not null and applicationid in (select id from applications where status <> 0)' +
+                    ' and date_format(payment_date, \'%Y\') = '+y+' order by EXTRACT(YEAR_MONTH FROM payment_date)';
+                query2 = 'select sum(interest_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') period, \n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and DATE_FORMAT(payment_date, \'%Y\') = ?\n'+
+                    'group by office, DATE_FORMAT(Payment_date, \'%Y\')'
+            }
+            if (freq == '4' && y == '0'){
+                query1 = 'select distinct(concat(\'Q\',quarter(payment_date),\'-\', year(payment_date))) periods from schedule_history where status = 1 and payment_date is not null and applicationid in (select id from applications where status <> 0)' +
+                    ' order by EXTRACT(YEAR_MONTH FROM payment_date)';
+                query2 = 'select sum(interest_amount) amount_received, \n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office,\n' +
+                    'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) period\n'+
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) = ?\n'+
+                    'group by office, period'
+            }
+            if (freq == '4' && y != '0'){
+                query1 = 'select distinct(concat(\'Q\',quarter(payment_date),\'-\', year(payment_date))) periods from schedule_history where status = 1 and payment_date is not null and applicationid in (select id from applications where status <> 0)' +
+                    ' and DATE_FORMAT(payment_date, \'%Y\') ='+y+'  order by EXTRACT(YEAR_MONTH FROM payment_date)';
+                query2 = 'select sum(interest_amount) amount_received, \n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office,\n' +
+                    'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) period\n'+
+                    'from schedule_history \n' +
+                    'where status = 1\n' +
+                    'and applicationid in (select id from applications where status <> 0)\n'+
+                    'and concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) = ?\n'+
+                    'group by office, period'
+            }
+            break;
+    }
+    let load = {};
+    db.query(query1, function (error, results, fields) {
+        db.getConnection(function(err, connection) {
+            if (err) throw err;
+            async.forEachOf(results, function (result, key, callback) {
+                connection.query(query2, [result['periods']], function (err, rest) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        load[result['periods']] = rest;
+                    }
+                    callback();
+                });
+            }, function (data) {
+                connection.release();
+                res.send({"status": 200, "error": null, "response": load, "message": "Success!"});
+            });
+        });
+    });
+});
+
+/////// Activity
+/*Create New Activity Type*/
+users.post('/new-activity-type', function(req, res, next) {
+    let postData = req.body,
+        query =  'INSERT INTO activity_types Set ?',
+        query2 = 'select * from activity_types where activity_name = ?';
+    postData.status = 1;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query2,req.body.role, function (error, results, fields) {
+        if (results && results[0])
+            return res.send(JSON.stringify({"status": 200, "error": null, "response": results, "message": "Activity type already exists!"}));
+        db.query(query,{"activity_name":postData.role, "date_created": postData.date_created, "status": 1}, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Type Added!"}));
+            }
+        });
+    });
+});
+
+users.get('/activity-types', function(req, res, next) {
+    let query = 'SELECT * from activity_types where status = 1';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+users.get('/activity-types-full', function(req, res, next) {
+    let query = 'SELECT * from activity_types';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Add New Activity */
+users.post('/new-activity', function(req, res, next) {
+    let data = [],
+        postData = req.body,
+        query =  'INSERT INTO activities Set ?',
+        query2 = 'SELECT ID from activities where ID = LAST_INSERT_ID()';
+    postData.status = 1;
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query,postData, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                connection.query(query2, function(error, results, fields){
+                    let id = results[0].ID;
+                    connection.query('update activities set attachments = ? where activities.id = ?', [postData.attachments, id], function(error, results, fields){
+                        connection.release();
+                        res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created", "result": id}));
+                    });
+                });
+            }
+        });
+    });
+});
+
+/* All Activities */
+users.get('/activities', function(req, res, next) {
+    let current_user = req.query.user;
+    let team = req.query.team;
+    let officer = req.query.officer;
+    let word = 'team'
+    let load = [];
+    let query = 'SELECT *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
+        '(select fullname from clients c where c.ID = client) as clients, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select name from teams where teams.Id = ?) as team_name, ' +
+        '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
+        'from activities where status = 1 and for_ = ? ';
+    if (team){
+        query = query.concat(' and category = ?').concat('  and team = ? order by id desc')
+        load = [team, current_user, word, team]
+    }
+    if (officer){
+        query = 'SELECT *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
+            '(select fullname from clients c where c.ID = client) as clients, ' +
+            '(select fullname from users where users.id = for_) as user, ' +
+            '(select name from teams where teams.Id = team) as team_name, ' +
+            '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
+            'from activities where for_ = ? and status = 1 ';
+        load = [officer]
+    }
+    db.query(query, load, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+users.get('/all-activities', function(req, res, next) {
+    let current_user = req.query.user;
+    let team = req.query.team;
+    let officer = req.query.officer;
+    let word = 'team'
+    let load = [];
+    let query = 'SELECT *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
+        '(select fullname from clients c where c.ID = client) as client_name, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select name from teams where teams.Id = team) as team_name, ' +
+        '(select activity_name from activity_types at where at.id = activity_type) as activity ' +
+        'from activities where status = 1 and for_ is not null order by ID desc';
+    db.query(query, load, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Teams */
+users.get('/teams', function(req, res, next) {
+    let current_user = req.query.user;
+    let query = 'select teamID, ' +
+                '(select name from teams where teams.id = teamID) as team_name ' +
+                'from team_members where memberID = ?' +
+                // '(select users.ID from users where users.fullname = ? and users.status = 1) ' +
+                'and status = 1'
+    db.query(query, [current_user], function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Team Activities */
+users.get('/team-activities', function(req, res, next) {
+    let current_user = req.query.user;
+    let word = 'team'
+    let query = 'select *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count, ' +
+                '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+                '(select name from teams where teams.Id = team) as team_name, ' +
+                '(select fullname from users where users.id = for_) as user, ' +
+                '(select fullname from clients where clients.id = client) as client_name ' +
+                'from activities where ' +
+                'category = ? and team in (select teamID from team_members where memberID = ?) or (select supervisor from teams where teams.id = team) = ?' +
+                ' order by id desc';
+                // 'for_ = ?  ';
+        // '(select fullname from users where users.id in (select memberID from team_members where teamID in (select teamID from team_members where memberID = (select users.ID from users where users.fullname = ? and users.status = 1 ) and status = 1)  and status = 1) ) ' +
+        //         'and for_ <> ?';
+    let query2 = 'select *, (select count(*) from activity_comments where activityID = activities.ID group by activityID) as comment_count,' +
+        '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+        '(select fullname from clients where clients.id = client) as client_name, ' +
+        '(select name from teams where teams.Id = team) as team_name, ' +
+        '(select fullname from users where users.id = for_) as user ' +
+        'from activities where ' +
+        'team = 0 and for_ = ? order by id desc';
+    db.query(query, [word, current_user, current_user], function (error, results_team, fields) {
+        db.query(query2, [current_user], function (error, results_personal, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                let results = _.orderBy(results_team.concat(results_personal), ['ID'], ['desc']);
+                res.send(JSON.stringify(results));
+            }
+        });
+    });
+});
+
+/* Add Comment */
+users.post('/save-comment', function(req, res, next) {
+    let data = [],
+        postData = req.body,
+        query =  'INSERT INTO activity_comments Set ?';
+    postData.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query(query,postData, function (error, results, fields) {
+            if(error){
+                res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+            } else {
+                res.send(JSON.stringify({"status": 200, "error": null, "response": "Comment Posted"}));
+            }
+        });
+    });
+});
+
+/* Activity Comments */
+users.get('/activity-comments', function(req, res, next) {
+    let activity = req.query.activity;
+    let query = 'select *, (select fullname from users where users.ID = commenter) as maker from activity_comments where activityID = ?'
+    db.query(query, [activity], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send(results);
+        }
+    });
+});
+
+/* Activity Details */
+users.get('/activity-details', function(req, res, next) {
+    var load = {}
+    let activity = req.query.id;
+    let query = 'select *, (select count(*) from activity_comments where activityID = ? group by activityID) as comment_count, ' +
+        '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+        '(select name from teams where teams.Id = team) as team_name, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select fullname from clients where clients.id = client) as client_name ' +
+                'from activities where activities.ID = ?'
+    let query2 = 'select *, (select fullname from users where users.ID = commenter) as maker from activity_comments where activityID = ?'
+    db.query(query, [activity, activity], function (error, results, fields) {
+        load.activity_details = results
+        db.query(query2, [activity], function (error, results, fields) {
+            load.activity_comments = results
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                res.send(load);
+            }
+        });
+    });
+});
+
+/* Client Activities */
+users.get('/client-activities', function(req, res, next) {
+    var load = {}
+    let client = req.query.id;
+    let query = 'select *, ' +
+        '(select activity_name from activity_types where activity_types.id = activity_type) as activity, ' +
+        '(select fullname from users where users.id = for_) as user, ' +
+        '(select fullname from clients where clients.id = client) as client_name ' +
+        'from activities where client = ?'
+    let query2 = 'select *, (select fullname from users where users.ID = commenter) as maker from activity_comments where activityID = ?'
+    db.query(query, [client], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send(results);
+        }
+    });
+});
+
+users.get('/clients-act', function(req, res, next) {
+    let user = req.query.user;
+    let team = req.query.team;
+    let params;
+    let query = 'select * ' +
+                'from clients where loan_officer = ? ' +
+                'and status = 1';
+    params = [user];
+    if (team){
+        query = 'select * from clients where loan_officer in (select memberID from team_members where teamID = ?)';
+        params = [team];
+    }
+    db.query(query, params, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
+});
+
+/* Change Activity Type Status */
+users.post('/del-act-type/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update activity_types SET status = 0, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Role Disabled!"}));
+        }
+    });
+});
+
+/* Reactivate Role */
+users.post('/en-act-type/:id', function(req, res, next) {
+    let date = Date.now(),
+        postData = req.body;
+    postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let payload = [postData.date_modified, req.params.id],
+        query = 'Update activity_types SET status = 1, date_modified = ? where id=?';
+    db.query(query, payload, function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Role Re-enabled!"}));
+        }
+    });
+});
+
+//File Attachments - Activities
+users.post('/attach-files/:id', function(req, res) {
+    if (!req.files) return res.status(400).send('No files were uploaded.');
+    if (!req.params.id) return res.status(400).send('No Folder specified!');
+    if (req.body.num == 1){
+        fs.stat('files/activities/'+req.params.id+'/', function(err) {
+            if (!err) {
+                console.log('file or directory exists');
+            }
+            else if (err.code === 'ENOENT') {
+                fs.mkdirSync('files/activities/'+req.params.id+'/');
+            }
+        });
+    }
+    let sampleFile = req.files.file,
+        name = sampleFile.name,
+        extArray = sampleFile.name.split("."),
+        extension = extArray[extArray.length - 1],
+        fileName = name+'.'+extension;
+    console.log(req.body)
+    fs.stat('files/activities/'+req.params.id+'/'+name, function (err) {
+        if (err) {
+            sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
+                if (err) return res.status(500).send(err);
+                res.send('File uploaded!');
+            });
+        }
+        else{
+            fs.unlink('files/activities/'+req.params.id+'/'+name,function(err){
+                if(err){
+                    res.send('Unable to delete file!');
+                }
+                else{
+                    sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
+                        if (err)
+                            return res.status(500).send(err);
+                        res.send('File uploaded!');
+                    });
+                }
+            });
+        }
+    });
+});
+
+/* GET Activity Attachments. */
+users.get('/attached-images/:folder/', function(req, res, next) {
+    var array = [];
+    var path = 'files/activities/'+req.params.folder+'/';
+    if (fs.existsSync(path)){
+        fs.readdir(path, function (err, files){
+            //console.log(path+': Exists, hence image '+JSON.stringify(files));
+            var obj = [];
+            async.forEach(files, function (file, callback){
+                obj.push(path+file)
+                callback();
+            }, function(data){
+                //array.push(res);
+                res.send(JSON.stringify({"status": 200, "response":obj}));
+            });
+        })	;
+    }
+    else {
+        res.send(JSON.stringify({"status":500, "response": "No Attachments!"}));
+    }
+});
+
+users.get('/user-commissions/:id', function(req, res, next) {
+    let query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select s.title from commissions s where s.ID = c.commissionID) as commission,' +
+        '(select t.title from targets t where t.ID = c.targetID) as target,(select p.name from sub_periods p where p.ID = c.sub_periodID) as period from user_commissions c where c.status = 1 and c.userID = ? order by c.ID desc';
+    db.query(query, [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "User commissions fetched successfully", "response": results});
+        }
+    });
+});
+
+users.post('/user-commissions', function(req, res, next) {
+    req.body.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM user_commissions WHERE userID=? AND type=? AND sub_periodID=? AND status = 1',
+        [req.body.userID,req.body.type,req.body.sub_periodID], function (error, result, fields) {
+            if (result && result[0]) {
+                res.send({"status": 500, "error": "The "+req.body.type+" commission for the same period has already been assigned to this user"});
+            } else {
+                db.query('SELECT * FROM users WHERE ID=?', [req.body.userID], function (error, user, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        if (user[0]['loan_officer_status'] !== 1)
+                            return res.send({"status": 500, "error": "User must be a loan officer"});
+                        db.query('INSERT INTO user_commissions SET ?', req.body, function (error, result, fields) {
+                            if(error){
+                                res.send({"status": 500, "error": error, "response": null});
+                            } else {
+                                let query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select s.title from commissions s where s.ID = c.commissionID) as commission,' +
+                                    '(select t.title from targets t where t.ID = c.targetID) as target,(select p.name from sub_periods p where p.ID = c.sub_periodID) as period from user_commissions c where c.status = 1 and c.userID = ? order by c.ID desc';
+                                db.query(query, [req.body.userID], function (error, results, fields) {
+                                    if(error){
+                                        res.send({"status": 500, "error": error, "response": null});
+                                    } else {
+                                        res.send({"status": 200, "message": "User commission assigned successfully", "response": results});
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+});
+
+users.delete('/user-commissions/:id/:userID', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE user_commissions SET status = 0, date_modified = ? WHERE ID = ?', [date, req.params.id], function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            let query = 'SELECT *,(select u.fullname from users u where u.ID = c.userID) as user,(select s.title from commissions s where s.ID = c.commissionID) as commission,' +
+                '(select t.title from targets t where t.ID = c.targetID) as target,(select p.name from sub_periods p where p.ID = c.sub_periodID) as period from user_commissions c where c.status = 1 and c.userID = ? order by c.ID desc';
+            db.query(query, [req.params.userID], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "User commission deleted successfully", "response": results});
+                }
+            });
+        }
+    });
+});
+
+users.get('/commissions-list', function(req, res, next) {
+    let type = req.query.type,
+        target = req.query.target,
+        commission = req.query.commission,
+        query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
+            '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID';
+    if (type)
+        query = query.concat(' AND c.type = "'+type+'"');
+    if (target)
+        query = query.concat(' AND c.targetID = '+target);
+    if (commission)
+        query = query.concat(' AND c.commissionID = '+commission);
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commissions list fetched successfully", "response": results});
+        }
+    });
+});
+
+users.get('/commissions-list/:officerID', function(req, res, next) {
+    let type = req.query.type,
+        id = req.params.officerID,
+        target = req.query.target,
+        commission = req.query.commission,
+        query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
+            '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID',
+        query2 = query.concat(' AND c.userID = '+id+' '),
+        query3 = query.concat(' AND (select supervisor from users where users.id = c.userID) =  '+id+' ');
+    if (id)
+        query = query2;
+    if (type)
+        query = query.concat(' AND c.type = "'+type+'"');
+    if (target)
+        query = query.concat(' AND c.targetID = '+target);
+    if (commission)
+        query = query.concat(' AND c.commissionID = '+commission);
+    if (id){
+        db.query(query, function (error, commissions, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                db.query(query3, function (error, commissions2, fields) {
+                    if(error){
+                        res.send({"status": 500, "error": error, "response": null});
+                    } else {
+                        let results = commissions.concat(commissions2);
+                        res.send({"status": 200, "message": "Commissions list fetched successfully", "response": results});
+                    }
+                });
+            }
+        });
+    } else {
+        db.query(query, function (error, results, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                res.send({"status": 200, "message": "Commissions list fetched successfully", "response": results});
+            }
+        });
+    }
+});
+
+users.post('/commission/payments', function(req, res, next) {
+    let data = req.body;
+    data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('INSERT INTO commission_payments SET ?', data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission payment saved successfully!"});
+        }
+    });
+});
+
+users.get('/commission/payment-history/:commissionID', function(req, res, next) {
+    db.query('SELECT * FROM commission_payments WHERE commissionID = '+req.params.commissionID, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission payment fetched successfully!", response: result});
+        }
+    });
+});
+
+users.get('/application/commission-payment-reversal/:id', function(req, res, next) {
+    db.query('UPDATE commission_payments SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Payment reversed successfully!"});
+        }
+    });
+});
+
+users.get('/target-mail', function(req, res) {
+    // let data = req.body;
+    // if (!data.name || !data.email || !data.company || !data.phone || !data.title || !data.location || !data.description || !data.lead)
+    //     return res.send("Required Parameters not sent!");
+    // data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    let mailOptions = {
+        from: 'Loanratus Target <applications@loan35.com>',
+        to: 'itaukemeabasi@gmail.com',
+        subject: 'Target',
+        template: 'target'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        console.log(error)
+        console.log(info)
+        if(error)
+            return res.send("Error");
+        return res.send("OK");
+    });
 });
 
 module.exports = users;

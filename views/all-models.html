@@ -266,7 +266,7 @@
 
                 </div>
             </div><!-- .animated -->
-            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 
@@ -445,7 +445,7 @@
 
         function populateModelsTable(models){
             // clear the table before populating it with more data
-            $("#models").DataTable().clear();
+            $("#models").dataTable().fnClearTable();
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';
             $.each(models, function(k, v){
@@ -461,7 +461,7 @@
 
         function populateBrandsTable(data) {
             // clear the table before populating it with more data
-            $("#bootstrap-data-table").DataTable().clear();
+            $("#bootstrap-data-table").dataTable().fnClearTable();
             var length = data.length;
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';

@@ -276,7 +276,7 @@
 
                                                 <div class="row">
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Loan Officer</label>
+                                                        <label class="form-control-label">Loan Officer<span class="text-danger">*</span></label>
                                                         <div class="input-group">
                                                             <select id="loan_officer" class="form-control" tabindex="5.2" >
                                                             </select>
@@ -284,7 +284,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-4 col-md-4">
-                                                        <label class="form-control-label">Branch</label>
+                                                        <label class="form-control-label">Branch<span class="text-danger">*</span></label>
                                                         <div class="input-group">
                                                             <select id="branch" class="form-control" tabindex="5.2" >
                                                                 <!--<option id="0"> &#45;&#45; Select a branch &#45;&#45;</option>-->
@@ -689,7 +689,7 @@
 
 
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 
 
@@ -741,11 +741,11 @@
 
             if(validateEmail($('#email').val())){
                 if (n == 1 && !validateForm()){
-                    swal('Fill all required fields');
+                    swal('Empty Field(s)!', 'Fill all required fields', 'warning');
                     return false;
                 }
             }else{
-                swal('Invalid Email');
+                swal('Please Enter a Valid Email', '', 'warning');
                 return false;
             }
 

@@ -30,7 +30,6 @@
     <style type="text/css">
         .todolist{
             background-color:#FFF;
-            padding:0 30px;
         }
         .todolist h1{
             margin:0;
@@ -65,7 +64,6 @@
             cursor: pointer !important;
         }
         li.disabled, option.disabled {
-            pointer-events:none;
             background: #efefef;
         }
         li.ui-state-default > span > small{
@@ -90,6 +88,13 @@
             border: 1px solid #ced4da;
             border-radius: .25rem;
         }
+        .edit-item{
+            pointer-events: auto;
+            margin-right: 5px;
+        }
+        .disabled{
+            pointer-events:none;
+        }
     </style>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -102,6 +107,9 @@
     <script type="text/javascript">
         jQuery(document).ready(function($){
             check(); loadMenus(); read_write();
+            localStorage.list_index = '';
+            localStorage.list_type = '';
+
             let $sortable = $("#sortable");
             $sortable.sortable();
             $sortable.disableSelection();
@@ -116,7 +124,9 @@
 
             //mark all tasks as done
             function AllDone(){
-                $sortable.find('li').remove();
+                let count = $sortable.find("li").length;
+                for (let i=count-3; i>0; i--)
+                    $sortable.find('li:eq('+i+')').remove();
                 countTodos();
             }
 
@@ -124,46 +134,141 @@
             $('#add-stage').click(function (e) {
                 e.preventDefault;
                 if($('.add-todo').val() !== ''){
-                    let stage = {},
-                        action_ids = [],
-                        action_names = [],
-                        stage_template = $('#stage-template').val(),
-                        documents = $('.document-upload-text').map(function() {
-                            if (this.value) return this.value;
-                        }).get(),
-                        actions = $('.local-stages-new').map(function() {
-                            if (this.value && (this.value !== '-- Choose Action --'))
-                                return this.value;
-                        }).get();
-                    stage.name = $('#stage-name').val();
-                    stage.description = $('#stage-description').val();
-                    stage.approverID = $('#process-rights').val();
-                    if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || !actions || !actions[0])
-                        return swal('Kindly fill all required fields!');
-                    stage.approverID = stage.approverID.join(',');
-                    if (documents && documents[0])
-                        stage.document = documents.join(',');
-                    if (actions[0]){
-                        $.each(actions, function (key, val) {
-                            let action = JSON.parse(decodeURIComponent(val));
-                            action_ids.push(action.ID);
-                            action_names.push(action.name);
-                            if (key === actions.length-1){
-                                if (action_ids[0])
-                                    stage.actions = action_ids.join(',');
-                                if (action_names[0])
-                                    stage.action_names = action_names;
-                                let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
-                                stage.stageID = stage_template_json.ID || stage_template_json.stageID;
-                                stage.stage_name = stage_template_json.name;
-                                createTodo(stage);
-                                countTodos();
-                            }
-                        });
-                    }
+                    addStage();
                 }else{
                     swal('Kindly fill all required fields!');
                 }
+            });
+
+            function addStage(id) {
+                let stage = {},
+                    action_ids = [],
+                    action_names = [],
+                    stage_template = $('#stage-template').val(),
+                    documents = $('.document-upload-text').map(function() {
+                        if (this.value) return this.value;
+                    }).get(),
+                    actions = $('.local-stages-new').map(function() {
+                        if (this.value && (this.value !== '-- Choose Action --'))
+                            return this.value;
+                    }).get();
+                stage.name = $('#stage-name').val();
+                stage.description = $('#stage-description').val();
+                stage.approverID = $('#process-rights').val();
+                if (!stage.name || stage_template === "-- Choose Action --" || stage.approverID === null || !actions || !actions[0])
+                    return swal('Kindly fill all required fields!');
+                stage.approverID = stage.approverID.join(',');
+                if (documents && documents[0])
+                    stage.document = documents.join(',');
+                if (actions[0]){
+                    $.each(actions, function (key, val) {
+                        let action = JSON.parse(decodeURIComponent(val));
+                        action_ids.push(action.ID);
+                        action_names.push(action.name);
+                        if (key === actions.length-1){
+                            if (action_ids[0])
+                                stage.actions = action_ids.join(',');
+                            if (action_names[0])
+                                stage.action_names = action_names;
+                            let stage_template_json = JSON.parse(decodeURIComponent(stage_template));
+                            stage.stageID = stage_template_json.ID || stage_template_json.stageID;
+                            stage.stage_name = stage_template_json.name;
+                            createTodo(stage,id);
+                            countTodos();
+                        }
+                    });
+                }
+            }
+
+            $('.todolist').on('click','.edit-item-enabled',function(){
+                localStorage.list_type = 'enabled';
+            });
+
+            $('.todolist').on('click','.edit-item-disabled',function(){
+                localStorage.list_type = 'disabled';
+            });
+
+            function enableTransitionInputs() {
+                $('#stage-name').prop('disabled',false);
+                $('#stage-template').prop('disabled',false);
+                $('.local-stages-new').prop('disabled',false);
+                $('#more-actions-link').removeClass('disabled');
+                $('#stage-action-div').find('.fa-times').show();
+                $('.document-upload-text').prop('disabled',false);
+                $('#document-upload').removeClass('disabled');
+                $('#document-upload-div').find('.fa-times').show();
+            }
+
+            function disableTransitionInputs() {
+                $('#stage-name').prop('disabled',true);
+                $('#stage-template').prop('disabled',true);
+                $('.local-stages-new').prop('disabled',true);
+                $('#more-actions-link').addClass('disabled');
+                $('#stage-action-div').find('.fa-times').hide();
+                $('.document-upload-text').prop('disabled',true);
+                $('#document-upload').addClass('disabled');
+                $('#document-upload-div').find('.fa-times').hide();
+            }
+
+            //load edit task
+            $('.todolist').on('click','.edit-item',function(){
+                $('#edit-stage').show();
+                $('#add-stage').hide();
+                $('#stage-action-div').html('');
+                $('#document-upload-div').html('');
+
+                let stage = JSON.parse(decodeURIComponent(this.id));
+                $('#stage-name').val(stage.name);
+                $('#stage-template').val($('#stage-template').find('option').filter(function () { return $(this).html() === stage.stage_name; }).val());
+                $('#process-rights').val(stage.approverID.split(','));
+                refreshMultiselect();
+                if (stage.actions) {
+                    let count = 0,
+                        actions_array = stage.actions.split(',');
+                    actions_array.forEach(function (action_id) {
+                        let action = ($.grep(JSON.parse(localStorage.stages), function (e) {return e.ID === parseInt(action_id);}))[0];
+                        count++;
+                        $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                            '<select id="action-name-'+count+'" class="form-control local-stages-new"><option selected="selected" value="-- Choose Action --">-- Choose Action --</option>' +
+                            '</select><i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeAction(this)"></i></div>');
+                        getLocalStages();
+                        $('#action-name-'+count).val($('#action-name-'+count).find('option').filter(function () { return $(this).html() === action.name; }).val());
+                    });
+                } else if (stage.action_names && stage.action_names[0]){
+                    let count = 0;
+                    stage.action_names.forEach(function (action) {
+                        count++;
+                        $("#stage-action-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                            '<select id="action-name-'+count+'" class="form-control local-stages-new"><option selected="selected" value="-- Choose Action --">-- Choose Action --</option>' +
+                            '</select><i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeAction(this)"></i></div>');
+                        getLocalStages();
+                        $('#action-name-'+count).val($('#action-name-'+count).find('option').filter(function () { return $(this).html() === action; }).val());
+                    });
+                }
+                if (stage.document) {
+                    let count = 0,
+                        documents_array = stage.document.split(',');
+                    documents_array.forEach(function (document) {
+                        count++;
+                        $("#document-upload-div").append('<div class="input-group" style="margin-bottom: 15px;">\n' +
+                            '    <div class="input-group-addon"><i class="fa fa-upload"></i></div>\n' +
+                            '    <input id="document-name-'+count+'" type="text" class="form-control document-upload-text" placeholder="Document Upload Caption" max="50">\n' +
+                            '<i class="fa fa-times" style="margin: 10px; color: #dc3545;" onclick="removeDocumentAction(this)"></i></div>');
+                        $('#document-name-'+count).val(document);
+                    });
+                }
+                localStorage.list_index = $(this).parent().index();
+                if (localStorage.list_type === 'enabled'){
+                    enableTransitionInputs();
+                } else if (localStorage.list_type === 'disabled'){
+                    disableTransitionInputs();
+                }
+            });
+
+            //edit todo
+            $('#edit-stage').click(function (e) {
+                e.preventDefault;
+                addStage(localStorage.list_index);
             });
 
             //delete done task from "already done"
@@ -178,24 +283,53 @@
             }
 
             //create task
-            function createTodo(stage){
-                $('#addStage').modal('hide');
+            window.createTodo = function (stage,id){
                 let markup = '',
                     count = parseInt($sortable.find("li").length);
-                if (stage.action_names){
-                    markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                if (id && localStorage.list_type === 'disabled'){
+                    markup = '<li class="ui-state-default disabled"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                        '<button class="edit-item edit-item-disabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
                 } else {
-                    markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/><button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button></li>';
+                    if (stage.action_names){
+                        markup = '<li class="ui-state-default"><span>'+stage.name+' <small> '+stage.stage_name+' → '+stage.action_names.join(" → ")+'</small></span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                            '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item edit-item-enabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
+                    } else {
+                        markup = '<li class="ui-state-default"><span>'+stage.name+'</span> <input class="stage-items" value="'+encodeURIComponent(JSON.stringify(stage))+'" style="display: none;"/>' +
+                            '<button class="remove-item btn btn-outline-danger btn-xs pull-right" id="'+stage.name+'"><span class="fa fa-trash"></span></button><button class="edit-item edit-item-enabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(stage))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
+                    }
                 }
-                $sortable.find('li:eq('+(count-2)+')').before(markup);
+                if (id){
+                    if (id < count-1){
+                        $sortable.find('li:eq('+id+')').remove();
+                        $sortable.find('li:eq('+id+')').before(markup);
+                    } else {
+                        $sortable.find('li:eq('+id+')').before(markup);
+                        $sortable.find('li:eq('+count+')').remove();
+                    }
+                } else {
+                    $sortable.find('li:eq('+(count-2)+')').before(markup);
+                }
+                clearStageInputs();
+                resetMultiselect();
+                getLocalStages();
+            };
+
+            function clearStageInputs() {
                 $('#document-upload').prop('checked',false);
                 $('#document-upload-div').html('');
                 $('#stage-description').val('');
                 $('#stage-action-div').html('');
-                $('#stage-template').val('');
+                $('#stage-template').val('-- Choose Action --');
                 $('#stage-name').val('');
-                getLocalStages();
+                resetMultiselect();
             }
+
+            $('#addTransition').on('click',function(){
+                enableTransitionInputs();
+                $('#edit-stage').hide();
+                $('#add-stage').show();
+                clearStageInputs();
+            });
 
             //remove done task from list
             function removeItem(element){
@@ -309,26 +443,30 @@
                             <div class="card-body card-block">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Workflow Name <strong style="color:red"> *</strong></label>
-                                    <div class="col-sm-8 input-group">
-                                        <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
-                                        <input id="process-name" class="form-control" required="required">
+                                    <div class="col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-11 input-group">
+                                                <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
+                                                <input id="process-name" class="form-control" required="required">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Workflow Transitions <strong style="color:red"> *</strong></label>
                                     <div class="col-sm-9">
                                         <div class="row">
-                                            <div class="col-sm-12">
-                                                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addStage"><i class="fa fa-plus"></i>Add Transition</button>
+                                            <div class="col-sm-11">
+                                                <button id="addTransition" class="btn btn-outline-dark" data-toggle="modal" data-target="#addStage"><i class="fa fa-plus"></i>Add Transition</button>
                                                 <button id="checkAll" class="btn btn-danger"><i class="fa fa-remove"></i>Clear Transition</button>
                                             </div>
-                                            <div class="col-sm-10" style="margin: 15px;">
+                                            <div class="col-sm-11" style="margin-top: 15px;">
                                                 <div class="alert alert-info" role="alert" data-original-title="" title="">A transition defines a change in your workflow from one stage to another. View transitions below. You can also <strong>drag and drop</strong> to re-order.</div>
                                             </div>
-                                            <div class="col-sm-10 todolist">
+                                            <div class="col-sm-11 todolist">
                                                 <ul id="sortable" class="list-unstyled"></ul>
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-11">
                                                 <div class="todo-footer">
                                                     Number of Transition(s): <strong><span class="count-todos"></span></strong>
                                                 </div>
@@ -344,7 +482,7 @@
                     </div>
                 </div>
             </div><!-- .animated -->
-            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 
@@ -363,7 +501,7 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label class=" form-control-label">Transition Name</label><strong style="color:red"> *</strong><span id="stage-name-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Transition Name</label><strong style="color:red"> *</strong><span id="stage-name-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-list"></i></div>
                                 <input id="stage-name" type="text" class="form-control add-todo" placeholder="Transition Name" maxlength="50" required="required">
@@ -371,14 +509,14 @@
                             <small class="form-text text-muted">Maximum of 50 characters</small>
                         </div>
                         <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Transition Description</label><span id="stage-description-error" style="padding-left:50px; text-align: center"></span>-->
+                            <!--<label class="form-control-label">Transition Description</label><span id="stage-description-error" style="padding-left:50px; text-align: center"></span>-->
                             <!--<div class="input-group">-->
                                 <!--<textarea id="stage-description" class="form-control" placeholder="Transition Description" maxlength="250"></textarea>-->
                             <!--</div>-->
                             <!--<small class="form-text text-muted">Maximum of 250 characters</small>-->
                         <!--</div>-->
                         <div class="form-group">
-                            <label class=" form-control-label">Start Stage</label><strong style="color:red"> *</strong>
+                            <label class="form-control-label">Start Stage</label><strong style="color:red"> *</strong>
                             <div class="input-group">
                                 <select id="stage-template" class="form-control" required="required">
                                     <option selected="selected">-- Choose Action --</option>
@@ -412,10 +550,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Rules</label>
+                            <label class="form-control-label">Rules</label>
                             <div class="input-group">
                                 <a id="document-upload">
-                                    <label class=" form-control-label" style="display: block">
+                                    <label class="form-control-label" style="display: block">
                                         <i class="fa fa-plus"></i> Document Upload Required
                                         </label></a><small class="form-text text-muted">&nbsp; (Maximum of 50 characters)</small>
                             </div>
@@ -432,31 +570,12 @@
                                 $(element).parent().remove();
                             }
                         </script>
-                        <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Triggers</label>-->
-                            <!--<div class="input-group">-->
-                                <!--<label><input id="trigger-1" type="checkbox"> &nbsp; Cancel Loan Application</label>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<script type="text/javascript">-->
-                            <!--$('#document-upload').change(function () {-->
-                                <!--$('#document-upload-div').toggle();-->
-                            <!--});-->
-                            <!--let status = false;-->
-                            <!--$('#trigger-1').change(function () {-->
-                                <!--status = !status;-->
-                                <!--if (status){-->
-                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "Denied"; }).val());-->
-                                <!--} else {-->
-                                    <!--$('#stage-template').val($('#stage-template option').filter(function () { return $(this).html() == "&#45;&#45; Choose Action &#45;&#45;"; }).val())-->
-                                <!--}-->
-                            <!--});-->
-                        <!--</script>-->
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="add-stage" type="button" class="btn btn-primary">Add Transition</button>
+                    <button id="add-stage" type="button" class="btn btn-primary" data-dismiss="modal">Add Transition</button>
+                    <button id="edit-stage" type="button" class="btn btn-primary" data-dismiss="modal" style="display: none;">Save</button>
                 </div>
             </div>
         </div>
@@ -484,8 +603,6 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            loadWorkflowStages();
-            loadProcesses();
             getStages();
             getRoles();
         });
@@ -497,6 +614,14 @@
         $(document).ajaxComplete(function(){
             $("#wait").css("display", "none");
         });
+
+        function resetMultiselect() {
+            $('#process-rights').multiselect("clearSelection");
+        }
+
+        function refreshMultiselect() {
+            $('#process-rights').multiselect("refresh");
+        }
 
         function check(){
             if (localStorage.getItem('role') !== 1){
@@ -558,37 +683,6 @@
             }
         }
 
-        let results;
-
-        function loadProcesses(){
-            $.ajax({
-                'url': '/workflows',
-                'type': 'get',
-                'data': {},
-                'success': function (data) {
-                    let processes = data.response;
-                    results = processes;
-                },
-                'error': function (err) {
-                    console.log('Error');
-                }
-            });
-        }
-
-        function loadWorkflowStages() {
-            $.ajax({
-                'url': '/workflow-stages',
-                'type': 'get',
-                'success': function (data) {
-                    localStorage.setItem('workflow_stages',JSON.stringify(data.response));
-                },
-                'error': function (err) {
-                    console.log('Error');
-                    swal('No internet connection','','error');
-                }
-            });
-        }
-
         function getLocalStages(){
             let $local_stages = $(".local-stages-new"),
                 count = $("#sortable").find("li").length;
@@ -612,7 +706,7 @@
                     $.each(JSON.parse(response), function (key, val) {
                         $("#process-rights").append('<option value = "'+val.id+'">'+val.role_name+'</option>');
                     });
-                    $('.multiselect-ui').multiselect({
+                    $('#process-rights').multiselect({
                         includeSelectAllOption: true
                     });
                 }
@@ -624,18 +718,19 @@
                 type: "GET",
                 url: "/stages",
                 success: function (response) {
-                    localStorage.setItem('stages',JSON.stringify(response));
-                    let local_stages = [];
+                    let local_stages = [],
+                        stages = JSON.parse(JSON.stringify(response));
+                    localStorage.setItem('stages',JSON.stringify(stages));
                     $.each(response, function (key, val) {
                         if (val.type === 1){
-                            val.approverID = 1;
+                            val.approverID = '1';
                             val.stageID = val.ID;
                             delete val.ID;
                             val.stage_name = val.name;
                             local_stages.push(val);
                         }
                         if (val.name === 'Disbursal'){
-                            $("#stage-template").append('<option class="disabled" disabled="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
+                            $("#stage-template").append('<option class="disabled" value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                         } else {
                             $("#stage-template").append('<option value = "'+encodeURIComponent(JSON.stringify(val))+'">'+val.name+'</option>');
                         }
@@ -646,8 +741,8 @@
                                 let stage_name, action_names;
                                 switch (val.name){
                                     case 'Application Start':{
-                                        stage_name = "N/A";
-                                        action_names = ['Application Start']; break;
+                                        stage_name = "Application Start";
+                                        action_names = ['Final Approval']; break;
                                     }
                                     case 'Final Approval':{
                                         stage_name = "Final Approval";
@@ -658,7 +753,9 @@
                                         action_names = ['Disbursed']; break;
                                     }
                                 }
-                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+' <small> '+stage_name+' → '+action_names.join(" → ")+'</small></span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/></li>';
+                                val.action_names = action_names;
+                                let markup = '<li class="ui-state-default disabled"><span>'+val.name+' <small> '+stage_name+' → '+action_names.join(" → ")+'</small></span><input class="stage-items" value="' + encodeURIComponent(JSON.stringify(val)) + '" style="display: none;"/>' +
+                                    '<button class="edit-item edit-item-disabled btn btn-outline-info btn-xs pull-right" id="'+encodeURIComponent(JSON.stringify(val))+'" data-toggle="modal" data-target="#addStage"><span class="fa fa-edit"></span></button></li>';
                                 $('#sortable').append(markup);
                                 if (key === local_stages_sorted.length-1)
                                     return getLocalStages();
@@ -667,50 +764,6 @@
                     });
                 }
             });
-        }
-
-        function addNewStage() {
-            let $name = $('#new-stage-name');
-            if (!$name)
-                return swal('Kindly input a stage name');
-            $.ajax({
-                'url': '/stages',
-                'type': 'post',
-                'data': {name:$name.val()},
-                'success': function (data) {
-                    $name.val('');
-                    swal('Stage saved successfully');
-                    window.location.reload();
-                },
-                'error': function (err) {
-                    $name.val('');
-                    swal('Oops! An error occurred while saving stage');
-                }
-            });
-        }
-
-        function formatDate(timestamp) {
-            timestamp = parseInt(timestamp);
-            let date =  new Date(timestamp);
-            return date.toLocaleString();
-        }
-
-        function openModal(id) {
-            let stages = localStorage.getItem("workflow_stages");
-            if (stages){
-                let data = $.grep(JSON.parse(stages), function(e){ return e.workflowID === id; });
-                $("#stages-table").dataTable().fnClearTable();
-                $.each(data, function(k, v){
-                    let table = [
-                        v.ID,
-                        v.name,
-                        v.description,
-                        v.stage_name
-                    ];
-                    $('#stages-table').dataTable().fnAddData(table);
-                    $('#stages-table').dataTable().fnSort([[0,'asc']]);
-                });
-            }
         }
         
         function addProcess() {
@@ -729,27 +782,21 @@
             if (($.grep(data.stages,function(e){return e.stage_name==='Application Start'})).length > 1)
                 data.stages.shift();
 
-            $('wait').show();
+            $('#wait').show();
             $.ajax({
                 type: 'POST',
                 url: '/workflows',
                 data: data,
                 success: function (data) {
-                    localStorage.setItem('workflow_stages',JSON.stringify(data.response));
                     localStorage.removeItem('local_stages');
-                    let $sortable = $("#sortable"),
-                        processes = data.response,
-                        count = $sortable.find("li").length;
-                    results = processes;
-                    $('.count-todos').html(0);
                     $('#process-name').val("");
-                    $sortable.html("");
-                    $('wait').hide();
+                    $('#wait').hide();
                     swal(data.message);
+                    window.location.href = "/all-workflow";
                 },
                 'error': function (err) {
                     console.log('Error');
-                    $('wait').hide();
+                    $('#wait').hide();
                     swal('No internet connection','','error');
                 }
             });

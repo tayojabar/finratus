@@ -324,7 +324,7 @@
         function populateDataTable(data) {
             console.log("populating data table...");
             // clear the table before populating it with more data
-            $("#bootstrap-data-table").DataTable().clear();
+            $("#bootstrap-data-table").dataTable().fnClearTable();
             var length = data.length;
             var action = '<a href="#" class="edit" title="Edit client" data-post-id="1" data-act="ajax-modal" data-title="Edit client" data-action-url="http://localhost:8888/proman/index.php/clients/modal_form"><i class="fa fa-pencil"></i>Edit</a>'+
                           '<a href="#" title="Delete client" class="delete" data-id="1" data-action-url="http://localhost:8888/proman/index.php/clients/delete" data-action="delete"><i class="fa fa-times fa-fw"></i>Delete</a>';

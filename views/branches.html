@@ -296,7 +296,7 @@
                         <div class="card-body">
                             <div class="widget-main padding-8">
                                 <div class="form-group">
-                                    <strong><label class=" form-control-label">Branch Name</label></strong>
+                                    <strong><label class="form-control-label">Branch Name</label></strong>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-building"></i></div>
                                         <input id="branch_name" type="text" class="form-control" required="required">
@@ -311,7 +311,7 @@
                 </div>
             </div>
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 
 
@@ -349,21 +349,21 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <strong><label class=" form-control-label">User</label></strong>
+                    <strong><label class="form-control-label">User</label></strong>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
                         <input id="username" type="text" class="form-control" required="required" readonly="readonly">
                     </div>
                 </div>
                 <div class="form-group">
-                    <strong><label class=" form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
+                    <strong><label class="form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                         <input id="new-password" type="password" class="form-control" required="required">
                     </div>
                 </div>
                 <div class="form-group">
-                    <strong><label class=" form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                    <strong><label class="form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                         <input id="cpassword" type="password" class="form-control" required="required">
@@ -481,7 +481,7 @@
             if (k.module_name === page){
                 w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
             }
-        });console.log(parseInt(w[0]['editable']));console.log('Here');
+        });
         if (parseInt(w[0]['editable']) != 1){
             $(".write").hide();
         }

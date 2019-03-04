@@ -24,6 +24,40 @@
     <link rel="stylesheet" href="assets/scss/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .dropdown-menu.show{
+            position: relative !important;
+        }
+        .select2-container{
+            width: 100% !important;
+            height: 35px !important;
+        }
+        .select2-selection{
+            height: 100% !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+            color: #495057 !important;
+        }
+        input.invalid, span.invalid {
+            border: 2px dashed red;
+        }
+        div.dataTables_wrapper div.dataTables_filter{
+            float: right;
+            margin-right: 15px;
+        }
+        div.dataTables_length{
+            float: left;
+        }
+        .dt-buttons.btn-group{
+            float: right;
+        }
+        .btn-default{
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #666e76;
+        }
+    </style>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script>
@@ -264,68 +298,64 @@
                                 <strong>Add User Data</strong> <small> User Information</small>
                             </div>
                             <div class="card-body card-block">
-                                <div class="form-group">
-                                    <label class=" form-control-label">Full Name</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
+                                <div class="form-group col-lg-6">
+                                    <label class="form-control-label">Full Name</label><strong style="color:red"> *</strong><span id="fullname-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                         <input id="fullname" class="form-control" required="required">
                                     </div>
                                     <small class="form-text text-muted">ex. user123</small>
                                 </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Email </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
+                                <div class="form-group col-lg-6">
+                                    <label class="form-control-label">Email </label><strong style="color:red"> *</strong><span id="email-error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-male"></i></div>
                                         <input type="email" id="email" class="form-control" required="required">
                                     </div>
-                                    <small class="form-text text-muted">ex. <Address>email@email.com</Address></small>
+                                    <small class="form-text text-muted">ex. email@email.com</small>
                                 </div>
-                                <!--<div class="form-group">-->
-                                <!--<label class=" form-control-label">Username</label><strong style="color:red"> *</strong><span id="username-error" style="padding-left:50px; text-align: center"></span>-->
-                                <!--<div class="input-group">-->
-                                <!--<div class="input-group-addon"><i class="fa fa-calendar"></i></div>-->
-                                <!--<input id="username" class="form-control" required="required">-->
-                                <!--</div>-->
-                                <!--<small class="form-text text-muted">ex. user123</small>-->
-                                <!--</div>-->
-                                <div class="form-group">
-                                    <label class=" form-control-label">User Role</label>
+                                <div class="form-group col-lg-6">
+                                    <label class="form-control-label">User Role</label>
                                     <strong style="color:red"> *</strong>
                                     <span id="role_error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                         <select id="role" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Choose User Role --</option>
+                                            <option id="0">-- Choose User Role --</option>
                                         </select><input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#roleModal" value="New Role"/>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class=" form-control-label">Branch</label>
+                                <div class="form-group col-lg-6">
+                                    <label class="form-control-label">Branch</label>
                                     <strong style="color:red"> *</strong>
                                     <span id="branch_error" style="padding-left:50px; text-align: center"></span>
                                     <div class="input-group">
                                         <div class="input-group-addon"><i class="fa fa-building"></i></div>
                                         <select id="branch" class="form-control" required="required">
-                                            <option selected="selected" id="0">-- Select a branch --</option>
+                                            <option id="0">-- Select a branch --</option>
                                         </select>
                                     </div>
                                 </div>
-                                <!--<div class="form-group">-->
-                                <!--<label class=" form-control-label">Phone Number</label>-->
-                                <!--<div class="input-group">-->
-                                <!--<div class="input-group-addon"><i class="fa fa-phone"></i></div>-->
-                                <!--<input id="phone" class="form-control" required="required">-->
-                                <!--</div>-->
-                                <!--<small class="form-text text-muted">ex. +234 - 813 - 455 - 6944</small>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<label class=" form-control-label">Address</label>-->
-                                <!--<div class="input-group">-->
-                                <!--<div class="input-group-addon"><i class="fa fa-credit-card"></i></div>-->
-                                <!--<input id="address" class="form-control" required="required">-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <div class = "form-group">
+                                <div class="form-group col-lg-6">
+                                    <label class="form-control-label">Supervisor</label><strong style="color:red"> *</strong>
+                                    <span id="supervisor_error" style="padding-left:50px; text-align: center"></span>
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                                        <select id="supervisor" class="form-control" required="required">
+                                            <option>-- Choose Supervisor --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label class="form-control-label">Loan Officer</label>
+                                    <span id="loan_officer_status_error" style="padding-left:50px; text-align: center"></span>
+                                    <div class="input-group">
+                                        <input id="loan_officer_status" type="checkbox" style="margin: 7px 7px 0 0" />
+                                        Check this box if the user is a loan officer
+                                        <small class="form-text text-muted">Client(s) and Target(s) can be assigned to this user</small>
+                                    </div>
+                                </div>
+                                <div class = "form-group col-lg-12">
                                     <input id="addUser" type="submit" class="btn btn-success btn-flat m-b-30 m-t-30 write" value="Submit" onclick="validate()"/><span id="submit-error" style="padding-left:50px; text-align: center"></span>
                                 </div>
                             </div>
@@ -335,7 +365,7 @@
 
                 </div>
             </div><!-- .animated -->
-            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 
@@ -358,22 +388,22 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <div class="write"><button type="button" class="btn btn-primary write" onclick="edit()"><i class="fa fa-pencil"></i> Edit User</button></div>
+                    <div class="write"><button type="button" class="btn btn-primary write" onclick="edit()" data-dismiss="modal"><i class="fa fa-pencil"></i> Edit User</button></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Add New Role</h4>
+                    <h4 class="modal-title" id="roleModalLabel">Add New Role</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <strong><label class=" form-control-label">Role Name</label></strong><strong style="color:red"> *</strong><span id="role-error" style="padding-left:50px; text-align: center"></span>
+                        <strong><label class="form-control-label">Role Name</label></strong><strong style="color:red"> *</strong><span id="role-error" style="padding-left:50px; text-align: center"></span>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-user"></i></div>
                             <input id="new-role" type="text" class="form-control" required="required">
@@ -388,30 +418,30 @@
         </div>
     </div>
 
-    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModal1Label">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Change Password</h4>
+                    <h4 class="modal-title" id="myModal1Label">Change Password</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <strong><label class=" form-control-label">User</label></strong>
+                        <strong><label class="form-control-label">User</label></strong>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-user"></i></div>
                             <input id="username" type="text" class="form-control" required="required" readonly="readonly">
                         </div>
                     </div>
                     <div class="form-group">
-                        <strong><label class=" form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
+                        <strong><label class="form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                             <input id="new-password" type="password" class="form-control" required="required">
                         </div>
                     </div>
                     <div class="form-group">
-                        <strong><label class=" form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                        <strong><label class="form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                             <input id="cpassword" type="password" class="form-control" required="required">
@@ -427,7 +457,129 @@
         </div>
     </div>
 
-    
+    <div class="modal fade" id="targetsModal" role="dialog" aria-labelledby="targetsModalLabel">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="targetsModalLabel">User Targets</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="target_list" class="form-control" required="required">
+                                    <option selected="selected">-- Select Target --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="sub_period_list" class="form-control" required="required" disabled="disabled"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
+                                <small id="target_limit" class="form-text text-muted"></small>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success pull-right" onclick="assignTarget()">Assign Target</button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table id="user_targets" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Target</th>
+                                    <th>Period</th>
+                                    <th>Value</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="commissionsModal" role="dialog" aria-labelledby="commissionsModalLabel">
+        <div class="modal-dialog" role="document" style="max-width: 70%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="commissionsModalLabel">User Commissions</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="commission_list" class="form-control" required="required">
+                                    <option selected="selected">-- Select Commission --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="commission_target" class="form-control" required="required">
+                                    <option selected="selected">-- Select Target --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select id="commission_period" class="form-control" required="required" disabled="disabled"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="50" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+                                <small id="commission_period_value" class="form-text text-muted"></small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success pull-right" onclick="assignCommission()">Assign Commission</button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table id="user_commissions" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Commission</th>
+                                    <th>Target</th>
+                                    <th>Period</th>
+                                    <th>Type</th>
+                                    <th>Threshold</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
@@ -444,11 +596,16 @@
     <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
     <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
     <script src="assets/js/lib/data-table/datatables-init.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
-          $('#bootstrap-data-table-export').DataTable();
+//            getUsers();
+            getTargets();
+            getCommissions();
+            $('#user_targets').DataTable();
+            $('#user_commissions').DataTable();
+            $('#bootstrap-data-table-export').DataTable();
         });
 
         $("#cpassword").change(function(){
@@ -468,7 +625,7 @@
         var table = $('#bootstrap-data-table-export').DataTable();
 
         function confirmPassword(){
-            if ($('#cpassword').val() == "" || $('#cpassword').val() != $('#new-password').val()){
+            if ($('#cpassword').val() === "" || $('#cpassword').val() != $('#new-password').val()){
                 $('#cpassword').css('border-color', 'red');
                 $('#cpassword-error').html("Passwords don't match");
                 $('#cpassword-error').css("color", 'red');
@@ -481,7 +638,7 @@
         }
 
         function validatePassword(){
-            if ($('#new-password').val() == "" || $('#new-password').val() == null){
+            if ($('#new-password').val() === "" || $('#new-password').val() === null){
                 $('#password-error').html("Enter password");
                 $('#password-error').css("color", "red");
                 $('#new-password').css("border-color", "red");
@@ -512,12 +669,11 @@
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    var users = JSON.parse(data);
+                    let users = JSON.parse(data);
                     results = users;
                     populateDataTable(users);
                 },
                 'error': function (err) {
-                    //alert ('Error');
                     console.log('Error');
                 }
             });
@@ -532,7 +688,7 @@
                 if (k.module_name === page){
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
                 }
-            });console.log(parseInt(w[0]['editable']));
+            });
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
                 $(".write").hide();
             }
@@ -579,31 +735,54 @@
         }
 
         function populateDataTable(data) {
-            // clear the table before populating it with more data
             $("#bootstrap-data-table").DataTable().clear();
-            var length = data.length;
-            //var action = '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>';
+            let processed_data = [];
             $.each(data, function(k, v){
                 let actions;
                 if (v.status === "1"){
-                    actions = '<button type="button" class="write btn btn-info" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</button>'+
-                        '<div class="write"><button class="write btn btn-success " data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-tasks"></i> Change Password</button></div>'+
-                        '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable User</button>';
+                    if (v.loan_officer_status === 1){
+                        actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
+                            '<div class="dropdown-menu">\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#targetsModal" onclick="openTargetsModal('+v.ID+')"><i class="fa fa-bullseye"></i> Add/View Target</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#commissionsModal" onclick="openCommissionsModal('+v.ID+')"><i class="fa fa-line-chart"></i> Add/View Commission</a>\n' +
+                            '    <a href="#" class="write dropdown-item" onclick="activities('+v.ID+')"><i class="fa fa-tasks"></i> View Activities</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-lock"></i> Change Password</a>\n' +
+                            '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
+                            '</div>';
+                    } else {
+                        actions = '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Choose Action </button>\n' +
+                            '<div class="dropdown-menu">\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal" onclick="openDetailsModal('+v.ID+')"><i class="fa fa-eye"></i> View More</a>\n' +
+                            '    <a href="#" class="write dropdown-item" data-toggle="modal" data-target="#myModal1" onclick="openPasswordModal('+v.ID+')"><i class="fa fa-lock"></i> Change Password</a>\n' +
+                            '    <a href="#" class="write dropdown-item" id="'+v.ID+'" name="'+v.ID+'" onclick="confirm('+v.ID+')"><i class="fa fa-trash"></i> Disable User</a>\n' +
+                            '</div>';
+                    }
                 }
                 else {
                     actions = '<button id="'+v.ID+'" name="'+v.ID+'" onclick="confirmEnable('+v.ID+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable User</button>';
                 }
-                $('#bootstrap-data-table').dataTable().fnAddData( [
-                    v.username,
-                    v.fullname,
-                    v.Role,
-                    actions
-                ]);
+                v.actions = actions;
+                processed_data.push(v);
+            });
+            $('#bootstrap-data-table').DataTable({
+                dom: 'Blfrtip',
+                bDestroy: true,
+                data: processed_data,
+                search: {search: ' '},
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                columns: [
+                    { data: "username" },
+                    { data: "fullname" },
+                    { data: "Role" },
+                    { data: "actions" }
+                ]
             });
         }
 
         function confirm(id) {
-            // approveInspection(status, "Passed");
             swal({
                 title: "Disable this user?",
                 text: "Click OK to continue",
@@ -638,9 +817,12 @@
         function openDetailsModal(id) {
             localStorage.setItem("user_id",id);
             let data = ($.grep(results, function(e){ return e.ID === id; }))[0],
+                loan_officer_status = '',
                 tbody = $("#details"),
                 tr = "";
             tbody.empty();
+            if (data.loan_officer_status === 1)
+                loan_officer_status = ' (Loan Officer)';
             if (data.fullname)
                 tr += "<tr><td><strong>Fullname</strong></td><td>"+data.fullname+"</td></tr>";
             if (data.username)
@@ -652,9 +834,11 @@
             if (data.address)
                 tr += "<tr><td><strong>Address</strong></td><td>"+data.address+"</td></tr>";
             if (data.Role)
-                tr += "<tr><td><strong>User Role</strong></td><td>"+data.Role+"</td></tr>";
+                tr += "<tr><td><strong>User Role</strong></td><td>"+data.Role+loan_officer_status+"</td></tr>";
             if (data.date_created)
                 tr += "<tr><td><strong>Date Created</strong></td><td>"+formatDate(data.date_created)+"</td></tr>";
+            if (data.supervisor)
+                tr += "<tr><td><strong>Supervisor</strong></td><td>"+data.supervisor+"</td></tr>";
             tbody.html(tr);
         }
         
@@ -695,28 +879,40 @@
             });
         }
 
+        function setSelectedIndex(s, valsearch){
+        // Loop through all the items in drop down list
+            for (i = 0; i< s.options.length; i++){
+                if (s.options[i].value == valsearch){
+                // Item is found. Set its property and exit
+                    s.options[i].selected = true;
+                    break;
+                }
+            }
+            return;
+        }
+
         function edit(){
-            getRoles(); getBranches();
+            getRoles(); getBranches(); getUsers();
             $.ajax({
                 'url': '/user/user-dets/'+localStorage.getItem("user_id"),
                 'type': 'get',
                 'data': {},
                 'success': function (data) {
-                    //console.log(data);
                     $('#user-form').slideDown();
                     $('#user-table').slideToggle();
-                    //console.log(data[0]);
                     $('#fullname').val(data[0].fullname);
                     $('#user-name').val(data[0].username);
                     $('#phone').val(data[0].phone);
                     $('#address').val(data[0].address);
                     $('#email').val(data[0].email);
-                    $('#role').val(data[0].user_role);
-                    $('#branch').val(data[0].user_role);
-                    // var applications = data.message;
-                    // results = applications;
-                    // populateDataTable(applications);
-                    // swal('Application archived successfully','','success');
+//                    $('#role').val(data[0].user_role);
+                    setSelectedIndex(document.getElementById('role'), data[0].user_role);
+//                    $('#branch').val(data[0].branch);
+                    setSelectedIndex(document.getElementById('branch'), data[0].branch);
+                    setSelectedIndex(document.getElementById('supervisor'), data[0].supervisor);
+//                    $('#supervisor').val(data[0].supervisor);
+                    if (data[0].loan_officer_status === 1)
+                        $('#loan_officer_status').prop('checked','checked');
                 },
                 'error': function (err) {
                     swal('Oops! An error occurred while retrieving details.','','error');
@@ -725,16 +921,18 @@
         }
         
         function submitDetails(){
-            let obj = {};
+            let obj = {},
+                test = {};
             obj.username = $('#user-name').val();
             obj.fullname = $('#fullname').val();
-//            obj.phone = $('#phone').val();
-//            obj.address = $('#address').val();
             obj.email = $('#email').val();
             obj.user_role = $('#role').find('option:selected').attr('id');
             obj.branch = $('#branch').find('option:selected').attr('id');
-            var test={};
-            console.log(+localStorage.getItem("user_id"));
+            if ($('#supervisor').val() !== '-- Choose Supervisor --')
+                obj.supervisor = $('#supervisor').val();
+            obj.loan_officer_status = 0;
+            if ($('#loan_officer_status').is(':checked'))
+                obj.loan_officer_status = 1;
             $.ajax({
                 'url': '/user/edit-user/'+localStorage.getItem("user_id"),
                 'type': 'post',
@@ -743,8 +941,7 @@
                     $.each(JSON.parse(data), function (key, val) {
                         test[key] = val;
                     });
-                    console.log(test);
-                    if(test.response == null){
+                    if(test.response === null){
                         swal("Communication Error! Please try again","","error");
                     }
                     else{
@@ -760,7 +957,7 @@
         }
 
         function disableUser(id){
-            var test = {};
+            let test = {};
             $.ajax({
                 'url': '/user/del-user/'+id,
                 'type': 'post',
@@ -782,7 +979,7 @@
         }
 
         function enableUser(id){
-            var test = {};
+            let test = {};
             $.ajax({
                 'url': '/user/en-user/'+id,
                 'type': 'post',
@@ -806,10 +1003,9 @@
         function getBranches(){
             $.ajax({
                 type: "GET",
-                url: "/user/branches/",
-                data: '{}',
+                url: "/user/branches",
                 success: function (response) {
-                    var branch = $("[id=branch]");
+                    let branch = $("[id=branch]");
                     branch.empty().append('<option selected="selected" id="0">-- Select a Branch --</option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
@@ -818,38 +1014,37 @@
             });
         }
 
+        function getUsers(){
+            $.ajax({
+                type: "GET",
+                url: "/user/users-list",
+                success: function (response) {
+                    $.each(JSON.parse(response), function (key, val) {
+                        $("#supervisor").append('<option value = "' + val.ID + '">' + val.fullname + '</option>');
+                    });
+                    $("#supervisor").select2();
+                }
+            });
+        }
+
         function validate(){
-            if ($('#fullname').val() == "" || $('#fullname').val() == null){
-                $('#fullname-error').html("Enter user's full name");
-                $('#fullname-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#role').find('option:selected').attr('id') == 0){
-                $('#role_error').html("Choose a role for this user");
-                $('#role_error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#email').val() == "" || $('#email').val() == null){
-                $('#email-error').html("Enter user's email address");
-                $('#email-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#branch').find('option:selected').attr('id') == 0){
-                $('#branch_error').html("Choose a branch for this user");
-                $('#branch_error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else{
-                submitDetails();
-            }
+            if ($('#fullname').val() == "" || $('#fullname').val() == null)
+                return swal('Kindly enter a valid fullname','','warning');
+            if ($('#email').val() == "" || $('#email').val() == null)
+                return swal('Kindly enter the an email address for the user','','warning');
+            if (validateEmail($('#email').val()) === false)
+                return swal('Kindly enter a valid email address','','warning');
+            if ($('#role').find('option:selected').attr('id') == 0)
+                return swal('Kindly select a role for this user','','warning');
+            if ($('#branch').val() === '-- Select a Branch --')
+                return swal('Kindly choose a branch','','warning');
+            if ($('#supervisor').val() === '-- Choose Supervisor --')
+                return swal('Kindly select a supervisor','','warning');
+            submitDetails();
         }
 
         function validateRole(){
-            if ($('#new-role').val() == "" || $('#new-role').val() == null){
+            if ($('#new-role').val() === "" || $('#new-role').val() === null){
                 $('#role-error').html("Enter a valid role name");
                 $('#role-error').css("color", "red");
                 $('#submit-role-error').css("color", "red");
@@ -859,6 +1054,296 @@
             }
         }
 
+        let target_id;
+        $('#target_list').on('change', function() {
+            target_id = $("#target_list").find("option:selected").val();
+            getPeriods(target_id);
+            getLimit(target_id);
+        });
+
+        let targets;
+        function getTargets(){
+            $.ajax({
+                type: "GET",
+                url: "/targets",
+                success: function (data) {
+                    targets = data.response;
+                    $.each(data.response, function (key, val) {
+                        $("#target_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
+                    });
+                    $("#target_list").select2();
+                }
+            });
+        }
+
+        let assigned_targets;
+        function getAssignedTarget(user_id){
+            $.ajax({
+                type: "GET",
+                url: "/user/user-assigned-target/"+user_id,
+                success: function (data) {
+                    assigned_targets = data.response;
+                    $("#commission_target").html('<option value="-- Select Target --" selected="selected">-- Select Target --</option>');
+                    $.each(data.response, function (key, val) {
+                        $("#commission_target").append('<option value = "' + val.ID + '">' + val.target + '</option>');
+                    });
+                    $("#commission_target").select2();
+                }
+            });
+        }
+
+        $('#commission_target').on('change', function() {
+            let id = $("#commission_target").find("option:selected").val();
+            getCommissionPeriods(id);
+        });
+
+        let commissions;
+        function getCommissions(){
+            $.ajax({
+                type: "GET",
+                url: "/commissions",
+                success: function (data) {
+                    commissions = data.response;
+                    $.each(data.response, function (key, val) {
+                        $("#commission_list").append('<option value = "' + val.ID + '">' + val.title + '</option>');
+                    });
+                    $("#commission_list").select2();
+                }
+            });
+        }
+
+        let target_limit;
+        $('#target_limit').text('');
+        function getLimit(id){
+            if (id && id !== '-- Select Target --'){
+                $.ajax({
+                    type: "GET",
+                    url: "/user/target/limit/"+id,
+                    success: function (data) {
+                        target_limit = parseFloat(data.response.unallocated);
+                        $('#target_limit').text('Total unallocated target is ₦'+(target_limit.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
+                    }
+                });
+            } else {
+                $('#target_limit').text('');
+            }
+        }
+
+        $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+        function getPeriods(id){
+            if (id && id !== '-- Select Target --'){
+                $('#wait').show();
+                $.ajax({
+                    type: "GET",
+                    url: "/target/sub_periods/"+id,
+                    success: function (data) {
+                        $('#wait').hide();
+                        $("#sub_period_list").prop('disabled',false);
+                        $("#sub_period_list").html('<option selected="selected">-- Select Target Period --</option>');
+                        $.each(data.response, function (key, val) {
+                            $("#sub_period_list").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        });
+                        $("#sub_period_list").select2();
+                    }
+                });
+            }
+        }
+
+        let assigned_periods;
+        $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
+        function getCommissionPeriods(id){
+            if (id && id !== '-- Select Target --'){
+                $('#wait').show();
+                $.ajax({
+                    type: "GET",
+                    url: "/user/user-assigned-period/"+localStorage.user_commission_id+"/"+id,
+                    success: function (data) {
+                        $('#wait').hide();
+                        assigned_periods = data.response;
+                        $("#commission_period").prop('disabled',false);
+                        $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
+                        $.each(assigned_periods, function (key, val) {
+                            $("#commission_period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        });
+                        $("#commission_period").select2();
+                    }
+                });
+            }
+        }
+
+        let commission_period_value;
+        $('#commission_period_value').text('');
+        $('#commission_period').on('change', function() {
+            let commission_period = $("#commission_period").find("option:selected").val();
+            if (commission_period && commission_period !== '-- Select Commission Period --'){
+                commission_period_value = parseFloat(($.grep(assigned_periods, function(e){return e.ID === parseInt(commission_period);}))[0]['value']);
+                $('#commission_period_value').text('Max rate is 100% (₦'+(commission_period_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+')');
+            } else {
+                $('#commission_period_value').text('');
+            }
+        });
+
+        function openTargetsModal(id) {
+            localStorage.user_target_id = id;
+            $.ajax({
+                type: "GET",
+                url: "/user/user-targets/"+id,
+                success: function (data) {
+                    populateTargets(data);
+                }
+            });
+        }
+
+        function populateTargets(data){
+            $("#user_targets").dataTable().fnClearTable();
+            $.each(data.response, function(k, v){
+                $('#user_targets').dataTable().fnAddData( [
+                    v.target,
+                    v.period,
+                    '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
+                    '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+','+v.targetID+')"><i class="fa fa-remove"></i> Remove</button>'
+                ]);
+            });
+        }
+
+        function openCommissionsModal(id) {
+            localStorage.user_commission_id = id;
+            getAssignedTarget(id);
+            $.ajax({
+                type: "GET",
+                url: "/user/user-commissions/"+id,
+                success: function (data) {
+                    populateCommissions(data);
+                }
+            });
+        }
+
+        function populateCommissions(data){
+            $("#user_commissions").dataTable().fnClearTable();
+            $.each(data.response, function(k, v){
+                $('#user_commissions').dataTable().fnAddData( [
+                    v.commission,
+                    v.target,
+                    v.period,
+                    v.type,
+                    v.threshold,
+                    '<button type="button" class="btn btn-danger" onclick="removeCommission('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
+                ]);
+            });
+        }
+
+        function assignTarget() {
+            let obj = {};
+            obj.userID = localStorage.user_target_id;
+            obj.targetID = $('#target_list').val();
+            obj.sub_periodID = $('#sub_period_list').val();
+            obj.value = $('#target_value').val();
+            if (obj.targetID === '-- Select Target --' || obj.sub_periodID === '-- Select Target Period --' || !obj.value)
+                return swal('Kindly fill all required field(s)','','warning');
+            if (parseFloat(obj.value) > target_limit)
+                return swal('Insufficient unallocated target ('+target_limit+')','','warning');
+            obj.periodID = ($.grep(targets, function(e){return e.ID === parseInt(target_id);}))[0]['period'];
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/user-targets',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        notification(response.error,"","error");
+                    } else{
+                        notification("Target assigned successfully!","","success");
+                        populateTargets(response);
+                        getLimit(obj.targetID);
+                    }
+                }
+            });
+        }
+
+        function removeTarget(id,targetID) {
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/user-targets/'+id+'/'+localStorage.user_target_id,
+                'type': 'delete',
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        notification("No internet connection","","error");
+                    } else{
+                        notification("Target deleted successfully!","","success");
+                        populateTargets(response);
+                        getLimit(targetID);
+                    }
+                }
+            });
+        }
+
+        function assignCommission() {
+            let obj = {};
+            obj.userID = localStorage.user_commission_id;
+            obj.targetID = $('#commission_target').val();
+            obj.commissionID = $('#commission_list').val();
+            obj.sub_periodID = $('#commission_period').val();
+            obj.threshold = $('#commission_threshold').val();
+            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || obj.sub_periodID === '-- Select Commission Period --' || !obj.threshold)
+                return swal('Kindly fill all required field(s)','','warning');
+            if (parseFloat(obj.threshold) < 50 || parseFloat(obj.threshold) > 100)
+                return swal('Commission threshold rate ('+obj.threshold+'%) must be at least 50% and at most 100%. (Total allocated target is valued at '+commission_period_value+')','','warning');
+            obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
+            let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0],
+                period = ($.grep(assigned_periods, function(e){return e.ID === parseInt(obj.sub_periodID);}))[0];
+            if (obj.type !== target.type)
+                return swal('Commission and Target must be of the same type','','warning');
+            obj.periodID = target.period;
+            obj.target_value = period.value;
+            obj.threshold = parseFloat(obj.threshold);
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/user-commissions',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        notification(response.error,"","error");
+                    } else{
+                        notification("Commission assigned successfully!","","success");
+                        populateCommissions(response);
+                    }
+                }
+            });
+        }
+
+        function removeCommission(id) {
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/user-commissions/'+id+'/'+localStorage.user_commission_id,
+                'type': 'delete',
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        notification("No internet connection","","error");
+                    } else{
+                        notification("Commission deleted successfully!","","success");
+                        populateCommissions(response);
+                    }
+                }
+            });
+        }
+
+        function activities(id){
+            window.location.href = '/activity?officer='+id;
+        }
+
+        function validateEmail(email) {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+
+        function notification(title,text,type) {
+            return swal({title: title, text: text, icon: type, timer: 1000});
+        }
     </script>
 
 

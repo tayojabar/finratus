@@ -241,7 +241,7 @@
                 </div>
             </div>
         </div><!-- .animated -->
-        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
     </div><!-- .content -->
 <!-- Right Panel -->
 
@@ -256,7 +256,7 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label class=" form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-comment"></i></div>
                                 <textarea id="comment" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
@@ -285,7 +285,7 @@
                         <h4 id="overpayment-message" style="color: #f0ad4e;"></h4>
                         <span id="message"></span>
                         <div class="form-group">
-                            <label class=" form-control-label">Payment Source</label><strong style="color:red"> *</strong><span id="source-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Payment Source</label><strong style="color:red"> *</strong><span id="source-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-link"></i></div>
                                 <select id="source" class="form-control" required="required">
@@ -297,14 +297,14 @@
                             <small class="form-text text-muted">Escrow Balance available is ₦<span class="escrow-balance">0</span></small>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Actual Payment</label><strong style="color:red"> *</strong><span id="payment-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Actual Payment</label><strong style="color:red"> *</strong><span id="payment-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="payment" type="number" class="form-control validate" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Principal</label><strong style="color:red"> *</strong><span id="principal-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Principal</label><strong style="color:red"> *</strong><span id="principal-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="principal" type="number" class="form-control validate" placeholder="0" required="required">
@@ -312,7 +312,7 @@
                             <small class="form-text text-muted">Maximum Principal Payable is <span id="principal-payable"></span></small>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Interest</label><strong style="color:red"> *</strong><span id="interest-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Interest</label><strong style="color:red"> *</strong><span id="interest-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="interest" type="number" class="form-control validate" placeholder="0" required="required">
@@ -320,21 +320,21 @@
                             <small class="form-text text-muted">Maximum Interest Payable is <span id="interest-payable"></span></small>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Fees</label><strong style="color:red"> *</strong><span id="fees-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Fees</label><strong style="color:red"> *</strong><span id="fees-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="fees" type="number" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Penalty</label><strong style="color:red"> *</strong><span id="penalty-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Penalty</label><strong style="color:red"> *</strong><span id="penalty-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="penalty" type="number" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Payment date</label><strong style="color:red"> *</strong><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Payment date</label><strong style="color:red"> *</strong><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                 <input id="repayment-date" type="date" class="form-control" required="required">
@@ -360,70 +360,70 @@
                 <div class="modal-body">
                     <form>
                         <div id="edit-principal-invoice-div" class="form-group">
-                            <label class=" form-control-label">Principal Invoice No</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-no-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Principal Invoice No</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-no-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
                                 <input id="edit-principal-invoice-no" type="text" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div id="edit-interest-invoice-div" class="form-group">
-                            <label class=" form-control-label">Interest Invoice No</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-no-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Interest Invoice No</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-no-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
                                 <input id="edit-interest-invoice-no" type="text" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Principal</label><strong style="color:red"> *</strong><span id="edit-principal-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Principal</label><strong style="color:red"> *</strong><span id="edit-principal-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="edit-principal" type="number" class="form-control" placeholder="0" required="required" disabled="disabled">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Interest</label><strong style="color:red"> *</strong><span id="edit-interest-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Interest</label><strong style="color:red"> *</strong><span id="edit-interest-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="edit-interest" type="number" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Fees</label><strong style="color:red"> *</strong><span id="edit-fees-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Fees</label><strong style="color:red"> *</strong><span id="edit-fees-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="edit-fees" type="number" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Penalty</label><strong style="color:red"> *</strong><span id="edit-penalty-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Penalty</label><strong style="color:red"> *</strong><span id="edit-penalty-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
                                 <input id="edit-penalty" type="number" class="form-control" placeholder="0" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Principal Payment Date</label><strong style="color:red"> *</strong><span id="edit-principal-payment-date-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Principal Payment Date</label><strong style="color:red"> *</strong><span id="edit-principal-payment-date-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                 <input id="edit-principal-payment-date" type="date" class="form-control" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Principal Invoice Date</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-date-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Principal Invoice Date</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-date-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                 <input id="edit-principal-invoice-date" type="date" class="form-control" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Interest Payment Date</label><strong style="color:red"> *</strong><span id="edit-interest-payment-date-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Interest Payment Date</label><strong style="color:red"> *</strong><span id="edit-interest-payment-date-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                 <input id="edit-interest-payment-date" type="date" class="form-control" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Interest Invoice Date</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-date-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Interest Invoice Date</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-date-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                                 <input id="edit-interest-invoice-date" type="date" class="form-control" required="required">
@@ -440,7 +440,7 @@
     </div>
 
     <div class="modal fade" id="invoiceHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
-        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="invoiceHistoryLabel">Repayment History</h4>
@@ -456,7 +456,8 @@
                             <th>Fees</th>
                             <th>Penalty</th>
                             <th>Paid By</th>
-                            <th>Date</th>
+                            <th>Payment Date</th>
+                            <th>Posted Date</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -500,7 +501,7 @@
     </div>
 
     <div class="modal fade" id="editHistory" tabindex="-1" role="dialog" aria-labelledby="editHistoryLabel">
-        <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="editHistoryLabel">Edit Schedule History</h4>
@@ -540,26 +541,26 @@
                 <div class="modal-body">
                     <form>
                         <!--<div class="form-group">-->
-                            <!--<label class=" form-control-label">Payment Amount</label>-->
+                            <!--<label class="form-control-label">Payment Amount</label>-->
                             <!--<div class="input-group">-->
                                 <!--<input id="payment-amount" type="number" class="form-control">-->
                             <!--</div>-->
                         <!--</div>-->
                         <div class="form-group">
-                            <label class=" form-control-label">Interest Amount</label><strong style="color:red"> *</strong>
+                            <label class="form-control-label">Interest Amount</label><strong style="color:red"> *</strong>
                             <div class="input-group">
                                 <input id="payment-interest" type="number" class="form-control" value="0">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Payment Date</label><strong style="color:red"> *</strong>
+                            <label class="form-control-label">Payment Date</label><strong style="color:red"> *</strong>
                             <div class="input-group">
                                 <input id="payment-date" type="date" class="form-control">
                             </div>
                             <small class="form-text text-muted">Note, payment date cannot be a future date</small>
                         </div>
                         <div class="form-group">
-                            <label class=" form-control-label">Notes</label>
+                            <label class="form-control-label">Notes</label>
                             <div class="input-group">
                                 <textarea id="payment-notes" class="form-control" maxlength="250" placeholder="Brief message"></textarea>
                             </div>
@@ -1034,25 +1035,32 @@
         }
 
         $('#source').change(function () {
-            let $payment = $('#payment');
+            let $payment = $('#payment'),
+                $message2 = $('#overpayment-message');
+            validation();
             if (this.value === 'escrow'){
                 $payment.val(0);
+                $message2.text('');
                 $payment.prop('disabled',true);
             } else {
                 $payment.prop('disabled',false);
             }
         });
 
-        $('.validate').change(function () {
+        $('.validate').keyup(function () {
+            validation();
+        });
+
+        function validation() {
             let invoice = {},
                 $message = $('#message'),
                 $interest = $('#interest'),
                 $principal = $('#principal'),
                 $message2 = $('#overpayment-message'),
                 $button = $('#confirm-payment-button'),
-                payment = parseFloat($('#payment').val());
-            invoice.actual_payment_amount = parseFloat($('#principal').val());
-            invoice.actual_interest_amount = parseFloat($('#interest').val());
+                payment = ($('#payment').val())? parseFloat($('#payment').val()) : 0;
+            invoice.actual_payment_amount = ($('#principal').val())? parseFloat($('#principal').val()) : 0;
+            invoice.actual_interest_amount = ($('#interest').val())? parseFloat($('#interest').val()) : 0;
 
             if (invoice.actual_payment_amount > (parseFloat(expected_invoice.payment_amount)).round(2)){
                 $message.text('Principal cannot be greater than '+expected_invoice.payment_amount);
@@ -1076,10 +1084,12 @@
             let overpayment = (payment - (invoice.actual_payment_amount + invoice.actual_interest_amount)).round(2);
             if (overpayment > 0){
                 $message2.text('Overpayment = ₦'+(parseFloat(overpayment).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
+            } else if (overpayment < 0){
+                $message2.text('Underpayment = ₦'+((-1*parseFloat(overpayment)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')));
             } else {
                 $message2.text('');
             }
-        });
+        }
 
         Date.prototype.toDateInputValue = (function() {
             let local = new Date(this);
@@ -1103,7 +1113,7 @@
                 return swal('Kindly select a payment source to proceed','','warning');
             application.escrow = application.escrow || "0";
             if (invoice.payment_source === 'escrow' && (total_payment > (parseFloat(application.escrow)).round(2)))
-                return swal('Total Payment ('+total_payment+') must be less than or equal to escrow balance ('+parseFloat(application.escrow).round(2)+')','','warning');
+                return swal('Insufficient escrow funds ('+parseFloat(application.escrow).round(2)+')','','warning');
             $('#wait').show();
             $('#confirmPayment').modal('hide');
             updateEscrow(invoice.payment_source, total_payment, function () {
@@ -1262,15 +1272,17 @@
                             v.fees_amount,
                             v.penalty_amount,
                             v.agent,
+                            v.payment_date,
                             v.date_created
                         ];
                         if (v.status === 0){
                             table.push('Payment Reversed');
                         } else if (v.status === 1){
-                            table.push('<button class="btn btn-danger" onclick="reversePayment('+v.ID+','+v.invoiceID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                            table.push('<button class="btn btn-danger reversePayment" onclick="reversePayment('+v.ID+','+v.invoiceID+')"><i class="fa fa-remove"></i> Reverse</button>');
                         }
                         $('#invoice-history').dataTable().fnAddData(table);
                         $('#invoice-history').dataTable().fnSort([[0,'desc']]);
+                        read_write();
                     });
                 },
                 'error': function (err) {
@@ -1294,10 +1306,11 @@
                         if (v.status === 0){
                             table.push('Payment Reversed');
                         } else if (v.status === 1){
-                            table.push('<button class="btn btn-danger" onclick="reverseEscrowPayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                            table.push('<button class="btn btn-danger reversePayment" onclick="reverseEscrowPayment('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
                         }
                         $('#escrow-history').dataTable().fnAddData(table);
                         $('#escrow-history').dataTable().fnSort([[2,'desc']]);
+                        read_write();
                     });
                 },
                 'error': function (err) {
@@ -1426,6 +1439,22 @@
             p = p || 10;
             return parseFloat( this.toFixed(p) );
         };
+
+        function read_write(){
+            let w,
+                perms = JSON.parse(localStorage.getItem("permissions")),
+                page = (window.location.pathname.split('/')[1].split('.'))[0],
+                reversePayment = ($.grep(perms, function(e){return e.module_name === 'reversePayment';}))[0];
+            perms.forEach(function (k){
+                if (k.module_name === page)
+                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
+            });
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
+                $(".write").hide();
+
+            if (reversePayment && reversePayment['read_only'] === '0')
+                $('.reversePayment').hide();
+        }
     </script>
 </body>
 </html>

@@ -3,7 +3,9 @@ var router = express.Router();
 var async = require('async');
 var db = require('../db');
 const fs = require('fs');
-const moment = require('moment');
+const Moment = require('moment');
+const MomentRange = require('moment-range');
+const moment = MomentRange.extendMoment(Moment);
 
 //File Upload - Inspection
 router.post('/upload/:number_plate/:part', function(req, res) {
@@ -1365,8 +1367,96 @@ router.post('/workflows', function(req, res, next) {
     });
 });
 
+router.post('/workflows/:workflow_id', function(req, res, next) {
+    let count = 0,
+        stages = req.body.stages,
+        workflow = req.body.workflow,
+        workflow_id = req.params.workflow_id,
+        date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    workflow.date_created = date_created;
+
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        connection.query('UPDATE workflows SET status = 0, date_modified = ? WHERE ID = ?', [date_created,workflow_id], function (error, result, fields) {
+            if(error){
+                res.send({"status": 500, "error": error, "response": null});
+            } else {
+                connection.query('INSERT INTO workflows SET ?', workflow, function (error, response, fields) {
+                    if(error || !response)
+                        res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+                    connection.query('SELECT * FROM workflows WHERE ID = LAST_INSERT_ID()', function (error, results, fields) {
+                        async.forEach(stages, function (stage, callback) {
+                            stage.workflowID = results[0]['ID'];
+                            stage.date_created = date_created;
+                            delete stage.ID;
+                            delete stage.stage_name;
+                            delete stage.type;
+                            if (stage.action_names)
+                                delete stage.action_names;
+                            connection.query('INSERT INTO workflow_stages SET ?', stage, function (error, results, fields) {
+                                if (error){
+                                    console.log(error);
+                                } else {
+                                    count++;
+                                }
+                                callback();
+                            });
+                        }, function (data) {
+                            connection.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+                                connection.release();
+                                res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) created successfully!", "response": results});
+                            });
+                        })
+                    })
+                });
+            }
+        });
+    });
+});
+
+router.post('/edit-workflows/:workflow_id', function(req, res, next) {
+    let count = 0,
+        stages = req.body.stages,
+        workflow = req.body.workflow,
+        workflow_id = req.params.workflow_id,
+        date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        async.forEach(stages, function (stage, callback) {
+            connection.query('UPDATE workflow_stages SET approverID=?, date_modified=? WHERE workflowID=? AND stageID=?',
+                [stage.approverID,date_modified,workflow_id,stage.stageID], function (error, results, fields) {
+                if (error){
+                    console.log(error);
+                } else {
+                    count++;
+                }
+                callback();
+            });
+        }, function (data) {
+            connection.query('SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc', function (error, results, fields) {
+                connection.release();
+                res.send({"status": 200, "error": null, "message": "Workflow with "+count+" stage(s) updated successfully!", "response": results});
+            });
+        })
+    });
+});
+
 router.get('/workflows', function(req, res, next) {
     let query = 'SELECT * FROM workflows AS w WHERE w.status <> 0 ORDER BY w.ID desc';
+    db.query(query, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Workflows fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.get('/workflows-all', function(req, res, next) {
+    let query = 'SELECT * FROM workflows AS w ORDER BY w.ID desc';
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -1399,7 +1489,7 @@ router.get('/workflow-stages', function(req, res, next) {
 });
 
 router.get('/workflow-stages/:workflow_id', function(req, res, next) {
-    let query = 'SELECT w.ID, w.document, w.actions, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.workflowID =? AND w.stageID=s.ID ORDER BY w.ID asc';
+    let query = 'SELECT w.ID, w.document, w.actions, w.approverID, w.workflowID, w.stageID, w.name, w.description, w.date_created, w.date_modified, s.name AS stage_name FROM workflow_stages AS w, stages as s WHERE w.workflowID =? AND w.stageID=s.ID ORDER BY w.ID asc';
     db.query(query, [req.params.workflow_id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -1569,6 +1659,224 @@ router.get('/document_check/:id/:name', function(req, res, next) {
     else {
         res.json({status:status});
     }
+});
+
+router.post('/targets', function(req, res, next) {
+    let target = req.body,
+        query = 'INSERT INTO targets SET ?';
+    target.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM targets WHERE status=1 AND type=? AND period=?', [target.type, target.period], function (error, target_obj, fields) {
+        if(target_obj && target_obj[0]){
+            res.send({"status": 500, "error": "Similar target ("+target_obj[0]['title']+") with same period already exists!", "response": target_obj});
+        } else {
+            db.query(query, target, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Target added successfully!"});
+                }
+            });
+        }
+    });
+});
+
+router.get('/targets', function(req, res, next) {
+    db.query('SELECT t.ID, t.title, t.description, t.period, t.type, t.value, t.date_created, p.start, p.end FROM targets AS t, periods AS p ' +
+        'WHERE t.period = p.ID AND t.status = 1', function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Targets fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.delete('/target/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE targets SET status=0,date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Target deleted successfully!"});
+        }
+    });
+});
+
+router.post('/periods', function(req, res, next) {
+    let period = req.body,
+        query = 'INSERT INTO periods SET ?';
+    period.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM periods WHERE status = 1 AND (name=? OR (TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end) OR TIMESTAMP(?) BETWEEN TIMESTAMP(start) AND TIMESTAMP(end)))',
+        [period.name,period.start,period.end], function (error, period_obj, fields) {
+        if(period_obj && period_obj[0]){
+            res.send({"status": 500, "error": "Similar period ("+period_obj[0]['name']+") already exist!", "response": period_obj});
+        } else {
+            db.query(query, period, function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    db.query('SELECT MAX(ID) AS ID from periods', function(err, period_id, fields) {
+                        if (err){
+                            res.send({"status": 200, "error": err, "response": null});
+                        } else{
+                            generateSubPeriods(period, period_id[0]['ID'], function (sub_periods) {
+                                db.getConnection(function(err, connection) {
+                                    if (err) throw err;
+
+                                    async.forEach(sub_periods, function (sub_period, callback) {
+                                        connection.query('INSERT INTO sub_periods SET ?', sub_period, function (error, results, fields) {
+                                            if(error)
+                                                console.log(error);
+                                            callback();
+                                        });
+                                    }, function (data) {
+                                        connection.release();
+                                        res.send({"status": 200, "message": "Period added successfully!"});
+                                    });
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+function generateSubPeriods(period, periodID, callback) {
+    let code, dates, count,
+        sub_periods = [];
+    switch (period.type){
+        case 'monthly':{
+            dates = dateRangeArray(period, 1);
+            code = 'M';
+            count = 12;
+            break;
+        }
+        case 'quarterly':{
+            dates = dateRangeArray(period, 3);
+            code = 'Q';
+            count = 4;
+            break;
+        }
+        case 'half_yearly':{
+            dates = dateRangeArray(period, 6);
+            code = 'H';
+            count = 2;
+            break;
+        }
+    }
+    for (let i=1; i<=count; i++){
+        let sub_period = {
+            periodID: periodID,
+            name: code+i+' of '+period.name,
+            type: code+i,
+            start: dates[i-1]['start'],
+            end: dates[i-1]['end']
+        };
+        sub_periods.push(sub_period);
+    }
+    return callback(sub_periods);
+}
+
+function dateRangeArray(period, interval) {
+    let dates_array = [],
+        count = 12/interval;
+    for (let i=0; i<count; i++){
+        let start,
+            date_object = {};
+        if (i === 0){
+            start = period.start;
+        } else {
+            start = moment(dates_array[i-1]['end']).add(1, 'days').format("YYYY-MM-DD");
+        }
+        date_object.start = start;
+        let days = 0,
+            start_year = parseInt((start.split('-'))[0]),
+            start_month = parseInt((start.split('-'))[1]);
+        for (let j=0; j<interval; j++){
+            if (start_month > 12)
+                start_month = start_month % 12;
+            days += daysInMonth((start_month + j),(start_year + parseInt(start_month/12)));
+        }
+        date_object.end = moment(date_object.start).add((days-1), 'days').format("YYYY-MM-DD");
+        dates_array.push(date_object);
+    }
+    return dates_array;
+}
+
+function daysInMonth (month, year) {
+    return new Date(year, month, 0).getDate();
+}
+
+router.get('/periods', function(req, res, next) {
+    db.query('SELECT * FROM periods WHERE status = 1', function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Periods fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.get('/period/sub_periods/:id', function(req, res, next) {
+    db.query('SELECT * FROM sub_periods WHERE periodID = ?', [req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Sub periods fetched successfully!", "response": results});
+        }
+    });
+});
+
+router.delete('/period/delete/:id', function(req, res, next) {
+    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('UPDATE periods SET status=0,date_modified=? WHERE ID = ?', [date,req.params.id], function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Period deleted successfully!"});
+        }
+    });
+});
+
+router.get('/target/sub_periods/:id', function(req, res, next) {
+    db.query('SELECT * FROM targets WHERE ID = ?', [req.params.id], function (error, target, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            db.query('SELECT * FROM sub_periods WHERE periodID = ?', target[0]['period'], function (error, results, fields) {
+                if(error){
+                    res.send({"status": 500, "error": error, "response": null});
+                } else {
+                    res.send({"status": 200, "message": "Sub periods fetched successfully!", "response": results});
+                }
+            });
+        }
+    });
+});
+
+router.post('/commissions', function(req, res, next) {
+    let commission = req.body,
+        query = 'INSERT INTO commissions SET ?';
+    commission.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query, commission, function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission added successfully!"});
+        }
+    });
+});
+
+router.get('/commissions', function(req, res, next) {
+    db.query('SELECT * FROM commissions WHERE status = 1', function (error, results, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commissions fetched successfully!", "response": results});
+        }
+    });
 });
 
 module.exports = router;

@@ -267,6 +267,7 @@
                                 <thead>
                                   <tr>
                                       <th>Loan ID</th>
+                                      <th>Loan CirrusID</th>
                                       <th>Full Name</th>
                                       <th>Phone Number</th>
                                       <th>Loan Amount</th>
@@ -284,7 +285,7 @@
                 </div>
             </div><!-- .animated -->
 
-            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 
@@ -324,7 +325,7 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label class=" form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
+                            <label class="form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-comment"></i></div>
                                 <textarea id="comment" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
@@ -383,9 +384,6 @@
     <script type="text/javascript">
         $(document).ready(function() {
           $('#bootstrap-data-table-export').DataTable();
-          getWorkflows();
-          loadUsers();
-          read_write();
         });
 
         $(document).ajaxStart(function(){
@@ -442,46 +440,43 @@
             });
         }
 
+        let applicationsList;
         function read_write(){
-            let w;
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-                if (k.module_name === page){
+            let w,
+                perms = JSON.parse(localStorage.getItem("permissions")),
+                page = (window.location.pathname.split('/')[1].split('.'))[0];
+            applicationsList = ($.grep(perms, function(e){return e.module_name === 'applicationsList';}))[0];
+            perms.forEach(function (k){
+                if (k.module_name === page)
                     w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-                }
             });
-            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
+            if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
                 $(".write").hide();
+
+            if (applicationsList && applicationsList['read_only'] === '1'){
+                loadApplications();
+            } else {
+                loadApplications((JSON.parse(localStorage.user_obj)).ID);
             }
         }
 
-        let results;
 
-        function loadUsers(){
+        let results;
+        $('#wait').show();
+        function loadApplications(id){
+            let uid = id || '';
             $.ajax({
-                'url': '/user/applications',
+                'url': '/user/applications/'+uid,
                 'type': 'get',
                 'success': function (data) {
-                    var applications = data.response;
+                    $('#wait').hide();
+                    let applications = data.response;
                     results = applications;
                     populateDataTable(applications);
                 },
                 'error': function (err) {
+                    $('#wait').hide();
                     console.log('Error');
-                }
-            });
-        }
-
-        function getWorkflows(){
-            $.ajax({
-                type: "GET",
-                url: "/workflows",
-                success: function (response) {
-                    localStorage.setItem("workflows",JSON.stringify(response.response));
-                    $.each(response.response, function (key, val) {
-                        $("#workflows").append('<option class="deptSp" value = "'+val.ID+'"">'+val.name+'</option>');
-                    });
                 }
             });
         }
@@ -492,6 +487,7 @@
             $.each(data, function(k, v){
                 let table = [
                     padWithZeroes(v.ID,9),
+                    v.loanCirrusID || 'N/A',
                     v.fullname,
                     v.phone,
                     v.loan_amount,
@@ -503,24 +499,30 @@
                     if (v.status === 1){
                         switch (v.current_stage){
                             case 2: {
-                                table[5] = '<span class="badge badge-info">Pending Approval</span>';
+                                table[6] = '<span class="badge badge-info">Pending Approval</span>';
                                 break;
                             }
                             case 3: {
-                                table[5] = '<span class="badge badge-info">Pending Disbursal</span>';
+                                table[6] = '<span class="badge badge-info">Pending Disbursal</span>';
                                 break;
                             }
                             default: {
-                                table[5] = '<span class="badge badge-primary">Started</span>';
+                                table[6] = '<span class="badge badge-primary">Started</span>';
                             }
                         }
                     } else if (v.status === 2){
-                        table[5] = '<span class="badge badge-success">Active</span>';
+                        table[6] = '<span class="badge badge-success">Active</span>';
                     } else {
-                        table[5] = '<span class="badge badge-danger">Not Active</span>';
+                        table[6] = '<span class="badge badge-danger">Not Active</span>';
                     }
                 } else{
-                    table[5] = '<span class="badge badge-warning">Closed</span>';
+                    table[6] = '<span class="badge badge-warning">Closed</span>';
+                }
+                if (v.reschedule_amount){
+                    table[6] = table[6].concat('<span class="badge badge-pill badge-secondary">Rescheduled</span>');
+                } else {
+                    if (v.reschedule_status === 1)
+                        table[6] = table[6].concat('<span class="badge badge-pill badge-secondary">Pending Reschedule</span>');
                 }
                 if (v.comment){
                     let view_comment_button = ' <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#viewCommentModal" onclick="openViewCommentModal('+v.ID+')"><i class="fa fa-eye"></i> View Comment</button>';
@@ -542,7 +544,7 @@
                     table[table.length-1] = table[table.length-1].concat(add_workflow_button);
                 }
                 $('#bootstrap-data-table').dataTable().fnAddData(table);
-                $('#bootstrap-data-table').dataTable().fnSort([[4,'desc']]);
+                $('#bootstrap-data-table').dataTable().fnSort([[5,'desc']]);
             });
         }
 
@@ -606,7 +608,6 @@
 
         function archive(){
             $('#wait').show();
-            $('#myModal').modal('hide');
             $.ajax({
                 'url': '/user/applications/delete/'+localStorage.getItem("application_id"),
                 'type': 'get',
@@ -614,8 +615,8 @@
                     $('#wait').hide();
                     let applications = data.response;
                     results = applications;
-                    populateDataTable(applications);
                     swal('Application archived successfully');
+                    window.location.reload();
                 },
                 'error': function (err) {
                     $('#wait').hide();
@@ -630,7 +631,6 @@
             if (!comment || comment === "")
                 return swal('Kindly type a brief comment');
             $('#wait').show();
-            $('#addCommentModal').modal('hide');
             $.ajax({
                 'url': '/user/applications/comment/'+localStorage.getItem("application_id"),
                 'type': 'post',
@@ -639,7 +639,6 @@
                     $('#wait').hide();
                     let applications = data.response;
                     results = applications;
-                    populateDataTable(applications);
                     $comment.val("");
                     swal('Comment saved successfully');
                     window.location.reload();
@@ -648,20 +647,22 @@
                     $('#wait').hide();
                     $comment.val("");
                     swal('Oops! An error occurred while saving comment');
-                    window.location.reload();
                 }
             });
         }
 
         $("#filter").submit(function (e) {
             e.preventDefault();
+            let id = '';
+            if (!(applicationsList && applicationsList['read_only'] === '1'))
+                id = (JSON.parse(localStorage.user_obj)).ID;
 
             let start = $("#startDate").val(),
                 end = $("#endDate").val(),
                 type = $("#type-filter").val(),
-                url = '/user/applications/filter?start='+formatDate(start)+'&&end='+formatDate(end);
+                url = '/user/applications/'+id+'?start='+formatDate(start)+'&&end='+formatDate(end);
             if (!start || !end)
-                return loadUsers();
+                return loadApplications();
             if (type)
                 url = url.concat('&&type='+type);
 
@@ -680,9 +681,13 @@
         });
 
         function filterType(type) {
+            let id = '';
+            if (!(applicationsList && applicationsList['read_only'] === '1'))
+                id = (JSON.parse(localStorage.user_obj)).ID;
+
             let start = $("#startDate").val(),
                 end = $("#endDate").val(),
-                url = '/user/applications/filter?';
+                url = '/user/applications/'+id+'?';
             if (start && end)
                 url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
             url = url.concat('type='+type.value);
