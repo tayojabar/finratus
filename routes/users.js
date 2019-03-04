@@ -2899,8 +2899,9 @@ users.get('/interests/', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
+        queryPart = queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')
         // query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query = (queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = queryPart.concat(group);
     }
     if (officer){
         queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = '+officer+' ')
