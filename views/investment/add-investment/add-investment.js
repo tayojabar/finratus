@@ -1,6 +1,8 @@
 $(document).ready(function () {
     component_initializer();
 });
+var productsControl = {};
+var products = [];
 
 function component_initializer() {
     $('#client').select2({
@@ -44,7 +46,7 @@ function component_initializer() {
         }
     });
 
-    $('#investment_product').select2({
+    productsControl = $('#investment_product').select2({
         allowClear: true,
         placeholder: "Search by Product Code/Name",
         ajax: {
@@ -60,7 +62,7 @@ function component_initializer() {
                 };
             },
             processResults: function (data, params) {
-                console.log(params);
+                products = data;
                 params.page = params.page || 1;
                 console.log(data);
                 if (data.error) {
@@ -72,7 +74,9 @@ function component_initializer() {
                         results: data.map(function (item) {
                             return {
                                 id: item.ID,
-                                text: `${item.name} (${item.code})`
+                                text: `${item.name} (${item.code})`,
+                                min: item.investment_min,
+                                max: item.investment_max
                             };
                         }),
                         pagination: {
@@ -94,7 +98,19 @@ $("#investment_amount").on("keyup", function (event) {
 // $("#investment_interest").on("keyup", function (event) {
 //     let val = $("#investment_interest").val();
 //     $("#investment_interest").val(formater(val));
-// });
+// }); $('#investment_product').on('select2:select').val(),
+
+$("#investment_product").on("change", function (event) {
+    const selectedID = $(this).val();
+    let selectedValue = products.find(x => x.ID.toString() === selectedID.toString());
+    $("#product_def").html(`Min.: ${selectedValue.investment_min} Max.:${selectedValue.investment_max}`);
+    console.log(selectedID);
+    console.log(selectedValue);
+});
+
+
+
+
 let start_with = "";
 $("#investment_date_start").on("change", function (event) {
     let val = $("#investment_date_start").val();

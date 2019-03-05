@@ -275,6 +275,63 @@
                                         </div>
                                         <div class="panel push-down">
                                             <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Maturity Term</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Min. Term(Month) <span
+                                                                    class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="number" id="min_term" class="form-control imp"
+                                                                    placeholder="Minimum Amount" min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <label class="form-control-label"> Min. Term(Month) <span
+                                                                    class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="number" id="max_term" class="form-control imp"
+                                                                    placeholder="Minimum Amount" min="0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
+
+                                                <div class="example-box-wrapper">
+                                                    <h6>Wallet</h6>
+                                                    <hr><br>
+                                                    <div class="row">
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <input type="checkbox" id="acct_allows_withdrawal">
+                                                            <label class="form-control-label">This acct allows
+                                                                withdrawal</label>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <input type="checkbox" id="inv_moves_wallet">
+                                                            <label class="form-control-label">On maturity Investment
+                                                                moves to wallet acct.</label>
+                                                        </div>
+                                                        <div class="form-group col-sm-4 col-md-4">
+                                                            <input type="checkbox" id="interest_moves_wallet">
+                                                            <label class="form-control-label">Interest always moves to
+                                                                wallet acct.</label>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel push-down">
+                                            <div class="panel-body">
                                                 <div class="example-box-wrapper">
                                                     <h6>Interest <input type="checkbox" id="chk_interest_rate"></h6>
                                                     <hr><br>
@@ -345,7 +402,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label">Charge for Above Freq.</label>
+                                                            <label class="form-control-label">Charge For Exiting Freq.</label>
                                                             <div class="input-group">
                                                                 <div class="row">
                                                                     <input type="text" id="withdrawal_charge_freq"
@@ -505,6 +562,21 @@
             $("#charge_interest_on_withdrawal").val(formater(val));
         });
 
+        $("#min_term").on("keyup", function (event) {
+            let val = $("#min_term").val();
+            $('#max_term').attr('min', val);
+        });
+
+        $("#max_term").on("focusout", function (event) {
+            let min_ = parseInt($("#min_term").val());
+            let max_ = parseInt($("#max_term").val());
+            console.log(min_, max_);
+            if (min_ > max_) {
+                $('#max_term').val("");
+            }
+            console.log("here is here");
+        });
+
         // $("#withdrawal_charge_freq").on("keyup", function (event) {
         //     //money_formater(event);
         //     var selection = window.getSelection().toString();
@@ -587,6 +659,14 @@
                         $('#opt_on_freq_charge').val((product_obj.withdrawal_freq_fees_opt ===
                             null) ? $(
                             '#opt_on_freq_charge').val() : product_obj.withdrawal_freq_fees_opt);
+                        $('#acct_allows_withdrawal').prop('checked', ((product_obj.acct_allows_withdrawal) ?
+                            true : false));
+                        $('#inv_moves_wallet').prop('checked', ((product_obj.inv_moves_wallet) ?
+                            true : false));
+                        $('#interest_moves_wallet').prop('checked', ((product_obj.interest_moves_wallet) ?
+                            true : false));
+                        $('#min_term').val(product_obj.min_term);
+                        $('#max_term').val(product_obj.max_term);
                         $('#btnSaveProduct').html('Update');
                         $('#wait').hide();
                     } else {
@@ -645,6 +725,11 @@
             product_obj.minimum_bal_charges_opt = $('#opt_on_minimum_bal_penalty_amount').val();
             product_obj.withdrawal_freq_fees_opt = $('#opt_on_freq_charge').val();
 
+            product_obj.acct_allows_withdrawal = $('#acct_allows_withdrawal').is(':checked') ? 1 : 0;
+            product_obj.inv_moves_wallet = $('#inv_moves_wallet').is(':checked') ? 1 : 0;
+            product_obj.interest_moves_wallet = $('#interest_moves_wallet').is(':checked') ? 1 : 0;
+            product_obj.min_term = $('#min_term').val();
+            product_obj.max_term = $('#max_term').val();
             product_obj.histories = (product_obj.histories == null) ? [] : product_obj.histories;
             console.log(product_obj.histories);
             product_obj.createdBy = (JSON.parse(localStorage.getItem("user_obj"))).ID;
