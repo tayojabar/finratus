@@ -516,8 +516,8 @@
                     v.period,
                     v.threshold,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
-                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+
-                    ','+v.rate+','+v.threshold+','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.start+','+v.end+'\')">' +
+                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+ ','+v.rate+','+v.threshold+
+                    ','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.accelerator_threshold+','+v.start+','+v.end+'\')">' +
                     '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#commissions').dataTable().fnAddData(table);
@@ -541,9 +541,9 @@
                 target_value = values[7],
                 accelerator = values[8],
                 accelerator_type = values[9],
-                accelerator_threshold = 100,
-                start = values[10],
-                end = values[11];
+                accelerator_threshold = values[10],
+                start = values[11],
+                end = values[12];
             user_id = userID;
             commission_id = ID;
             amount_paid = paid;
@@ -558,7 +558,11 @@
                     let threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value),
                         progress = (parseFloat(data.total)/parseFloat(target_value)) * 100;
                     if (parseFloat(data.total) >= parseFloat(threshold)){
-                        if ((progress >= accelerator_threshold) && (accelerator_type !== 'null')) {
+                        if ((accelerator !== 'null') &&
+                            (accelerator_type !== 'null') &&
+                            (accelerator_threshold !== 'null') &&
+                            (progress >= accelerator_threshold)
+                        ) {
                             switch (accelerator_type) {
                                 case 'all': {
                                     earnings = (parseInt(accelerator)/100) * parseFloat(data.total);
