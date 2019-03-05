@@ -490,7 +490,7 @@ users.get('/team/targets/:id', function(req, res, next) {
 
 users.get('/user-targets/:id', function(req, res, next) {
     let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
-        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+        '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
     db.query(query, [req.params.id], function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -518,19 +518,6 @@ users.get('/user-assigned-period/:id/:targetID', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "User assigned period fetched successfully", "response": results});
-        }
-    });
-});
-
-
-users.get('/user-targets/:id', function(req, res, next) {
-    let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
-        '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
-    db.query(query, [req.params.id], function (error, results, fields) {
-        if(error){
-            res.send({"status": 500, "error": error, "response": null});
-        } else {
-            res.send({"status": 200, "message": "User targets fetched successfully", "response": results});
         }
     });
 });
@@ -659,7 +646,6 @@ users.get('/committals/user/disbursement/:userID/:targetID', function(req, res, 
         query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c,' +
             '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     } else {
@@ -692,7 +678,6 @@ users.get('/committals/user/interest/:userID/:targetID', function(req, res, next
             'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
             'WHERE a.userID = c.client_id AND a.status = 2) AS apps,(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     } else {
@@ -722,7 +707,6 @@ users.get('/committals/user/disbursement/:id', function(req, res, next) {
         query = 'SELECT count(*) count, sum(a.loan_amount) total FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2',
         query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -752,7 +736,6 @@ users.get('/committals/user/interest/:id', function(req, res, next) {
             'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT ID client_id FROM clients WHERE loan_officer = ? AND status = 1) AS c ' +
             'WHERE a.userID = c.client_id AND a.status = 2) AS apps WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -781,7 +764,6 @@ users.get('/committals/team/disbursement/:id', function(req, res, next) {
         query2 = 'SELECT *, a.loan_amount amount, a.disbursement_channel channel, a.disbursement_date date, (SELECT cls.fullname FROM clients cls WHERE cls.ID = a.userID AND cls.status = 1) AS client FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c ' +
             'WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -811,7 +793,6 @@ users.get('/committals/team/interest/:id', function(req, res, next) {
             'FROM schedule_history AS s, (SELECT ID application_id, duration FROM applications AS a, (SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE teamID = ? AND status = 1) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps ' +
             'WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     }
@@ -842,7 +823,6 @@ users.get('/committals/disbursement/:id', function(req, res, next) {
             '(SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE status = 1 AND teamID in (SELECT t.userID FROM user_targets t WHERE t.status = 1 AND t.user_type = "team" AND t.targetID = ?)) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c, ' +
             '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE a.userID = c.client_id AND a.status = 2';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(a.disbursement_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     } else {
@@ -880,7 +860,6 @@ users.get('/committals/interest/:id', function(req, res, next) {
             '(SELECT cl.ID client_id FROM clients AS cl, (SELECT memberID user_id FROM team_members WHERE status = 1 AND teamID in (SELECT t.userID FROM user_targets t WHERE t.status = 1 AND t.user_type = "team" AND t.targetID = ?)) AS t WHERE cl.loan_officer = t.user_id AND cl.status = 1) AS c WHERE a.userID = c.client_id AND a.status = 2) AS apps, ' +
             '(SELECT p.start,p.end FROM periods p WHERE p.ID = (SELECT period FROM targets WHERE status = 1 AND ID = ?)) AS ranges WHERE s.applicationID = apps.application_id AND s.status = 1 AND s.interest_amount > 0';
     if (start && end){
-        end = moment(end).add(1, 'days').format("YYYY-MM-DD");
         query = query.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
         query2 = query2.concat(' AND TIMESTAMP(s.payment_date) BETWEEN TIMESTAMP("'+start+'") AND TIMESTAMP("'+end+'")');
     } else {
@@ -986,7 +965,7 @@ users.post('/user-targets', function(req, res, next) {
                             res.send({"status": 500, "error": error, "response": null});
                         } else {
                             let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
-                                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                                '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
                             db.query(query, [req.body.userID], function (error, results, fields) {
                                 if(error){
                                     res.send({"status": 500, "error": error, "response": null});
@@ -1028,7 +1007,7 @@ users.delete('/user-targets/:id/:userID', function(req, res, next) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             let query = 'SELECT *,(select u.fullname from users u where u.ID = t.userID) as user,(select u.name from sub_periods u where u.ID = t.sub_periodID AND u.periodID = t.periodID) as period,' +
-                '(select u.title from targets u where u.ID = t.targetID) as target from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
+                '(select u.title from targets u where u.ID = t.targetID) as target,(select u.type from targets u where u.ID = t.targetID) as type from user_targets t where t.status = 1 and t.userID = ? order by t.ID desc';
             db.query(query, [req.params.userID], function (error, results, fields) {
                 if(error){
                     res.send({"status": 500, "error": error, "response": null});
@@ -2771,7 +2750,7 @@ users.post('/forgot-password', function(req, res) {
 users.get('/report-cards', function(req, res, next) {
     let query, query1, query2, query3;
     query = 'select count(*) as branches from branches'
-    query1 = 'select count(*) as loan_officers from users where ID not in (3, 4)'
+    query1 = 'select count(*) as loan_officers from users where ID in (select loan_officer from clients where clients.id in (select userid from applications where applications.status = 2))'
     query2 = 'select count(*) as all_applications from applications where status = 2'
     query3 = 'select count(*) as apps from applications'
     var items = {}; var num;
@@ -2878,16 +2857,18 @@ users.get('/disbursements/filter', function(req, res, next) {
 /* Interest Received  */
 users.get('/interests/', function(req, res, next) {
     let start = req.query.start,
-        end = req.query.end
-    end = moment(end).add(1, 'days').format("YYYY-MM-DD");
+        end = req.query.end,
+        officer = req.query.officer
+    // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
         query,
         group
     queryPart = 'select \n' +
         '(select userID from applications where ID = applicationID) as user, (select fullname from clients where ID = user) as fullname, \n' +
         'applicationID, sum(interest_amount) as paid, \n' +
-        '(select date_modified from applications where ID = applicationID) as date\n' +
-        'from schedule_history \n' +
+        '(select date_modified from applications where ID = applicationID) as date,\n' +
+        '(select fullname from users where users.id = (select loan_officer from clients where clients.id = (select userid from applications where applications.id = applicationid))) loan_officer\n'+
+        'from schedule_history sh \n' +
         'where applicationID in (select applicationID from application_schedules\n' +
         '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n' +
         'and status = 1\n';
@@ -2897,8 +2878,13 @@ users.get('/interests/', function(req, res, next) {
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
+        queryPart = queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')
         // query = (queryPart.concat('AND (TIMESTAMP((select date_created from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query = (queryPart.concat('AND (TIMESTAMP(payment_date) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query = queryPart.concat(group);
+    }
+    if (officer){
+        queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = '+officer+' ')
+        query = queryPart.concat(group)
     }
     db.query(query, function (error, results, fields) {
         if(error){
@@ -4390,14 +4376,20 @@ users.delete('/user-commissions/:id/:userID', function(req, res, next) {
 
 users.get('/commissions-list', function(req, res, next) {
     let type = req.query.type,
+        user = req.query.user,
         target = req.query.target,
+        sub_period = req.query.sub_period,
         commission = req.query.commission,
         query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
-            '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID';
+            '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,c.accelerator_threshold,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID';
+    if (user)
+        query = query.concat(' AND c.userID = "'+user+'"');
     if (type)
         query = query.concat(' AND c.type = "'+type+'"');
     if (target)
         query = query.concat(' AND c.targetID = '+target);
+    if (sub_period)
+        query = query.concat(' AND c.sub_periodID = '+sub_period);
     if (commission)
         query = query.concat(' AND c.commissionID = '+commission);
     db.query(query, function (error, results, fields) {
@@ -4411,19 +4403,25 @@ users.get('/commissions-list', function(req, res, next) {
 
 users.get('/commissions-list/:officerID', function(req, res, next) {
     let type = req.query.type,
+        user = req.query.user,
         id = req.params.officerID,
         target = req.query.target,
+        sub_period = req.query.sub_period,
         commission = req.query.commission,
         query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
-            '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID',
+            '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,c.accelerator_threshold,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID',
         query2 = query.concat(' AND c.userID = '+id+' '),
         query3 = query.concat(' AND (select supervisor from users where users.id = c.userID) =  '+id+' ');
     if (id)
         query = query2;
+    if (user)
+        query = query.concat(' AND c.userID = "'+user+'"');
     if (type)
         query = query.concat(' AND c.type = "'+type+'"');
     if (target)
         query = query.concat(' AND c.targetID = '+target);
+    if (sub_period)
+        query = query.concat(' AND c.sub_periodID = '+sub_period);
     if (commission)
         query = query.concat(' AND c.commissionID = '+commission);
     if (id){

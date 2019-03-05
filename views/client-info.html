@@ -726,11 +726,13 @@
                 //alert(k);
                 //alert(d1.toString('dd/mm/yyyy'));
                 let stat;
+                let view = ' <button type="button" class="btn btn-outline-primary" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Application</button>';
                 if (v.close_status === 0) {
                     if (v.status === 1){
                         stat = '<span class="label label-primary" style="background-color:blue; color:white; padding: 5px; border-radius: 5px">Pending Approval</span>';
                     } else if (v.status === 2){
                         stat = '<span class="label label-success" style="background-color:green; color:white; padding: 5px; border-radius: 5px">Active</span>';
+                        view = ' <button type="button" class="btn btn-outline-primary" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Loan</button>';
                     } else {
                         stat = '<span class="label label-danger" style="background-color:red; color:white; padding: 5px; border-radius: 5px">Not Active</span>';
                     }
@@ -738,7 +740,6 @@
                 else{
                     stat = '<span class="label label-warning" style="background-color:orange; color:white; padding: 5px; border-radius: 5px">Closed</span>';
                 }
-                let view = ' <button type="button" class="btn btn-outline-primary" onclick="openViewWorkflowModal('+v.ID+')"><i class="fa fa-eye"></i> View Application</button>';
                 $("#loan-table").dataTable().fnAddData([formatter.format(v.loan_amount), (v.date_created), stat, view ]);
             });
         }

@@ -39,6 +39,9 @@
         .zc-ref {
             display: none;
         }
+        #filter_type_group .select2-container{
+            width: 150px !important;
+        }
     </style>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
@@ -152,22 +155,30 @@
                             <div class="card-header">
                                 <strong class="card-title" style="float: left;">Commission Dashboard</strong>
                                 <form id="filter" class="form-inline" style="float: right;">
-                                    <div class="form-group">
+                                    <div class="form-group" style="margin: 0 5px;">
+                                        <select id="filter_user_list" class="form-control">
+                                            <option selected="selected">Select User</option>
+                                        </select>
+                                    </div>
+                                    <div id="filter_type_group" class="form-group">
                                         <select id="filter_type" class="form-control">
-                                            <option selected="selected">-- Select Type --</option>
+                                            <option selected="selected">Select Type</option>
                                             <option value="disbursement">Disbursement</option>
                                             <option value="interest">Interest</option>
                                         </select>
                                     </div>
+                                    <div class="form-group" style="margin: 0 5px;">
+                                        <select id="filter_commission_list" class="form-control">
+                                            <option selected="selected">Select Commission</option>
+                                        </select>
+                                    </div>
                                     <div class="form-group" style="margin-left: 5px;">
                                         <select id="filter_target_list" class="form-control">
-                                            <option selected="selected">-- Select Target --</option>
+                                            <option selected="selected">Select Target</option>
                                         </select>
                                     </div>
                                     <div class="form-group" style="margin: 0 5px;">
-                                        <select id="filter_commission_list" class="form-control">
-                                            <option selected="selected">-- Select Commission --</option>
-                                        </select>
+                                        <select id="filter_sub_period" class="form-control" disabled="disabled"></select>
                                     </div>
                                     <button type="submit" class="btn btn-success">Filter</button>
                                 </form>
@@ -203,7 +214,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="myModalLabel">Commission Details</h4>
@@ -288,8 +299,9 @@
             check(); loadMenus(); read_write();
             $('#commissions-export').DataTable();
             $("#filter_type").select2();
-            getTargetList();
             getCommissionList();
+            getTargetList();
+            getUserList();
         });
 
         $(document).ajaxStart(function(){
@@ -385,7 +397,13 @@
                 }
             });
         }
-        
+
+        $('#filter_target_list').on('change', function() {
+            let target_id = $("#filter_target_list").find("option:selected").val();
+            getPeriods(target_id);
+        });
+
+
         function getTargetList(){
             $.ajax({
                 type: "GET",
@@ -412,9 +430,42 @@
             });
         }
 
+        function getUserList(){
+            $.ajax({
+                type: "GET",
+                url: "/user/users-list",
+                success: function (data) {
+                    $.each(JSON.parse(data), function (key, val) {
+                        $("#filter_user_list").append('<option value = "' + val.ID + '">' + val.fullname + '</option>');
+                    });
+                    $("#filter_user_list").select2();
+                }
+            });
+        }
+
+        $("#filter_sub_period").html('<option selected="selected">Select Period</option>');
+        function getPeriods(id){
+            if (id && id !== 'Select Target'){
+                $('#wait').show();
+                $.ajax({
+                    type: "GET",
+                    url: "/target/sub_periods/"+id,
+                    success: function (data) {
+                        $('#wait').hide();
+                        $("#filter_sub_period").prop('disabled',false);
+                        $("#filter_sub_period").html('<option selected="selected">Select Period</option>');
+                        $.each(data.response, function (key, val) {
+                            $("#filter_sub_period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
+                        });
+                        $("#filter_sub_period").select2();
+                    }
+                });
+            }
+        }
+
         $("#filter").submit(function (e) {
             e.preventDefault();
-            
+
             let id = '';
             if (!(commissionsList && commissionsList['read_only'] === '1'))
                 id = (JSON.parse(localStorage.user_obj)).ID;
@@ -422,13 +473,19 @@
             let filter = {},
                 url = '/user/commissions-list/'+id,
                 filter_type = $("#filter_type").val(),
+                filter_user_list = $("#filter_user_list").val(),
+                filter_sub_period = $("#filter_sub_period").val(),
                 filter_target_list = $("#filter_target_list").val(),
                 filter_commission_list = $("#filter_commission_list").val();
-            if (filter_type !== '-- Select Type --')
+            if (filter_type !== 'Select Type')
                 filter.type = filter_type;
-            if (filter_target_list !== '-- Select Target --')
+            if (filter_user_list !== 'Select User')
+                filter.user = filter_user_list;
+            if (filter_sub_period !== 'Select Period')
+                filter.sub_period = filter_sub_period;
+            if (filter_target_list !== 'Select Target')
                 filter.target = filter_target_list;
-            if (filter_commission_list !== '-- Select Commission --')
+            if (filter_commission_list !== 'Select Commission')
                 filter.commission = filter_commission_list;
             if (!$.isEmptyObject(filter))
                 url = url.concat('?'+$.param(filter));
@@ -459,8 +516,8 @@
                     v.period,
                     v.threshold,
                     '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
-                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+
-                    ','+v.rate+','+v.threshold+','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.start+','+v.end+'\')">' +
+                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+ ','+v.rate+','+v.threshold+
+                    ','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.accelerator_threshold+','+v.start+','+v.end+'\')">' +
                     '<i class="fa fa-eye"></i> View Details</button>'
                 ];
                 $('#commissions').dataTable().fnAddData(table);
@@ -484,8 +541,9 @@
                 target_value = values[7],
                 accelerator = values[8],
                 accelerator_type = values[9],
-                start = values[10],
-                end = values[11];
+                accelerator_threshold = values[10],
+                start = values[11],
+                end = values[12];
             user_id = userID;
             commission_id = ID;
             amount_paid = paid;
@@ -497,9 +555,14 @@
                     $('#commission-paid').text('₦'+(parseFloat(paid)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     let data = response.response;
                     data.total = data.total || 0;
-                    let threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value);
+                    let threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value),
+                        progress = (parseFloat(data.total)/parseFloat(target_value)) * 100;
                     if (parseFloat(data.total) >= parseFloat(threshold)){
-                        if (accelerator_type !== 'null') {
+                        if ((accelerator !== 'null') &&
+                            (accelerator_type !== 'null') &&
+                            (accelerator_threshold !== 'null') &&
+                            (progress >= accelerator_threshold)
+                        ) {
                             switch (accelerator_type) {
                                 case 'all': {
                                     earnings = (parseInt(accelerator)/100) * parseFloat(data.total);
