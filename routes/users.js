@@ -4380,7 +4380,7 @@ users.get('/commissions-list', function(req, res, next) {
         target = req.query.target,
         sub_period = req.query.sub_period,
         commission = req.query.commission,
-        query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
+        query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.ID=p.user_commissionID AND p.status=1) AS value,' +
             '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,c.accelerator_threshold,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID';
     if (user)
         query = query.concat(' AND c.userID = "'+user+'"');
@@ -4408,7 +4408,7 @@ users.get('/commissions-list/:officerID', function(req, res, next) {
         target = req.query.target,
         sub_period = req.query.sub_period,
         commission = req.query.commission,
-        query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.commissionID=p.commissionID AND p.status=1) AS value,' +
+        query = 'SELECT c.ID,c.userID,c.commissionID,c.targetID,c.periodID,c.sub_periodID,c.type,c.threshold,c.target_value,c.status,c.date_created,c.date_modified,(SELECT CASE WHEN sum(p.amount) IS NULL THEN 0 ELSE sum(p.AMOUNT) END FROM commission_payments p WHERE c.ID=p.user_commissionID AND p.status=1) AS value,' +
             '(select u.fullname from users u where u.ID = c.userID) as user,(select u.title from targets u where u.ID = c.targetID) as target,m.title as commission,m.rate,m.accelerator,m.accelerator_type,c.accelerator_threshold,p.name as period,p.start,p.end from user_commissions c, commissions m, sub_periods p where c.status = 1 and c.commissionID = m.ID and p.ID = c.sub_periodID',
         query2 = query.concat(' AND c.userID = '+id+' '),
         query3 = query.concat(' AND (select supervisor from users where users.id = c.userID) =  '+id+' ');
@@ -4462,8 +4462,8 @@ users.post('/commission/payments', function(req, res, next) {
     });
 });
 
-users.get('/commission/payment-history/:commissionID', function(req, res, next) {
-    db.query('SELECT * FROM commission_payments WHERE commissionID = '+req.params.commissionID, function (error, result, fields) {
+users.get('/commission/payment-history/:user_commissionID', function(req, res, next) {
+    db.query('SELECT * FROM commission_payments WHERE user_commissionID = '+req.params.user_commissionID, function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
