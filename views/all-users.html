@@ -458,7 +458,7 @@
     </div>
 
     <div class="modal fade" id="targetsModal" role="dialog" aria-labelledby="targetsModalLabel">
-        <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="targetsModalLabel">User Targets</h4>
@@ -478,13 +478,13 @@
                                 <select id="sub_period_list" class="form-control" required="required" disabled="disabled"></select>
                             </div>
                         </div>
-                        <div class="col-lg-8">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
                                 <small id="target_limit" class="form-text text-muted"></small>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <button type="button" class="btn btn-success pull-right" onclick="assignTarget()">Assign Target</button>
                             </div>
@@ -498,6 +498,7 @@
                                 <tr>
                                     <th>Target</th>
                                     <th>Period</th>
+                                    <th>Type</th>
                                     <th>Value</th>
                                     <th>Action</th>
                                 </tr>
@@ -1216,6 +1217,7 @@
                 $('#user_targets').dataTable().fnAddData( [
                     v.target,
                     v.period,
+                    v.type,
                     '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
                     '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+','+v.targetID+')"><i class="fa fa-remove"></i> Remove</button>'
                 ]);
