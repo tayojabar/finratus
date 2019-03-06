@@ -434,14 +434,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <strong><label class="form-control-label">New Password</label></strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
+                        <strong><label class="form-control-label">New Password</label></strong><strong style="color:red"> *</strong><span id="password-error" style="padding-left:50px; text-align: center"></span>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                             <input id="new-password" type="password" class="form-control" required="required">
                         </div>
                     </div>
                     <div class="form-group">
-                        <strong><label class="form-control-label">Confirm Password</label></strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
+                        <strong><label class="form-control-label">Confirm Password</label></strong><strong style="color:red"> *</strong><span id="cpassword-error" style="padding-left:50px; text-align: center"></span>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
                             <input id="cpassword" type="password" class="form-control" required="required">
@@ -601,6 +601,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
 //            getUsers();
+            getRoles();
             getTargets();
             getCommissions();
             $('#user_targets').DataTable();
@@ -632,11 +633,7 @@
 
         function validatePassword(){
             if ($('#new-password').val() === "" || $('#new-password').val() === null){
-                $('#password-error').html("Enter password");
-                $('#password-error').css("color", "red");
-                $('#new-password').css("border-color", "red");
-                $('#pass-error').css("color", "red");
-                $('#pass-error').html("Unable to submit. Check information entered.");
+                return swal('', 'Password field cannot be empty!', 'warning');
             }
             else {
                 changePassword();
@@ -867,11 +864,12 @@
                 url: "/user/user-roles/",
                 data: '{}',
                 success: function (response) {
-                    var role = $("[id*=role]");
+                    var role = $("[id=role]");
                     // role.empty().append('<option selected="selected" id="0">-- Choose User Role --</option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#role").append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.role_name + '</option>');
                     });
+                    getBranches();
                 }
             });
         }
@@ -889,11 +887,9 @@
         }
 
         function edit(){
-            getRoles(); getBranches(); getUsers();
             $.ajax({
                 'url': '/user/user-dets/'+localStorage.getItem("user_id"),
                 'type': 'get',
-                'data': {},
                 'success': function (data) {
                     $('#user-form').slideDown();
                     $('#user-table').slideToggle();
@@ -902,12 +898,14 @@
                     $('#phone').val(data[0].phone);
                     $('#address').val(data[0].address);
                     $('#email').val(data[0].email);
-//                    $('#role').val(data[0].user_role);
-                    setSelectedIndex(document.getElementById('role'), data[0].user_role);
-//                    $('#branch').val(data[0].branch);
-                    setSelectedIndex(document.getElementById('branch'), data[0].branch);
-                    setSelectedIndex(document.getElementById('supervisor'), data[0].supervisor);
-//                    $('#supervisor').val(data[0].supervisor);
+                    $('#role').val(data[0].user_role);
+                    console.log(data[0]);
+//                    console.log(data[0].user_role);
+//                    setSelectedIndex(document.getElementById('role'), data[0].user_role);
+                    $('#branch').val(data[0].branch);
+//                    setSelectedIndex(document.getElementById('branch'), data[0].branch);
+//                    setSelectedIndex(document.getElementById('supervisor'), data[0].supervisor);
+                    $('#supervisor').select2().select2("val", data[0].supervisor);
                     if (data[0].loan_officer_status === 1)
                         $('#loan_officer_status').prop('checked','checked');
                 },
@@ -1003,10 +1001,11 @@
                 url: "/user/branches",
                 success: function (response) {
                     let branch = $("[id=branch]");
-                    branch.empty().append('<option selected="selected" id="0">-- Select a Branch --</option>');
+                    branch.empty().append('<option id="0">-- Select a Branch --</option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
                     });
+                    getUsers();
                 }
             });
         }
@@ -1042,13 +1041,36 @@
 
         function validateRole(){
             if ($('#new-role').val() === "" || $('#new-role').val() === null){
-                $('#role-error').html("Enter a valid role name");
-                $('#role-error').css("color", "red");
-                $('#submit-role-error').css("color", "red");
-                $('#submit-role-error').html("Unable to submit. Check information entered.");
+                return swal('', 'Enter a valid role name.', 'warning')
             }else{
                 saveNewRole();
             }
+        }
+
+        function saveNewRole(){
+            let obj = {},
+                test = {};
+            obj.role = $('#new-role').val();
+            $.ajax({
+                'url': '/user/new-role/',
+                'type': 'post',
+                'data': obj,
+                'success': function (data) {
+                    $.each(JSON.parse(data), function (key, val) {
+                        test[key] = val;
+                    });
+                    if(test.message){
+                        $('#new-role').val("");
+                        swal("Role already exists!","","error");
+                    }
+                    else if(test.status === 500){
+                        $('#new-role').val("");
+                        swal("Please recheck entered values!","","error");
+                    }
+                    else
+                    {$('#new-role').val(""); swal("New Role Registered!","","success"); getRoles();}
+                }
+            });
         }
 
         let target_id;

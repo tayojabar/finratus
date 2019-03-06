@@ -827,11 +827,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        checkForEdit();
         getOfficers();
-        getBranches();
-        getCountries();
-        getStates();
     });
 
     let client_id;
@@ -1195,6 +1191,7 @@
                 $.each(JSON.parse(response), function (key, val) {
                     $("#loan_officer").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                 });
+                getBranches();
             }
         });
     }
@@ -1209,6 +1206,7 @@
                 $.each(JSON.parse(response), function (key, val) {
                     $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
                 });
+                getCountries();
             }
         });
     }
@@ -1223,6 +1221,7 @@
                 $.each(JSON.parse(response), function (key, val) {
                     country.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.country_name + '</option>');
                 });
+                getStates();
             }
         });
     }
@@ -1237,6 +1236,7 @@
                 $.each(JSON.parse(response), function (key, val) {
                     state.append('<option value = "' + val.id + '" id="' + val.id + '">' + val.state + '</option>');
                 });
+                checkForEdit();
             }
         });
     }
