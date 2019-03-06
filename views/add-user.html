@@ -595,6 +595,13 @@
                     }
                     else{
                         swal("User Registered!","","success");
+                        $('#email').val('');
+                        $('#password').val('');
+                        $('#fullname').val('');
+                        $('#email').val('');
+                        $('#role').val(0);
+                        $('#branch').val(0);
+                        $('#supervisor').val(0);
                         window.location.href = "/all-users";
                     }
                 }
@@ -628,10 +635,7 @@
 
         function validateRole(){
             if ($('#new-role').val() == "" || $('#new-role').val() == null){
-                $('#role-error').html("Enter a valid role name");
-                $('#role-error').css("color", "red");
-                $('#submit-role-error').css("color", "red");
-                $('#submit-role-error').html("Unable to submit. Check information entered.");
+                return swal('', 'Enter a valid role name.', 'warning')
             }else{
                 saveNewRole();
             }
