@@ -458,7 +458,7 @@
     </div>
 
     <div class="modal fade" id="targetsModal" role="dialog" aria-labelledby="targetsModalLabel">
-        <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
+        <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="targetsModalLabel">User Targets</h4>
@@ -478,13 +478,13 @@
                                 <select id="sub_period_list" class="form-control" required="required" disabled="disabled"></select>
                             </div>
                         </div>
-                        <div class="col-lg-8">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <input id="target_value" type="number" class="form-control" placeholder="Target Value" />
                                 <small id="target_limit" class="form-text text-muted"></small>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <button type="button" class="btn btn-success pull-right" onclick="assignTarget()">Assign Target</button>
                             </div>
@@ -498,6 +498,7 @@
                                 <tr>
                                     <th>Target</th>
                                     <th>Period</th>
+                                    <th>Type</th>
                                     <th>Value</th>
                                     <th>Action</th>
                                 </tr>
@@ -515,7 +516,7 @@
     </div>
 
     <div class="modal fade" id="commissionsModal" role="dialog" aria-labelledby="commissionsModalLabel">
-        <div class="modal-dialog" role="document" style="max-width: 70%;">
+        <div class="modal-dialog" role="document" style="max-width: 80%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="commissionsModalLabel">User Commissions</h4>
@@ -537,15 +538,21 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <select id="commission_period" class="form-control" required="required" disabled="disabled"></select>
                             </div>
                         </div>
                         <div class="col-lg-3">
                             <div class="form-group">
-                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="50" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+                                <input id="commission_threshold" type="number" class="form-control" placeholder="Threshold Rate" min="1" max="100" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
                                 <small id="commission_period_value" class="form-text text-muted"></small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div id="accelerator_threshold_div" class="form-group" style="display: none;">
+                                <input id="accelerator_threshold" type="number" class="form-control" placeholder="Accelerator Threshold" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+                                <small class="form-text text-muted">Accelerator threshold should be greater than Commission threshold</small>
                             </div>
                         </div>
                         <div class="col-lg-3">
@@ -565,6 +572,7 @@
                                     <th>Period</th>
                                     <th>Type</th>
                                     <th>Threshold</th>
+                                    <th>Accelerator</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -1169,7 +1177,7 @@
         }
 
         let assigned_periods;
-        $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
+        $("#commission_period").html('<option selected="selected">-- Select Period -</option>');
         function getCommissionPeriods(id){
             if (id && id !== '-- Select Target --'){
                 $('#wait').show();
@@ -1180,7 +1188,7 @@
                         $('#wait').hide();
                         assigned_periods = data.response;
                         $("#commission_period").prop('disabled',false);
-                        $("#commission_period").html('<option selected="selected">-- Select Commission Period --</option>');
+                        $("#commission_period").html('<option selected="selected">-- Select Period -</option>');
                         $.each(assigned_periods, function (key, val) {
                             $("#commission_period").append('<option value = "' + val.ID + '">' + val.name + '</option>');
                         });
@@ -1194,11 +1202,23 @@
         $('#commission_period_value').text('');
         $('#commission_period').on('change', function() {
             let commission_period = $("#commission_period").find("option:selected").val();
-            if (commission_period && commission_period !== '-- Select Commission Period --'){
+            if (commission_period && commission_period !== '-- Select Period -'){
                 commission_period_value = parseFloat(($.grep(assigned_periods, function(e){return e.ID === parseInt(commission_period);}))[0]['value']);
                 $('#commission_period_value').text('Max rate is 100% (₦'+(commission_period_value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'))+')');
             } else {
                 $('#commission_period_value').text('');
+            }
+        });
+
+        $('#commission_list').on('change', function() {
+            let commission_id = $("#commission_list").find("option:selected").val();
+            if (commission_id && commission_id !== '-- Select Commission -'){
+                let commission = ($.grep(commissions, function(e){return e.ID === parseInt(commission_id);}))[0];
+                if (commission && commission.accelerator){
+                    $('#accelerator_threshold_div').show();
+                } else {
+                    $('#accelerator_threshold_div').hide();
+                }
             }
         });
 
@@ -1219,6 +1239,7 @@
                 $('#user_targets').dataTable().fnAddData( [
                     v.target,
                     v.period,
+                    v.type,
                     '₦'+((parseFloat(v.value)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')),
                     '<button type="button" class="btn btn-danger" onclick="removeTarget('+v.ID+','+v.targetID+')"><i class="fa fa-remove"></i> Remove</button>'
                 ]);
@@ -1246,6 +1267,7 @@
                     v.period,
                     v.type,
                     v.threshold,
+                    v.accelerator_threshold || '--',
                     '<button type="button" class="btn btn-danger" onclick="removeCommission('+v.ID+')"><i class="fa fa-remove"></i> Remove</button>'
                 ]);
             });
@@ -1305,10 +1327,15 @@
             obj.commissionID = $('#commission_list').val();
             obj.sub_periodID = $('#commission_period').val();
             obj.threshold = $('#commission_threshold').val();
-            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || obj.sub_periodID === '-- Select Commission Period --' || !obj.threshold)
+            obj.accelerator_threshold = $('#accelerator_threshold').val();
+            if (obj.targetID === '-- Select Target --' || obj.commissionID === '-- Select Commission --' || obj.sub_periodID === '-- Select Period -' || !obj.threshold)
                 return swal('Kindly fill all required field(s)','','warning');
-            if (parseFloat(obj.threshold) < 50 || parseFloat(obj.threshold) > 100)
-                return swal('Commission threshold rate ('+obj.threshold+'%) must be at least 50% and at most 100%. (Total allocated target is valued at '+commission_period_value+')','','warning');
+            if (parseFloat(obj.threshold) < 1 || parseFloat(obj.threshold) > 100)
+                return swal('Commission threshold rate ('+obj.threshold+'%) must be at least 1% and at most 100%. (Total allocated target is valued at '+commission_period_value+')','','warning');
+            if (obj.accelerator_threshold){
+                if (parseFloat(obj.accelerator_threshold) <= parseFloat(obj.threshold))
+                    return swal('Accelerator threshold ('+obj.accelerator_threshold+'%) must be greater than '+parseFloat(obj.threshold)+'%.','','warning');
+            }
             obj.type = ($.grep(commissions, function(e){return e.ID === parseInt(obj.commissionID);}))[0]['type'];
             let target = ($.grep(assigned_targets, function(e){return e.ID === parseInt(obj.targetID);}))[0],
                 period = ($.grep(assigned_periods, function(e){return e.ID === parseInt(obj.sub_periodID);}))[0];

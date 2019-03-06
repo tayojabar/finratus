@@ -473,6 +473,14 @@ app.get('/all-investments', requireLogin, function (req, res) {
     });
 });
 
+
+app.get('/all-commissions', requireLogin, function (req, res) {
+    res.sendFile('all-commissions.html', {
+        root: __dirname + '/views'
+    });
+});
+
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     let err = new Error('Not Found');

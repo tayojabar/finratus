@@ -536,7 +536,6 @@
                 });
         }
 
-
         function populateCommittals(data){
             $("#committals").dataTable().fnClearTable();
             $.each(data.data, function(k, v){
@@ -551,7 +550,7 @@
         }
 
         function initGuage(value) {
-            zingchart.THEME = "classic";
+            value = (value > 100)? 100 : value;
             let myConfig = {
                 "graphset": [{
                     "type": "gauge",
@@ -579,19 +578,19 @@
                             "offset-r": "130px",
                             "rules": [{
                                 "rule": "%v >=0 && %v < 20",
-                                "background-color": "#348D00"
+                                "background-color": "#FB0A02"
                             }, {
                                 "rule": "%v >= 20 && %v < 40",
-                                "background-color": "#B1AD00"
+                                "background-color": "#EC7928"
                             }, {
                                 "rule": "%v >= 40 && %v < 60",
                                 "background-color": "#FAC100"
                             }, {
                                 "rule": "%v >= 60 && %v < 80",
-                                "background-color": "#EC7928"
+                                "background-color": "#B1AD00"
                             }, {
                                 "rule": "%v >= 80",
-                                "background-color": "#FB0A02"
+                                "background-color": "#348D00"
                             }]
                         }
                     },
@@ -605,10 +604,10 @@
                         "padding": 10,
                         "anchor": "c",
                         "text": "Very High",
-                        "backgroundColor": "#FB0A02",
+                        "backgroundColor": "#348D00",
                         "tooltip": {
                             "padding": 10,
-                            "backgroundColor": "#ea0901",
+                            "backgroundColor": "#237b00",
                             "text": "< 80 <br>Percent",
                             "shadow": 0
                         }
@@ -622,10 +621,10 @@
                         "padding": 10,
                         "anchor": "c",
                         "text": "High",
-                        "backgroundColor": "#EC7928",
+                        "backgroundColor": "#B1AD00",
                         "tooltip": {
                             "padding": 10,
-                            "backgroundColor": "#da6817",
+                            "backgroundColor": "#a09c00",
                             "text": "> 60 < 80<br>Percent",
                             "shadow": 0
                         }
@@ -656,10 +655,10 @@
                         "padding": 10,
                         "anchor": "c",
                         "text": "Low",
-                        "backgroundColor": "#B1AD00",
+                        "backgroundColor": "#EC7928",
                         "tooltip": {
                             "padding": 10,
-                            "backgroundColor": "#a09c00",
+                            "backgroundColor": "#da6817",
                             "text": "> 20 < 40<br>Percent",
                             "shadow": 0
                         }
@@ -673,10 +672,10 @@
                         "padding": 10,
                         "anchor": "c",
                         "text": "Very Low",
-                        "backgroundColor": "#348D00",
+                        "backgroundColor": "#FB0A02",
                         "tooltip": {
                             "padding": 10,
-                            "backgroundColor": "#237b00",
+                            "backgroundColor": "#ea0901",
                             "text": "< 20<br>Percent",
                             "shadow": 0
                         }
@@ -693,6 +692,7 @@
                 }]
             };
 
+            zingchart.THEME = "classic";
             zingchart.render({
                 id: 'myChart',
                 data: myConfig,
