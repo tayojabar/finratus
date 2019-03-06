@@ -4472,6 +4472,28 @@ users.get('/commission/payment-history/:user_commissionID', function(req, res, n
     });
 });
 
+users.post('/commission/processes', function(req, res, next) {
+    let data = req.body;
+    data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('INSERT INTO commission_processes SET ?', data, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission process saved successfully!"});
+        }
+    });
+});
+
+users.get('/commission/processes/:user_commissionID', function(req, res, next) {
+    db.query('SELECT * FROM commission_processes WHERE user_commissionID = '+req.params.user_commissionID, function (error, result, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Commission process fetched successfully!", response: result[0]});
+        }
+    });
+});
+
 users.get('/application/commission-payment-reversal/:id', function(req, res, next) {
     db.query('UPDATE commission_payments SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
         if(error){

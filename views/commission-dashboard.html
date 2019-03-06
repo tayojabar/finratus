@@ -213,28 +213,37 @@
     <!-- Right Panel -->
 
     <!-- Modal -->
-    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="viewCommissionModal" role="dialog" aria-labelledby="viewCommissionModalLabel">
         <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Commission Details</h4>
+                    <h4 class="modal-title" id="viewCommissionModalLabel">Commission Details</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="row setup-content">
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="card text-white bg-flat-color-1">
                                 <div class="card-body pb-0">
                                     <h3 id="commission-earned" class="mb-0"></h3>
-                                    <p class="text-light">Total Commission Earned</p>
+                                    <p class="text-light">Total Earned</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4" data-toggle="modal" data-target="#processCommissionModal" style="cursor: pointer;">
+                            <div class="card text-white bg-flat-color-1" style="margin-bottom: 0;">
+                                <div class="card-body pb-0">
+                                    <h3 id="commission-processed" class="mb-0"></h3>
+                                    <p class="text-light">Total Processed</p>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Click to process commission</small>
+                        </div>
+                        <div class="col-sm-4">
                             <div class="card text-white bg-flat-color-1">
                                 <div class="card-body pb-0">
                                     <h3 id="commission-paid" class="mb-0"></h3>
-                                    <p class="text-light">Total Commission Paid</p>
+                                    <p class="text-light">Total Paid</p>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +252,7 @@
                     <div class="row setup-content">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <strong><label class=" form-control-label">Amount Paid</label></strong><strong style="color:red"> *</strong><span id="commission-title-error" style="padding-left:50px; text-align: center"></span>
+                                <strong><label class=" form-control-label">Amount Paid</label></strong><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
                                 <div class="input-group">
                                     <div class="input-group-addon">₦</div>
                                     <input id="amount" type="number" placeholder="0" class="form-control" required="required">
@@ -270,6 +279,47 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="processCommissionModal" role="dialog" aria-labelledby="processCommissionModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="processCommissionModalLabel">Commission Process</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row setup-content">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <strong><label class=" form-control-label">Title</label></strong><strong style="color:red"> *</strong><span id="process-title-error" style="padding-left:50px; text-align: center"></span>
+                                <input id="process-title" type="text" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <strong><label class=" form-control-label">Amount</label></strong><strong style="color:red"> *</strong><span id="process-type-error" style="padding-left:50px; text-align: center"></span>
+                                <select id="process-type" class="form-control" required="required">
+                                    <option selected="selected">-- Select Type --</option>
+                                    <option value="addition">Addition</option>
+                                    <option value="deduction">Deduction</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <strong><label class=" form-control-label">Amount</label></strong><strong style="color:red"> *</strong><span id="process-amount-error" style="padding-left:50px; text-align: center"></span>
+                                <input id="process-amount" type="number" placeholder="0" class="form-control" required="required">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="save-process-btn" type="button" class="btn btn-success" onclick="saveProcess()">Save</button>
                 </div>
             </div>
         </div>
@@ -515,7 +565,7 @@
                     v.target,
                     v.period,
                     v.threshold,
-                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#viewCommissionModal" ' +
                     'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.commissionID+','+v.targetID+','+v.value+','+v.type+ ','+v.rate+','+v.threshold+
                     ','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.accelerator_threshold+','+v.start+','+v.end+'\')">' +
                     '<i class="fa fa-eye"></i> View Details</button>'
@@ -567,7 +617,6 @@
                             (accelerator_threshold_rate !== 'null') &&
                             (progress >= accelerator_threshold_rate)
                         ) {
-                            console.log(accelerator_type)
                             switch (accelerator_type) {
                                 case 'all': {
                                     earnings = (parseInt(accelerator)/100) * parseFloat(data.total);
@@ -587,6 +636,33 @@
                     }
                     earned = earnings - parseFloat(paid);
                     $('#commission-earned').text('₦'+earned.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    processCommission(ID,earned);
+                }
+            });
+        }
+
+        let processed_commission = 0;
+        function processCommission(id,earned) {
+            $.ajax({
+                type: "GET",
+                url: "/user/commission/processes/"+id,
+                success: function (data) {
+                    let process = data.response,
+                        $type = $('#process-type'),
+                        $title = $('#process-title'),
+                        $amount = $('#process-amount'),
+                        $button = $('#save-process-btn');
+                    if (process){
+                        $button.hide();
+                        $type.val(process.type);
+                        $title.val(process.title);
+                        $amount.val(process.amount);
+                        $type.prop('disabled',true);
+                        $title.prop('disabled',true);
+                        $amount.prop('disabled',true);
+                        processed_commission = earned + parseFloat(process.amount);
+                    }
+                    $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 }
             });
         }
@@ -599,8 +675,8 @@
             obj.amount = $('#amount').val();
             if (!obj.amount)
                 return swal('Kindly fill all required field(s)','','warning');
-            if (parseFloat(obj.amount) > earned)
-                return swal('Insufficient commission earned ('+earned+')','','warning');
+            if (parseFloat(obj.amount) > processed_commission)
+                return swal('Insufficient commission available ('+processed_commission+')','','warning');
             $('#wait').show();
             $.ajax({
                 'url': '/user/commission/payments',
@@ -637,6 +713,37 @@
                         $('#payment-history').dataTable().fnAddData(table);
                         $('#payment-history').dataTable().fnSort([[1,'desc']]);
                     });
+                }
+            });
+        }
+
+        function saveProcess() {
+            let obj = {};
+            obj.userID = user_id;
+            obj.commissionID = commission_id;
+            obj.user_commissionID = user_commission_id;
+            obj.title = $('#process-title').val();
+            obj.type = $('#process-type').val();
+            obj.amount = $('#process-amount').val();
+            if (!obj.amount || !obj.title || obj.amount === '-- Select Type --')
+                return swal('Kindly fill all required field(s)','','warning');
+            obj.amount = parseFloat(obj.amount);
+            if ((obj.type === 'deduction') && (obj.amount > earned))
+                return swal('Insufficient commission earned ('+earned+')','','warning');
+            obj.amount = (obj.type === 'addition')? obj.amount : (-1 * obj.amount);
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/commission/processes',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal(response.error,"","error");
+                    } else{
+                        swal("Commission process saved successfully!","","success");
+                        window.location.reload();
+                    }
                 }
             });
         }
