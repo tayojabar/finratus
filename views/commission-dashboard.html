@@ -676,7 +676,10 @@
             obj.amount = $('#amount').val();
             if (!obj.amount)
                 return swal('Kindly fill all required field(s)','','warning');
-            if (parseFloat(obj.amount) > processed_commission)
+            obj.amount = parseFloat(obj.amount);
+            if (obj.amount <= 0)
+                return swal('Invalid amount specified','','warning');
+            if (obj.amount > processed_commission)
                 return swal('Insufficient commission available ('+processed_commission+')','','warning');
             $('#wait').show();
             $.ajax({
@@ -729,6 +732,8 @@
             if (!obj.amount || !obj.title || obj.amount === '-- Select Type --')
                 return swal('Kindly fill all required field(s)','','warning');
             obj.amount = parseFloat(obj.amount);
+            if (obj.amount <= 0)
+                return swal('Invalid amount specified','','warning');
             if ((obj.type === 'deduction') && (obj.amount > earned))
                 return swal('Insufficient commission earned ('+earned+')','','warning');
             obj.amount = (obj.type === 'addition')? obj.amount : (-1 * obj.amount);
