@@ -1,4 +1,4 @@
-var table = $('#bootstrap-data-table2');
+var table = {};
 $(document).ready(function () {
     $('#bootstrap-data-table-export').DataTable();
     bindDataTable();
@@ -6,7 +6,7 @@ $(document).ready(function () {
 let _table = $('#bootstrap-data-table-export').DataTable();
 
 function bindDataTable() {
-    table.DataTable({
+    table = $('#bootstrap-data-table2').DataTable({
         dom: 'Blfrtip',
         bProcessing: true,
         bServerSide: true,
@@ -80,14 +80,20 @@ function bindDataTable() {
                 width: "15%"
             },
             {
-                defaultContent: "<button id='1'>Edit</button> <button id='0'>Stop</button>",
-                width: "15%"
+                width: "15%",
+                "mRender": function (data, type, full) {
+                    return `<a class="btn btn-info btn-sm">View Form</a>`;
+                }
             }
         ]
     });
 }
+$(document).ready(function () {});
 
-$('#bootstrap-data-table2 tbody').on('click', 'button', function () {
-    var data = table.row($(this).parents('tr')).data();
-    console.log(data);
+$(document).ajaxStart(function () {
+    $("#wait").css("display", "block");
+});
+
+$(document).ajaxComplete(function () {
+    $("#wait").css("display", "none");
 });

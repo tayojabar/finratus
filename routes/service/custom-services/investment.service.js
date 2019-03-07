@@ -2,14 +2,10 @@ const express = require('express');
 const axios = require('axios');
 const moment = require('moment');
 const router = express.Router();
-const config = require('../config/default.json');
 var isAfter = require('date-fns/is_after');
 
-
-
-const HOST = `${config.protocol}://${config.host}:${config.port}`;
-
 router.post('/create', function (req, res, next) {
+    const HOST = `${req.protocol}://${req.get('host')}`;
     var data = req.body
     const is_after = isAfter(new Date(data.investment_mature_date.toString()), new Date(data.investment_start_date.toString()))
     if (is_after) {
@@ -50,6 +46,7 @@ router.post('/create', function (req, res, next) {
 
 
 router.get('/get-investments', function (req, res, next) {
+    const HOST = `${req.protocol}://${req.get('host')}`;
     let limit = req.query.limit;
     let offset = req.query.offset;
     let draw = req.query.draw;
@@ -70,10 +67,10 @@ router.get('/get-investments', function (req, res, next) {
         }
     }).then(response => {
         console.log(response.data);
-        query = `SELECT count(*) AS recordsTotal, (SELECT count(*) FROM test.investments v 
-                    inner join test.investment_products p on v.productId = p.ID inner join test.clients c on
+        query = `SELECT count(*) AS recordsTotal, (SELECT count(*) FROM investments v 
+                    inner join investment_products p on v.productId = p.ID inner join clients c on
                     v.clientId = c.ID WHERE upper(p.code) LIKE "${search_string}%" OR upper(p.name) LIKE "${search_string}%" 
-                    OR upper(c.fullname) LIKE "${search_string}%") as recordsFiltered FROM test.investments`;
+                    OR upper(c.fullname) LIKE "${search_string}%") as recordsFiltered FROM investments`;
         endpoint = '/core-service/get';
         url = `${HOST}${endpoint}`;
         axios.get(url, {
@@ -90,8 +87,57 @@ router.get('/get-investments', function (req, res, next) {
             });
         });
     });
+});
 
-
+router.get('/get-investments/:id', function (req, res, next) {
+    const HOST = `${req.protocol}://${req.get('host')}`;
+    let limit = req.query.limit;
+    let offset = req.query.offset;
+    let draw = req.query.draw;
+    let order = req.query.order;
+    let search_string = req.query.search_string.toUpperCase();
+    console.log(search_string);
+    let query = `SELECT v.ID,clientId,p.name AS investment, amount, investment_start_date, investment_mature_date
+    FROM investments v inner join investment_products p on v.productId = p.ID WHERE clientId = ${req.params.id}
+    AND (upper(p.code) LIKE "${search_string}%" OR upper(p.name) LIKE "${search_string}%") ${order} LIMIT ${limit} OFFSET ${offset}`;
+    let endpoint = '/core-service/get';
+    let url = `${HOST}${endpoint}`;
+    var data = [];
+    axios.get(url, {
+        params: {
+            query: query
+        }
+    }).then(response => {
+        console.log(response.data);
+        query = `SELECT count(*) as recordsFiltered FROM investments v 
+                    inner join investment_products p on v.productId = p.ID
+                    WHERE v.clientId = ${req.params.id} AND (upper(p.code) LIKE "${search_string}%" OR upper(p.name) LIKE "${search_string}%")`;
+        endpoint = '/core-service/get';
+        url = `${HOST}${endpoint}`;
+        axios.get(url, {
+            params: {
+                query: query
+            }
+        }).then(payload => {
+            console.log(payload.data);
+            query = `SELECT count(*) as recordsTotal FROM investments WHERE clientId = ${req.params.id}`;
+            endpoint = '/core-service/get';
+            url = `${HOST}${endpoint}`;
+            axios.get(url, {
+                params: {
+                    query: query
+                }
+            }).then(payload2 => {
+                console.log(payload2.data);
+                res.send({
+                    draw: draw,
+                    recordsTotal: payload2.data[0].recordsTotal,
+                    recordsFiltered: payload.data[0].recordsFiltered,
+                    data: (response.data === undefined) ? [] : response.data
+                });
+            });
+        });
+    });
 });
 
 

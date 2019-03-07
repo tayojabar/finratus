@@ -378,7 +378,7 @@ app.get('/all-clients', requireLogin, function (req, res) {
 });
 
 app.get('/client-info', requireLogin, function (req, res) {
-    res.sendFile('client-info.html', {
+    res.sendFile('client/client-info/client-info.html', {
         root: __dirname + '/views'
     });
 });
@@ -449,14 +449,14 @@ app.get('/commission-dashboard', requireLogin, function (req, res) {
     });
 });
 
-app.get('/investment-products', requireLogin, function (req, res) {
-    res.sendFile('investment-products.html', {
+app.get('/add-investment-products', requireLogin, function (req, res) {
+    res.sendFile('investment/add-product/investment-products.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/all-investment-products', requireLogin, function (req, res) {
-    res.sendFile('all-investment-products.html', {
+    res.sendFile('investment/all-product/all-investment-products.html', {
         root: __dirname + '/views'
     });
 });
