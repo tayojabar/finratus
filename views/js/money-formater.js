@@ -1,6 +1,7 @@
 function formater(value) {
-    var n = value.split(".");
-    console.log(n);
+    var _n = value.split(".");
+    var _n2 = (_n[1] !== undefined) ? _n[0] + "." + _n[1] : _n[0];
+    var n = _n2.split(".");
     n[0] = n[0].replace(/[\D\s\._\-]+/g, "");
     for (let index = 2; index < n.length; index++) {
         const element = n[index];
