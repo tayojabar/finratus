@@ -966,7 +966,7 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <div class="col-sm-5">
-                                                                <strong>Loans by Branch</strong>&nbsp;&nbsp;&nbsp;
+                                                                <strong>Disbursements by Branch</strong>&nbsp;&nbsp;&nbsp;
                                                                 <span>Total: <span id="total-loans-by-branch"></span></span>
                                                             </div>
                                                             <div class="col-sm-7">
@@ -1078,7 +1078,7 @@
 //        loadProjectedInterests();
         loadInterestReceived();
         loadInterestReceivable();
-        loadBadLoans();
+//        loadBadLoans();
         loadOverdues();
         loadAggProjectedInterests();
         disbursed();
@@ -1090,6 +1090,8 @@
         document.getElementsByName("filteraggprointend")[0].setAttribute('min', today);
         document.getElementsByName("filteraggprointstart")[0].setAttribute('min', today);
     });
+
+    let amount_paid = {};
 
     function loadYears(id){
         var max = new Date().getFullYear(),
@@ -1293,7 +1295,7 @@
         $("#interests-receivable-div").attr('class', 'col-sm-12');
         $("#interests-received-div").hide();
         $("#agg-prj-int-div").hide();
-        $("#interests-receivable-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#interest-receivable-button").attr('class', 'btn btn-primary col-sm-12');
         $("#interests-received-button").attr('class', 'btn col-sm-12');
         $("#gross-projected-interest-button").attr('class', 'btn col-sm-12');
     });
@@ -1329,6 +1331,7 @@
     });
 
     $(document).on("click", "#bad-loans-button", function (e) {
+        loadBadLoans();
         $("#bad-loans-div").show();
         $("#bad-loans-div").attr('class', 'col-sm-12');
         $("#overdue-loans-div").hide();
@@ -1480,6 +1483,7 @@
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
             let d = [];
             jQuery.each(dets.with_payments, function(k, v){
+                amount_paid[v.applicationID] = v.valid_payment;
                 loa += v.loan_amount;
                 num_all++;
                 num_paid++;
@@ -1494,27 +1498,11 @@
                     formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
                     formatDate(v.date)
                 ]);
-//                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) === 0)){
-//                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid)) === 0))){
-//                if (!(parseFloat(v.loan_amount - v.valid_payment) === 0)){
-//                if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
-////                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) : 0
-//                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
-//                    pay+=v.valid_payment;
-////                    console.log((v.loan_amount - v.valid_payment) + ' -> ' +totalglp);
-//                    $("#glp-table").dataTable().fnAddData([
-//                        padWithZeroes(parseInt(v.applicationID),6),
-//                        v.fullname,
-//                        formatter.format(parseFloat(v.loan_amount)),
-////                        formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
-//                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
-//                        formatDate(v.date)
-//                    ]);
-//                }
             });
             var totalhere = 0;
             jQuery.each(dets.without_pay, function(k, v){
 //                loans+=v.loan_amount;
+                amount_paid[v.ID] = 0;
                 totalhere += parseFloat(v.loan_amount);
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
@@ -1529,13 +1517,17 @@
                     formatDate(v.disbursement_date)
                 ]);
             });
+            amount_paidx(amount_paid);
             $('#total-disbursements').html(formatter.format(total));
 //            $('#glp').html(formatter.format(totalglp));
 //            $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
 //            $('#avg-loan-disbursed').html(formatter.format((num_all === 0) ? 0: total/num_all));
         }
     }
-
+    function amount_paidx(value){
+        console.log(value);
+    }
+    console.log(amount_paid);
     function populateGLP(dets){
         $("#glp-table").dataTable().fnClearTable();
         if (dets.length === 0){
@@ -2088,16 +2080,18 @@
 //            var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
             jQuery.each(dets, function(k, v){
                 var duedate = new Date(v.duedate);
-                if ((Math.round((now.getTime() - duedate.getTime())/(oneDay))) > 90){
-                    total+= parseFloat(v.amount_due);
-                    $("#bad-loans-table").dataTable().fnAddData([
-                        padWithZeroes(parseInt(v.applicationID),6),
-                        v.client,
-                        formatter.format(parseFloat(v.principal)),
-                        formatter.format(parseFloat(v.amount_due)),
-                        v.duedate
-                    ]);
-                }
+//                if ((Math.round((now.getTime() - duedate.getTime())/(oneDay))) > 90){
+                let validpayment = amount_paid[v.applicationID];
+                total+= parseFloat(v.principal - validpayment);
+                $("#bad-loans-table").dataTable().fnAddData([
+                    padWithZeroes(parseInt(v.applicationID),6),
+                    v.client,
+                    formatter.format(parseFloat(v.principal)),
+//                        formatter.format(parseFloat(v.principal - v.payment_amount)),
+                    formatter.format(parseFloat(v.principal - validpayment)),
+                    v.duedate
+                ]);
+//                }
             });
             $('#total-badloans').html(formatter.format(total));
         }
@@ -2789,7 +2783,14 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    d.push({label: v.branch , value: v.amount_disbursed}, );
+                    let value;
+                    if (v.amount_disbursed)
+                        value = v.amount_disbursed;
+                    if (v.amount_received)
+                        value = v.amount_received;
+                    if (v.amount)
+                        value = v.amount;
+                    d.push({label: v.branch , value: value}, );
                 });
                 if (type == '1'){
                     yaxis = 'Amount Disbursed (In Naira)';
@@ -2798,6 +2799,10 @@
                 if (type == '2'){
                     yaxis = 'Interest Earned (In Naira)';
                     caption = 'Interest Earned by Branches'
+                }
+                if (type == '3'){
+                    yaxis = 'Payments Received (In Naira)';
+                    caption = 'Payments Received by Branches'
                 }
                 var chartConfigs = {
                     type: 'column2d', // The chart type
@@ -2880,6 +2885,29 @@
                         caption = 'Interest Earned by Branches: ';
                         if (v.branch)
                             d.push({label: v.branch , value: v.amount_received}, );
+                        if (v.PaymentYear){
+                            agent = ': '+v.office;
+                            xaxis = 'Period'
+                            d.push({label: v.PaymentYear , value: v.amount_received}, );
+                        }
+                        if (v.monthpayed){
+                            agent = ': '+v.office;
+                            xaxis = 'Period';
+                            d.push({label: v.monthpayed , value: v.amount_received}, )
+                        }
+                        if (v.branchQuarter){
+                            agent = ': '+v.office;
+                            xaxis = 'Period'
+                            d.push({label: v.branchQuarter , value: v.amount_received}, );
+                        }
+                    }
+                    if ($('#branchreport').val() == '3'){
+                        yaxis = 'Payments Received (Naira)';
+                        caption = 'Payments Received by Branches ';
+                        if (v.branch) {
+                            agent = ': '+v.branch;
+                            d.push({label: v.branch, value: v.amount_received},);
+                        }
                         if (v.PaymentYear){
                             agent = ': '+v.office;
                             xaxis = 'Period'
@@ -3144,6 +3172,7 @@
             'url': url,
             'type': 'get',
             'success': function (data) {
+                // Single Branch
                 if (report == '1'){
                     jQuery.each(data.response, function(k, v){
                         if ($('#branchreport').val() == '1') {
@@ -3188,6 +3217,29 @@
                                 d.push({label: v.branchQuarter , value: v.amount_received}, );
                             }
                         }
+                        if ($('#branchreport').val() == '3'){
+                            yaxis = 'Payments Received (Naira)';
+                            caption = 'Payments Received by Branches ';
+                            if (v.branch) {
+                                agent = ': '+v.branch;
+                                d.push({label: v.branch, value: v.amount_received},);
+                            }
+                            if (v.PaymentYear){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+                            }
+                            if (v.monthpayed){
+                                agent = ': '+v.office;
+                                xaxis = 'Period';
+                                d.push({label: v.monthpayed , value: v.amount_received}, )
+                            }
+                            if (v.branchQuarter){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+                            }
+                        }
                     });
                     var chartConfigs = {
                         type: 'column2d', // The chart type
@@ -3210,6 +3262,7 @@
                     };
                     $("#branch-chart").insertFusionCharts(chartConfigs);
                 }
+                // All Branches
                 else if (report == '2'){
                     if ($('#branchreport').val() == '1') {
                         jQuery.each(data.response, function (k, v) {
@@ -3389,6 +3442,29 @@
                                 d.push({label: v.branchQuarter , value: v.amount_received}, );
                             }
                         }
+                        if ($('#branchreport').val() == '3'){
+                            yaxis = 'Payments Received (Naira)';
+                            caption = 'Payments Received by Branches ';
+                            if (v.branch) {
+                                agent = ': '+v.branch;
+                                d.push({label: v.branch, value: v.amount_received},);
+                            }
+                            if (v.PaymentYear){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+                            }
+                            if (v.monthpayed){
+                                agent = ': '+v.office;
+                                xaxis = 'Period';
+                                d.push({label: v.monthpayed , value: v.amount_received}, )
+                            }
+                            if (v.branchQuarter){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+                            }
+                        }
                     });
                     var chartConfigs = {
                         type: 'column2d', // The chart type
@@ -3446,6 +3522,36 @@
                         jQuery.each(data.response, function (k, v) {
                             yaxis = 'Interest Earned (Naira)';
                             caption = 'Interest Earned by Branches';
+                            xaxis = 'Period';
+                            categories.push({label: k});
+                            chartTemp = $.grep(v, function(e){return e.period === k.toString();});
+                            values.push(chartTemp);
+                            diffSeries.push(chartTemp.length);
+                            jQuery.each(v, function (key, val) {
+                                seriesNames.push(val.office);
+                            });
+                        });
+                        countSeries = Math.max.apply(Math, diffSeries);
+                        nondupSeriesNames = seriesNames.filter(function(elem, index, self) {
+                            return index === self.indexOf(elem);
+                        }).sort();
+                        for (let j = 0; j < nondupSeriesNames.length; j++) {
+                            let datum = [];
+                            for (let i = 0; i < values.length; i++) {
+                                let branch_series_value = ($.grep(values[i], function(e){return e.office === nondupSeriesNames[j];}))[0];
+                                if (branch_series_value){
+                                    datum.push({value: branch_series_value.amount_received});
+                                } else {
+                                    datum.push({value: 0});
+                                }
+                            }
+                            dataset.push({seriesname: nondupSeriesNames[j], data: datum});
+                        }
+                    }
+                    if ($('#branchreport').val() == '3') {
+                        jQuery.each(data.response, function (k, v) {
+                            yaxis = 'Payments Received (Naira)';
+                            caption = 'Payments Received by Branches';
                             xaxis = 'Period';
                             categories.push({label: k});
                             chartTemp = $.grep(v, function(e){return e.period === k.toString();});

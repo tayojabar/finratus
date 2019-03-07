@@ -3009,13 +3009,14 @@ users.get('/badloans/', function(req, res, next) {
         query,
         group
     queryPart = 'select ID, applicationID, \n' +
-        'min(payment_collect_date) as duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
-        '(select loan_amount from applications where applications.ID = applicationID) as principal,\n' +
-        '(sum(payment_amount) - payment_amount) as amount_due, (sum(interest_amount) - interest_amount) as interest_due\n' +
+        '(payment_collect_date) as duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
+        '(select loan_amount from applications where applications.ID = applicationID) as principal, payment_amount\n' +
+        // 'payment_amount, sum(payment_amount) sum,  (sum(interest_amount) - interest_amount) as interest_due\n' +
         'from application_schedules\n' +
-        'where payment_status = 0 and status = 1 and applicationID in (select a.ID from applications a where a.status = 2)\n';
+        'where payment_status = 0 and status = 1 and applicationID in (select a.ID from applications a where a.status = 2) \n'+
+        'and datediff(curdate(), payment_collect_date) > 90 ';
     group = 'group by applicationID';
-    query = queryPart.concat(group);
+    query = queryPart.concat(group)
     if (start  && end){
         start = "'"+start+"'"
         end = "'"+end+"'"
@@ -3315,7 +3316,7 @@ users.get('/analytics', function(req, res, next) {
             }
             break;
         case 'branches':
-            //Default
+            //Disbursements
             if (bt == '1'){
 
                 query = 'select sum(loan_amount) amount_disbursed, \n' +
@@ -3422,6 +3423,7 @@ users.get('/analytics', function(req, res, next) {
                         'GROUP BY Quarter order by DisburseYearMonth'
                 }
             }
+            //Interests
             if (bt == '2'){
                 query = 'select sum(interest_amount) amount_received, \n' +
                     '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) branch\n' +
@@ -3492,6 +3494,167 @@ users.get('/analytics', function(req, res, next) {
                 }
                 if (b !== '0' && freq == "4" && y == '0'){
                     query = 'select sum(interest_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office, \n'+
+                        'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) branchQuarter\n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by branchQuarter order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+            }
+            //Payments
+            if (bt == '3'){
+                query = 'select sum(payment_amount) amount_received, \n' +
+                    '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) branch\n' +
+                    'from schedule_history \n' +
+                    'where status = 1 and applicationid in (select id from applications where applications.status <> 0)\n' +
+                    'group by branch'
+                //Specific Branch
+                if (b){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) branch\n' +
+                        'from schedule_history \n' +
+                        'where status = 1 and applicationid in (select id from applications where applications.status <> 0)\n' +
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by branch'
+                }
+                //Specific Branch, Monthly, Specific Year
+                if (b !== '0' && freq == "2"){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        'DATE_FORMAT(payment_date, \'%M %Y\') monthpayed, \n'+
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                        'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                if (b !== '0' && freq == "2" && y == '0'){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        'DATE_FORMAT(payment_date, \'%M %Y\') monthpayed, \n'+
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                //Specific Branch, Yearly
+                if (b !== '0' && freq == "3"){
+                    query = 'select sum(payment_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office \n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and date_format(payment_date, \'%Y\') = '+y+'\n'+
+                        'group by office, DATE_FORMAT(Payment_date, \'%Y\')'
+                }
+                if (b !== '0' && freq == "3" && y == '0'){
+                    query = 'select sum(payment_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office \n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by office, DATE_FORMAT(Payment_date, \'%Y\')'
+                }
+                if (b !== '0' && freq == "4"){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office, \n'+
+                        'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) branchQuarter\n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                        'group by branchQuarter order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                if (b !== '0' && freq == "4" && y == '0'){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office, \n'+
+                        'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) branchQuarter\n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by branchQuarter order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+            }
+            //Bad Loans
+            if (bt == '4'){
+                query = 'select ID, applicationID, \n' +
+                    'min(payment_collect_date) as duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
+                    '(select loan_amount from applications where applications.ID = applicationID) as principal,\n' +
+                    '(sum(payment_amount) - payment_amount) as amount_due, (sum(interest_amount) - interest_amount) as interest_due\n' +
+                    'from application_schedules\n' +
+                    'where payment_status = 0 and status = 1 and applicationID in (select a.ID from applications a where a.status = 2) group by applicationid\n';
+                //Specific Branch
+                if (b){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) branch\n' +
+                        'from schedule_history \n' +
+                        'where status = 1 and applicationid in (select id from applications where applications.status <> 0)\n' +
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by branch'
+                }
+                //Specific Branch, Monthly, Specific Year
+                if (b !== '0' && freq == "2"){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        'DATE_FORMAT(payment_date, \'%M %Y\') monthpayed, \n'+
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                        'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                if (b !== '0' && freq == "2" && y == '0'){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        'DATE_FORMAT(payment_date, \'%M %Y\') monthpayed, \n'+
+                        '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n' +
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by Date_format(Payment_date, \'%M%Y\') order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                //Specific Branch, Yearly
+                if (b !== '0' && freq == "3"){
+                    query = 'select sum(payment_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office \n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and date_format(payment_date, \'%Y\') = '+y+'\n'+
+                        'group by office, DATE_FORMAT(Payment_date, \'%Y\')'
+                }
+                if (b !== '0' && freq == "3" && y == '0'){
+                    query = 'select sum(payment_amount) amount_received, DATE_FORMAT(payment_date, \'%Y\') PaymentYear, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office \n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'group by office, DATE_FORMAT(Payment_date, \'%Y\')'
+                }
+                if (b !== '0' && freq == "4"){
+                    query = 'select sum(payment_amount) amount_received, \n' +
+                        '(select branch_name from branches where branches.id = '+b+') office, \n'+
+                        'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) branchQuarter\n'+
+                        'from schedule_history \n' +
+                        'where status = 1\n' +
+                        'and applicationid in (select id from applications where status <> 0)\n'+
+                        'and (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid)) = '+b+'\n'+
+                        'and Date_format(Payment_date, \'%Y\') = '+y+'\n'+
+                        'group by branchQuarter order by EXTRACT(YEAR_MONTH FROM payment_date)'
+                }
+                if (b !== '0' && freq == "4" && y == '0'){
+                    query = 'select sum(payment_amount) amount_received, \n' +
                         '(select branch_name from branches where branches.id = '+b+') office, \n'+
                         'concat(\'Q\',quarter(payment_date),\'-\', year(payment_date)) branchQuarter\n'+
                         'from schedule_history \n' +
@@ -4145,7 +4308,7 @@ users.get('/multi-analytics', function (req, res, next){
                 'payment_collect_date is not null and applicationid in (select id from applications where status <> 0) order by EXTRACT(YEAR_MONTH from payment_collect_date)'
             query2 = 'select ID, applicationID, \n' +
                 'min(payment_collect_date) duedate, (select fullname from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) as client,\n' +
-                '(sum(payment_amount) - payment_amount) as amount_due,\n' +
+                '(sum(payment_amount)) as amount_due,\n' +
                 '(select branch_name from branches where branches.id = (select branch from clients where clients.id = (select userid from applications where applications.id = applicationid))) office\n'+
                 'from application_schedules\n' +
                 'where payment_status = 0 and status = 1 and applicationID in (select a.ID from applications a where a.status = 2)\n'+
