@@ -494,10 +494,10 @@
         });
     }
 
-    let earned;
+    let earned,
+        earnings;
     function openCommissionModal(owner) {
-        let earnings = 0,
-            values = owner.split(','),
+        let values = owner.split(','),
             ID = values[0],
             userID = values[1],
             commissionID = values[2],
@@ -512,6 +512,7 @@
             accelerator_threshold_rate = values[11],
             start = values[12],
             end = values[13];
+        earnings = 0;
         $.ajax({
             type: "GET",
             url: "/user/committals/user/"+type+"/"+userID+"/"+targetID+"?start="+start+"&&end="+end,
@@ -545,21 +546,21 @@
                         earnings = (parseInt(rate)/100) * parseFloat(data.total);
                     }
                 }
-                earned = earnings - parseFloat(paid);
-                processCommission(ID,earned);
+                processCommission(ID,earnings,paid);
             }
         });
     }
 
-    let processed_commission = 0;
-    function processCommission(id,earned) {
+    let processed_commission;
+    function processCommission(id,earnings,paid) {
+        processed_commission = 0;
         $.ajax({
             type: "GET",
             url: "/user/commission/processes/"+id,
             success: function (data) {
                 let process = data.response;
                 if (process)
-                    processed_commission = earned + parseFloat(process.amount);
+                    processed_commission = earnings - parseFloat(paid) + parseFloat(process.amount);
                 $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             }
         });
