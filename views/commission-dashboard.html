@@ -574,14 +574,13 @@
             });
         }
 
-        let earned,
-            user_id,
+        let user_id,
+            earnings,
             amount_paid,
             commission_id,
             user_commission_id;
         function openCommissionModal(owner) {
-            let earnings = 0,
-                values = owner.split(','),
+            let values = owner.split(','),
                 ID = values[0],
                 userID = values[1],
                 commissionID = values[2],
@@ -596,6 +595,7 @@
                 accelerator_threshold_rate = values[11],
                 start = values[12],
                 end = values[13];
+            earnings = 0;
             user_id = userID;
             user_commission_id = ID;
             commission_id = commissionID;
@@ -634,15 +634,14 @@
                             earnings = (parseInt(rate)/100) * parseFloat(data.total);
                         }
                     }
-                    earned = earnings - parseFloat(paid);
-                    $('#commission-earned').text('₦'+earned.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-                    processCommission(ID,earned);
+                    $('#commission-earned').text('₦'+earnings.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    processCommission(ID,earnings,paid);
                 }
             });
         }
 
         let processed_commission;
-        function processCommission(id,earned) {
+        function processCommission(id,earnings,paid) {
             processed_commission = 0;
             $.ajax({
                 type: "GET",
@@ -653,6 +652,7 @@
                         $title = $('#process-title'),
                         $amount = $('#process-amount'),
                         $button = $('#save-process-btn');
+                    processed_commission = earnings - parseFloat(paid);
                     if (process){
                         $button.hide();
                         $type.val(process.type);
@@ -661,7 +661,7 @@
                         $type.prop('disabled',true);
                         $title.prop('disabled',true);
                         $amount.prop('disabled',true);
-                        processed_commission = earned + parseFloat(process.amount);
+                        processed_commission = processed_commission + parseFloat(process.amount);
                     }
                     $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 }
@@ -734,8 +734,8 @@
             obj.amount = parseFloat(obj.amount);
             if (obj.amount <= 0)
                 return swal('Invalid amount specified','','warning');
-            if ((obj.type === 'deduction') && (obj.amount > earned))
-                return swal('Insufficient commission earned ('+earned+')','','warning');
+            if ((obj.type === 'deduction') && (obj.amount > earnings))
+                return swal('Insufficient commission earned ('+earnings+')','','warning');
             obj.amount = (obj.type === 'addition')? obj.amount : (-1 * obj.amount);
             $('#wait').show();
             $.ajax({
