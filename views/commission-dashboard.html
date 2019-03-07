@@ -261,7 +261,7 @@
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success" onclick="payCommission()">Add Payment</button>
+                                <button type="button" class="btn btn-block btn-success payCommission" onclick="payCommission()">Add Payment</button>
                             </div>
                         </div>
                     </div>
@@ -319,7 +319,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="save-process-btn" type="button" class="btn btn-success" onclick="saveProcess()">Save</button>
+                    <button id="save-process-btn" type="button" class="btn btn-success processCommission" onclick="saveProcess()">Save</button>
                 </div>
             </div>
         </div>
@@ -411,7 +411,9 @@
             let w,
                 perms = JSON.parse(localStorage.getItem("permissions")),
                 page = (window.location.pathname.split('/')[1].split('.'))[0],
-                reversePayment = ($.grep(perms, function(e){return e.module_name === 'reversePayment';}))[0];
+                payCommission = ($.grep(perms, function(e){return e.module_name === 'payCommission';}))[0],
+                reversePayment = ($.grep(perms, function(e){return e.module_name === 'reversePayment';}))[0],
+                processCommission = ($.grep(perms, function(e){return e.module_name === 'processCommission';}))[0];
             commissionsList = ($.grep(perms, function(e){return e.module_name === 'commissionsList';}))[0];
             perms.forEach(function (k){
                 if (k.module_name === page)
@@ -420,8 +422,14 @@
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
                 $(".write").hide();
 
+            if (payCommission && payCommission['read_only'] === '0')
+                $('.payCommission').hide();
+
             if (reversePayment && reversePayment['read_only'] === '0')
                 $('.reversePayment').hide();
+
+            if (processCommission && processCommission['read_only'] === '0')
+                $('.processCommission').hide();
 
             if (commissionsList && commissionsList['read_only'] === '1'){
                 getCommissions();
@@ -653,22 +661,22 @@
                         $amount = $('#process-amount'),
                         $button = $('#save-process-btn');
                     if (process){
-                        $button.hide();
                         $type.val(process.type);
                         $title.val(process.title);
                         $amount.val(process.amount);
                         $type.prop('disabled',true);
                         $title.prop('disabled',true);
                         $amount.prop('disabled',true);
+                        $button.prop('disabled',true);
                         processed_commission = earnings - parseFloat(paid) + parseFloat(process.amount);
                     } else {
-                        $button.show();
                         $type.val('-- Select Type --');
                         $title.val('');
                         $amount.val('');
                         $type.prop('disabled',false);
                         $title.prop('disabled',false);
                         $amount.prop('disabled',false);
+                        $button.prop('disabled',false);
                     }
                     $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 }
