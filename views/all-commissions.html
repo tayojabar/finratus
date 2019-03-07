@@ -559,9 +559,8 @@
             url: "/user/commission/processes/"+id,
             success: function (data) {
                 let process = data.response;
-                processed_commission = earnings - parseFloat(paid);
                 if (process)
-                    processed_commission = processed_commission + parseFloat(process.amount);
+                    processed_commission = earnings - parseFloat(paid) + parseFloat(process.amount);
                 $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             }
         });
