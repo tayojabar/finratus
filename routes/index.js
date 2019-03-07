@@ -325,7 +325,6 @@ router.get('/vehicles/:number_plate/', function(req, res, next) {
                 let path = 'files/'+k.Number_Plate+'/';
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
-                        console.log(path+': Exists, hence image '+JSON.stringify(files));
                         let obj = {};
                         async.forEach(files, function (file, callback){
                             let insP = file.split('.')[0].split('_')[1];
@@ -376,7 +375,6 @@ router.get('/vehicles-owner/:owner', function(req, res, next) {
                         });
                     });
                 } else {
-                    console.log(path+': Doesnt Exist, no image');
                     k.images = "No Image";
                     array.push(k);
                     cb();
@@ -449,7 +447,6 @@ router.get('/inspected-by/:inspector', function(req, res, next) {
                 if (fs.existsSync(path)){
                     fs.readdir(path, function (err, files){
                         let obj = {};
-                        console.log(path+': Exists, hence image');
                         async.forEach(files, function (file, callback){
                             let part = file.split('.')[0].split('_')[1];
                             obj[part] = path+file;
@@ -460,9 +457,7 @@ router.get('/inspected-by/:inspector', function(req, res, next) {
                             cb();
                         });
                     });
-                }
-                else {
-                    console.log(path+': Doesnt Exist, no image');
+                } else {
                     k.images = "No Image";
                     array.push(k);
                     cb();

@@ -4368,7 +4368,6 @@ users.get('/multi-analytics', function (req, res, next){
             break;
     }
     let load = {};
-    // console.log(query1); console.log(query2);
     db.query(query1, function (error, results, fields) {
         db.getConnection(function(err, connection) {
             if (err) throw err;
@@ -4699,7 +4698,7 @@ users.post('/en-act-type/:id', function(req, res, next) {
 users.post('/attach-files/:id', function(req, res) {
     if (!req.files) return res.status(400).send('No files were uploaded.');
     if (!req.params.id) return res.status(400).send('No Folder specified!');
-    if (req.body.num == 1){
+    if (req.body.num === 1){
         fs.stat('files/activities/'+req.params.id+'/', function(err) {
             if (!err) {
                 console.log('file or directory exists');
@@ -4714,7 +4713,7 @@ users.post('/attach-files/:id', function(req, res) {
         extArray = sampleFile.name.split("."),
         extension = extArray[extArray.length - 1],
         fileName = name+'.'+extension;
-    console.log(req.body)
+
     fs.stat('files/activities/'+req.params.id+'/'+name, function (err) {
         if (err) {
             sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
@@ -4745,7 +4744,6 @@ users.get('/attached-images/:folder/', function(req, res, next) {
     var path = 'files/activities/'+req.params.folder+'/';
     if (fs.existsSync(path)){
         fs.readdir(path, function (err, files){
-            //console.log(path+': Exists, hence image '+JSON.stringify(files));
             var obj = [];
             async.forEach(files, function (file, callback){
                 obj.push(path+file)
