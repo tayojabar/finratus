@@ -16,7 +16,6 @@ router.post('/create', function (req, res, next) {
         const url = `${HOST}${endpoint}`;
         axios.post(url, data)
             .then(function (response) {
-                console.log(response.data);
                 res.send(response.data);
             }, err => {
                 res.send({
@@ -52,7 +51,6 @@ router.get('/get-investments', function (req, res, next) {
     let draw = req.query.draw;
     let order = req.query.order;
     let search_string = req.query.search_string.toUpperCase();
-    console.log(search_string);
     let query = `SELECT v.ID,p.name AS investment,c.fullname AS client,amount, investment_start_date, investment_mature_date
     FROM investments v inner join investment_products p on
     v.productId = p.ID inner join clients c on
@@ -66,7 +64,6 @@ router.get('/get-investments', function (req, res, next) {
             query: query
         }
     }).then(response => {
-        console.log(response.data);
         query = `SELECT count(*) AS recordsTotal, (SELECT count(*) FROM investments v 
                     inner join investment_products p on v.productId = p.ID inner join clients c on
                     v.clientId = c.ID WHERE upper(p.code) LIKE "${search_string}%" OR upper(p.name) LIKE "${search_string}%" 
@@ -78,7 +75,6 @@ router.get('/get-investments', function (req, res, next) {
                 query: query
             }
         }).then(payload => {
-            console.log(payload.data);
             res.send({
                 draw: draw,
                 recordsTotal: payload.data[0].recordsTotal,
@@ -96,7 +92,6 @@ router.get('/get-investments/:id', function (req, res, next) {
     let draw = req.query.draw;
     let order = req.query.order;
     let search_string = req.query.search_string.toUpperCase();
-    console.log(search_string);
     let query = `SELECT v.ID,clientId,p.name AS investment, amount, investment_start_date, investment_mature_date
     FROM investments v inner join investment_products p on v.productId = p.ID WHERE clientId = ${req.params.id}
     AND (upper(p.code) LIKE "${search_string}%" OR upper(p.name) LIKE "${search_string}%") ${order} LIMIT ${limit} OFFSET ${offset}`;
@@ -108,7 +103,6 @@ router.get('/get-investments/:id', function (req, res, next) {
             query: query
         }
     }).then(response => {
-        console.log(response.data);
         query = `SELECT count(*) as recordsFiltered FROM investments v 
                     inner join investment_products p on v.productId = p.ID
                     WHERE v.clientId = ${req.params.id} AND (upper(p.code) LIKE "${search_string}%" OR upper(p.name) LIKE "${search_string}%")`;
@@ -119,7 +113,6 @@ router.get('/get-investments/:id', function (req, res, next) {
                 query: query
             }
         }).then(payload => {
-            console.log(payload.data);
             query = `SELECT count(*) as recordsTotal FROM investments WHERE clientId = ${req.params.id}`;
             endpoint = '/core-service/get';
             url = `${HOST}${endpoint}`;
@@ -128,7 +121,6 @@ router.get('/get-investments/:id', function (req, res, next) {
                     query: query
                 }
             }).then(payload2 => {
-                console.log(payload2.data);
                 res.send({
                     draw: draw,
                     recordsTotal: payload2.data[0].recordsTotal,

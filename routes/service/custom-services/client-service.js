@@ -17,7 +17,6 @@ router.get('/all', function (req, res, next) {
             }
         })
         .then(function (response) {
-            console.log(response.data);
             res.send(response.data);
         }, err => {
             res.send(err);

@@ -5,9 +5,7 @@ const router = express.Router();
 
 router.get('/get', function (req, res, next) {
     let query = req.query.query;
-    console.log(query);
     db.query(query, function (error, results, fields) {
-        console.log("Calling core-services");
         if (error) {
             res.send({
                 "status": 500,
