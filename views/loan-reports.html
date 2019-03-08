@@ -76,6 +76,21 @@
     .step.finish {
         background-color: #4CAF50;
     }
+    div.dataTables_wrapper div.dataTables_filter{
+        float: right;
+        margin-right: 15px;
+    }
+    div.dataTables_length{
+        float: left;
+    }
+    .dt-buttons.btn-group{
+        float: right;
+    }
+    .btn-default{
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #666e76;
+    }
 </style>
 
 <aside id="left-panel" class="left-panel">
@@ -227,10 +242,10 @@
                                     <a class="nav-link" href="#risk-reports" role="tab" data-toggle="tab">Risk Reports</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#fin-reports" role="tab" data-toggle="tab">Payments</a>
+                                    <a class="nav-link" id="payments" href="#fin-reports" role="tab" data-toggle="tab">Payments</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#branch-reports" role="tab" data-toggle="tab">Branch Reports</a>
+                                    <a class="nav-link" id="branches" href="#branch-reports" role="tab" data-toggle="tab">Branch Reports</a>
                                 </li>
                             </ul>
 
@@ -1071,21 +1086,8 @@
         getOfficers();
         getBranches();
         loadInfo();
-        loadDisbursed();
-        loadGLP();
-        loadPayments();
-        loadLoansByBranch();
-//        loadProjectedInterests();
-        loadInterestReceived();
-        loadInterestReceivable();
-//        loadBadLoans();
-        loadOverdues();
-        loadAggProjectedInterests();
         disbursed();
-        branches($('#branchreport').val());
-        payments();
-        interestreceived();
-        interestreceivable();
+        loadGLP();
         var today = new Date().toISOString().split('T')[0];
         document.getElementsByName("filteraggprointend")[0].setAttribute('min', today);
         document.getElementsByName("filteraggprointstart")[0].setAttribute('min', today);
@@ -1273,6 +1275,14 @@
         $("#wait").css("display", "none");
     });
 
+    $(document).on("click", "#payments", function (e){
+        payments();
+    });
+
+    $(document).on("click", "#branches", function (e){
+        branches($('#branchreport').val());
+    });
+
     $(document).on("click", "#disburse-button", function (e) {
         $("#loan-by-branch-div").hide();
         $("#disbursement-div").attr('class', 'col-sm-12');
@@ -1283,6 +1293,7 @@
 
     $(document).on("click", "#loan-branch-button", function (e) {
         loadLoansByBranch();
+        branches($('#branchreport').val());
         $("#loan-by-branch-div").show();
         $("#loan-by-branch-div").attr('class', 'col-sm-12');
         $("#disbursement-div").hide();
@@ -1291,6 +1302,8 @@
     });
 
     $(document).on("click", "#interest-receivable-button", function (e) {
+        loadInterestReceivable();
+        interestreceivable();
         $("#interests-receivable-div").show();
         $("#interests-receivable-div").attr('class', 'col-sm-12');
         $("#interests-received-div").hide();
@@ -1301,6 +1314,8 @@
     });
 
     $(document).on("click", "#interests-received-button", function (e) {
+        loadInterestReceived();
+        interestreceived();
         $("#interests-received-div").show();
         $("#interests-received-div").attr('class', 'col-sm-12');
         $("#interests-receivable-div").hide();
@@ -1311,6 +1326,7 @@
     });
 
     $(document).on("click", "#gross-projected-interest-button", function (e) {
+        loadAggProjectedInterests();
         $("#agg-prj-int-div").show();
         $("#agg-prj-int-div").attr('class', 'col-sm-12');
         $("#interests-receivable-div").hide();
@@ -1321,6 +1337,7 @@
     });
 
     $(document).on("click", "#overdue-loans-button", function (e) {
+        loadOverdues();
         $("#overdue-loans-div").show();
         $("#overdue-loans-div").attr('class', 'col-sm-12');
         $("#bad-loans-div").hide();
@@ -1342,6 +1359,7 @@
     });
 
     $(document).on("click", "#glp-button", function (e) {
+        loadGLP();
         $("#glp-div").show();
         $("#glp-div").attr('class', 'col-sm-12');
         $("#overdue-loans-div").hide();
@@ -1481,7 +1499,7 @@
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
-            let d = [];
+            let d = []; let processed_data = [];
             jQuery.each(dets.with_payments, function(k, v){
                 amount_paid[v.applicationID] = v.valid_payment;
                 loa += v.loan_amount;
@@ -1489,50 +1507,73 @@
                 num_paid++;
                 total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 pay+=v.valid_payment;
-                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0
-                $("#disbursed-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.loan_amount)),
-//                    formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
-                    formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
-                    formatDate(v.date)
-                ]);
+                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0;
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.balance = formatter.format(parseFloat(v.loan_amount - v.valid_payment));
+                v.principal = formatter.format(parseFloat(v.loan_amount));
+                processed_data.push(v);
+                $('#disbursed-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: processed_data,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "principal" },
+                        { data: "balance" },
+                        { data: "date" }
+                    ]
+                });
             });
             var totalhere = 0;
             jQuery.each(dets.without_pay, function(k, v){
-//                loans+=v.loan_amount;
+                let nopay = [];
                 amount_paid[v.ID] = 0;
                 totalhere += parseFloat(v.loan_amount);
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
-//                console.log(v.loan_amount + ' -> ' + totalglp);
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
-                $("#disbursed-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.ID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatDate(v.disbursement_date)
-                ]);
+                v.id = padWithZeroes(parseInt(v.ID),6);
+                v.balance = formatter.format(parseFloat(v.loan_amount));
+                v.principal = formatter.format(parseFloat(v.loan_amount));
+                v.date = formatDate(v.disbursement_date);
+                processed_data.push(v);
+                let table = $("#disbursed-table").DataTable();
+                $('#disbursed-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: processed_data,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "principal" },
+                        { data: "balance" },
+                        { data: "date" }
+                    ]
+                });
             });
-            amount_paidx(amount_paid);
             $('#total-disbursements').html(formatter.format(total));
 //            $('#glp').html(formatter.format(totalglp));
 //            $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
 //            $('#avg-loan-disbursed').html(formatter.format((num_all === 0) ? 0: total/num_all));
         }
     }
-    function amount_paidx(value){
-        console.log(value);
-    }
-    console.log(amount_paid);
+
     function populateGLP(dets){
         $("#glp-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#glp-table").dataTable().fnClearTable();
         }else{
+            let processed_data = [];
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
             jQuery.each(dets.with_payments, function(k, v){
                 loa += v.loan_amount;
@@ -1540,17 +1581,31 @@
                 num_paid++;
                 total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 pay+=v.valid_payment;
-                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0
+                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0;
                 if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
-                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
+                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0;
                     pay+=v.valid_payment;
-                    $("#glp-table").dataTable().fnAddData([
-                        padWithZeroes(parseInt(v.applicationID),6),
-                        v.fullname,
-                        formatter.format(parseFloat(v.loan_amount)),
-                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
-                        formatDate(v.date)
-                    ]);
+                    v.id = padWithZeroes(parseInt(v.applicationID),6);
+                    v.principal = formatter.format(parseFloat(v.loan_amount));
+                    v.balance = formatter.format(parseFloat(v.loan_amount - v.valid_payment));
+                    v.date = formatDate(v.date);
+                    processed_data.push(v);
+                    $('#glp-table').DataTable({
+                        dom: 'Blfrtip',
+                        bDestroy: true,
+                        data: processed_data,
+                        search: {search: ' '},
+                        buttons: [
+                            'copy', 'csv', 'excel', 'pdf', 'print'
+                        ],
+                        columns: [
+                            { data: "id" },
+                            { data: "fullname" },
+                            { data: "principal" },
+                            { data: "balance" },
+                            { data: "date" }
+                        ]
+                    });
                 }
             });
             var totalhere = 0;
@@ -1561,13 +1616,27 @@
 //                console.log(v.loan_amount + ' -> ' + totalglp);
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
-                $("#glp-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.ID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatDate(v.date_modified)
-                ]);
+                v.id = padWithZeroes(parseInt(v.ID),6);
+                v.principal = formatter.format(parseFloat(v.loan_amount));
+                v.balance = formatter.format(parseFloat(v.loan_amount));
+                v.date = formatDate(v.disbursement_date);
+                processed_data.push(v);
+                $('#glp-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: processed_data,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "principal" },
+                        { data: "balance" },
+                        { data: "date" }
+                    ]
+                });
             });
             $('#glp').html(formatter.format(totalglp));
             $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
@@ -1693,14 +1762,27 @@
         if (dets.length === 0){
             $("#payments-table").dataTable().fnClearTable();
         }else{
+            let deta = [];
             var total = 0;
             jQuery.each(dets.payment, function(k, v){
-                $("#payments-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.clientid),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.paid + v.interest)),
-                    v.date
-                ]);
+                v.client = padWithZeroes(parseInt(v.clientid),6);
+                v.amount = formatter.format(parseFloat(v.paid + v.interest));
+                deta.push(v);
+                $('#payments-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "client" },
+                        { data: "fullname" },
+                        { data: "amount" },
+                        { data: "date" }
+                    ]
+                });
             });
             total = dets.total[0]["total"];
             $('#total-payments').html(formatter.format(total));
@@ -1753,19 +1835,32 @@
             $("#loan-by-branch-table").dataTable().fnClearTable();
             $('#total-loans-by-branch').html(formatter.format(0));
         }else{
+            let deta = [];
             var total = 0; var collected = 0;
             jQuery.each(dets, function(k, v){
                 total += (v.disbursed) ? v.disbursed : 0;
-                $("#loan-by-branch-table").dataTable().fnAddData([
-                    padWithZeroes(v.branchID, 6),
-                    v.branch,
-                    formatter.format(v.disbursed),
-                    formatter.format(v.collected),
-                    formatter.format(v.disbursed - v.collected)
-                ]);
-                collected = v.collected;
+                v.id = padWithZeroes(v.branchID, 6);
+                v.amount = formatter.format(v.disbursed);
+                v.paid = formatter.format(v.collected);
+                v.glp = formatter.format(v.disbursed - v.collected);
+                deta.push(v);
+                $('#loan-by-branch-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "branch" },
+                        { data: "amount" },
+                        { data: "paid" },
+                        { data: "glp" }
+                    ]
+                });
             });
-//            console.log(collected);
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
@@ -1949,15 +2044,27 @@
             $("#interests-table").dataTable().fnClearTable();
             $('#total-interests-earned').html(formatter.format(0));
         }else{
-            var total = 0;
+            var total = 0; let deta = [];
             jQuery.each(dets, function(k, v){
                 total+= parseFloat(v.paid);
-                $("#interests-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.paid)),
-                    v.loan_officer
-                ]);
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.paid));
+                deta.push(v);
+                $('#interests-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "amount" },
+                        { data: "loan_officer" }
+                    ]
+                });
             });
             $('#total-interests-earned').html(formatter.format(total));
         }
@@ -1969,15 +2076,27 @@
             $("#interests-rec-table").dataTable().fnClearTable();
             $('#total-interests-rec').html(formatter.format(0));
         }else{
-            var total = 0;
+            var total = 0; let deta = [];
             jQuery.each(dets, function(k, v){
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.due));
+                deta.push(v);
                 total+= parseFloat(v.due);
-                $("#interests-rec-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.due)),
-                    v.loan_officer
-                ]);
+                $('#interests-rec-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "amount" },
+                        { data: "loan_officer" }
+                    ]
+                });
             });
             $('#total-interests-rec').html(formatter.format(total));
         }
@@ -2069,6 +2188,7 @@
             $("#bad-loans-table").dataTable().fnClearTable();
             $('#total-badloans').html(formatter.format(0));
         }else{
+            let deta = [];
             var total = 0;
             var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
             var today = new Date();
@@ -2083,14 +2203,26 @@
 //                if ((Math.round((now.getTime() - duedate.getTime())/(oneDay))) > 90){
                 let validpayment = amount_paid[v.applicationID];
                 total+= parseFloat(v.principal - validpayment);
-                $("#bad-loans-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.client,
-                    formatter.format(parseFloat(v.principal)),
-//                        formatter.format(parseFloat(v.principal - v.payment_amount)),
-                    formatter.format(parseFloat(v.principal - validpayment)),
-                    v.duedate
-                ]);
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.principal));
+                v.owed = formatter.format(parseFloat(v.principal - validpayment));
+                deta.push(v);
+                $('#bad-loans-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "client" },
+                        { data: "amount" },
+                        { data: "owed" },
+                        { data: "duedate" }
+                    ]
+                });
 //                }
             });
             $('#total-badloans').html(formatter.format(total));
@@ -2174,6 +2306,7 @@
             $("#overdues-table").dataTable().fnClearTable();
             $('#total-overdue').html(formatter.format(0));
         }else{
+            let deta = [];
             var total = 0;
             var today = new Date();
             var dd = today.getDate();
@@ -2182,13 +2315,34 @@
             var now = yyyy+'-'+mm+'-'+dd;
             jQuery.each(dets, function(k, v){
                 total+= parseFloat(v.amount_due);
-                $("#overdues-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.client,
-                    formatter.format(parseFloat(v.principal)),
-                    formatter.format(parseFloat(v.amount_due)),
-                    formatter.format(parseFloat(v.interest_due))
-                ]);
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.principal));
+                v.owed = formatter.format(parseFloat(v.amount_due));
+                v.int_owed = formatter.format(parseFloat(v.interest_due));
+                deta.push(v);
+                $('#overdues-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "client" },
+                        { data: "amount" },
+                        { data: "owed" },
+                        { data: "int_owed" }
+                    ]
+                });
+//                $("#overdues-table").dataTable().fnAddData([
+//                    padWithZeroes(parseInt(v.applicationID),6),
+//                    v.client,
+//                    formatter.format(parseFloat(v.principal)),
+//                    formatter.format(parseFloat(v.amount_due)),
+//                    formatter.format(parseFloat(v.interest_due))
+//                ]);
             });
             $('#total-overdue').html(formatter.format(total));
         }
@@ -2461,6 +2615,7 @@
                     }
                 };
                 $("#chart-container").insertFusionCharts(chartConfigs);
+                loadDisbursed();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2824,6 +2979,7 @@
                     }
                 };
                 $("#branch-chart").insertFusionCharts(chartConfigs);
+                loadLoansByBranch();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -3687,6 +3843,7 @@
                     }
                 };
                 $("#payments-chart").insertFusionCharts(chartConfigs);
+                loadPayments();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -4000,6 +4157,7 @@
                     }
                 };
                 $("#interest-received-chart").insertFusionCharts(chartConfigs);
+                loadInterestReceived();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -4317,6 +4475,7 @@
                     }
                 };
                 $("#interest-receivable-chart").insertFusionCharts(chartConfigs);
+                loadInterestReceivable();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
