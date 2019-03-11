@@ -133,7 +133,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>Add New Product</h1>
+                        <h1>Investment Product</h1>
                     </div>
                 </div>
             </div>
@@ -143,7 +143,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Investment</a></li>
-                            <li class="active">New Product</li>
+                            <li id="li_sub_dir" class="active">New Product</li>
                         </ol>
                     </div>
                 </div>
@@ -157,8 +157,7 @@
                     <div id="user-form" class="col-xs-12 col-sm-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong id="new_edit">Add Investment Product Configuration</strong> <small id="def_name">
-                                    Investment Product Information</small>
+                                <strong id="new_edit">Configure Investment Product</strong>
                             </div>
                             <div class="card-body card-block">
                                 <div id="regForm" action="user/new-client" method="post">
@@ -218,7 +217,6 @@
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label">Charges on Deposit
-                                                                Account
                                                                 <span class="text-danger">*</span></label>
                                                             <div class="input-group">
                                                                 <div class="row">
@@ -246,7 +244,7 @@
                                                     <div class="row">
 
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label"> Amount </label>
+                                                            <label class="form-control-label"> Amount <span class="text-danger">*</span></label>
                                                             <div class="input-group">
                                                                 <input type="text" id="minimum_bal" class="form-control imp"
                                                                     placeholder="Minimum Amount" min="0.00">
@@ -287,15 +285,15 @@
                                                                     class="text-danger">*</span></label>
                                                             <div class="input-group">
                                                                 <input type="number" id="min_term" class="form-control imp"
-                                                                    placeholder="Minimum Amount" min="0">
+                                                                    placeholder="Minimum Term" min="0">
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label"> Min. Term(Month) <span
+                                                            <label class="form-control-label"> Max. Term(Month) <span
                                                                     class="text-danger">*</span></label>
                                                             <div class="input-group">
                                                                 <input type="number" id="max_term" class="form-control imp"
-                                                                    placeholder="Minimum Amount" min="0">
+                                                                    placeholder="Max. Term" min="0">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -341,7 +339,7 @@
                                                             <label class="form-control-label">Interest Rate(%)</label>
                                                             <div class="input-group">
                                                                 <input type="text" id="interest_rate" class="form-control imp"
-                                                                    placeholder="Maximum Amount" min="0" disabled>
+                                                                    placeholder="Interest Rate" min="0" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
@@ -385,12 +383,13 @@
                                                     <hr><br>
                                                     <div class="row">
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label"> Count (e.g: 3 Times of)
-                                                            </label>
+                                                            <label class="form-control-label"> Count (e.g: 3 Times of)</label>
                                                             <div class="input-group">
                                                                 <input type="number" id="withdrawal_conditions_value"
                                                                     class="form-control imp" placeholder="Count" min="0">
                                                             </div>
+                                                            <div><input type="checkbox" id="chk_enforce_count">Enforce
+                                                                Count</div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label"> Duration
@@ -425,7 +424,7 @@
                                     </div>
                                     <div style="overflow:auto;">
                                         <div style="float:right;">
-                                            <button class="btn btn-success" id="btnSaveProduct" type="button" onclick="set_investment_product()">Add
+                                            <button class="btn btn-success" id="btnSaveProduct" type="button" onclick="set_investment_product()">Create
                                                 New Product</button>
                                         </div>
                                     </div>
