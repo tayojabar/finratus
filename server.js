@@ -138,23 +138,6 @@ app.post('/login', function (req, res) {
     });
 });
 
-
-// app.use(function(req, res, next) {
-//     if (req.session && req.session.user) {
-//         db.query('SELECT * FROM users WHERE email = ?', req.session.user.email, function(err, rows, fields) {
-//             if (!err) {
-//                 req.user = rows[0];
-//                 delete rows[0].password;
-//                 req.session.user = rows[0];
-//                 res.locals.user = rows[0];
-//             }
-//             next();
-//         });
-//     } else {
-//         next();
-//     }
-// });
-
 function requireLogin(req, res, next) {
     if (!req.cookies.timeout) {
         res.sendFile('index.html', {
@@ -197,10 +180,6 @@ function requireLogin(req, res, next) {
     }
 }
 
-function checkPermission(req, res, next) {
-
-}
-
 app.get('/logout', function (req, res) {
     req.session.reset();
     res.redirect('/logon');
@@ -213,6 +192,7 @@ app.use('/core-service', core_service);
 app.use('/client-service', client_service);
 app.use('/investment-service', investment_service);
 app.use('/investment-products', investment_product_service);
+app.use('/notifications', notifications);
 app.use('/files', express.static(__dirname + '/files'));
 
 app.get('/logon', function (req, res) {
