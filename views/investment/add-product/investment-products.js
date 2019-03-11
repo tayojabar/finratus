@@ -1,6 +1,7 @@
 var product_obj = {};
 $(document).ready(function () {
     get_global_items();
+    $("li_sub_dir").html("New Product");
 });
 
 $(document).ajaxStart(function () {
@@ -66,6 +67,12 @@ $("#charge_interest_on_withdrawal").on("keyup", function (event) {
     $("#charge_interest_on_withdrawal").val(formater(val));
 });
 
+
+$("#interest_rate").on("keyup", function (event) {
+    let val = $("#interest_rate").val();
+    $("#interest_rate").val(formater(val));
+});
+
 $("#min_term").on("keyup", function (event) {
     let val = $("#min_term").val();
     $('#max_term').attr('min', val);
@@ -87,6 +94,7 @@ function getInvestmentProducts(id) {
         url: `/investment/products/${id}`,
         success: function (data) {
             if (data.status === undefined) {
+                $("li_sub_dir").html("Update Product");
                 product_obj = data[0];
                 console.log(product_obj.saving_charge_opt);
                 product_obj.histories = JSON.parse(product_obj.histories);
@@ -137,9 +145,44 @@ function getInvestmentProducts(id) {
     });
 }
 
+$("#acct_allows_withdrawal").on('change',
+    function () {
+        let status = $('#acct_allows_withdrawal').is(':checked');
+        if (status) {
+            $('#inv_moves_wallet').prop("checked", false);
+            $('#interest_moves_wallet').prop("checked", false);
+        }
+    });
+
+$("#inv_moves_wallet").on('change',
+    function () {
+        let status = $('#inv_moves_wallet').is(':checked');
+        if (status) {
+            $('#acct_allows_withdrawal').prop("checked", false);
+        }
+    });
+
+$("#interest_moves_wallet").on('change',
+    function () {
+        let status = $('#interest_moves_wallet').is(':checked');
+        if (status) {
+            $('#acct_allows_withdrawal').prop("checked", false);
+        }
+    });
+
+
 $("#chk_interest_rate").on('change',
     function () {
         let status = $('#chk_interest_rate').is(':checked');
+        console.log(status);
+        if (!status) {
+            $('#interest_rate').val('');
+            $('#condition_for_interest').val('');
+            $('#charge_interest_on_withdrawal').val('');
+            $('#opt_on_charge_interest_on_withdrawal').val('');
+            $('#forfeit_interest_on_withdrawal').attr('disabled', true);
+
+        }
         activate_interest_controls(!status);
     });
 
@@ -160,6 +203,120 @@ function activate_interest_penalty_controls(status) {
     $('#opt_on_charge_interest_on_withdrawal').attr('disabled', status);
 }
 
+$("#product_investment_amount_min").on('focusout',
+    function () {
+        validate_values($("#product_investment_amount_min"), $("#product_investment_amount_max"), "Minimum investment value can not be greater than the Maximum investment value");
+    });
+
+
+function validate_values(val1, val2, message) {
+    if (val1.val() !== '') {
+        let _val1 = parseInt(val1.val().split(',').join(''));
+        let _val2 = parseInt(val2.val().split(',').join(''));
+        console.log(_val1, _val2);
+        if (_val1 <= _val2) {
+            val1.val('');
+            alert(message);
+        }
+    }
+}
+
+function validate_values_(val1, val2, message) {
+    if (val1.val() !== '') {
+        let _val1 = parseInt(val1.val().split(',').join(''));
+        let _val2 = parseInt(val2.val().split(',').join(''));
+        console.log(_val1, _val2);
+        if (_val1 > _val2) {
+            val1.val('');
+            alert(message);
+        }
+    }
+}
+
+function validate_values_2(val1, val2, val3, message) {
+    if (val1.val() !== '') {
+        let _val1 = parseInt(val1.val().split(',').join(''));
+        let _val2 = parseInt(val2.val().split(',').join(''));
+        let _val3 = parseInt(val3.val().split(',').join(''));
+        if ((_val1 >= _val2) || (_val1 >= _val3)) {
+            val1.val('');
+            alert(message);
+        }
+    }
+}
+
+function validate_values_3(val1, val2, val3, val4, message) {
+    if (val1.val() !== '') {
+        let _val1 = parseInt(val1.val().split(',').join(''));
+        let _val2 = parseInt(val2.val().split(',').join(''));
+        let _val3 = parseInt(val3.val().split(',').join(''));
+        let _val4 = parseInt(val4.val().split(',').join(''));
+        if ((_val1 >= _val2) || (_val1 >= _val3) || (_val1 >= _val4)) {
+            val1.val('');
+            alert(message);
+        }
+    }
+}
+
+
+
+
+$("#product_name").on('focusout',
+    function () {
+        if (!$("#product_name").val().replace(/\s/g, '').length) {
+            alert('Invalid product name');
+            $("#product_name").val('');
+        }
+    });
+
+
+$("#withdrawal_charge_freq").on('focusout',
+    function () {
+        validate_values_($("#withdrawal_charge_freq"), $("#minimum_bal"), "Charge for above freq. can not be greater than the Minimum investment balance");
+    });
+
+
+$("#product_investment_amount_max").on('focusout',
+    function () {
+        validate_values($("#product_investment_amount_max"), $("#product_investment_amount_min"), "Minimum investment value can not be greater than the Maximum investment value");
+    });
+
+
+$("#saving_fees").on('focusout',
+    function () {
+        validate_values_2($("#saving_fees"), $("#product_investment_amount_max"), $("#product_investment_amount_min"), "Charges on Deposit can not be greater than either Minimum or Maximum investment value");
+    });
+
+$("#minimum_bal").on('focusout',
+    function () {
+        if ($("#minimum_bal_penalty_amount").val() === '') {
+            validate_values_2($("#minimum_bal"), $("#product_investment_amount_max"), $("#product_investment_amount_min"), "Minimum balance can not be greater than either Minimum or Maximum investment value");
+        } else {
+            validate_values_3($("#minimum_bal_penalty_amount"), $("#minimum_bal"), $("#product_investment_amount_max"), $("#product_investment_amount_min"), "Penalty Charge can not be greater than either Minimum balance, Minimum or Maximum investment value");
+        }
+
+    });
+
+$("#minimum_bal_penalty_amount").on('focusout',
+    function () {
+        validate_values_3($("#minimum_bal_penalty_amount"), $("#minimum_bal"), $("#product_investment_amount_max"), $("#product_investment_amount_min"), "Penalty Charge can not be greater than either Minimum balance, Minimum or Maximum investment value");
+    });
+
+$("#chk_enforce_count").on('change',
+    function () {
+
+        let _status = $('#chk_enforce_count').is(':checked');
+        if (_status) {
+            $('#opt_on_freq_charge').val('');
+            $('#withdrawal_charge_freq').val('');
+            $('#opt_on_freq_charge').attr('disabled', true);
+            $('#withdrawal_charge_freq').attr('disabled', true);
+        } else {
+            $('#opt_on_freq_charge').attr('disabled', false);
+            $('#withdrawal_charge_freq').attr('disabled', false);
+            $('#opt_on_freq_charge').val('Fixed');
+        }
+    });
 
 
 function set_investment_product() {
@@ -208,14 +365,14 @@ function set_investment_product() {
                     $('input').prop("checked", false);
                 } else {
                     $('#wait').hide();
-                    swal('Oops! An error occurred while saving Investment Product; ' + data.error
-                        .sqlMessage,
+                    console.log(data.error);
+                    swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
                         '', 'error');
                 }
             },
             'error': function (err) {
                 $('#wait').hide();
-                swal('Oops! An error occurred while saving Investment Product; ' + data.error.sqlMessage,
+                swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
                     '', 'error');
             }
         });

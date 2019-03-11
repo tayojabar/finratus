@@ -135,7 +135,7 @@ function bindDataTable() {
                     let status_label = (full.status === 1) ? "Active" : "Inactive";
                     let status_class = (full.status === 1) ? "active-status" :
                         "inactive-status";
-                    return `<a class="btn btn-info btn-sm" href="./investment-products?id=${full.ID}">Edit</a> 
+                    return `<a class="btn btn-info btn-sm" href="./add-investment-products?id=${full.ID}">Edit</a> 
                     <a class="btn btn-info btn-sm ${status_class}" onclick="updateStatus(${full.ID},${status_})">${status_label}</a> `;
                 }
             }
