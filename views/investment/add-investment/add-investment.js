@@ -107,7 +107,7 @@ $("#investment_amount").on("focusout", function (event) {
     const selectedID = $("#investment_product").val();
     let selectedValue = products.find(x => x.ID.toString() === selectedID.toString());
     if (selectedValue !== undefined) {
-        let amount = $("#investment_amount").val().split(',').join('');;
+        let amount = $("#investment_amount").val().split(',').join('');
         let amt_min = selectedValue.investment_min.split(',').join('');
         let amt_max = selectedValue.investment_max.split(',').join('');
         console.log(amount, amt_min, amt_max);
