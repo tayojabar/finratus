@@ -62,7 +62,7 @@
                     <i class="fa fa-bars"></i>
                 </button>
                 <a class="navbar-brand" href="/dashboard">Loanratus</a>
-                <a class="navbar-brand hidden" href="/dashboard">35</a>
+                <a class="navbar-brand hidden" href="/dashboard">LR</a>
             </div>
 
             <div id="main-menu" class="main-menu collapse navbar-collapse">
@@ -213,28 +213,37 @@
     <!-- Right Panel -->
 
     <!-- Modal -->
-    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="viewCommissionModal" role="dialog" aria-labelledby="viewCommissionModalLabel">
         <div class="modal-dialog modal-lg" role="document" style="min-width: 50%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Commission Details</h4>
+                    <h4 class="modal-title" id="viewCommissionModalLabel">Commission Details</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="row setup-content">
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="card text-white bg-flat-color-1">
                                 <div class="card-body pb-0">
                                     <h3 id="commission-earned" class="mb-0"></h3>
-                                    <p class="text-light">Total Commission Earned</p>
+                                    <p class="text-light">Total Earned</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4" data-toggle="modal" data-target="#processCommissionModal" style="cursor: pointer;">
+                            <div class="card text-white bg-flat-color-1" style="margin-bottom: 0;">
+                                <div class="card-body pb-0">
+                                    <h3 id="commission-processed" class="mb-0"></h3>
+                                    <p class="text-light">Total Processed</p>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Click to process commission</small>
+                        </div>
+                        <div class="col-sm-4">
                             <div class="card text-white bg-flat-color-1">
                                 <div class="card-body pb-0">
                                     <h3 id="commission-paid" class="mb-0"></h3>
-                                    <p class="text-light">Total Commission Paid</p>
+                                    <p class="text-light">Total Paid</p>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +252,7 @@
                     <div class="row setup-content">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <strong><label class=" form-control-label">Amount Paid</label></strong><strong style="color:red"> *</strong><span id="commission-title-error" style="padding-left:50px; text-align: center"></span>
+                                <strong><label class=" form-control-label">Amount Paid</label></strong><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
                                 <div class="input-group">
                                     <div class="input-group-addon">₦</div>
                                     <input id="amount" type="number" placeholder="0" class="form-control" required="required">
@@ -252,7 +261,7 @@
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success" onclick="payCommission()">Add Payment</button>
+                                <button type="button" class="btn btn-block btn-success payCommission" onclick="payCommission()">Add Payment</button>
                             </div>
                         </div>
                     </div>
@@ -270,6 +279,47 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="processCommissionModal" role="dialog" aria-labelledby="processCommissionModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="processCommissionModalLabel">Commission Process</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row setup-content">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <strong><label class=" form-control-label">Title</label></strong><strong style="color:red"> *</strong><span id="process-title-error" style="padding-left:50px; text-align: center"></span>
+                                <input id="process-title" type="text" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <strong><label class=" form-control-label">Amount</label></strong><strong style="color:red"> *</strong><span id="process-type-error" style="padding-left:50px; text-align: center"></span>
+                                <select id="process-type" class="form-control" required="required">
+                                    <option value="-- Select Type --" selected="selected">-- Select Type --</option>
+                                    <option value="addition">Addition</option>
+                                    <option value="deduction">Deduction</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <strong><label class=" form-control-label">Amount</label></strong><strong style="color:red"> *</strong><span id="process-amount-error" style="padding-left:50px; text-align: center"></span>
+                                <input id="process-amount" type="number" placeholder="0" class="form-control" required="required">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="save-process-btn" type="button" class="btn btn-success processCommission" onclick="saveProcess()">Save</button>
                 </div>
             </div>
         </div>
@@ -361,7 +411,9 @@
             let w,
                 perms = JSON.parse(localStorage.getItem("permissions")),
                 page = (window.location.pathname.split('/')[1].split('.'))[0],
-                reversePayment = ($.grep(perms, function(e){return e.module_name === 'reversePayment';}))[0];
+                payCommission = ($.grep(perms, function(e){return e.module_name === 'payCommission';}))[0],
+                reversePayment = ($.grep(perms, function(e){return e.module_name === 'reversePayment';}))[0],
+                processCommission = ($.grep(perms, function(e){return e.module_name === 'processCommission';}))[0];
             commissionsList = ($.grep(perms, function(e){return e.module_name === 'commissionsList';}))[0];
             perms.forEach(function (k){
                 if (k.module_name === page)
@@ -370,8 +422,14 @@
             if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
                 $(".write").hide();
 
+            if (payCommission && payCommission['read_only'] === '0')
+                $('.payCommission').hide();
+
             if (reversePayment && reversePayment['read_only'] === '0')
                 $('.reversePayment').hide();
+
+            if (processCommission && processCommission['read_only'] === '0')
+                $('.processCommission').hide();
 
             if (commissionsList && commissionsList['read_only'] === '1'){
                 getCommissions();
@@ -515,8 +573,8 @@
                     v.target,
                     v.period,
                     v.threshold,
-                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ' +
-                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.targetID+','+v.value+','+v.type+ ','+v.rate+','+v.threshold+
+                    '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#viewCommissionModal" ' +
+                    'onclick="openCommissionModal(\''+v.ID+','+v.userID+','+v.commissionID+','+v.targetID+','+v.value+','+v.type+ ','+v.rate+','+v.threshold+
                     ','+v.target_value+','+v.accelerator+','+v.accelerator_type+','+v.accelerator_threshold+','+v.start+','+v.end+'\')">' +
                     '<i class="fa fa-eye"></i> View Details</button>'
                 ];
@@ -524,44 +582,48 @@
             });
         }
 
-        let earned,
-            user_id,
+        let user_id,
+            earnings,
             amount_paid,
-            commission_id;
+            commission_id,
+            user_commission_id;
         function openCommissionModal(owner) {
-            let earnings = 0,
-                values = owner.split(','),
+            let values = owner.split(','),
                 ID = values[0],
                 userID = values[1],
-                targetID = values[2],
-                paid = values[3],
-                type = values[4],
-                rate = values[5],
-                threshold_rate = values[6],
-                target_value = values[7],
-                accelerator = values[8],
-                accelerator_type = values[9],
-                accelerator_threshold = values[10],
-                start = values[11],
-                end = values[12];
+                commissionID = values[2],
+                targetID = values[3],
+                paid = values[4],
+                type = values[5],
+                rate = values[6],
+                threshold_rate = values[7],
+                target_value = values[8],
+                accelerator = values[9],
+                accelerator_type = values[10],
+                accelerator_threshold_rate = values[11],
+                start = values[12],
+                end = values[13];
+            earnings = 0;
             user_id = userID;
-            commission_id = ID;
-            amount_paid = paid;
+            user_commission_id = ID;
+            commission_id = commissionID;
+            amount_paid = parseFloat(paid);
             getPaymentHistory(ID);
             $.ajax({
                 type: "GET",
                 url: "/user/committals/user/"+type+"/"+userID+"/"+targetID+"?start="+start+"&&end="+end,
                 success: function (response) {
-                    $('#commission-paid').text('₦'+(parseFloat(paid)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    $('#commission-paid').text('₦'+amount_paid.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     let data = response.response;
                     data.total = data.total || 0;
-                    let threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value),
+                    let accelerator_threshold = (parseFloat(accelerator_threshold_rate)/100) * parseFloat(target_value),
+                        threshold = (parseFloat(threshold_rate)/100) * parseFloat(target_value),
                         progress = (parseFloat(data.total)/parseFloat(target_value)) * 100;
-                    if (parseFloat(data.total) >= parseFloat(threshold)){
+                    if (parseFloat(data.total) >= threshold){
                         if ((accelerator !== 'null') &&
                             (accelerator_type !== 'null') &&
-                            (accelerator_threshold !== 'null') &&
-                            (progress >= accelerator_threshold)
+                            (accelerator_threshold_rate !== 'null') &&
+                            (progress >= accelerator_threshold_rate)
                         ) {
                             switch (accelerator_type) {
                                 case 'all': {
@@ -569,8 +631,8 @@
                                     break;
                                 }
                                 case 'additional': {
-                                    let excess = parseFloat(data.total) - parseFloat(threshold),
-                                        earnings_ = (parseInt(rate)/100) * parseFloat(threshold),
+                                    let excess = parseFloat(data.total) - accelerator_threshold,
+                                        earnings_ = (parseInt(rate)/100) * accelerator_threshold,
                                         earnings_excess = (parseInt(accelerator)/100) * excess;
                                     earnings = earnings_ + earnings_excess;
                                     break;
@@ -580,8 +642,43 @@
                             earnings = (parseInt(rate)/100) * parseFloat(data.total);
                         }
                     }
-                    earned = earnings - parseFloat(paid);
-                    $('#commission-earned').text('₦'+earned.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    $('#commission-earned').text('₦'+earnings.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+                    processCommission(ID,earnings,paid);
+                }
+            });
+        }
+
+        let processed_commission;
+        function processCommission(id,earnings,paid) {
+            processed_commission = 0;
+            $.ajax({
+                type: "GET",
+                url: "/user/commission/processes/"+id,
+                success: function (data) {
+                    let process = data.response,
+                        $type = $('#process-type'),
+                        $title = $('#process-title'),
+                        $amount = $('#process-amount'),
+                        $button = $('#save-process-btn');
+                    if (process){
+                        $type.val(process.type);
+                        $title.val(process.title);
+                        $amount.val(process.amount);
+                        $type.prop('disabled',true);
+                        $title.prop('disabled',true);
+                        $amount.prop('disabled',true);
+                        $button.prop('disabled',true);
+                        processed_commission = earnings - parseFloat(paid) + parseFloat(process.amount);
+                    } else {
+                        $type.val('-- Select Type --');
+                        $title.val('');
+                        $amount.val('');
+                        $type.prop('disabled',false);
+                        $title.prop('disabled',false);
+                        $amount.prop('disabled',false);
+                        $button.prop('disabled',false);
+                    }
+                    $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 }
             });
         }
@@ -590,11 +687,18 @@
             let obj = {};
             obj.userID = user_id;
             obj.commissionID = commission_id;
+            obj.user_commissionID = user_commission_id;
+            obj.total_earned = earnings.toFixed(2);
+            obj.total_processed = processed_commission.toFixed(2);
+            obj.total_paid = amount_paid.toFixed(2);
             obj.amount = $('#amount').val();
             if (!obj.amount)
                 return swal('Kindly fill all required field(s)','','warning');
-            if (parseFloat(obj.amount) > earned)
-                return swal('Insufficient commission earned ('+earned+')','','warning');
+            obj.amount = parseFloat(obj.amount);
+            if (obj.amount <= 0)
+                return swal('Invalid amount specified','','warning');
+            if (obj.amount > processed_commission)
+                return swal('Insufficient commission available ('+processed_commission+')','','warning');
             $('#wait').show();
             $.ajax({
                 'url': '/user/commission/payments',
@@ -631,6 +735,39 @@
                         $('#payment-history').dataTable().fnAddData(table);
                         $('#payment-history').dataTable().fnSort([[1,'desc']]);
                     });
+                }
+            });
+        }
+
+        function saveProcess() {
+            let obj = {};
+            obj.userID = user_id;
+            obj.commissionID = commission_id;
+            obj.user_commissionID = user_commission_id;
+            obj.title = $('#process-title').val();
+            obj.type = $('#process-type').val();
+            obj.amount = $('#process-amount').val();
+            if (!obj.amount || !obj.title || obj.amount === '-- Select Type --')
+                return swal('Kindly fill all required field(s)','','warning');
+            obj.amount = parseFloat(obj.amount);
+            if (obj.amount <= 0)
+                return swal('Invalid amount specified','','warning');
+            if ((obj.type === 'deduction') && (obj.amount > earnings))
+                return swal('Insufficient commission earned ('+earnings+')','','warning');
+            obj.amount = (obj.type === 'addition')? obj.amount : (-1 * obj.amount);
+            $('#wait').show();
+            $.ajax({
+                'url': '/user/commission/processes',
+                'type': 'post',
+                'data': obj,
+                'success': function (response) {
+                    $('#wait').hide();
+                    if(response.status === 500){
+                        swal(response.error,"","error");
+                    } else{
+                        swal("Commission process saved successfully!","","success");
+                        window.location.reload();
+                    }
                 }
             });
         }

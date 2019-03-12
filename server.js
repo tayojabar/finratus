@@ -44,6 +44,7 @@ if (fs.existsSync('./files')) {
 let app = express(),
     cors = require('cors'),
     user = require('./routes/users'),
+    settings = require('./routes/settings'),
     investment = require('./routes/investment'),
     core_service = require('./routes/service/core-service'),
     client_service = require('./routes/service/custom-services/client-service'),
@@ -208,6 +209,7 @@ app.get('/logout', function (req, res) {
 
 app.use('/', index);
 app.use('/user', user);
+app.use('/settings', settings);
 app.use('/investment', investment);
 app.use('/core-service', core_service);
 app.use('/client-service', client_service);
@@ -472,6 +474,19 @@ app.get('/all-investments', requireLogin, function (req, res) {
         root: __dirname + '/views'
     });
 });
+
+app.get('/all-commissions', requireLogin, function (req, res) {
+    res.sendFile('all-commissions.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/application-settings', requireLogin, function (req, res) {
+    res.sendFile('settings/application-settings/application-settings.html', {
+        root: __dirname + '/views'
+    });
+});
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

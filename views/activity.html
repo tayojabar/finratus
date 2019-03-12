@@ -177,7 +177,7 @@
                 <i class="fa fa-bars"></i>
             </button>
             <a class="navbar-brand" href="/dashboard">Loanratus</a>
-            <a class="navbar-brand hidden" href="/dashboard">35</a>
+            <a class="navbar-brand hidden" href="/dashboard">LR</a>
         </div>
 
         <div id="main-menu" class="main-menu collapse navbar-collapse">
@@ -267,10 +267,10 @@
                                 <!--</select>-->
                                 <label for="team-list" class="inp">
                                     <select id="team-list" class="fields" required="required">
-                                        <option id="-1">* Choose Team</option>
+                                        <option id="-1">Choose Team</option>
                                         <option value="0" id="0">Personal</option>
                                     </select>
-                                    <span class="label"></span>
+                                    <span style="left: -10px" class="label text-danger">*</span>
                                     <span class="border"></span>
                                 </label>
                             </div>
@@ -285,7 +285,7 @@
                                     <select id="client-list" class="fields" required="required">
                                         <option value="-1">&#xf17b; Client</option>
                                     </select>
-                                    <span class="label"></span>
+                                    <span class="label text-danger">*</span>
                                     <span class="border"></span>
                                 </label>
                             </div>
@@ -298,9 +298,9 @@
                                 <!--</select>-->
                                 <label for="activity-type" class="inp">
                                     <select id="activity-type" class="fields" required="required">
-                                        <option value="-1">Type</option>
+                                        <option value="-1">   Type</option>
                                     </select>
-                                    <span class="label"></span>
+                                    <span style="left: -10px"  class="label text-danger">*</span>
                                     <span class="border"></span>
                                 </label>
                                 <!--<input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New"/>-->
@@ -350,7 +350,7 @@
                                 <!--<div class="input-group-addon"><i class="fa fa-file-pdf-o"></i></div>-->
                                 <!--<input class="form-control" type="file"/>-->
                                 <label for="activity-files" class="inp">
-                                    <input type="file" id="activity-files" multiple name="files">
+                                    <input type="file" id="activity-files" multiple name="files" accept=".jpg,.jpeg, .png">
                                     <span class="label">Attachment(s)</span>
                                     <span class="border"></span>
                                 </label>
@@ -616,7 +616,7 @@
                     '    </div>\n' +
                     '    <div class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading"><small>'+pic+' Activity by </small><span class="text-muted">'+v.user+''+for_+'</span></div>\n' +
+                    '            <div class="panel-heading"><small>'+pic+' Activity by </small><span class="text-muted">'+v.user+''+for_+'</span><small> Posted on </small><span class="text-muted">'+v.date_created+'</span></div>\n' +
                     '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
                     '            <div class="panel-body">'+
                     '               <small><i class="fa fa-tasks"></i> '+v.activity+'</span></small>&nbsp;|'+
@@ -703,7 +703,7 @@
                     '    </div>\n' +
                     '    <div id="inside'+v.ID+'" class="col-sm-11" style="padding-left: 30px">\n' +
                     '        <div class="panel panel-default col-sm-12" style="background: #e9ecef; padding-left: 10px; border-radius: 0px">\n' +
-                    '            <div class="panel-heading"><small>'+pic+' Activity by </small><span class="text-muted">'+v.user+ ''+for_+'</span></div>\n' +
+                    '            <div class="panel-heading"><small>'+pic+' Activity by </small><span class="text-muted">'+v.user+ ''+for_+'</span> <small>Posted on </small><span class="text-muted">'+v.date_created+'</span></div>\n' +
                     '              <button type="button" class="btn btn-outline-primary pull-right" data-toggle="modal" data-target="#myModal" onclick="loadAttachments('+v.ID+')"><i class="fa fa-paperclip"></i> Attachments ('+attachment_count+')</button>'+
                     '            <div class="panel-body">' +
                     '               <small><i class="fa fa-tasks"></i> '+v.activity+'</span></small>&nbsp;|'+
@@ -933,7 +933,7 @@
                     let pro = '<i class="fa fa-lock"></i> Prospective Client';
                     clients = JSON.parse(response);
                     $('#client-list').empty();
-                    $('#client-list').append('<option value="-1" id="-1"><span class="text-danger">*</span> Choose Client</option>');
+                    $('#client-list').append('<option value="-1" id="-1">Choose Client</option>');
                     $('#client-list').append('<option value="0" id="0"> &#xf17b; Prospective Client </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         $("#client-list").append('<option value = "'+val.ID+'" id="'+val.ID+'" phone="'+val.phone+'" email="'+val.email+'">' + val.fullname + '</option>');
@@ -979,7 +979,7 @@
                 url: "/user/activity-types/",
                 success: function (response) {
                     var role = $("[id=activity-type]");
-                    role.empty().append('<option id="0"><span class="text-danger" style="color: red">*</span> Type </option>');
+                    role.empty().append('<option id="0">Type </option>');
                     $.each(JSON.parse(response), function (key, val) {
                         role.append('<option class="deptSp" value = "' + val.id + '" id="' + val.id + '">' + val.activity_name + '</option>');
                     });
@@ -1203,14 +1203,14 @@
 
 //    })(jQuery);
 </script>
-<!--<style>-->
+<style>
 
-    <!--.inp select {-->
-        <!--color: red; !important;-->
-    <!--}-->
-    <!--.inp option:not(:first-of-type) {-->
-        <!--color: black;-->
-    <!--}-->
-<!--</style>-->
+    .inp select option div {
+        color: red; !important;
+    }
+    /*<!--.inp option:not(:first-of-type) {-->*/
+        /*<!--color: black;-->*/
+    /*<!--}-->*/
+</style>
 </body>
 </html>

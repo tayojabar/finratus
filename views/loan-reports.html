@@ -76,6 +76,21 @@
     .step.finish {
         background-color: #4CAF50;
     }
+    div.dataTables_wrapper div.dataTables_filter{
+        float: right;
+        margin-right: 15px;
+    }
+    div.dataTables_length{
+        float: left;
+    }
+    .dt-buttons.btn-group{
+        float: right;
+    }
+    .btn-default{
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #666e76;
+    }
 </style>
 
 <aside id="left-panel" class="left-panel">
@@ -86,7 +101,7 @@
                 <i class="fa fa-bars"></i>
             </button>
             <a class="navbar-brand" href="/dashboard">Loanratus</a>
-            <a class="navbar-brand hidden" href="/dashboard">35</a>
+            <a class="navbar-brand hidden" href="/dashboard">LR</a>
         </div>
 
         <div id="main-menu" class="main-menu collapse navbar-collapse">
@@ -227,10 +242,10 @@
                                     <a class="nav-link" href="#risk-reports" role="tab" data-toggle="tab">Risk Reports</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#fin-reports" role="tab" data-toggle="tab">Payments</a>
+                                    <a class="nav-link" id="payments" href="#fin-reports" role="tab" data-toggle="tab">Payments</a>
                                 </li>
-                                <!--<li class="nav-item">-->
-                                    <!--<a class="nav-link" href="#cust-reports" role="tab" data-toggle="tab">Custom Reports</a>-->
+                                <li class="nav-item">
+                                    <a class="nav-link" id="branches" href="#branch-reports" role="tab" data-toggle="tab">Branch Reports</a>
                                 </li>
                             </ul>
 
@@ -239,13 +254,15 @@
                                 <div role="tabpanel" class="tab-pane fade active show in" id="intelliboard">
                                     <div class="card">
                                         <div class="card-body">
-                                            <div class="row" style="padding: 20px">
-                                                <div class="col-sm-6">
-                                                    <button id="disburse-button" class="btn btn-primary col-sm-12">Disbursements</button>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <button id="loan-branch-button" class="btn btn-block col-sm-12">Loans By Branch</button>
-                                                </div>
+                                            <div>
+                                            <!--<div class="row" style="padding: 20px">-->
+                                                <!--<div class="col-sm-6">-->
+                                                    <!--<button id="disburse-button" class="btn btn-primary col-sm-12">Disbursements</button>-->
+                                                <!--</div>-->
+                                                <!--<div class="col-sm-6">-->
+                                                    <!--<button id="loan-branch-button" class="btn btn-block col-sm-12">Loans By Branch</button>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
                                             </div>
                                             <div class="row">
                                                 <div id="disbursement-div" class="col-sm-12" >
@@ -331,96 +348,98 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="loan-by-branch-div" style="display: none" >
-                                                    <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
-                                                        <div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">
-                                                            <div class="form-group">
-                                                                <div class="input-group">
-                                                                    <select id="reportview" onchange="changeview(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="1">Single Chart</option>
-                                                                        <option value="2">Comparison Chart</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">
-                                                            <div class="form-group">
-                                                                <div class="input-group">
-                                                                    <select id="branchreport" onchange="changereport(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="1">Disbursements</option>
-                                                                        <option value="2">Interests</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3 card" id="sel-brn" style="background-color: transparent; border-color: transparent">
-                                                            <div class="form-group">
-                                                                <div class="input-group">
-                                                                    <select id="chartfilterbranches" onchange="bFilterBranch(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-2 card" id="brn-freq" style="background-color: transparent; border-color: transparent">
-                                                            <div class="form-group">
-                                                                <div class="input-group">
-                                                                    <select id="branch-frequency" onchange="bFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="-1"> -- Select Period --</option>
-                                                                        <option value="2">Monthly</option>
-                                                                        <option value="4">Quarterly</option>
-                                                                        <option value="3">Yearly</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3 card" id="brn-year" style="background-color: transparent; border-color: transparent; display: none">
-                                                            <div class="form-group">
-                                                                <div class="input-group">
-                                                                    <select id="branch-year" onchange="bFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
-                                                                        <option value="0">Select Year</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <div class="col-sm-5">
-                                                                <strong>Loans by Branch</strong>&nbsp;&nbsp;&nbsp;
-                                                                <span>Total: <span id="total-loans-by-branch"></span></span>
-                                                            </div>
-                                                            <div class="col-sm-7">
-                                                                <form id="filterbybranch" class="form-inline" style="float: right;">
-                                                                <div class="form-group">
-                                                                    <label class="" for="startDate">Start date</label>
-                                                                    <input type="date" class="form-control" id="filterbranchstart" placeholder="Start date">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label class="" for="endDate">End date</label>
-                                                                    <input type="date" class="form-control" id="filterbranchend" placeholder="End date">
-                                                                </div>
-                                                                <button type="submit" class="btn btn-success">Filter</button>
-                                                            </form>
-                                                            </div>
-                                                            <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
-                                                            <!--</select>-->
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <table id="loan-by-branch-table" class="table table-striped table-bordered">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>Branch ID</th>
-                                                                    <th>Branch Name</th>
-                                                                    <th>Disbursed</th>
-                                                                    <th>Collected</th>
-                                                                    <th>GLP</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody></tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
+                                                <div>
+                                                <!--<div id="loan-by-branch-div" style="display: none" >-->
+                                                    <!--<div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">-->
+                                                        <!--<div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">-->
+                                                            <!--<div class="form-group">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<select id="reportview" onchange="changeview(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">-->
+                                                                        <!--<option value="1">Single Chart</option>-->
+                                                                        <!--<option value="2">Comparison Chart</option>-->
+                                                                    <!--</select>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">-->
+                                                            <!--<div class="form-group">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<select id="branchreport" onchange="changereport(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">-->
+                                                                        <!--<option value="1">Disbursements</option>-->
+                                                                        <!--<option value="2">Interests</option>-->
+                                                                    <!--</select>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="col-sm-3 card" id="sel-brn" style="background-color: transparent; border-color: transparent">-->
+                                                            <!--<div class="form-group">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<select id="chartfilterbranches" onchange="bFilterBranch(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">-->
+                                                                    <!--</select>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="col-sm-2 card" id="brn-freq" style="background-color: transparent; border-color: transparent">-->
+                                                            <!--<div class="form-group">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<select id="branch-frequency" onchange="bFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">-->
+                                                                        <!--<option value="-1"> &#45;&#45; Select Period &#45;&#45;</option>-->
+                                                                        <!--<option value="2">Monthly</option>-->
+                                                                        <!--<option value="4">Quarterly</option>-->
+                                                                        <!--<option value="3">Yearly</option>-->
+                                                                    <!--</select>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="col-sm-3 card" id="brn-year" style="background-color: transparent; border-color: transparent; display: none">-->
+                                                            <!--<div class="form-group">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<select id="branch-year" onchange="bFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">-->
+                                                                        <!--<option value="0">Select Year</option>-->
+                                                                    <!--</select>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>-->
+                                                    <!--<div class="card">-->
+                                                        <!--<div class="card-header">-->
+                                                            <!--<div class="col-sm-5">-->
+                                                                <!--<strong>Loans by Branch</strong>&nbsp;&nbsp;&nbsp;-->
+                                                                <!--<span>Total: <span id="total-loans-by-branch"></span></span>-->
+                                                            <!--</div>-->
+                                                            <!--<div class="col-sm-7">-->
+                                                                <!--<form id="filterbybranch" class="form-inline" style="float: right;">-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="startDate">Start date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterbranchstart" placeholder="Start date">-->
+                                                                <!--</div>-->
+                                                                <!--<div class="form-group">-->
+                                                                    <!--<label class="" for="endDate">End date</label>-->
+                                                                    <!--<input type="date" class="form-control" id="filterbranchend" placeholder="End date">-->
+                                                                <!--</div>-->
+                                                                <!--<button type="submit" class="btn btn-success">Filter</button>-->
+                                                            <!--</form>-->
+                                                            <!--</div>-->
+                                                            <!--&lt;!&ndash;<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">&ndash;&gt;-->
+                                                            <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                                                        <!--</div>-->
+                                                        <!--<div class="card-body">-->
+                                                            <!--<table id="loan-by-branch-table" class="table table-striped table-bordered">-->
+                                                                <!--<thead>-->
+                                                                <!--<tr>-->
+                                                                    <!--<th>Branch ID</th>-->
+                                                                    <!--<th>Branch Name</th>-->
+                                                                    <!--<th>Disbursed</th>-->
+                                                                    <!--<th>Collected</th>-->
+                                                                    <!--<th>GLP</th>-->
+                                                                <!--</tr>-->
+                                                                <!--</thead>-->
+                                                                <!--<tbody></tbody>-->
+                                                            <!--</table>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
                                                 </div>
                                             </div>
                                         </div>
@@ -432,13 +451,15 @@
                                             <div class="col-sm-12" style="padding: 20px">
                                                 <div class="row" style="padding-bottom: 10px">
                                                     <div class="col-sm-6">
-                                                        <button id="gross-projected-interest-button" class="btn btn-block col-sm-12">Projected Interests</button>
+                                                        <button id="gross-projected-interest-button" class="btn btn-block col-sm-12">Projected Interest</button>
                                                     </div>
-                                                    <!--<div class="col-sm-6">-->
-                                                        <!--<button id="projected-interest-button" class="btn col-sm-12">Projected Interest</button>-->
-                                                    <!--</div>-->
                                                     <div class="col-sm-6">
-                                                        <button id="interests-received-button" class="btn btn-block col-sm-12">Interests Received</button>
+                                                        <button id="interest-receivable-button" class="btn col-sm-12">Interest Receivable</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <button id="interests-received-button" class="btn btn-block col-sm-12">Interest Received</button>
                                                     </div>
                                                 </div>
                                                 <!--<div class="row">-->
@@ -548,6 +569,82 @@
                                                                     <th>Loan ID</th>
                                                                     <th>Client Name</th>
                                                                     <th>Interest Received</th>
+                                                                    <th>Loan Officer</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="interests-receivable-div" style="display: none" class="col-sm-12">
+                                                    <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
+                                                        <div class="col-sm-4 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="irrecchartfilterofficers" onchange="irRecFilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="ir-rec-freq" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="ir-rec-frequency" onchange="irRecFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="-1"> -- Select Period --</option>
+                                                                        <option value="2">Monthly</option>
+                                                                        <option value="4">Quarterly</option>
+                                                                        <option value="3">Yearly</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-4 card" id="ir-rec-year" style="display: none; background-color: transparent; border-color: transparent; ">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="i-r-rec-year" onchange="irRecFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="0">Select Year</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="interest-receivable-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
+                                                                <strong>Interests Receivable</strong>
+                                                                <span>Total: <span id="total-interests-rec"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-3 card" style="background-color: transparent; border-color: transparent">
+                                                                <div class="form-group">
+                                                                    <div class="input-group">
+                                                                        <select id="interest-rec-officers" onchange="intRecFilterOfficer(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 card" style="background-color: transparent; border-color: transparent">
+                                                                <form id="filterinterestsrec" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="filterinterestrecstart" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="filterinterestrecend" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="interests-rec-table" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Loan ID</th>
+                                                                    <th>Client Name</th>
+                                                                    <th>Interest Receivable</th>
                                                                     <th>Loan Officer</th>
                                                                 </tr>
                                                                 </thead>
@@ -821,7 +918,108 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="cust-reports">ccc</div>
+                                <div role="tabpanel" class="tab-pane fade" id="branch-reports">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div id="loan-by-branch-div" class="col-sm-12">
+                                                    <div class="row" style="background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; padding-bottom: 0px">
+                                                        <div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="reportview" onchange="changeview(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="1">Single Chart</option>
+                                                                        <option value="2">Comparison Chart</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 card" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="branchreport" onchange="changereport(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="1">Disbursements</option>
+                                                                        <option value="2">Interests</option>
+                                                                        <option value="3">Payments</option>
+                                                                        <!--<option value="4">Bad Loans</option>-->
+                                                                        <!--<option value="5">Overdues</option>-->
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 card" id="sel-brn" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="chartfilterbranches" onchange="bFilterBranch(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 card" id="brn-freq" style="background-color: transparent; border-color: transparent">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="branch-frequency" onchange="bFrequencyChange(this)" class="form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="-1"> -- Select Period --</option>
+                                                                        <option value="2">Monthly</option>
+                                                                        <option value="4">Quarterly</option>
+                                                                        <option value="3">Yearly</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 card" id="brn-year" style="background-color: transparent; border-color: transparent; display: none">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <select id="branch-year" onchange="bFilterYear(this)" class="year form-control" style="width:200px; margin: 0 5px; margin-left: 50px">
+                                                                        <option value="0">Select Year</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="branch-chart" style="text-align: center">FusionCharts XT will load here!</div><hr/>
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <div class="col-sm-5">
+                                                                <strong>Disbursements by Branch</strong>&nbsp;&nbsp;&nbsp;
+                                                                <span>Total: <span id="total-loans-by-branch"></span></span>
+                                                            </div>
+                                                            <div class="col-sm-7">
+                                                                <form id="filterbybranch" class="form-inline" style="float: right;">
+                                                                    <div class="form-group">
+                                                                        <label class="" for="startDate">Start date</label>
+                                                                        <input type="date" class="form-control" id="filterbranchstart" placeholder="Start date">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="" for="endDate">End date</label>
+                                                                        <input type="date" class="form-control" id="filterbranchend" placeholder="End date">
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success">Filter</button>
+                                                                </form>
+                                                            </div>
+                                                            <!--<select id="branch-filter" onchange="filterBranch(this)" style="width: 200px">-->
+                                                            <!--</select>-->
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="loan-by-branch-table" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Branch ID</th>
+                                                                    <th>Branch Name</th>
+                                                                    <th>Disbursed</th>
+                                                                    <th>Collected</th>
+                                                                    <th>GLP</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -884,26 +1082,18 @@
         loadYears('branch-year');
         loadYears('payment-year');
         loadYears('i-r-year');
+        loadYears('i-r-rec-year');
         getOfficers();
         getBranches();
         loadInfo();
-        loadDisbursed();
-        loadGLP();
-        loadPayments();
-//        loadLoansByBranch();
-//        loadProjectedInterests();
-        loadInterestReceived();
-        loadBadLoans();
-        loadOverdues();
-        loadAggProjectedInterests();
         disbursed();
-        branches($('#branchreport').val());
-        payments();
-        interestreceived();
+        loadGLP();
         var today = new Date().toISOString().split('T')[0];
         document.getElementsByName("filteraggprointend")[0].setAttribute('min', today);
         document.getElementsByName("filteraggprointstart")[0].setAttribute('min', today);
     });
+
+    let amount_paid = {};
 
     function loadYears(id){
         var max = new Date().getFullYear(),
@@ -1059,12 +1249,38 @@
             }
         });
 
+    var myTable9 = $('#interests-rec-table')
+        .DataTable({
+            bAutoWidth: true,
+            "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": true }, { "bSortable": true }, null
+                // , null, { "bSortable": false },
+            ],
+            "aaSorting": [],
+//            "bFilter": true,
+//            "bSearchable": false,
+            // "bInfo" : false,
+            select: {
+                style: 'multi'
+            },
+            "paging": true
+        });
+
     $(document).ajaxStart(function(){
         $("#wait").css("display", "block");
     });
 
     $(document).ajaxComplete(function(){
         $("#wait").css("display", "none");
+    });
+
+    $(document).on("click", "#payments", function (e){
+        payments();
+    });
+
+    $(document).on("click", "#branches", function (e){
+        branches($('#branchreport').val());
     });
 
     $(document).on("click", "#disburse-button", function (e) {
@@ -1077,6 +1293,7 @@
 
     $(document).on("click", "#loan-branch-button", function (e) {
         loadLoansByBranch();
+        branches($('#branchreport').val());
         $("#loan-by-branch-div").show();
         $("#loan-by-branch-div").attr('class', 'col-sm-12');
         $("#disbursement-div").hide();
@@ -1084,37 +1301,43 @@
         $("#disburse-button").attr('class', 'btn col-sm-12');
     });
 
-    $(document).on("click", "#projected-interest-button", function (e) {
-        $("#projected-interests-div").show();
-        $("#projected-interests-div").attr('class', 'col-sm-12');
+    $(document).on("click", "#interest-receivable-button", function (e) {
+        loadInterestReceivable();
+        interestreceivable();
+        $("#interests-receivable-div").show();
+        $("#interests-receivable-div").attr('class', 'col-sm-12');
         $("#interests-received-div").hide();
         $("#agg-prj-int-div").hide();
-        $("#projected-interest-button").attr('class', 'btn btn-primary col-sm-12');
+        $("#interest-receivable-button").attr('class', 'btn btn-primary col-sm-12');
         $("#interests-received-button").attr('class', 'btn col-sm-12');
         $("#gross-projected-interest-button").attr('class', 'btn col-sm-12');
     });
 
     $(document).on("click", "#interests-received-button", function (e) {
+        loadInterestReceived();
+        interestreceived();
         $("#interests-received-div").show();
         $("#interests-received-div").attr('class', 'col-sm-12');
-        $("#projected-interests-div").hide();
+        $("#interests-receivable-div").hide();
         $("#agg-prj-int-div").hide();
         $("#interests-received-button").attr('class', 'btn btn-primary col-sm-12');
-        $("#projected-interest-button").attr('class', 'btn col-sm-12');
+        $("#interests-receivable-button").attr('class', 'btn col-sm-12');
         $("#gross-projected-interest-button").attr('class', 'btn col-sm-12');
     });
 
     $(document).on("click", "#gross-projected-interest-button", function (e) {
+        loadAggProjectedInterests();
         $("#agg-prj-int-div").show();
         $("#agg-prj-int-div").attr('class', 'col-sm-12');
-        $("#projected-interests-div").hide();
+        $("#interests-receivable-div").hide();
         $("#interests-received-div").hide();
         $("#gross-projected-interest-button").attr('class', 'btn btn-primary col-sm-12');
-        $("#projected-interest-button").attr('class', 'btn col-sm-12');
+        $("#interests-receivable-button").attr('class', 'btn col-sm-12');
         $("#interests-received-button").attr('class', 'btn col-sm-12');
     });
 
     $(document).on("click", "#overdue-loans-button", function (e) {
+        loadOverdues();
         $("#overdue-loans-div").show();
         $("#overdue-loans-div").attr('class', 'col-sm-12');
         $("#bad-loans-div").hide();
@@ -1125,6 +1348,7 @@
     });
 
     $(document).on("click", "#bad-loans-button", function (e) {
+        loadBadLoans();
         $("#bad-loans-div").show();
         $("#bad-loans-div").attr('class', 'col-sm-12');
         $("#overdue-loans-div").hide();
@@ -1135,6 +1359,7 @@
     });
 
     $(document).on("click", "#glp-button", function (e) {
+        loadGLP();
         $("#glp-div").show();
         $("#glp-div").attr('class', 'col-sm-12');
         $("#overdue-loans-div").hide();
@@ -1274,56 +1499,67 @@
             $("#disbursed-table").dataTable().fnClearTable();
         }else{
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
-            let d = [];
+            let d = []; let processed_data = [];
             jQuery.each(dets.with_payments, function(k, v){
+                amount_paid[v.applicationID] = v.valid_payment;
                 loa += v.loan_amount;
                 num_all++;
                 num_paid++;
                 total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 pay+=v.valid_payment;
-                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0
-                $("#disbursed-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.loan_amount)),
-//                    formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
-                    formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
-                    formatDate(v.date)
-                ]);
-//                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) === 0)){
-//                if (!(parseFloat(v.loan_amount - (parseFloat(v.paid)) === 0))){
-//                if (!(parseFloat(v.loan_amount - v.valid_payment) === 0)){
-//                if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
-////                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment))) : 0
-//                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
-//                    pay+=v.valid_payment;
-////                    console.log((v.loan_amount - v.valid_payment) + ' -> ' +totalglp);
-//                    $("#glp-table").dataTable().fnAddData([
-//                        padWithZeroes(parseInt(v.applicationID),6),
-//                        v.fullname,
-//                        formatter.format(parseFloat(v.loan_amount)),
-////                        formatter.format(parseFloat(v.loan_amount - (parseFloat(v.paid) - parseFloat((v.invalid_payment === null) ? 0 : v.invalid_payment)))),
-//                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
-//                        formatDate(v.date)
-//                    ]);
-//                }
+                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0;
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.balance = formatter.format(parseFloat(v.loan_amount - v.valid_payment));
+                v.principal = formatter.format(parseFloat(v.loan_amount));
+                processed_data.push(v);
+                $('#disbursed-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: processed_data,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "principal" },
+                        { data: "balance" },
+                        { data: "date" }
+                    ]
+                });
             });
             var totalhere = 0;
             jQuery.each(dets.without_pay, function(k, v){
-//                loans+=v.loan_amount;
+                let nopay = [];
+                amount_paid[v.ID] = 0;
                 totalhere += parseFloat(v.loan_amount);
                 total+= (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 totalglp += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
-//                console.log(v.loan_amount + ' -> ' + totalglp);
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
-                $("#disbursed-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.ID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatDate(v.disbursement_date)
-                ]);
+                v.id = padWithZeroes(parseInt(v.ID),6);
+                v.balance = formatter.format(parseFloat(v.loan_amount));
+                v.principal = formatter.format(parseFloat(v.loan_amount));
+                v.date = formatDate(v.disbursement_date);
+                processed_data.push(v);
+                let table = $("#disbursed-table").DataTable();
+                $('#disbursed-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: processed_data,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "principal" },
+                        { data: "balance" },
+                        { data: "date" }
+                    ]
+                });
             });
             $('#total-disbursements').html(formatter.format(total));
 //            $('#glp').html(formatter.format(totalglp));
@@ -1337,6 +1573,7 @@
         if (dets.length === 0){
             $("#glp-table").dataTable().fnClearTable();
         }else{
+            let processed_data = [];
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
             jQuery.each(dets.with_payments, function(k, v){
                 loa += v.loan_amount;
@@ -1344,17 +1581,31 @@
                 num_paid++;
                 total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 pay+=v.valid_payment;
-                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0
+                totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0;
                 if ((parseFloat(v.loan_amount - v.valid_payment) > 0)){
-                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0
+                    totalglp += (v.loan_amount) ? parseFloat(v.loan_amount - v.valid_payment) : 0;
                     pay+=v.valid_payment;
-                    $("#glp-table").dataTable().fnAddData([
-                        padWithZeroes(parseInt(v.applicationID),6),
-                        v.fullname,
-                        formatter.format(parseFloat(v.loan_amount)),
-                        formatter.format(parseFloat(v.loan_amount - v.valid_payment)),
-                        formatDate(v.date)
-                    ]);
+                    v.id = padWithZeroes(parseInt(v.applicationID),6);
+                    v.principal = formatter.format(parseFloat(v.loan_amount));
+                    v.balance = formatter.format(parseFloat(v.loan_amount - v.valid_payment));
+                    v.date = formatDate(v.date);
+                    processed_data.push(v);
+                    $('#glp-table').DataTable({
+                        dom: 'Blfrtip',
+                        bDestroy: true,
+                        data: processed_data,
+                        search: {search: ' '},
+                        buttons: [
+                            'copy', 'csv', 'excel', 'pdf', 'print'
+                        ],
+                        columns: [
+                            { data: "id" },
+                            { data: "fullname" },
+                            { data: "principal" },
+                            { data: "balance" },
+                            { data: "date" }
+                        ]
+                    });
                 }
             });
             var totalhere = 0;
@@ -1365,13 +1616,27 @@
 //                console.log(v.loan_amount + ' -> ' + totalglp);
                 totalbalance += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
                 num_all++;
-                $("#glp-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.ID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatter.format(parseFloat(v.loan_amount)),
-                    formatDate(v.date_modified)
-                ]);
+                v.id = padWithZeroes(parseInt(v.ID),6);
+                v.principal = formatter.format(parseFloat(v.loan_amount));
+                v.balance = formatter.format(parseFloat(v.loan_amount));
+                v.date = formatDate(v.disbursement_date);
+                processed_data.push(v);
+                $('#glp-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: processed_data,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "principal" },
+                        { data: "balance" },
+                        { data: "date" }
+                    ]
+                });
             });
             $('#glp').html(formatter.format(totalglp));
             $('#avg-loan-balance').html(formatter.format((num_all === 0) ? 0: totalbalance/num_all));
@@ -1497,14 +1762,27 @@
         if (dets.length === 0){
             $("#payments-table").dataTable().fnClearTable();
         }else{
+            let deta = [];
             var total = 0;
             jQuery.each(dets.payment, function(k, v){
-                $("#payments-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.clientid),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.paid + v.interest)),
-                    v.date
-                ]);
+                v.client = padWithZeroes(parseInt(v.clientid),6);
+                v.amount = formatter.format(parseFloat(v.paid + v.interest));
+                deta.push(v);
+                $('#payments-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "client" },
+                        { data: "fullname" },
+                        { data: "amount" },
+                        { data: "date" }
+                    ]
+                });
             });
             total = dets.total[0]["total"];
             $('#total-payments').html(formatter.format(total));
@@ -1557,19 +1835,32 @@
             $("#loan-by-branch-table").dataTable().fnClearTable();
             $('#total-loans-by-branch').html(formatter.format(0));
         }else{
+            let deta = [];
             var total = 0; var collected = 0;
             jQuery.each(dets, function(k, v){
                 total += (v.disbursed) ? v.disbursed : 0;
-                $("#loan-by-branch-table").dataTable().fnAddData([
-                    padWithZeroes(v.branchID, 6),
-                    v.branch,
-                    formatter.format(v.disbursed),
-                    formatter.format(v.collected),
-                    formatter.format(v.disbursed - v.collected)
-                ]);
-                collected = v.collected;
+                v.id = padWithZeroes(v.branchID, 6);
+                v.amount = formatter.format(v.disbursed);
+                v.paid = formatter.format(v.collected);
+                v.glp = formatter.format(v.disbursed - v.collected);
+                deta.push(v);
+                $('#loan-by-branch-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "branch" },
+                        { data: "amount" },
+                        { data: "paid" },
+                        { data: "glp" }
+                    ]
+                });
             });
-//            console.log(collected);
             $('#total-loans-by-branch').html(formatter.format(total));
         }
     }
@@ -1729,23 +2020,85 @@
         });
     }
 
+    function loadInterestReceivable(){
+        let start = $("#filterinterestrecstart").val(),
+            end = $("#filterinterestrecend").val(),
+            url;
+        url = (start === "" || start === null || end === "" || end === null ) ? 'user/interests-receivable' : 'user/interests-receivable?start='+formatDate(start)+'&&end='+formatDate(end)
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                (data.status === 200) ? populateInterestReceivable(data.response) : swal({"icon": "error", "text": 'Database Error'})
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
     function populateInterestReceived(dets){
         $("#interests-table").dataTable().fnClearTable();
         if (dets.length === 0){
             $("#interests-table").dataTable().fnClearTable();
             $('#total-interests-earned').html(formatter.format(0));
         }else{
-            var total = 0;
+            var total = 0; let deta = [];
             jQuery.each(dets, function(k, v){
                 total+= parseFloat(v.paid);
-                $("#interests-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.fullname,
-                    formatter.format(parseFloat(v.paid)),
-                    v.loan_officer
-                ]);
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.paid));
+                deta.push(v);
+                $('#interests-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "amount" },
+                        { data: "loan_officer" }
+                    ]
+                });
             });
             $('#total-interests-earned').html(formatter.format(total));
+        }
+    }
+
+    function populateInterestReceivable(dets){
+        $("#interests-rec-table").dataTable().fnClearTable();
+        if (dets.length === 0){
+            $("#interests-rec-table").dataTable().fnClearTable();
+            $('#total-interests-rec').html(formatter.format(0));
+        }else{
+            var total = 0; let deta = [];
+            jQuery.each(dets, function(k, v){
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.due));
+                deta.push(v);
+                total+= parseFloat(v.due);
+                $('#interests-rec-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "fullname" },
+                        { data: "amount" },
+                        { data: "loan_officer" }
+                    ]
+                });
+            });
+            $('#total-interests-rec').html(formatter.format(total));
         }
     }
 
@@ -1780,6 +2133,37 @@
         });
     });
 
+    $("#filterinterestsrec").submit(function (e) {
+        e.preventDefault();
+
+        let start = $("#filterinterestrecstart").val(),
+            end = $("#filterinterestrecend").val(),
+            officer = $('#interest-rec-officers').find('option:selected').attr('id')
+        url = '/user/interests-receivable?start='+formatDate(start)+'&&end='+formatDate(end);
+        if (start && end && officer==0){
+            url = '/user/interests-receivable?start='+formatDate(start)+'&&end='+formatDate(end);
+        }
+        if ((!start || !end) && officer==0 ) {
+            return loadInterestReceivable();
+        }
+        if (officer != 0){
+            url = url.concat('&&officer='+officer);
+        }
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateInterestReceivable(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    });
+
     function loadBadLoans(){
 //        let start = $("#filterbadloanstart").val(),
 //            end = $("#filterbadloanend").val(),
@@ -1804,6 +2188,7 @@
             $("#bad-loans-table").dataTable().fnClearTable();
             $('#total-badloans').html(formatter.format(0));
         }else{
+            let deta = [];
             var total = 0;
             var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
             var today = new Date();
@@ -1815,16 +2200,30 @@
 //            var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
             jQuery.each(dets, function(k, v){
                 var duedate = new Date(v.duedate);
-                if ((Math.round((now.getTime() - duedate.getTime())/(oneDay))) > 90){
-                    total+= parseFloat(v.amount_due);
-                    $("#bad-loans-table").dataTable().fnAddData([
-                        padWithZeroes(parseInt(v.applicationID),6),
-                        v.client,
-                        formatter.format(parseFloat(v.principal)),
-                        formatter.format(parseFloat(v.amount_due)),
-                        v.duedate
-                    ]);
-                }
+//                if ((Math.round((now.getTime() - duedate.getTime())/(oneDay))) > 90){
+                let validpayment = amount_paid[v.applicationID];
+                total+= parseFloat(v.principal - validpayment);
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.principal));
+                v.owed = formatter.format(parseFloat(v.principal - validpayment));
+                deta.push(v);
+                $('#bad-loans-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "client" },
+                        { data: "amount" },
+                        { data: "owed" },
+                        { data: "duedate" }
+                    ]
+                });
+//                }
             });
             $('#total-badloans').html(formatter.format(total));
         }
@@ -1907,6 +2306,7 @@
             $("#overdues-table").dataTable().fnClearTable();
             $('#total-overdue').html(formatter.format(0));
         }else{
+            let deta = [];
             var total = 0;
             var today = new Date();
             var dd = today.getDate();
@@ -1915,13 +2315,34 @@
             var now = yyyy+'-'+mm+'-'+dd;
             jQuery.each(dets, function(k, v){
                 total+= parseFloat(v.amount_due);
-                $("#overdues-table").dataTable().fnAddData([
-                    padWithZeroes(parseInt(v.applicationID),6),
-                    v.client,
-                    formatter.format(parseFloat(v.principal)),
-                    formatter.format(parseFloat(v.amount_due)),
-                    formatter.format(parseFloat(v.interest_due))
-                ]);
+                v.id = padWithZeroes(parseInt(v.applicationID),6);
+                v.amount = formatter.format(parseFloat(v.principal));
+                v.owed = formatter.format(parseFloat(v.amount_due));
+                v.int_owed = formatter.format(parseFloat(v.interest_due));
+                deta.push(v);
+                $('#overdues-table').DataTable({
+                    dom: 'Blfrtip',
+                    bDestroy: true,
+                    data: deta,
+                    search: {search: ' '},
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: "id" },
+                        { data: "client" },
+                        { data: "amount" },
+                        { data: "owed" },
+                        { data: "int_owed" }
+                    ]
+                });
+//                $("#overdues-table").dataTable().fnAddData([
+//                    padWithZeroes(parseInt(v.applicationID),6),
+//                    v.client,
+//                    formatter.format(parseFloat(v.principal)),
+//                    formatter.format(parseFloat(v.amount_due)),
+//                    formatter.format(parseFloat(v.interest_due))
+//                ]);
             });
             $('#total-overdue').html(formatter.format(total));
         }
@@ -1978,7 +2399,9 @@
                 $("#chartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#pchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#irchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#irrecchartfilterofficers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $("#interest-officers").empty().append('<option value="0" id="0">All Loan Officers</option>');
+                $("#interest-rec-officers").empty().append('<option value="0" id="0">All Loan Officers</option>');
                 $.each(JSON.parse(response), function (key, val) {
                     $("#filter-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#overdue-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
@@ -1986,7 +2409,9 @@
                     $("#chartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#pchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#irchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#irrecchartfilterofficers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                     $("#interest-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
+                    $("#interest-rec-officers").append('<option value = "' + val.ID + '" id="' + val.ID + '">' + val.fullname + '</option>');
                 });
             }
         });
@@ -2042,6 +2467,33 @@
                 let applications = data.response;
                 results = applications;
                 populateInterestReceived(applications);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function intRecFilterOfficer(officer) {
+        let start = $("#filterinterestrecstart").val(),
+            end = $("#filterinterestrecend").val(),
+            url = '/user/interests-receivable?',
+            d=[], agent;
+        if (start && end){
+            url = url.concat('start='+formatDate(start)+'&&end='+formatDate(end)+'&&');
+        }
+        if (officer.value == 0){
+            return loadInterestReceived();
+        }
+        url = url.concat('officer='+officer.value);
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+                let applications = data.response;
+                results = applications;
+                populateInterestReceivable(applications);
             },
             'error': function (err) {
                 console.log(err);
@@ -2163,6 +2615,7 @@
                     }
                 };
                 $("#chart-container").insertFusionCharts(chartConfigs);
+                loadDisbursed();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2485,7 +2938,14 @@
             'success': function (data) {
 //                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
                 jQuery.each(data.response, function(k, v){
-                    d.push({label: v.branch , value: v.amount_disbursed}, );
+                    let value;
+                    if (v.amount_disbursed)
+                        value = v.amount_disbursed;
+                    if (v.amount_received)
+                        value = v.amount_received;
+                    if (v.amount)
+                        value = v.amount;
+                    d.push({label: v.branch , value: value}, );
                 });
                 if (type == '1'){
                     yaxis = 'Amount Disbursed (In Naira)';
@@ -2494,6 +2954,10 @@
                 if (type == '2'){
                     yaxis = 'Interest Earned (In Naira)';
                     caption = 'Interest Earned by Branches'
+                }
+                if (type == '3'){
+                    yaxis = 'Payments Received (In Naira)';
+                    caption = 'Payments Received by Branches'
                 }
                 var chartConfigs = {
                     type: 'column2d', // The chart type
@@ -2515,6 +2979,7 @@
                     }
                 };
                 $("#branch-chart").insertFusionCharts(chartConfigs);
+                loadLoansByBranch();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -2576,6 +3041,29 @@
                         caption = 'Interest Earned by Branches: ';
                         if (v.branch)
                             d.push({label: v.branch , value: v.amount_received}, );
+                        if (v.PaymentYear){
+                            agent = ': '+v.office;
+                            xaxis = 'Period'
+                            d.push({label: v.PaymentYear , value: v.amount_received}, );
+                        }
+                        if (v.monthpayed){
+                            agent = ': '+v.office;
+                            xaxis = 'Period';
+                            d.push({label: v.monthpayed , value: v.amount_received}, )
+                        }
+                        if (v.branchQuarter){
+                            agent = ': '+v.office;
+                            xaxis = 'Period'
+                            d.push({label: v.branchQuarter , value: v.amount_received}, );
+                        }
+                    }
+                    if ($('#branchreport').val() == '3'){
+                        yaxis = 'Payments Received (Naira)';
+                        caption = 'Payments Received by Branches ';
+                        if (v.branch) {
+                            agent = ': '+v.branch;
+                            d.push({label: v.branch, value: v.amount_received},);
+                        }
                         if (v.PaymentYear){
                             agent = ': '+v.office;
                             xaxis = 'Period'
@@ -2840,6 +3328,7 @@
             'url': url,
             'type': 'get',
             'success': function (data) {
+                // Single Branch
                 if (report == '1'){
                     jQuery.each(data.response, function(k, v){
                         if ($('#branchreport').val() == '1') {
@@ -2884,6 +3373,29 @@
                                 d.push({label: v.branchQuarter , value: v.amount_received}, );
                             }
                         }
+                        if ($('#branchreport').val() == '3'){
+                            yaxis = 'Payments Received (Naira)';
+                            caption = 'Payments Received by Branches ';
+                            if (v.branch) {
+                                agent = ': '+v.branch;
+                                d.push({label: v.branch, value: v.amount_received},);
+                            }
+                            if (v.PaymentYear){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+                            }
+                            if (v.monthpayed){
+                                agent = ': '+v.office;
+                                xaxis = 'Period';
+                                d.push({label: v.monthpayed , value: v.amount_received}, )
+                            }
+                            if (v.branchQuarter){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+                            }
+                        }
                     });
                     var chartConfigs = {
                         type: 'column2d', // The chart type
@@ -2906,6 +3418,7 @@
                     };
                     $("#branch-chart").insertFusionCharts(chartConfigs);
                 }
+                // All Branches
                 else if (report == '2'){
                     if ($('#branchreport').val() == '1') {
                         jQuery.each(data.response, function (k, v) {
@@ -2941,6 +3454,36 @@
                         jQuery.each(data.response, function (k, v) {
                             yaxis = 'Interest Earned (Naira)';
                             caption = 'Interest Earned by Branches';
+                            xaxis = 'Period';
+                            categories.push({label: k});
+                            chartTemp = $.grep(v, function(e){return e.period === k.toString();});
+                            values.push(chartTemp);
+                            diffSeries.push(chartTemp.length);
+                            jQuery.each(v, function (key, val) {
+                                seriesNames.push(val.office);
+                            });
+                        });
+                        countSeries = Math.max.apply(Math, diffSeries);
+                        nondupSeriesNames = seriesNames.filter(function(elem, index, self) {
+                            return index === self.indexOf(elem);
+                        }).sort();
+                        for (let j = 0; j < nondupSeriesNames.length; j++) {
+                            let datum = [];
+                            for (let i = 0; i < values.length; i++) {
+                                let branch_series_value = ($.grep(values[i], function(e){return e.office === nondupSeriesNames[j];}))[0];
+                                if (branch_series_value){
+                                    datum.push({value: branch_series_value.amount_received});
+                                } else {
+                                    datum.push({value: 0});
+                                }
+                            }
+                            dataset.push({seriesname: nondupSeriesNames[j], data: datum});
+                        }
+                    }
+                    if ($('#branchreport').val() == '3') {
+                        jQuery.each(data.response, function (k, v) {
+                            yaxis = 'Payments Received (Naira)';
+                            caption = 'Payments Received by Branches';
                             xaxis = 'Period';
                             categories.push({label: k});
                             chartTemp = $.grep(v, function(e){return e.period === k.toString();});
@@ -3055,6 +3598,29 @@
                                 d.push({label: v.branchQuarter , value: v.amount_received}, );
                             }
                         }
+                        if ($('#branchreport').val() == '3'){
+                            yaxis = 'Payments Received (Naira)';
+                            caption = 'Payments Received by Branches ';
+                            if (v.branch) {
+                                agent = ': '+v.branch;
+                                d.push({label: v.branch, value: v.amount_received},);
+                            }
+                            if (v.PaymentYear){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.PaymentYear , value: v.amount_received}, );
+                            }
+                            if (v.monthpayed){
+                                agent = ': '+v.office;
+                                xaxis = 'Period';
+                                d.push({label: v.monthpayed , value: v.amount_received}, )
+                            }
+                            if (v.branchQuarter){
+                                agent = ': '+v.office;
+                                xaxis = 'Period'
+                                d.push({label: v.branchQuarter , value: v.amount_received}, );
+                            }
+                        }
                     });
                     var chartConfigs = {
                         type: 'column2d', // The chart type
@@ -3112,6 +3678,36 @@
                         jQuery.each(data.response, function (k, v) {
                             yaxis = 'Interest Earned (Naira)';
                             caption = 'Interest Earned by Branches';
+                            xaxis = 'Period';
+                            categories.push({label: k});
+                            chartTemp = $.grep(v, function(e){return e.period === k.toString();});
+                            values.push(chartTemp);
+                            diffSeries.push(chartTemp.length);
+                            jQuery.each(v, function (key, val) {
+                                seriesNames.push(val.office);
+                            });
+                        });
+                        countSeries = Math.max.apply(Math, diffSeries);
+                        nondupSeriesNames = seriesNames.filter(function(elem, index, self) {
+                            return index === self.indexOf(elem);
+                        }).sort();
+                        for (let j = 0; j < nondupSeriesNames.length; j++) {
+                            let datum = [];
+                            for (let i = 0; i < values.length; i++) {
+                                let branch_series_value = ($.grep(values[i], function(e){return e.office === nondupSeriesNames[j];}))[0];
+                                if (branch_series_value){
+                                    datum.push({value: branch_series_value.amount_received});
+                                } else {
+                                    datum.push({value: 0});
+                                }
+                            }
+                            dataset.push({seriesname: nondupSeriesNames[j], data: datum});
+                        }
+                    }
+                    if ($('#branchreport').val() == '3') {
+                        jQuery.each(data.response, function (k, v) {
+                            yaxis = 'Payments Received (Naira)';
+                            caption = 'Payments Received by Branches';
                             xaxis = 'Period';
                             categories.push({label: k});
                             chartTemp = $.grep(v, function(e){return e.period === k.toString();});
@@ -3247,6 +3843,7 @@
                     }
                 };
                 $("#payments-chart").insertFusionCharts(chartConfigs);
+                loadPayments();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -3560,6 +4157,7 @@
                     }
                 };
                 $("#interest-received-chart").insertFusionCharts(chartConfigs);
+                loadInterestReceived();
             },
             'error': function (err) {
                 swal('Error in Connection!','','error')
@@ -3843,6 +4441,326 @@
             }
         });
     }
+
+    // Interests Receivable
+
+    function interestreceivable(){
+        let d = [];
+
+        $.ajax({
+            'url': 'user/analytics?t=interest-receivable',
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    d.push({label: v.officer , value: v.amount_due}, );
+                });
+                var chartConfigs = {
+                    type: 'column2d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Receivable",
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": "Loan Officers",
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
+                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#interest-receivable-chart").insertFusionCharts(chartConfigs);
+                loadInterestReceivable();
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+
+    }
+
+    function irRecFilterOfficer(officer){
+        let url = '/user/analytics?t=interest-receivable&&',
+            freq = $('#ir-rec-frequency').val(),
+            year = $('#i-r-rec-year').val();
+        if (officer.value == 0 && freq == "-1"){
+            return interestreceivable();
+        }
+        url = url.concat('officer='+officer.value+'&&year='+year);
+        if (freq != "2" || freq != '4'){
+            $('#ir-rec-year').hide();
+            $('#i-r-rec-year').val(0);
+            url = url.concat('&&freq='+freq);
+        }
+        else{
+            url = url.concat('&&freq='+freq);
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer){
+                        agent = ': '+v.officer;
+                        d.push({label: v.officer , value: v.amount_due}, );
+                    }
+                    if (v.year){
+                        agent = ': '+v.agent;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.amount_due}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.amount_due}, )
+                    }
+                    if (v.paymonth){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.paymonth , value: v.amount_due}, )
+                    }
+                    if (v.Monthyear){
+                        agent = ' ';
+                        xaxis = 'Months';
+                        d.push({label: v.Monthyear , value: v.amount_due}, )
+                    }
+                    if (v.OfficerQuarter){
+                        agent = ': '+v.agent;
+                        xaxis = 'Period';
+                        d.push({label: v.OfficerQuarter , value: v.amount_due}, )
+                    }
+                    if (v.Quarter){
+                        agent = '';
+                        xaxis = 'Quarters';
+                        d.push({label: v.Quarter , value: v.amount_due}, )
+                    }
+                    if (v.PaymentYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.PaymentYear, value: v.amount_due}, );
+                    }
+                    if (v.OfficerYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.OfficerYear, value: v.amount_due}, );
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column2d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Receivable"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
+                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#interest-receivable-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function irRecFrequencyChange(frequency){
+        let url ='user/analytics?t=interest-receivable&&',
+            year = $('#i-r-rec-year').val(),
+            officer = $('#irrecchartfilterofficers').val();
+        if (frequency.value == 2 || frequency.value == 4){
+            $('#ir-rec-year').show();
+            if (officer && year){
+                url = url.concat('officer='+officer+'&&year='+year+'&&freq='+frequency.value);
+            }
+        }
+        else {
+            $('#ir-rec-year').hide();
+            $('#i-r-rec-year').val(0);
+            url = url.concat('officer='+officer+'&&freq='+frequency.value+'&&year='+$('#i-r-year').val());
+        }
+        let d = [], agent = '', xaxis;
+
+        $.ajax({
+            'url': url,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer){
+                        agent = ': '+v.officer;
+                        d.push({label: v.officer , value: v.amount_due}, );
+                    }
+                    if (v.year){
+                        agent = ': '+v.agent;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.amount_due}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.amount_due}, )
+                    }
+                    if (v.paymonth){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.paymonth , value: v.amount_due}, )
+                    }
+                    if (v.Monthyear){
+                        agent = ' ';
+                        xaxis = 'Months';
+                        d.push({label: v.Monthyear , value: v.amount_due}, )
+                    }
+                    if (v.OfficerQuarter){
+                        agent = ': '+v.agent;
+                        xaxis = 'Quarters';
+                        d.push({label: v.OfficerQuarter , value: v.amount_due}, )
+                    }
+                    if (v.Quarter){
+                        agent = '';
+                        xaxis = 'Quarters';
+                        d.push({label: v.Quarter , value: v.amount_due}, )
+                    }
+                    if (v.PaymentYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.PaymentYear, value: v.amount_due}, );
+                    }
+                    if (v.OfficerYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.OfficerYear, value: v.amount_due}, );
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column2d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Receivable"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
+                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#interest-receivable-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+    function irRecFilterYear(year) {
+        let urlAn = '/user/analytics?t=interest-receivable&&';
+        let officer = $('#irrecchartfilterofficers').val(),
+            freq = $("#ir-rec-frequency").val(),
+            d=[], agent, xaxis;
+        urlAn = urlAn.concat('freq='+freq+'&&officer='+officer+'&&year='+year.value);
+
+        $.ajax({
+            'url': urlAn,
+            'type': 'get',
+            'success': function (data) {
+//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+                jQuery.each(data.response, function(k, v){
+                    if (v.officer){
+                        agent = ': '+v.officer;
+                        d.push({label: v.officer , value: v.amount_due}, );
+                    }
+                    if (v.year){
+                        agent = ': '+v.agent;
+                        xaxis = 'Years'
+                        d.push({label: v.year , value: v.amount_due}, );
+                    }
+                    if (v.month){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.PaymentMonth , value: v.amount_due}, );
+                    }
+                    if (v.paymonth){
+                        agent = ': '+v.agent;
+                        xaxis = 'Months';
+                        d.push({label: v.paymonth , value: v.amount_due}, );
+                    }
+                    if (v.Monthyear){
+                        agent = ' ';
+                        xaxis = 'Months';
+                        d.push({label: v.Monthyear , value: v.amount_due}, );
+                    }
+                    if (v.OfficerQuarter){
+                        agent = ': '+v.agent;
+                        xaxis = 'Quarters';
+                        d.push({label: v.OfficerQuarter , value: v.amount_due}, );
+                    }
+                    if (v.Quarter){
+                        agent = '';
+                        xaxis = 'Quarters';
+                        d.push({label: v.Quarter , value: v.amount_due}, );
+                    }
+                    if (v.PaymentYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.PaymentYear, value: v.amount_due}, );
+                    }
+                    if (v.OfficerYear){
+                        agent = '';
+                        xaxis = 'Years';
+                        d.push({label: v.OfficerYear, value: v.amount_due}, );
+                    }
+                });
+                var chartConfigs = {
+                    type: 'column2d', // The chart type
+                    width: '100%', // Width of the chart
+                    height: '400', // Height of the chart
+                    dataFormat: 'json', // Data type
+                    dataSource: {
+                        // Chart Configuration
+                        "chart": {
+                            "caption": "Interest Receivable"+agent,
+//                            "subCaption": "In MMbbl = One Million barrels",
+                            "xAxisName": xaxis,
+                            "yAxisName": "Amount (In Naira)",
+                            "numberSuffix": "",
+                            "theme": "fusion",
+                        },
+                        // Chart Data
+                        "data": d
+                    }
+                };
+                $("#interest-received-chart").insertFusionCharts(chartConfigs);
+            },
+            'error': function (err) {
+                swal('Error in Connection!','','error')
+            }
+        });
+    }
+
+
 
 </script>
 
