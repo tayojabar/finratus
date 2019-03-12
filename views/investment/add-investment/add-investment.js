@@ -153,15 +153,14 @@ $("#investment_date_start").on("change", function (event) {
     let selectedValue = products.find(x => x.ID.toString() === selectedID.toString());
     var min_date = new Date(start_with);
     var max_date = new Date(start_with);
-    min_date.setMonth(min_date.getMonth() + parseInt(selectedValue.min_term));
-    max_date.setMonth(max_date.getMonth() + parseInt(selectedValue.max_term));
+    min_date.setMonth((min_date.getMonth() + 1) + parseInt(selectedValue.min_term));
+    max_date.setMonth((max_date.getMonth() + 1) + parseInt(selectedValue.max_term));
 
     let _min = `${min_date.getUTCFullYear()}-${pad(min_date.getMonth())}-${pad(min_date.getDate())}`;
     let _max = `${max_date.getUTCFullYear()}-${pad(max_date.getMonth())}-${pad(max_date.getDate())}`;
-    console.log(_min, new Date(_max));
     $('#investment_mature_date').attr('min', _min);
     $('#investment_mature_date').attr('max', _max);
-    $("#duration_info").html(`Min.: ${_min} Max.:${_max}`);
+    $("#duration_info").html(`Min.: ${pad(min_date.getDate())}-${pad(min_date.getMonth())}-${min_date.getUTCFullYear()} Max.: ${pad(max_date.getDate())}-${pad(max_date.getMonth())}-${max_date.getUTCFullYear()}`);
 
 });
 
@@ -205,8 +204,11 @@ $("input").on("change", function (event) {
     validate();
 });
 
-function validate() {
+$("select").on("change", function (event) {
+    validate();
+});
 
+function validate() {
     if (
 
         $('#client').on('select2:select').val() !== "0" &&
