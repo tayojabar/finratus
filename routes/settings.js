@@ -3,11 +3,10 @@ const moment = require('moment');
 const db = require('../db');
 const router = express.Router();
 
-router.post('/products', function (req, res, next) {
+router.post('/application', function (req, res, next) {
     let data = req.body;
-    data.status = 1;
     data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('INSERT INTO investment_products SET ?', data, function (error, result, fields) {
+    db.query('INSERT INTO application_settings SET ?', data, function (error, result, fields) {
         if (error) {
             res.send({
                 "status": 500,
@@ -17,18 +16,14 @@ router.post('/products', function (req, res, next) {
         } else {
             res.send({
                 "status": 200,
-                "message": "Investment product saved successfully!"
+                "message": "Application settings saved successfully!"
             });
         }
     });
 });
 
-//Get Investment Product
-router.get('/products', function (req, res, next) {
-    const limit = req.query.limit;
-    const offset = req.query.offset;
-
-    let query = `SELECT SQL_CALC_FOUND_ROWS * FROM investment_products ORDER BY name LIMIT ${limit} OFFSET ${offset}`;
+router.get('/application', function (req, res, next) {
+    let query = "SELECT * FROM application_settings WHERE ID = (SELECT MAX(ID) FROM application_settings)";
     db.query(query, function (error, results, fields) {
         if (error) {
             res.send({
@@ -37,19 +32,48 @@ router.get('/products', function (req, res, next) {
                 "response": null
             });
         } else {
-            query = 'SELECT COUNT(*) as total FROM investment_products';
-            db.query(query, function (error, response, fields) {
+            res.send({
+                "status": 200,
+                "message": "Application settings fetched successfully!",
+                "response": results[0]
+            });
+        }
+    });
+});
+
+router.post('/application/loan_purpose', function (req, res, next) {
+    let data = req.body;
+    data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query('SELECT * FROM loan_purpose_settings WHERE title = ?', [data.title], function (error, loan_purposes, fields) {
+        if (loan_purposes && loan_purposes[0]) {
+            res.send({
+                "status": 500,
+                "error": data.title+" has already been added!",
+                "response": loan_purposes[0]
+            });
+        } else {
+            db.query('INSERT INTO loan_purpose_settings SET ?', data, function (error, result, fields) {
                 if (error) {
                     res.send({
-                        status: 500,
-                        error: error,
-                        total: 0,
-                        data: results
+                        "status": 500,
+                        "error": error,
+                        "response": null
                     });
                 } else {
-                    res.send({
-                        total: response[0].total,
-                        data: results
+                    db.query("SELECT * FROM loan_purpose_settings WHERE status = 1", function (error, results, fields) {
+                        if (error) {
+                            res.send({
+                                "status": 500,
+                                "error": error,
+                                "response": null
+                            });
+                        } else {
+                            res.send({
+                                "status": 200,
+                                "message": "Loan purpose saved successfully!",
+                                "response": results
+                            });
+                        }
                     });
                 }
             });
@@ -57,30 +81,8 @@ router.get('/products', function (req, res, next) {
     });
 });
 
-
-router.get('/products/:id', function (req, res, next) {
-    let query = 'SELECT * FROM investment_products where id = ?';
-    db.query(query, req.params.id, function (error, results, fields) {
-        if (error) {
-            res.send(JSON.stringify({
-                "status": 500,
-                "error": error,
-                "response": null
-            }));
-        } else {
-            res.send(results);
-        }
-    });
-});
-
-router.post('/products/:id', function (req, res, next) {
-    var dt = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    data = req.body;
-    data.histories[data.histories.length - 1].date_created = dt;
-    data.date_modified = dt;
-    data.histories = JSON.stringify(data.histories);
-    delete data.ID;
-    db.query('UPDATE investment_products SET ? WHERE ID = ' + req.params.id, data, function (error, result, fields) {
+router.get('/application/loan_purpose', function (req, res, next) {
+    db.query("SELECT * FROM loan_purpose_settings WHERE status = 1", function (error, results, fields) {
         if (error) {
             res.send({
                 "status": 500,
@@ -90,16 +92,17 @@ router.post('/products/:id', function (req, res, next) {
         } else {
             res.send({
                 "status": 200,
-                "message": "Investment product updated successfully",
-                "response": result
+                "message": "Loan purposes fetched successfully!",
+                "response": results
             });
         }
     });
 });
 
-router.post('/products-status/:id', function (req, res, next) {
-    let date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('UPDATE investment_products SET status = ?, date_modified = ? WHERE ID = ?', [req.body.status, date, req.params.id], function (error, result, fields) {
+router.delete('/application/loan_purpose/:id', function (req, res, next) {
+    let query = "UPDATE loan_purpose_settings SET status = 0, date_modified = ? WHERE ID = ? AND status = 1",
+        date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+    db.query(query, [date_modified, req.params.id], function (error, results, fields) {
         if (error) {
             res.send({
                 "status": 500,
@@ -107,10 +110,20 @@ router.post('/products-status/:id', function (req, res, next) {
                 "response": null
             });
         } else {
-            res.send({
-                "status": 200,
-                "message": "Investment product updated successfully",
-                "response": result
+            db.query("SELECT * FROM loan_purpose_settings WHERE status = 1", function (error, results, fields) {
+                if (error) {
+                    res.send({
+                        "status": 500,
+                        "error": error,
+                        "response": null
+                    });
+                } else {
+                    res.send({
+                        "status": 200,
+                        "message": "Loan purpose deleted successfully!",
+                        "response": results
+                    });
+                }
             });
         }
     });

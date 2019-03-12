@@ -320,7 +320,7 @@ app.get('/workflow', requireLogin, function (req, res) {
 });
 
 app.get('/application/:id?', requireLogin, function (req, res) {
-    res.sendFile('application.html', {
+    res.sendFile('/application/view-application/view-application.html', {
         root: __dirname + '/views'
     });
 });
@@ -344,7 +344,7 @@ app.get('/module', requireLogin, function (req, res) {
 });
 
 app.get('/add-application', requireLogin, function (req, res) {
-    res.sendFile('add-application.html', {
+    res.sendFile('/application/add-application/add-application.html', {
         root: __dirname + '/views'
     });
 });
