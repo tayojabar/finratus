@@ -12,7 +12,6 @@
     <title>Loanratus Admin</title>
     <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="apple-touch-icon" href="apple-icon.png">
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="assets/css/normalize.css">
@@ -21,14 +20,12 @@
     <link rel="stylesheet" href="assets/css/themify-icons.css">
     <link rel="stylesheet" href="assets/css/flag-icon.min.css">
     <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
     <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
     <link rel="stylesheet" href="assets/scss/style.css">
     <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-
-
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
@@ -36,16 +33,6 @@
 
 <body>
     <!-- Left Panel -->
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-    <script src="../../menus/menu-items.js"></script>
-    <script type="text/javascript">
-        jQuery(document).ready(function ($) {
-            check();
-            loadMenus();
-            read_write();
-        });
-    </script>
-
     <aside id="left-panel" class="left-panel">
         <nav class="navbar navbar-expand-sm navbar-default">
 
@@ -129,10 +116,10 @@
         <div class="content mt-3">
             <div class="animated fadeIn">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-8">
+                    <div class="col-xs-12 col-sm-7">
                         <div class="card">
                             <div class="card-body card-block">
-                                <div action="user/new-client" method="post" style="padding: 20px;">
+                                <div style="padding: 20px;">
                                     <div class="tab">
                                         <div class="panel push-down">
                                             <div class="panel-body">
@@ -145,7 +132,7 @@
                                                             <label class="form-control-label">Min. Amount <span class="text-danger">*</span></label>
                                                             <div class="input-group">
                                                                 <input type="text" id="loan_requested_min"
-                                                                    class="form-control" placeholder="Minimum Amount" min="0">
+                                                                    class="form-control imp" placeholder="Minimum Amount" min="0">
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-6 col-md-6">
@@ -222,103 +209,40 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-4">
+                    <div class="col-xs-12 col-sm-5">
                         <div class="card">
                             <div class="card-body card-block">
-                                <div action="user/new-client" method="post" style="padding: 20px;">
+                                <div style="padding: 20px;">
                                     <div class="tab">
                                         <div class="panel push-down">
                                             <div class="panel-body">
-
                                                 <div class="example-box-wrapper">
-                                                    <h6>Investment Amount</h6>
+                                                    <h6>Purpose Of Loan</h6>
                                                     <hr>
-                                                    <div class="row">
-
-                                                        <div class="form-group col-sm-6 col-md-6">
-                                                            <label class="form-control-label">Min. Amount <span class="text-danger">*</span></label>
-                                                            <div class="input-group">
-                                                                <input type="text" id="product_investment_amount_min"
-                                                                       class="form-control" placeholder="Minimum Amount"
-                                                                       min="0">
-                                                            </div>
+                                                    <div class="row" style="margin-bottom: 15px;">
+                                                        <div class="col-lg-9">
+                                                            <input type="text" id="purpose_of_loan" class="form-control" placeholder="Title">
                                                         </div>
-                                                        <div class="form-group col-sm-6 col-md-6">
-                                                            <label class="form-control-label">Max. Amount <span class="text-danger">*</span></label>
-                                                            <div class="input-group">
-                                                                <input type="text" id="product_investment_amount_max"
-                                                                       class="form-control" placeholder="Maximum Amount"
-                                                                       min="0">
-                                                            </div>
+                                                        <div class="col-lg-3">
+                                                            <button type="button" class="btn btn-success" onclick="addLoanPurpose()">Add</button>
                                                         </div>
                                                     </div>
-                                                    <hr />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel push-down">
-                                            <div class="panel-body">
-
-                                                <div class="example-box-wrapper">
-                                                    <h6>Maturity Term</h6>
                                                     <hr>
                                                     <div class="row">
-
-                                                        <div class="form-group col-sm-6 col-md-6">
-                                                            <label class="form-control-label"> Min. Term(Month) <span
-                                                                    class="text-danger">*</span></label>
-                                                            <div class="input-group">
-                                                                <input type="number" id="min_term" class="form-control"
-                                                                       placeholder="Minimum Amount" min="0">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group col-sm-6 col-md-6">
-                                                            <label class="form-control-label"> Min. Term(Month) <span
-                                                                    class="text-danger">*</span></label>
-                                                            <div class="input-group">
-                                                                <input type="number" id="max_term" class="form-control"
-                                                                       placeholder="Minimum Amount" min="0">
-                                                            </div>
+                                                        <div class="col-lg-12">
+                                                            <table id="purposes" class="table table-striped table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Title</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
                                                         </div>
                                                     </div>
-                                                    <hr />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="panel push-down">
-                                            <div class="panel-body">
-
-                                                <div class="example-box-wrapper">
-                                                    <h6>Maturity Term</h6>
-                                                    <hr>
-                                                    <div class="row">
-
-                                                        <div class="form-group col-sm-6 col-md-6">
-                                                            <label class="form-control-label"> Min. Term(Month) <span
-                                                                    class="text-danger">*</span></label>
-                                                            <div class="input-group">
-                                                                <input type="number" id="min_term" class="form-control"
-                                                                       placeholder="Minimum Amount" min="0">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group col-sm-6 col-md-6">
-                                                            <label class="form-control-label"> Min. Term(Month) <span
-                                                                    class="text-danger">*</span></label>
-                                                            <div class="input-group">
-                                                                <input type="number" id="max_term" class="form-control"
-                                                                       placeholder="Minimum Amount" min="0">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <hr />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="overflow:auto;">
-                                        <div style="float:right;">
-                                            <button class="btn btn-success" id="btnSaveProduct" type="button" onclick="set_investment_product()">Add
-                                                New Product</button>
                                         </div>
                                     </div>
                                 </div>
@@ -335,14 +259,23 @@
     </div><!-- /#right-panel -->
 
     <!-- Right Panel -->
-
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
-    <script type="text/javascript" src="global-params.js"></script>
-    <script src="./js/money-formater.js"></script>
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>
+    <script src="./js/helper-functions.js"></script>
+    <script src="../../menus/menu-items.js"></script>
     <script type="text/javascript" src="../../settings/application-settings/application-settings.js"></script>
 </body>
 

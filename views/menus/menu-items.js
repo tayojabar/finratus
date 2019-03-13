@@ -9,31 +9,6 @@ function check() {
     }
 }
 
-function loadUsers(id) {
-    let start = $("#startDate").val(),
-        end = $("#endDate").val(),
-        uid = id || '',
-        url;
-    url = (start === "" || start === null || end === "" || end === null) ? 'user/clients-list-full/' + uid :
-        'user/clients-list-full/' + uid + '?start=' + start + '&&end=' + end;
-    $('#wait').show();
-    $.ajax({
-        'url': url,
-        'type': 'get',
-        'success': function (data) {
-            $('#wait').hide();
-            let users = JSON.parse(data);
-            results = users;
-            populateDataTable(users);
-        },
-        'error': function (err) {
-            $('#wait').hide();
-            console.log('Error');
-        }
-    });
-
-}
-
 function read_write() {
     let w;
     var perms = JSON.parse(localStorage.getItem("permissions"));
