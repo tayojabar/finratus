@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="assets/css/flag-icon.min.css">
     <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
     <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
     <link rel="stylesheet" href="assets/scss/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
@@ -37,6 +38,9 @@
             });
         });
     </script>
+
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+
 </head>
 
 <body>
@@ -177,7 +181,7 @@
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>All Investments</h1>
+                        <h1 id="header_investment_name"></h1>
                     </div>
                 </div>
             </div>
@@ -187,7 +191,7 @@
                         <ol class="breadcrumb text-right">
                             <li><a href="#">Dashboard</a></li>
                             <li><a href="#">Investment</a></li>
-                            <li class="active">All Investment</li>
+                            <li class="active">Transactions</li>
                         </ol>
                     </div>
                 </div>
@@ -201,14 +205,28 @@
                     <div id="user-table" class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="col-sm-9">
-                                    <strong class="card-title">CLIENT'S INVESTMENT</strong>
-                                </div>
                                 <div class="col-sm-3">
+                                    <div class="row">
+                                        <span><strong>Client: </strong> <span id="client_name" class="card-title"></span></span>
+                                        <span><strong>Product: </strong> <span id="inv_name" class="card-title"></span></span>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-9">
                                     <div class="pull-right">
-                                        <a href="/add-investments" class="btn btn-primary"><i class="fa fa-plus"></i>
-                                            New
-                                            Investment</a>
+                                        <div class="col-sm-4 col-md-4">
+                                            <a href="" class="btn btn-primary">
+                                                Transfer</a>
+                                        </div>
+                                        <div class="col-sm-4 col-md-4">
+                                            <a href="" class="btn btn-danger">
+                                                Withdraw</a>
+                                        </div>
+                                        <div class="col-sm-4 col-md-4">
+                                            <a href="" class="btn btn-success">
+                                                Deposit</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -217,12 +235,12 @@
                                 <table id="bootstrap-data-table2" class="table table-striped table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Client</th>
-                                            <th>Investment</th>
-                                            <th>Amount</th>
-                                            <th>Start Date</th>
-                                            <th>Maturity Date</th>
-                                            <th>Action</th>
+                                            <th>Date</th>
+                                            <th>Ref. Number</th>
+                                            <th>Description</th>
+                                            <th>Credit</th>
+                                            <th>Debit</th>
+                                            <th>Balance</th>
                                         </tr>
                                     </thead>
                                     <tbody id="investment_products">
@@ -258,7 +276,7 @@
     <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
     <script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
     <script src="assets/js/lib/data-table/datatables-init.js"></script>
-    <script type="text/javascript" src="../../investment/all-investment/all-investment.js"></script>
+    <script type="text/javascript" src="../../investment/transaction/transaction.js"></script>
     <script type="text/javascript">
     </script>
 </body>

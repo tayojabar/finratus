@@ -475,6 +475,12 @@ app.get('/all-investments', requireLogin, function (req, res) {
     });
 });
 
+app.get('/investment-transactions', requireLogin, function (req, res) {
+    res.sendFile('investment/transaction/transaction.html', {
+        root: __dirname + '/views'
+    });
+});
+
 app.get('/all-commissions', requireLogin, function (req, res) {
     res.sendFile('commission/all-commissions/all-commissions.html', {
         root: __dirname + '/views'

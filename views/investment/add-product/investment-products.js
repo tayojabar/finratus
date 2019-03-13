@@ -19,7 +19,6 @@ $("#saving_fees").on("keyup", function (event) {
 
 function get_global_items() {
     var sPageURL = window.location.search.substring(1);
-    console.log(sPageURL);
     if (sPageURL !== "") {
         var sURLVariables = sPageURL.split('=')[1];
         console.log(sURLVariables);
@@ -74,8 +73,17 @@ $("#interest_rate").on("keyup", function (event) {
 });
 
 $("#min_term").on("keyup", function (event) {
+    $("#min_term").val(formater($("#min_term").val()));
     let val = $("#min_term").val();
     $('#max_term').attr('min', val);
+});
+
+$("#max_term").on("keyup", function (event) {
+    $("#max_term").val(formater($("#max_term").val()));
+});
+
+$("#withdrawal_conditions_value").on("keyup", function (event) {
+    $("#withdrawal_conditions_value").val(formater($("#withdrawal_conditions_value").val()));
 });
 
 $("#max_term").on("focusout", function (event) {
@@ -137,9 +145,7 @@ function getInvestmentProducts(id) {
                 $('#wait').hide();
             } else {
                 $('#wait').hide();
-                swal('Oops! An error occurred while geting Investment Product; ' + data.error
-                    .sqlMessage,
-                    '', 'error');
+                swal('Oops! An error occurred while geting Investment Product; Required field(s) missing', '', 'error');
             }
         }
     });
@@ -216,7 +222,7 @@ function validate_values(val1, val2, message) {
         console.log(_val1, _val2);
         if (_val1 <= _val2) {
             val1.val('');
-            alert(message);
+            alert(message, '', 'error');
         }
     }
 }
@@ -228,7 +234,7 @@ function validate_values_(val1, val2, message) {
         console.log(_val1, _val2);
         if (_val1 > _val2) {
             val1.val('');
-            alert(message);
+            alert(message, '', 'error');
         }
     }
 }
@@ -240,7 +246,7 @@ function validate_values_2(val1, val2, val3, message) {
         let _val3 = parseInt(val3.val().split(',').join(''));
         if ((_val1 >= _val2) || (_val1 >= _val3)) {
             val1.val('');
-            alert(message);
+            alert(message, '', 'error');
         }
     }
 }
@@ -253,7 +259,7 @@ function validate_values_3(val1, val2, val3, val4, message) {
         let _val4 = parseInt(val4.val().split(',').join(''));
         if ((_val1 >= _val2) || (_val1 >= _val3) || (_val1 >= _val4)) {
             val1.val('');
-            alert(message);
+            alert(message, '', 'error');
         }
     }
 }
@@ -264,7 +270,7 @@ function validate_values_3(val1, val2, val3, val4, message) {
 $("#product_name").on('focusout',
     function () {
         if (!$("#product_name").val().replace(/\s/g, '').length) {
-            alert('Invalid product name');
+            swal('Invalid product name', '', 'error');
             $("#product_name").val('');
         }
     });
@@ -396,14 +402,13 @@ function set_investment_product() {
                     $('input').prop("checked", false);
                 } else {
                     $('#wait').hide();
-                    swal('Oops! An error occurred while updating Investment Product; ' + data.error
-                        .sqlMessage,
+                    swal('Oops! An error occurred while updating Investment Product; Required field(s) missing',
                         '', 'error');
                 }
             },
             'error': function (err) {
                 $('#wait').hide();
-                swal('Oops! An error occurred while updating Investment Product; ' + data.error.sqlMessage,
+                swal('Oops! An error occurred while updating Investment Product; Required field(s) missing',
                     '', 'error');
             }
         });
