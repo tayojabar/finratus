@@ -109,7 +109,7 @@ function loadApplication(user_id){
                     for (let j=0; j<4; j++){
                         if (count < files_count){
                             let file_name = file_names[count],
-                                file = application.files[file_name];
+                                file = "/"+application.files[file_name];
                             if (isUriImage(file)){
                                 $('.page-'+i).append('<div class="col-md-3"><a class="thumbnail grouped_elements" rel="grouped_elements" data-toggle="tooltip" data-placement="bottom" title="Click to Expand!" href="'+file+'"><img src="'+file+'" alt="'+file_name.replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_name.replace(/_/g, ' ')+'</p></div>');
                             } else {
