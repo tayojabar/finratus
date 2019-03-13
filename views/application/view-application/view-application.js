@@ -58,6 +58,7 @@ let workflow,
     application;
 
 function loadApplication(user_id){
+    let settings = settings_obj;
     $.ajax({
         'url': '/user/application-id/'+application_id,
         'type': 'get',
@@ -126,7 +127,7 @@ function loadApplication(user_id){
             }
 
             initCSVUpload(application);
-            initCSVUpload2(application);
+            initCSVUpload2(application, settings);
         },
         'error': function (err) {
             console.log('Error');
@@ -1084,7 +1085,7 @@ function processSchedule(schedule) {
     return result;
 }
 
-function initCSVUpload2(application) {
+function initCSVUpload2(application, settings) {
     let schedule = [],
         loan_amount = 0,
         $dvCSV = $("#dvCSV2"),
@@ -1112,15 +1113,15 @@ function initCSVUpload2(application) {
             duration = parseFloat(duration);
             loanAmount = parseFloat(loanAmount);
             interestRate = parseFloat(interestRate);
-            if (duration < settings_obj.tenor_min || duration > settings_obj.tenor_max)
-                return $message.text(`Minimum tenor is ${numberToCurrencyformatter(settings_obj.tenor_min)} (month)
-                     and Maximum is ${numberToCurrencyformatter(settings_obj.tenor_max)} (months)`,'','warning');
-            if (interestRate < settings_obj.interest_rate_min || interestRate > settings_obj.interest_rate_max)
-                return $message.text(`Minimum interest rate is ${numberToCurrencyformatter(settings_obj.interest_rate_min)}% 
-                    and Maximum is ${numberToCurrencyformatter(settings_obj.interest_rate_max)}%`,'','warning');
-            if (loanAmount < settings_obj.loan_requested_min || loanAmount > settings_obj.loan_requested_max)
-                return $message.text(`Minimum loan amount is ₦${numberToCurrencyformatter(settings_obj.loan_requested_min)} 
-                    and Maximum is ₦${numberToCurrencyformatter(settings_obj.loan_requested_max)}`,'','warning');
+            if (duration < settings.tenor_min || duration > settings.tenor_max)
+                return $message.text(`Minimum tenor is ${numberToCurrencyformatter(settings.tenor_min)} (month)
+                     and Maximum is ${numberToCurrencyformatter(settings.tenor_max)} (months)`,'','warning');
+            if (interestRate < settings.interest_rate_min || interestRate > settings.interest_rate_max)
+                return $message.text(`Minimum interest rate is ${numberToCurrencyformatter(settings.interest_rate_min)}% 
+                    and Maximum is ${numberToCurrencyformatter(settings.interest_rate_max)}%`,'','warning');
+            if (loanAmount < settings.loan_requested_min || loanAmount > settings.loan_requested_max)
+                return $message.text(`Minimum loan amount is ₦${numberToCurrencyformatter(settings.loan_requested_min)} 
+                    and Maximum is ₦${numberToCurrencyformatter(settings.loan_requested_max)}`,'','warning');
             $message.hide();
 
             let years = duration/12,
