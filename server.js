@@ -248,13 +248,13 @@ app.get('/all-users', requireLogin, function (req, res) {
 });
 
 app.get('/all-applications', requireLogin, function (req, res) {
-    res.sendFile('all-applications.html', {
+    res.sendFile('application/all-applications/all-applications.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/all-collections', requireLogin, function (req, res) {
-    res.sendFile('all-collections.html', {
+    res.sendFile('collection/all-collections/all-collections.html', {
         root: __dirname + '/views'
     });
 });
@@ -313,8 +313,8 @@ app.get('/reports', requireLogin, function (req, res) {
     });
 });
 
-app.get('/workflow', requireLogin, function (req, res) {
-    res.sendFile('workflow.html', {
+app.get('/add-workflow', requireLogin, function (req, res) {
+    res.sendFile('workflow/add-workflow/add-workflow.html', {
         root: __dirname + '/views'
     });
 });
@@ -326,7 +326,7 @@ app.get('/application/:id?', requireLogin, function (req, res) {
 });
 
 app.get('/edit-workflow/:id?', requireLogin, function (req, res) {
-    res.sendFile('edit-workflow.html', {
+    res.sendFile('workflow/edit-workflow/edit-workflow.html', {
         root: __dirname + '/views'
     });
 });
@@ -350,7 +350,7 @@ app.get('/add-application', requireLogin, function (req, res) {
 });
 
 app.get('/all-workflow', requireLogin, function (req, res) {
-    res.sendFile('all-workflow.html', {
+    res.sendFile('workflow/all-workflow/all-workflow.html', {
         root: __dirname + '/views'
     });
 });
@@ -362,7 +362,7 @@ app.get('/all-requests', requireLogin, function (req, res) {
 });
 
 app.get('/loan-repayment', requireLogin, function (req, res) {
-    res.sendFile('loan-repayment.html', {
+    res.sendFile('collection/loan-repayment/loan-repayment.html', {
         root: __dirname + '/views'
     });
 });

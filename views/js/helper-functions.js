@@ -55,6 +55,12 @@ Number.prototype.trunc = function(p) {
     return parseFloat((parseInt(this*d)/d).toFixed(p));
 };
 
+Date.prototype.toDateInputValue = (function() {
+    let local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+
 function formatDate(date) {
     let d = new Date(date),
         month = '' + (d.getMonth() + 1),
