@@ -1,0 +1,376 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="assets/scss/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" />
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="assets/js/zingchart.min.js"></script>
+    <style type="text/css">
+        .zc-ref {
+            display: none;
+        }
+        #datepicker input {
+            display: block;
+            width: 100%;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        option.disabled {
+            background: #efefef;
+        }
+    </style>
+</head>
+<body>
+<!-- Left Panel -->
+<aside id="left-panel" class="left-panel">
+    <nav class="navbar navbar-expand-sm navbar-default">
+
+        <div class="navbar-header">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="/dashboard">Loanratus</a>
+            <a class="navbar-brand hidden" href="/dashboard">LR</a>
+        </div>
+
+        <div id="main-menu" class="main-menu collapse navbar-collapse">
+            <ul id="sidebar" class="nav navbar-nav">
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </nav>
+</aside><!-- /#left-panel -->
+<!-- Left Panel -->
+
+<!-- Right Panel -->
+<div id="right-panel" class="right-panel">
+
+    <!-- Header-->
+    <header id="header" class="header">
+
+        <div class="header-menu">
+
+            <div class="col-sm-7">
+                <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                <div class="header-left">
+                    <button class="search-trigger"><i class="fa fa-search"></i></button>
+                    <div class="form-inline">
+                        <form class="search-form">
+                            <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                            <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-5">
+                <div class="user-area dropdown float-right">
+                    <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
+                    </a>
+
+                    <div class="user-menu dropdown-menu">
+                        <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+
+                        <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+
+                        <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
+
+                        <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
+                        <script type="text/javascript">
+                            function logout() {
+                                localStorage.login = "0";
+                                window.location.href = "/logout";
+                            }
+                        </script>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </header><!-- /header -->
+    <!-- Header-->
+
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    <h1>All Targets</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="page-header float-right">
+                <div class="page-title">
+                    <ol class="breadcrumb text-right">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Users</a></li>
+                        <li class="active">All Targets</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title" style="float: left;">All Targets</strong>
+                            <button style="float: right;" class="btn btn-info" data-toggle="modal" data-target="#addNewTargetModal"><i class="fa fa-plus"></i> Add Target</button>
+                            <button style="float: right;" class="btn btn-primary" data-toggle="modal" data-target="#addNewPeriodModal"><i class="fa fa-plus"></i> Add Period</button>
+                        </div>
+                        <div class="card-body">
+                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Goal</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody id="targets">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- .animated -->
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+    </div><!-- .content -->
+
+
+</div><!-- /#right-panel -->
+<!-- Right Panel -->
+
+<!-- Modal -->
+<div class="modal fade" id="addNewTargetModal" tabindex="-1" role="dialog" aria-labelledby="addNewTargetModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addNewTargetModalLabel">Add Target</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Target Title</label><strong style="color:red"> *</strong><span id="new-target-title-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <input id="new-target-title" type="text" class="form-control" placeholder="Target Title" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Target Description</label><strong style="color:red"> *</strong><span id="new-target-description-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <textarea id="new-target-description" class="form-control" placeholder="Target Description" required="required"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Target Period</label><strong style="color:red"> *</strong><span id="new-target-period-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <select id="new-target-period" class="form-control" required="required">
+                                <option selected="selected">-- Select Target Period --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Target Type</label><strong style="color:red"> *</strong><span id="new-target-type-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <select id="new-target-type" class="form-control" required="required">
+                                <option selected="selected">-- Select Target Type --</option>
+                                <option value="disbursement">Disbursement</option>
+                                <option value="interest">Interest</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Target Value</label><strong style="color:red"> *</strong><span id="new-target-value-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="new-target-value" type="number" class="form-control" placeholder="Target Value" required="required">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="addNewTarget()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addNewPeriodModal" tabindex="-1" role="dialog" aria-labelledby="addNewPeriodModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addNewPeriodModalLabel">Add Period</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Period Name</label><strong style="color:red"> *</strong><span id="new-period-name-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <input id="new-period-name" type="text" class="form-control" placeholder="Period Name" required="required">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label">Start Date</label><strong style="color:red"> *</strong><span id="new-period-start-error" style="padding-left:50px; text-align: center"></span>
+                                <div class="input-group">
+                                    <input id="new-period-start" type="date" class="form-control" placeholder="Start Date" required="required" style="display: none;">
+                                    <div class="input-append date" id="datepicker" data-date-format="mm-yyyy">
+                                        <input type="text" id="new-period-start-2" placeholder="Start Date" readonly="readonly">
+                                        <span class="add-on"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label">End Date</label><strong style="color:red"> *</strong><span id="new-period-end-error" style="padding-left:50px; text-align: center"></span>
+                                <div class="input-group">
+                                    <input id="new-period-end" type="date" class="form-control" placeholder="End Date" disabled="disabled" required="required" style="display: none;">
+                                    <input id="new-period-end-2" type="text" class="form-control" placeholder="End Date" disabled="disabled" required="required">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Sub Period</label><strong style="color:red"> *</strong><span id="new-period-type-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <select id="new-period-type" class="form-control" required="required">
+                                <option>-- Select Sub Period --</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="half_yearly">Half Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="addNewPeriod()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="max-width: 95%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Target Details</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row setup-content">
+                    <div class="col-sm-3">
+                        <div class="card text-white bg-flat-color-1">
+                            <div class="card-body pb-0">
+                                <h3 id="committal-total" class="mb-0"></h3>
+                                <p class="text-light">Committals (<span id="committal-count"></span>)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card text-white bg-flat-color-1">
+                            <div class="card-body pb-0">
+                                <h3 id="target-value" class="mb-0"></h3>
+                                <p class="text-light">Goal</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card text-white bg-flat-color-1">
+                            <div class="card-body pb-0">
+                                <h3 id="committal-rate" class="mb-0"></h3>
+                                <p class="text-light">Progress</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card text-white bg-flat-color-1">
+                            <div class="card-body pb-0">
+                                <h3 id="allocation-total" class="mb-0"></h3>
+                                <p class="text-light">Allocations (<span id="allocation-count"></span>)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-7">
+                        <h4 class="text-center" style="margin-bottom: 5px;">Committals Guage</h4>
+                        <div id="targetGuage"></div>
+                    </div>
+                    <div class="col-lg-5" style="padding: 0;">
+                        <h4 class="text-center" style="margin-bottom: 5px;">Allocations Pie Chart</h4>
+                        <div id="allocationPiechart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/lib/data-table/datatables.min.js"></script>
+<script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+<script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+<script src="assets/js/lib/data-table/datatables-init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+<script src="./js/helper-functions.js"></script>
+<script src="../../menus/menu-items.js"></script>
+<script type="text/javascript" src="../../target/all-targets/all-targets.js"></script>
+</body>
+</html>

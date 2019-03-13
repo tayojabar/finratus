@@ -367,7 +367,7 @@ function loadWorkflowStages(state) {
 }
 
 $('.cancel').on('click', function(e) {
-    notification({
+    swal({
         title: "Are you sure?",
         text: "Once cancelled, this process is not reversible!",
         icon: "warning",
@@ -979,7 +979,7 @@ function checkTotalDue() {
         $('#generate-schedule-v2').hide();
         if (application.close_status === 0){
             $('#loan_closed').html('<strong>REPAYMENT COMPLETED</strong>');
-            notification({
+            swal({
                 title: "Would you like to close this loan?",
                 text: "All repayments for this loan application has been made",
                 icon: "warning",
@@ -1346,7 +1346,7 @@ function initCSVUpload2(application) {
         if (!new_reschedule || !new_reschedule[0])
             return notification('There is no reschedule available for approval!','','error');
 
-        notification({
+        swal({
             title: "Are you sure?",
             text: "Once started, this process is not reversible!",
             icon: "warning",

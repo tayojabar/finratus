@@ -106,3 +106,15 @@ function isUriImage(uri) {
     if(imageTypes.indexOf(extension) !== -1)
         return true;
 }
+
+function isLeapYear(year) {
+    return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0);
+}
+
+function generateColour() {
+    let color = '#',
+        letters = "0123456789ABCDEF";
+    for (let i = 0; i < 6; i++)
+        color += letters[(Math.floor(Math.random() * 16))];
+    return color;
+}

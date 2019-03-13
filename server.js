@@ -404,7 +404,7 @@ app.get('/activity', requireLogin, function (req, res) {
 });
 
 app.get('/all-targets', requireLogin, function (req, res) {
-    res.sendFile('all-targets.html', {
+    res.sendFile('target/all-targets/all-targets.html', {
         root: __dirname + '/views'
     });
 });
@@ -416,7 +416,7 @@ app.get('/all-teams', requireLogin, function (req, res) {
 });
 
 app.get('/target-dashboard', requireLogin, function (req, res) {
-    res.sendFile('target-dashboard.html', {
+    res.sendFile('target/target-dashboard/target-dashboard.html', {
         root: __dirname + '/views'
     });
 });
@@ -434,19 +434,19 @@ app.get('/activity-settings', requireLogin, function (req, res) {
 });
 
 app.get('/all-periods', requireLogin, function (req, res) {
-    res.sendFile('all-periods.html', {
+    res.sendFile('target/all-periods/all-periods.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/commission-profile', requireLogin, function (req, res) {
-    res.sendFile('commission-profile.html', {
+    res.sendFile('/settings/commission-profile/commission-profile.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/commission-dashboard', requireLogin, function (req, res) {
-    res.sendFile('commission-dashboard.html', {
+    res.sendFile('commission/commission-dashboard/commission-dashboard.html', {
         root: __dirname + '/views'
     });
 });
@@ -476,7 +476,7 @@ app.get('/all-investments', requireLogin, function (req, res) {
 });
 
 app.get('/all-commissions', requireLogin, function (req, res) {
-    res.sendFile('all-commissions.html', {
+    res.sendFile('commission/all-commissions/all-commissions.html', {
         root: __dirname + '/views'
     });
 });
