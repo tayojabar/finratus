@@ -171,6 +171,7 @@
         let schedule = [],
             loan_amount = 0,
             $dvCSV = $("#dvCSV2"),
+            settings = settings_obj,
             $csvUpload = $("#csvUpload2"),
             $uploadCSV = $("#uploadCSV2"),
             $message = $("#schedule-error-message");
@@ -191,15 +192,15 @@
                 duration = parseFloat(duration);
                 loanAmount = parseFloat(loanAmount);
                 interestRate = parseFloat(interestRate);
-                if (duration < settings_obj.tenor_min || duration > settings_obj.tenor_max)
-                    return $message.text(`Minimum tenor is ${numberToCurrencyformatter(settings_obj.tenor_min)} (month)
-                     and Maximum is ${numberToCurrencyformatter(settings_obj.tenor_max)} (months)`,'','warning');
-                if (interestRate < settings_obj.interest_rate_min || interestRate > settings_obj.interest_rate_max)
-                    return $message.text(`Minimum interest rate is ${numberToCurrencyformatter(settings_obj.interest_rate_min)}% 
-                    and Maximum is ${numberToCurrencyformatter(settings_obj.interest_rate_max)}%`,'','warning');
-                if (loanAmount < settings_obj.loan_requested_min || loanAmount > settings_obj.loan_requested_max)
-                    return $message.text(`Minimum loan amount is ₦${numberToCurrencyformatter(settings_obj.loan_requested_min)} 
-                    and Maximum is ₦${numberToCurrencyformatter(settings_obj.loan_requested_max)}`,'','warning');
+                if (duration < settings.tenor_min || duration > settings.tenor_max)
+                    return $message.text(`Minimum tenor is ${numberToCurrencyformatter(settings.tenor_min)} (month)
+                     and Maximum is ${numberToCurrencyformatter(settings.tenor_max)} (months)`,'','warning');
+                if (interestRate < settings.interest_rate_min || interestRate > settings.interest_rate_max)
+                    return $message.text(`Minimum interest rate is ${numberToCurrencyformatter(settings.interest_rate_min)}% 
+                    and Maximum is ${numberToCurrencyformatter(settings.interest_rate_max)}%`,'','warning');
+                if (loanAmount < settings.loan_requested_min || loanAmount > settings.loan_requested_max)
+                    return $message.text(`Minimum loan amount is ₦${numberToCurrencyformatter(settings.loan_requested_min)} 
+                    and Maximum is ₦${numberToCurrencyformatter(settings.loan_requested_max)}`,'','warning');
                 $message.hide();
 
                 let years = duration/12,
@@ -345,7 +346,6 @@
         $("#addApplication").click(function () {
             if (!schedule[0])
                 return notification('Please upload a valid CSV file.','','warning');
-
             validateSchedule(schedule, function (validation) {
                 if (validation.status){
                     let obj = {},
@@ -367,15 +367,15 @@
                     obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
                     if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
                         return notification('Kindly fill all required fields!','','warning');
-                    if (parseFloat(obj.duration) < settings_obj.tenor_min || parseFloat(obj.duration) > settings_obj.tenor_max)
-                        return notification(`Minimum tenor is ${numberToCurrencyformatter(settings_obj.tenor_min)} (month) 
-                        and Maximum is ${numberToCurrencyformatter(settings_obj.tenor_max)} (months)`,'','warning');
-                    if (parseFloat(obj.interest_rate) < settings_obj.interest_rate_min || parseFloat(obj.interest_rate) > settings_obj.interest_rate_max)
-                        return notification(`Minimum interest rate is ${numberToCurrencyformatter(settings_obj.interest_rate_min)}% 
-                        and Maximum is ${numberToCurrencyformatter(settings_obj.interest_rate_max)}%`,'','warning');
-                    if (parseFloat(obj.loan_amount) < settings_obj.loan_requested_min || parseFloat(obj.loan_amount) > settings_obj.loan_requested_max)
-                        return notification(`Minimum loan amount is ₦${numberToCurrencyformatter(settings_obj.loan_requested_min)} 
-                        and Maximum is ₦${numberToCurrencyformatter(settings_obj.loan_requested_max)}`,'','warning');
+                    if (parseFloat(obj.duration) < settings.tenor_min || parseFloat(obj.duration) > settings.tenor_max)
+                        return notification(`Minimum tenor is ${numberToCurrencyformatter(settings.tenor_min)} (month) 
+                        and Maximum is ${numberToCurrencyformatter(settings.tenor_max)} (months)`,'','warning');
+                    if (parseFloat(obj.interest_rate) < settings.interest_rate_min || parseFloat(obj.interest_rate) > settings.interest_rate_max)
+                        return notification(`Minimum interest rate is ${numberToCurrencyformatter(settings.interest_rate_min)}% 
+                        and Maximum is ${numberToCurrencyformatter(settings.interest_rate_max)}%`,'','warning');
+                    if (parseFloat(obj.loan_amount) < settings.loan_requested_min || parseFloat(obj.loan_amount) > settings.loan_requested_max)
+                        return notification(`Minimum loan amount is ₦${numberToCurrencyformatter(settings.loan_requested_min)} 
+                        and Maximum is ₦${numberToCurrencyformatter(settings.loan_requested_max)}`,'','warning');
                     if (loan_amount !== parseFloat(obj.loan_amount))
                         return notification('Loan amount ('+parseFloat(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch','','warning');
 
