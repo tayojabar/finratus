@@ -127,13 +127,28 @@ $("#investment_amount").on("focusout", function (event) {
 
 $("#investment_product").on("change", function (event) {
     const selectedID = $("#investment_product").val();
-    console.log(selectedID);
-    console.log(products);
     let selectedValue = products.find(x => x.ID.toString() === selectedID.toString());
-    console.log(products);
-    $("#amount_info").html(`Min.: ${selectedValue.investment_min} Max.:${selectedValue.investment_max}`);
-    console.log(selectedID);
-    console.log(selectedValue);
+    if (selectedValue !== undefined) {
+        $("#amount_info").html(`Min.: ${selectedValue.investment_min} Max.:${selectedValue.investment_max}`);
+        let start_with = $("#investment_date_start").val();
+
+        let min_date = new Date(start_with);
+        let max_date = new Date(start_with);
+
+        min_date.setMonth((min_date.getMonth() + 1) + parseInt(selectedValue.min_term));
+        max_date.setMonth((max_date.getMonth() + 1) + parseInt(selectedValue.max_term));
+
+        let _min = `${min_date.getUTCFullYear()}-${pad(min_date.getMonth())}-${pad(min_date.getDate())}`;
+        let _max = `${max_date.getUTCFullYear()}-${pad(max_date.getMonth())}-${pad(max_date.getDate())}`;
+        $('#investment_mature_date').attr('min', _min);
+        $('#investment_mature_date').attr('max', _max);
+
+        $('#investment_mature_date').val(0);
+        if (!isNaN(min_date.getDate()) && !isNaN(max_date.getDate())) {
+            $("#duration_info").html(`Min.: ${pad(min_date.getDate())}-${pad(min_date.getMonth())}-${min_date.getUTCFullYear()} Max.: ${pad(max_date.getDate())}-${pad(max_date.getMonth())}-${max_date.getUTCFullYear()}`);
+        }
+        $('#investment_mature_date').attr('disabled', false);
+    }
 });
 
 function pad(d) {
@@ -147,21 +162,27 @@ $("#investment_date_start").on("change", function (event) {
     let val = $("#investment_date_start").val();
     start_with = val;
     console.log(start_with);
-    $('#investment_mature_date').attr('disabled', false);
-
     const selectedID = $("#investment_product").val();
     let selectedValue = products.find(x => x.ID.toString() === selectedID.toString());
+    console.log(selectedValue);
     var min_date = new Date(start_with);
     var max_date = new Date(start_with);
-    min_date.setMonth((min_date.getMonth() + 1) + parseInt(selectedValue.min_term));
-    max_date.setMonth((max_date.getMonth() + 1) + parseInt(selectedValue.max_term));
+    if (selectedValue !== undefined && selectedValue !== undefined) {
+        $('#investment_mature_date').attr('disabled', false);
+        min_date.setMonth((min_date.getMonth() + 1) + parseInt(selectedValue.min_term));
+        max_date.setMonth((max_date.getMonth() + 1) + parseInt(selectedValue.max_term));
 
-    let _min = `${min_date.getUTCFullYear()}-${pad(min_date.getMonth())}-${pad(min_date.getDate())}`;
-    let _max = `${max_date.getUTCFullYear()}-${pad(max_date.getMonth())}-${pad(max_date.getDate())}`;
-    $('#investment_mature_date').attr('min', _min);
-    $('#investment_mature_date').attr('max', _max);
-    $("#duration_info").html(`Min.: ${pad(min_date.getDate())}-${pad(min_date.getMonth())}-${min_date.getUTCFullYear()} Max.: ${pad(max_date.getDate())}-${pad(max_date.getMonth())}-${max_date.getUTCFullYear()}`);
-
+        let _min = `${min_date.getUTCFullYear()}-${pad(min_date.getMonth())}-${pad(min_date.getDate())}`;
+        let _max = `${max_date.getUTCFullYear()}-${pad(max_date.getMonth())}-${pad(max_date.getDate())}`;
+        $('#investment_mature_date').attr('min', _min);
+        $('#investment_mature_date').attr('max', _max);
+        if (!isNaN(min_date.getDate()) && !isNaN(max_date.getDate())) {
+            $("#duration_info").html(`Min.: ${pad(min_date.getDate())}-${pad(min_date.getMonth())}-${min_date.getUTCFullYear()} Max.: ${pad(max_date.getDate())}-${pad(max_date.getMonth())}-${max_date.getUTCFullYear()}`);
+        }
+    } else {
+        swal('Please select investment product', '', 'error');
+        $('#investment_mature_date').attr('disabled', true);
+    }
 });
 
 $("#btn_save_product").on("click", function (event) {
@@ -178,9 +199,9 @@ $("#btn_save_product").on("click", function (event) {
         'data': data,
         'success': function (data) {
             if (data.error) {
+                console.log(data.error);
                 $('#wait').hide();
-                swal('Oops! An error occurred while creating Investment; ' + data.error
-                    .sqlMessage,
+                swal('Oops! An error occurred while creating Investment; Required field(s) missing',
                     '', 'error');
             } else {
                 $('#wait').hide();
@@ -192,9 +213,9 @@ $("#btn_save_product").on("click", function (event) {
             }
         },
         'error': function (err) {
+            console.log(err);
             $('#wait').hide();
-            swal('Oops! An error occurred while creating Investment; ' + data.error.sqlMessage,
-                '', 'error');
+            swal('Oops! An error occurred while creating Investment; ', '', 'error');
         }
     });
 

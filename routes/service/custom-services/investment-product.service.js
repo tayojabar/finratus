@@ -8,7 +8,7 @@ router.get('/all', function (req, res, next) {
     let limit = req.query.limit;
     let page = ((req.query.page - 1) * 10 < 0) ? 0 : (req.query.page - 1) * 10;
     let search_string = (req.query.search_string === undefined) ? "" : req.query.search_string.toUpperCase();
-    let query = `SELECT ID,name,code,investment_max,investment_min,min_term,max_term FROM investment_products WHERE upper(code) LIKE "${search_string}%" OR upper(name) LIKE "${search_string}%" ORDER BY ID desc LIMIT ${limit} OFFSET ${page}`;
+    let query = `SELECT ID,name,code,investment_max,investment_min,min_term,max_term FROM investment_products WHERE status = 1 AND (upper(code) LIKE "${search_string}%" OR upper(name) LIKE "${search_string}%") ORDER BY ID desc LIMIT ${limit} OFFSET ${page}`;
     const endpoint = "/core-service/get";
     const url = `${HOST}${endpoint}`;
     axios.get(url, {
@@ -33,9 +33,11 @@ router.get('/get-products', function (req, res, next) {
     let offset = req.query.offset;
     let draw = req.query.draw;
     let order = req.query.order;
+    let status = req.query.status;
+    let qStatus = (status === undefined) ? "" : `status = ${status} AND`;
     let search_string = req.query.search_string.toUpperCase();
     let query = `SELECT ID,name,code,investment_max,investment_min,interest_rate,status, date_created 
-    FROM investment_products WHERE status = 1 AND code LIKE "${search_string}%" OR name LIKE "${search_string}%" 
+    FROM investment_products WHERE ${qStatus} code LIKE "${search_string}%" OR name LIKE "${search_string}%" 
     ${order} LIMIT ${limit} OFFSET ${offset}`;
     let endpoint = '/core-service/get';
     let url = `${HOST}${endpoint}`;
