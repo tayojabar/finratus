@@ -245,10 +245,16 @@ function processCommission(id,earnings,paid) {
         type: "GET",
         url: "/user/commission/processes/"+id,
         success: function (data) {
-            let process = data.response;
-            if (process)
-                processed_commission = earnings - parseFloat(paid) + parseFloat(process.amount);
-            $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            let process_amount = 0;
+            $("#process-history").dataTable().fnClearTable();
+            $.each(data.response, function(k, v){
+                let amount = parseFloat((parseFloat(v.amount)).toFixed(2));
+                process_amount += amount;
+            });
+            if (process_amount !== 0)
+                processed_commission = parseFloat(earnings) - parseFloat(paid) + process_amount;
+            processed_commission = processed_commission.toFixed(2);
+            $('#commission-processed').text('₦'+processed_commission.replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         }
     });
 }

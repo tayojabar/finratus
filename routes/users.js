@@ -5098,11 +5098,11 @@ users.post('/commission/processes', function(req, res, next) {
 });
 
 users.get('/commission/processes/:user_commissionID', function(req, res, next) {
-    db.query('SELECT * FROM commission_processes WHERE user_commissionID = '+req.params.user_commissionID, function (error, result, fields) {
+    db.query('SELECT * FROM commission_processes WHERE status = 1 AND user_commissionID = '+req.params.user_commissionID, function (error, result, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            res.send({"status": 200, "message": "Commission process fetched successfully!", response: result[0]});
+            res.send({"status": 200, "message": "Commission process fetched successfully!", response: result});
         }
     });
 });
@@ -5113,6 +5113,16 @@ users.get('/application/commission-payment-reversal/:id', function(req, res, nex
             res.send({"status": 500, "error": error, "response": null});
         } else {
             res.send({"status": 200, "message": "Payment reversed successfully!"});
+        }
+    });
+});
+
+users.get('/application/commission-process-reversal/:id', function(req, res, next) {
+    db.query('UPDATE commission_processes SET status=0 WHERE ID=?', [req.params.id], function (error, history, fields) {
+        if(error){
+            res.send({"status": 500, "error": error, "response": null});
+        } else {
+            res.send({"status": 200, "message": "Process reversed successfully!"});
         }
     });
 });
