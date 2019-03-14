@@ -1,6 +1,5 @@
 $(document).ready(function() {
     loadComments();
-    getApplicationSettings();
     check();
     loadMenus();
     read_write_1();
@@ -27,9 +26,9 @@ let settings_obj = {
     tenor_min: 1,
     tenor_max: 60,
     interest_rate_min: 1,
-    interest_rate_max: 12
+    interest_rate_max: 1000
 };
-function getApplicationSettings() {
+function getApplicationSettings(application) {
     $('#wait').show();
     $.ajax({
         type: "GET",
@@ -50,6 +49,8 @@ function getApplicationSettings() {
                 if (settings_obj.interest_rate_max)
                     $('#interest_rate_max').text(numberToCurrencyformatter(settings_obj.interest_rate_max));
             }
+            initCSVUpload(application);
+            initCSVUpload2(application, settings_obj);
         }
     });
 }
@@ -109,7 +110,7 @@ function loadApplication(user_id){
                     for (let j=0; j<4; j++){
                         if (count < files_count){
                             let file_name = file_names[count],
-                                file = application.files[file_name];
+                                file = "/"+application.files[file_name];
                             if (isUriImage(file)){
                                 $('.page-'+i).append('<div class="col-md-3"><a class="thumbnail grouped_elements" rel="grouped_elements" data-toggle="tooltip" data-placement="bottom" title="Click to Expand!" href="'+file+'"><img src="'+file+'" alt="'+file_name.replace(/_/g, ' ')+'" style="max-width:100%; height: 200px;"></a><p style="text-align: center;">'+file_name.replace(/_/g, ' ')+'</p></div>');
                             } else {
@@ -125,8 +126,7 @@ function loadApplication(user_id){
                 }
             }
 
-            initCSVUpload(application);
-            initCSVUpload2(application);
+            getApplicationSettings(application);
         },
         'error': function (err) {
             console.log('Error');
@@ -367,7 +367,7 @@ function loadWorkflowStages(state) {
 }
 
 $('.cancel').on('click', function(e) {
-    notification({
+    swal({
         title: "Are you sure?",
         text: "Once cancelled, this process is not reversible!",
         icon: "warning",
@@ -619,7 +619,7 @@ $('#document-file').change(function () {
 
                 formData.append('files[]', _self.files[0]);
                 $.ajax({
-                    url: 'document-upload/'+application_id+'/'+stage_document_name,
+                    url: '/document-upload/'+application_id+'/'+stage_document_name,
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -661,7 +661,7 @@ function fileUpload(document) {
     }
 
     $fileupload.fileupload({
-        url: 'document-upload/'+application_id+'/'+stage_document_name,
+        url: '/document-upload/'+application_id+'/'+stage_document_name,
         disableImageResize: /Android(?!.*Chrome)|Opera/
             .test(window.navigator.userAgent),
         maxFileSize: 999000,
@@ -979,7 +979,7 @@ function checkTotalDue() {
         $('#generate-schedule-v2').hide();
         if (application.close_status === 0){
             $('#loan_closed').html('<strong>REPAYMENT COMPLETED</strong>');
-            notification({
+            swal({
                 title: "Would you like to close this loan?",
                 text: "All repayments for this loan application has been made",
                 icon: "warning",
@@ -1084,7 +1084,7 @@ function processSchedule(schedule) {
     return result;
 }
 
-function initCSVUpload2(application) {
+function initCSVUpload2(application, settings) {
     let schedule = [],
         loan_amount = 0,
         $dvCSV = $("#dvCSV2"),
@@ -1112,15 +1112,15 @@ function initCSVUpload2(application) {
             duration = parseFloat(duration);
             loanAmount = parseFloat(loanAmount);
             interestRate = parseFloat(interestRate);
-            if (duration < settings_obj.tenor_min || duration > settings_obj.tenor_max)
-                return $message.text(`Minimum tenor is ${numberToCurrencyformatter(settings_obj.tenor_min)} (month)
-                     and Maximum is ${numberToCurrencyformatter(settings_obj.tenor_max)} (months)`,'','warning');
-            if (interestRate < settings_obj.interest_rate_min || interestRate > settings_obj.interest_rate_max)
-                return $message.text(`Minimum interest rate is ${numberToCurrencyformatter(settings_obj.interest_rate_min)}% 
-                    and Maximum is ${numberToCurrencyformatter(settings_obj.interest_rate_max)}%`,'','warning');
-            if (loanAmount < settings_obj.loan_requested_min || loanAmount > settings_obj.loan_requested_max)
-                return $message.text(`Minimum loan amount is ₦${numberToCurrencyformatter(settings_obj.loan_requested_min)} 
-                    and Maximum is ₦${numberToCurrencyformatter(settings_obj.loan_requested_max)}`,'','warning');
+            if (duration < settings.tenor_min || duration > settings.tenor_max)
+                return $message.text(`Minimum tenor is ${numberToCurrencyformatter(settings.tenor_min)} (month)
+                     and Maximum is ${numberToCurrencyformatter(settings.tenor_max)} (months)`,'','warning');
+            if (interestRate < settings.interest_rate_min || interestRate > settings.interest_rate_max)
+                return $message.text(`Minimum interest rate is ${numberToCurrencyformatter(settings.interest_rate_min)}% 
+                    and Maximum is ${numberToCurrencyformatter(settings.interest_rate_max)}%`,'','warning');
+            if (loanAmount < settings.loan_requested_min || loanAmount > settings.loan_requested_max)
+                return $message.text(`Minimum loan amount is ₦${numberToCurrencyformatter(settings.loan_requested_min)} 
+                    and Maximum is ₦${numberToCurrencyformatter(settings.loan_requested_max)}`,'','warning');
             $message.hide();
 
             let years = duration/12,
@@ -1346,7 +1346,7 @@ function initCSVUpload2(application) {
         if (!new_reschedule || !new_reschedule[0])
             return notification('There is no reschedule available for approval!','','error');
 
-        notification({
+        swal({
             title: "Are you sure?",
             text: "Once started, this process is not reversible!",
             icon: "warning",

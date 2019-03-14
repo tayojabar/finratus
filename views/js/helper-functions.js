@@ -2,7 +2,7 @@ function numberToCurrencyformatter(value) {
     if (!value && isNaN(value))
         return value;
     if (typeof value !== "string")
-        value.toString();
+        value = value.toString();
     let _n = value.split("."),
         _n2 = (_n[1] !== undefined) ? _n[0] + "." + _n[1] : _n[0],
         n = _n2.split(".");
@@ -55,6 +55,12 @@ Number.prototype.trunc = function(p) {
     return parseFloat((parseInt(this*d)/d).toFixed(p));
 };
 
+Date.prototype.toDateInputValue = (function() {
+    let local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+
 function formatDate(date) {
     let d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -105,4 +111,16 @@ function isUriImage(uri) {
         imageTypes = ['jpg','jpeg','tiff','png','gif','bmp'];
     if(imageTypes.indexOf(extension) !== -1)
         return true;
+}
+
+function isLeapYear(year) {
+    return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0);
+}
+
+function generateColour() {
+    let color = '#',
+        letters = "0123456789ABCDEF";
+    for (let i = 0; i < 6; i++)
+        color += letters[(Math.floor(Math.random() * 16))];
+    return color;
 }
