@@ -2,7 +2,6 @@
     jQuery(document).ready(function() {
         getUsers();
         getWorkflows();
-        initCSVUpload2();
         getLoanPurposes();
         getApplicationSettings();
         check();
@@ -85,6 +84,7 @@
                     if (settings_obj.interest_rate_max)
                         $('#interest_rate_max').text(numberToCurrencyformatter(settings_obj.interest_rate_max));
                 }
+                initCSVUpload2();
             }
         });
     }

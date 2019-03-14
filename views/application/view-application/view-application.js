@@ -1,6 +1,5 @@
 $(document).ready(function() {
     loadComments();
-    getApplicationSettings();
     check();
     loadMenus();
     read_write_1();
@@ -29,7 +28,7 @@ let settings_obj = {
     interest_rate_min: 1,
     interest_rate_max: 1000
 };
-function getApplicationSettings() {
+function getApplicationSettings(application) {
     $('#wait').show();
     $.ajax({
         type: "GET",
@@ -50,6 +49,8 @@ function getApplicationSettings() {
                 if (settings_obj.interest_rate_max)
                     $('#interest_rate_max').text(numberToCurrencyformatter(settings_obj.interest_rate_max));
             }
+            initCSVUpload(application);
+            initCSVUpload2(application, settings_obj);
         }
     });
 }
@@ -58,7 +59,6 @@ let workflow,
     application;
 
 function loadApplication(user_id){
-    let settings = settings_obj;
     $.ajax({
         'url': '/user/application-id/'+application_id,
         'type': 'get',
@@ -126,8 +126,7 @@ function loadApplication(user_id){
                 }
             }
 
-            initCSVUpload(application);
-            initCSVUpload2(application, settings);
+            getApplicationSettings(application);
         },
         'error': function (err) {
             console.log('Error');
@@ -620,7 +619,7 @@ $('#document-file').change(function () {
 
                 formData.append('files[]', _self.files[0]);
                 $.ajax({
-                    url: 'document-upload/'+application_id+'/'+stage_document_name,
+                    url: '/document-upload/'+application_id+'/'+stage_document_name,
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -662,7 +661,7 @@ function fileUpload(document) {
     }
 
     $fileupload.fileupload({
-        url: 'document-upload/'+application_id+'/'+stage_document_name,
+        url: '/document-upload/'+application_id+'/'+stage_document_name,
         disableImageResize: /Android(?!.*Chrome)|Opera/
             .test(window.navigator.userAgent),
         maxFileSize: 999000,
