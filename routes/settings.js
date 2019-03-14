@@ -44,7 +44,7 @@ router.get('/application', function (req, res, next) {
 router.post('/application/loan_purpose', function (req, res, next) {
     let data = req.body;
     data.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    db.query('SELECT * FROM loan_purpose_settings WHERE title = ? WHERE status = 1', [data.title], function (error, loan_purposes, fields) {
+    db.query('SELECT * FROM loan_purpose_settings WHERE title = ? AND status = 1', [data.title], function (error, loan_purposes, fields) {
         if (loan_purposes && loan_purposes[0]) {
             res.send({
                 "status": 500,
