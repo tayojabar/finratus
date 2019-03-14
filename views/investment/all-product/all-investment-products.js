@@ -40,6 +40,11 @@ function updateStatus(id, status) {
     });
 }
 
+function onRequirement(value) {
+    $("viewRequirementModalLabel").text(`${value} Requirement`);
+
+}
+
 function bindDataTable() {
     table = $('#product-data-table').DataTable({
         dom: 'Blfrtip',
@@ -49,8 +54,6 @@ function bindDataTable() {
             'copy', 'csv', 'excel', 'pdf', 'print'
         ],
         fnServerData: function (sSource, aoData, fnCallback) {
-            console.log(aoData);
-
             let tableHeaders = [{
                     name: "code",
                     query: `ORDER BY code ${aoData[2].value[0].dir}`
@@ -130,15 +133,28 @@ function bindDataTable() {
             {
                 width: "15%",
                 "mRender": function (data, type, full) {
-                    console.log(data, type, full);
+                    console.log(full);
                     let status_ = (full.status === 1) ? 0 : 1;
-                    let status_label = (full.status === 1) ? "Active" : "Inactive";
+                    let status_label = (full.status === 1) ? "Deactivate" : "Activate";
                     let status_class = (full.status === 1) ? "active-status" :
                         "inactive-status";
-                    return `<a class="btn btn-info btn-sm" href="./add-investment-products?id=${full.ID}">Edit</a> 
-                    <a class="btn btn-info btn-sm ${status_class}" onclick="updateStatus(${full.ID},${status_})">${status_label}</a> `;
+                    let strProduct = JSON.stringify(full);
+                    return `
+                    <div class="dropdown">
+                    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        More
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <button class="dropdown-item" type="button" href="./add-investment-products?id=${full.ID}">Edit</button> 
+                    <button type="button" class="dropdown-item ${status_class}" onclick="updateStatus(${full.ID},${status_})">${status_label}</button>
+                    <button class="dropdown-item" type="button" data-toggle="modal" data-target="#viewRequirementModal" onclick="onRequirement('${full.name}')">Requirement</button>
+                    </div>
+                </div>`;
                 }
             }
         ]
     });
+
+
 }

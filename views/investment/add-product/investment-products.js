@@ -89,11 +89,24 @@ $("#withdrawal_conditions_value").on("keyup", function (event) {
 $("#max_term").on("focusout", function (event) {
     let min_ = parseInt($("#min_term").val());
     let max_ = parseInt($("#max_term").val());
-    console.log(min_, max_);
     if (min_ > max_) {
         $('#max_term').val("");
     }
-    console.log("here is here");
+});
+
+$("#min_days_termination").on("keyup", function (event) {
+    let val = $("#min_days_termination").val();
+    $("#min_days_termination").val(formater(val));
+});
+
+$("#min_days_termination_charge").on("keyup", function (event) {
+    let val = $("#min_days_termination_charge").val();
+    $("#min_days_termination_charge").val(formater(val));
+});
+
+$('#premature_interest_rate').on("keyup", function (event) {
+    let val = $("#premature_interest_rate").val();
+    $("#premature_interest_rate").val(formater(val));
 });
 
 function getInvestmentProducts(id) {
@@ -141,6 +154,11 @@ function getInvestmentProducts(id) {
                     true : false));
                 $('#min_term').val(product_obj.min_term);
                 $('#max_term').val(product_obj.max_term);
+                $('#premature_interest_rate').val(product_obj.premature_interest_rate);
+                $('#min_days_termination').val(product_obj.min_days_termination);
+                $('#min_days_termination_charge').val(product_obj.min_days_termination_charge);
+                $('#opt_on_min_days_termination').val(product_obj.opt_on_min_days_termination);
+                //opt_on_min_days_termination
                 $('#btnSaveProduct').html('Update');
                 $('#wait').hide();
             } else {
@@ -186,13 +204,56 @@ $("#chk_interest_rate").on('change',
             $('#condition_for_interest').val('');
             $('#charge_interest_on_withdrawal').val('');
             $('#opt_on_charge_interest_on_withdrawal').val('');
+            $('#premature_interest_rate').val('');
             $('#forfeit_interest_on_withdrawal').attr('disabled', true);
 
         }
         activate_interest_controls(!status);
     });
 
+$("#chk_wallet").on('change',
+    function () {
+        let status = $('#chk_wallet').is(':checked');
+        if (!status) {
+            $('#inv_moves_wallet').attr("checked", false);
+            $('#acct_allows_withdrawal').attr("checked", false);
+            $('#interest_moves_wallet').attr("checked", false);
+        }
+        $('#acct_allows_withdrawal').attr('disabled', !status);
+        $('#inv_moves_wallet').attr('disabled', !status);
+        $('#interest_moves_wallet').attr('disabled', !status);
+    });
+
+$("#chk_maturity_term").on('change',
+    function () {
+        let status = $('#chk_maturity_term').is(':checked');
+        if (!status) {
+            $('#min_term').val('');
+            $('#max_term').val('');
+            $('#minimum_bal_penalty_amount').val('');
+            $('#opt_on_minimum_bal_penalty_amount').prop("checked", false);
+        }
+        $('#min_term').attr('disabled', !status);
+        $('#max_term').attr('disabled', !status);
+        $('#minimum_bal_penalty_amount').attr('disabled', !status);
+        $('#opt_on_minimum_bal_penalty_amount').attr('disabled', !status);
+    });
+
+$("#chk_liquidation").on('change',
+    function () {
+        let status = $('#chk_liquidation').is(':checked');
+        if (!status) {
+            $('#min_days_termination').val('');
+            $('#min_days_termination_charge').val('');
+            $('#opt_on_min_days_termination').prop("checked", false);
+        }
+        $('#min_days_termination').attr('disabled', !status);
+        $('#min_days_termination_charge').attr('disabled', !status);
+        $('#opt_on_min_days_termination').attr('disabled', !status);
+    });
+
 function activate_interest_controls(status) {
+    $('#premature_interest_rate').attr('disabled', status);
     $('#interest_rate').attr('disabled', status);
     $('#condition_for_interest').attr('disabled', status);
     $('#forfeit_interest_on_withdrawal').attr('disabled', status);
@@ -352,7 +413,11 @@ function set_investment_product() {
     product_obj.min_term = $('#min_term').val();
     product_obj.max_term = $('#max_term').val();
     product_obj.histories = (product_obj.histories == null) ? [] : product_obj.histories;
-    console.log(product_obj.histories);
+
+    product_obj.premature_interest_rate = $('#premature_interest_rate').val();
+    product_obj.min_days_termination = $('#min_days_termination').val();
+    product_obj.min_days_termination_charge = $('#min_days_termination_charge').val();
+    product_obj.opt_on_min_days_termination = $('#opt_on_min_days_termination').val();
     product_obj.createdBy = (JSON.parse(localStorage.getItem("user_obj"))).ID;
 
     console.log(product_obj);
