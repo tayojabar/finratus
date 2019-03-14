@@ -1,6 +1,7 @@
 var table = {};
 $(document).ready(function () {
     bindDataTable();
+
 });
 $(document).ajaxStart(function () {
     $("#wait").css("display", "block");
@@ -42,7 +43,45 @@ function updateStatus(id, status) {
 
 function onRequirement(value) {
     $("#viewRequirementModalHeader").html(`${value} Requirement`);
-
+    $('#list_user_roles').select2({
+        allowClear: true,
+        placeholder: "Select Role",
+        ajax: {
+            url: "/investment-products/roles",
+            dataType: "json",
+            delay: 250,
+            data: function (params) {
+                params.page = (params.page === undefined || params.page === null) ? 0 : params.page;
+                return {
+                    limit: 10,
+                    page: params.page,
+                    search_string: params.term
+                };
+            },
+            processResults: function (data, params) {
+                console.log(data);
+                params.page = params.page || 1;
+                if (data.error) {
+                    return {
+                        results: []
+                    };
+                } else {
+                    return {
+                        results: data.map(function (item) {
+                            return {
+                                id: item.ID,
+                                text: item.role_name
+                            };
+                        }),
+                        pagination: {
+                            more: params.page * 10
+                        }
+                    };
+                }
+            },
+            cache: true
+        }
+    });
 }
 
 function bindDataTable() {
@@ -155,6 +194,4 @@ function bindDataTable() {
             }
         ]
     });
-
-
 }
