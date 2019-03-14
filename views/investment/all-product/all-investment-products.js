@@ -41,7 +41,7 @@ function updateStatus(id, status) {
 }
 
 function onRequirement(value) {
-    $("viewRequirementModalLabel").text(`${value} Requirement`);
+    $("#viewRequirementModalHeader").html(`${value} Requirement`);
 
 }
 
