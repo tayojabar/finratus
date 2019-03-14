@@ -2,7 +2,7 @@ function numberToCurrencyformatter(value) {
     if (!value && isNaN(value))
         return value;
     if (typeof value !== "string")
-        value.toString();
+        value = value.toString();
     let _n = value.split("."),
         _n2 = (_n[1] !== undefined) ? _n[0] + "." + _n[1] : _n[0],
         n = _n2.split(".");

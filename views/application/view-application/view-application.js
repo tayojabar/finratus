@@ -27,7 +27,7 @@ let settings_obj = {
     tenor_min: 1,
     tenor_max: 60,
     interest_rate_min: 1,
-    interest_rate_max: 12
+    interest_rate_max: 1000
 };
 function getApplicationSettings() {
     $('#wait').show();
