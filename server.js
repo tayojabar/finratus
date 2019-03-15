@@ -44,6 +44,7 @@ if (fs.existsSync('./files')) {
 let app = express(),
     cors = require('cors'),
     user = require('./routes/users'),
+    settings = require('./routes/settings'),
     investment = require('./routes/investment'),
     core_service = require('./routes/service/core-service'),
     client_service = require('./routes/service/custom-services/client-service'),
@@ -189,6 +190,7 @@ app.get('/logout', function (req, res) {
 
 app.use('/', index);
 app.use('/user', user);
+app.use('/settings', settings);
 app.use('/investment', investment);
 app.use('/core-service', core_service);
 app.use('/client-service', client_service);
@@ -229,13 +231,13 @@ app.get('/all-users', requireLogin, function (req, res) {
 });
 
 app.get('/all-applications', requireLogin, function (req, res) {
-    res.sendFile('all-applications.html', {
+    res.sendFile('application/all-applications/all-applications.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/all-collections', requireLogin, function (req, res) {
-    res.sendFile('all-collections.html', {
+    res.sendFile('collection/all-collections/all-collections.html', {
         root: __dirname + '/views'
     });
 });
@@ -294,20 +296,20 @@ app.get('/reports', requireLogin, function (req, res) {
     });
 });
 
-app.get('/workflow', requireLogin, function (req, res) {
-    res.sendFile('workflow.html', {
+app.get('/add-workflow', requireLogin, function (req, res) {
+    res.sendFile('workflow/add-workflow/add-workflow.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/application/:id?', requireLogin, function (req, res) {
-    res.sendFile('application.html', {
+    res.sendFile('/application/view-application/view-application.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/edit-workflow/:id?', requireLogin, function (req, res) {
-    res.sendFile('edit-workflow.html', {
+    res.sendFile('workflow/edit-workflow/edit-workflow.html', {
         root: __dirname + '/views'
     });
 });
@@ -325,13 +327,13 @@ app.get('/module', requireLogin, function (req, res) {
 });
 
 app.get('/add-application', requireLogin, function (req, res) {
-    res.sendFile('add-application.html', {
+    res.sendFile('/application/add-application/add-application.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/all-workflow', requireLogin, function (req, res) {
-    res.sendFile('all-workflow.html', {
+    res.sendFile('workflow/all-workflow/all-workflow.html', {
         root: __dirname + '/views'
     });
 });
@@ -343,7 +345,7 @@ app.get('/all-requests', requireLogin, function (req, res) {
 });
 
 app.get('/loan-repayment', requireLogin, function (req, res) {
-    res.sendFile('loan-repayment.html', {
+    res.sendFile('collection/loan-repayment/loan-repayment.html', {
         root: __dirname + '/views'
     });
 });
@@ -385,7 +387,7 @@ app.get('/activity', requireLogin, function (req, res) {
 });
 
 app.get('/all-targets', requireLogin, function (req, res) {
-    res.sendFile('all-targets.html', {
+    res.sendFile('target/all-targets/all-targets.html', {
         root: __dirname + '/views'
     });
 });
@@ -397,7 +399,7 @@ app.get('/all-teams', requireLogin, function (req, res) {
 });
 
 app.get('/target-dashboard', requireLogin, function (req, res) {
-    res.sendFile('target-dashboard.html', {
+    res.sendFile('target/target-dashboard/target-dashboard.html', {
         root: __dirname + '/views'
     });
 });
@@ -421,19 +423,19 @@ app.get('/notification-settings', requireLogin, function (req, res) {
 });
 
 app.get('/all-periods', requireLogin, function (req, res) {
-    res.sendFile('all-periods.html', {
+    res.sendFile('target/all-periods/all-periods.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/commission-profile', requireLogin, function (req, res) {
-    res.sendFile('commission-profile.html', {
+    res.sendFile('/settings/commission-profile/commission-profile.html', {
         root: __dirname + '/views'
     });
 });
 
 app.get('/commission-dashboard', requireLogin, function (req, res) {
-    res.sendFile('commission-dashboard.html', {
+    res.sendFile('commission/commission-dashboard/commission-dashboard.html', {
         root: __dirname + '/views'
     });
 });
@@ -462,9 +464,20 @@ app.get('/all-investments', requireLogin, function (req, res) {
     });
 });
 
+app.get('/investment-transactions', requireLogin, function (req, res) {
+    res.sendFile('investment/transaction/transaction.html', {
+        root: __dirname + '/views'
+    });
+});
 
 app.get('/all-commissions', requireLogin, function (req, res) {
-    res.sendFile('all-commissions.html', {
+    res.sendFile('commission/all-commissions/all-commissions.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/application-settings', requireLogin, function (req, res) {
+    res.sendFile('settings/application-settings/application-settings.html', {
         root: __dirname + '/views'
     });
 });

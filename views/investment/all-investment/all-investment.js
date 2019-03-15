@@ -82,7 +82,7 @@ function bindDataTable() {
             {
                 width: "15%",
                 "mRender": function (data, type, full) {
-                    return `<a class="btn btn-info btn-sm">View Form</a>`;
+                    return `<a class="btn btn-info btn-sm" href="./investment-transactions?id=${full.ID}">View Form</a>`;
                 }
             }
         ]
