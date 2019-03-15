@@ -4,8 +4,6 @@ $(document).ready(function() {
     getCommissionList();
     getTargetList();
     getUserList();
-    check();
-    loadMenus();
     read_write_custom();
 });
 

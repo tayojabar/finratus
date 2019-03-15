@@ -4,9 +4,6 @@
         getWorkflows();
         getLoanPurposes();
         getApplicationSettings();
-        check();
-        loadMenus();
-        read_write();
     });
 
     $(document).ajaxStart(function(){

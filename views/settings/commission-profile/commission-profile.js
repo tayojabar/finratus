@@ -1,9 +1,6 @@
 $(document).ready(function () {
     $('#commissions').DataTable();
     getCommissions();
-    check();
-    loadMenus();
-    read_write();
 });
 
 $(document).on("click", "#accelerator", function (e) {

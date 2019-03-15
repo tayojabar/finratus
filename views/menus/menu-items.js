@@ -1,3 +1,7 @@
+$(document).ready(function () {
+    includeHTML();
+});
+
 function check() {
     if (localStorage.getItem('role') !== 1) {
         jQuery('#car-models').hide();
@@ -10,9 +14,9 @@ function check() {
 }
 
 function read_write() {
-    let w;
-    var perms = JSON.parse(localStorage.getItem("permissions"));
-    var page = (window.location.pathname.split('/')[1].split('.'))[0];
+    let w,
+        perms = JSON.parse(localStorage.getItem("permissions")),
+        page = (window.location.pathname.split('/')[1].split('.'))[0];
     perms.forEach(function (k, v) {
         if (k.module_name === page) {
             w = $.grep(perms, function (e) {
@@ -20,9 +24,8 @@ function read_write() {
             });
         }
     });
-    if (w && w[0] && (parseInt(w[0]['editable']) !== 1)) {
+    if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
         $(".write").hide();
-    }
 }
 
 function loadMenus() {
@@ -60,4 +63,35 @@ function loadMenus() {
             });
         }
     });
+}
+
+function includeHTML() {
+    let z, i, elmnt, file, xhttp;
+    z = document.getElementsByTagName("*");
+    for (i = 0; i < z.length; i++) {
+        elmnt = z[i];
+        file = elmnt.getAttribute("include-html");
+        if (file) {
+            xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {elmnt.innerHTML = this.responseText;}
+                    if (this.status === 404) {elmnt.innerHTML = "Page not found.";}
+                    elmnt.removeAttribute("include-html");
+                    includeHTML();
+                }
+            };
+            xhttp.open("GET", file, true);
+            xhttp.send();
+            return;
+        }
+    }
+    check();
+    read_write();
+    loadMenus();
+}
+
+function logout() {
+    localStorage.login = "0";
+    window.location.href = "/logout";
 }

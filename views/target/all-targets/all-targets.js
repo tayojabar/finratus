@@ -1,9 +1,6 @@
 $(document).ready(function() {
     $('#bootstrap-data-table-export').DataTable();
     getTargets();
-    check();
-    loadMenus();
-    read_write();
     $("#datepicker").datepicker({
         format: "mm-yyyy",
         startView: "months",

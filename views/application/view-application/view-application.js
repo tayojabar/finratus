@@ -1,7 +1,5 @@
 $(document).ready(function() {
     loadComments();
-    check();
-    loadMenus();
     read_write_1();
 });
 

@@ -1,9 +1,6 @@
 $(document).ready(function () {
     loadLoanPurposes();
     getApplicationSettings();
-    check();
-    loadMenus();
-    read_write();
 });
 
 $(document).ajaxStart(function () {
