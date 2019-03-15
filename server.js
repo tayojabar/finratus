@@ -49,6 +49,8 @@ let app = express(),
     client_service = require('./routes/service/custom-services/client-service'),
     investment_product_service = require('./routes/service/custom-services/investment-product.service'),
     investment_service = require('./routes/service/custom-services/investment.service'),
+    notification = require('./routes/notifications'),
+    notification_service = require('./routes/notifications-service'),
     index = require('./routes/index');
 
 app.use(bodyParser.urlencoded({
@@ -192,7 +194,8 @@ app.use('/core-service', core_service);
 app.use('/client-service', client_service);
 app.use('/investment-service', investment_service);
 app.use('/investment-products', investment_product_service);
-app.use('/notifications', notifications);
+// app.use('/notification-service', notification_service);
+app.use('/notifications', notification);
 app.use('/files', express.static(__dirname + '/files'));
 
 app.get('/logon', function (req, res) {
@@ -407,6 +410,12 @@ app.get('/view-activity', requireLogin, function (req, res) {
 
 app.get('/activity-settings', requireLogin, function (req, res) {
     res.sendFile('activity-settings.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/notification-settings', requireLogin, function (req, res) {
+    res.sendFile('notification-settings.html', {
         root: __dirname + '/views'
     });
 });

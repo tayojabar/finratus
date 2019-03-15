@@ -10,6 +10,7 @@ let token,
     bcrypt = require('bcryptjs'),
     jwt = require('jsonwebtoken'),
     nodemailer = require('nodemailer'),
+    notificationsService = require('./notifications-service'),
 	hbs = require('nodemailer-express-handlebars'),
     smtpTransport = require('nodemailer-smtp-transport'),
 	smtpConfig = smtpTransport({
@@ -184,6 +185,10 @@ users.post('/new-user', function(req, res, next) {
                         connection.query('SELECT * from users where ID = LAST_INSERT_ID()', function(err, re, fields) {
                             connection.release();
                             if (!err){
+                                let payload = {}
+                                payload.category = 'Users'
+                                payload.description = 'New User Created'
+                                notificationsService.log(req, payload)
                                 res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
                             }
                             else{
@@ -4614,6 +4619,11 @@ users.post('/new-activity', function(req, res, next) {
                     let id = results[0].ID;
                     connection.query('update activities set attachments = ? where activities.id = ?', [postData.attachments, id], function(error, results, fields){
                         connection.release();
+                        let payload = {}
+                        payload.category = 'Activity'
+                        payload.userid = ''
+                        payload.description = 'New Activity'
+                        notificationsService.log(req,payload)
                         res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created", "result": id}));
                     });
                 });
@@ -4861,7 +4871,7 @@ users.post('/en-act-type/:id', function(req, res, next) {
 users.post('/attach-files/:id', function(req, res) {
     if (!req.files) return res.status(400).send('No files were uploaded.');
     if (!req.params.id) return res.status(400).send('No Folder specified!');
-    if (req.body.num === 1){
+    if (req.body.num === '1'){
         fs.stat('files/activities/'+req.params.id+'/', function(err) {
             if (!err) {
                 console.log('file or directory exists');
@@ -4869,36 +4879,36 @@ users.post('/attach-files/:id', function(req, res) {
             else if (err.code === 'ENOENT') {
                 fs.mkdirSync('files/activities/'+req.params.id+'/');
             }
-        });
-    }
-    let sampleFile = req.files.file,
-        name = sampleFile.name,
-        extArray = sampleFile.name.split("."),
-        extension = extArray[extArray.length - 1],
-        fileName = name+'.'+extension;
+            let sampleFile = req.files.file,
+                name = sampleFile.name,
+                extArray = sampleFile.name.split("."),
+                extension = extArray[extArray.length - 1],
+                fileName = name+'.'+extension;
 
-    fs.stat('files/activities/'+req.params.id+'/'+name, function (err) {
-        if (err) {
-            sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
-                if (err) return res.status(500).send(err);
-                res.send('File uploaded!');
-            });
-        }
-        else{
-            fs.unlink('files/activities/'+req.params.id+'/'+name,function(err){
-                if(err){
-                    res.send('Unable to delete file!');
-                }
-                else{
+            fs.stat('files/activities/'+req.params.id+'/'+name, function (err) {
+                if (err) {
                     sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
-                        if (err)
-                            return res.status(500).send(err);
+                        if (err) return res.status(500).send(err);
                         res.send('File uploaded!');
                     });
                 }
+                else{
+                    fs.unlink('files/activities/'+req.params.id+'/'+name,function(err){
+                        if(err){
+                            res.send('Unable to delete file!');
+                        }
+                        else{
+                            sampleFile.mv('files/activities/'+req.params.id+'/'+name, function(err) {
+                                if (err)
+                                    return res.status(500).send(err);
+                                res.send('File uploaded!');
+                            });
+                        }
+                    });
+                }
             });
-        }
-    });
+        });
+    }
 });
 
 /* GET Activity Attachments. */
