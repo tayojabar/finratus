@@ -34,8 +34,8 @@ function getApplicationSettings(application) {
         type: "GET",
         url: "/settings/application",
         success: function (data) {
-            settings_obj = data.response;
-            if (settings_obj) {
+            if (data.response) {
+                settings_obj = data.response;
                 if (settings_obj.loan_requested_min)
                     $('#loan_requested_min').text(numberToCurrencyformatter(settings_obj.loan_requested_min));
                 if (settings_obj.loan_requested_max)

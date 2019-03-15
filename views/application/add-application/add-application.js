@@ -69,8 +69,8 @@
             type: "GET",
             url: "/settings/application",
             success: function (data) {
-                settings_obj = data.response;
-                if (settings_obj) {
+                if (data.response) {
+                    settings_obj = data.response;
                     if (settings_obj.loan_requested_min)
                         $('#loan_requested_min').text(numberToCurrencyformatter(settings_obj.loan_requested_min));
                     if (settings_obj.loan_requested_max)
@@ -84,7 +84,7 @@
                     if (settings_obj.interest_rate_max)
                         $('#interest_rate_max').text(numberToCurrencyformatter(settings_obj.interest_rate_max));
                 }
-                initCSVUpload2();
+                initCSVUpload2(settings_obj);
             }
         });
     }
@@ -167,11 +167,10 @@
         return schedule;
     }
 
-    function initCSVUpload2() {
+    function initCSVUpload2(settings) {
         let schedule = [],
             loan_amount = 0,
             $dvCSV = $("#dvCSV2"),
-            settings = settings_obj,
             $csvUpload = $("#csvUpload2"),
             $uploadCSV = $("#uploadCSV2"),
             $message = $("#schedule-error-message");
