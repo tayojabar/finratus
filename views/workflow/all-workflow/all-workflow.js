@@ -3,9 +3,6 @@ $(document).ready(function() {
     $('#stages').DataTable({"bFilter": false, "bInfo" : false});
     loadProcesses();
     getStages();
-    check();
-    loadMenus();
-    read_write();
 });
 
 $(document).ajaxStart(function(){

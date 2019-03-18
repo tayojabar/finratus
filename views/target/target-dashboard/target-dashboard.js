@@ -2,8 +2,6 @@ $(document).ready(function() {
     $('#bootstrap-data-table-export').DataTable();
     $("#filter_type").select2();
     getTargetList();
-    check();
-    loadMenus();
     read_write_custom();
 });
 

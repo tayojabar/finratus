@@ -1,8 +1,5 @@
 $(document).ready(function() {
     getPeriods();
-    check();
-    loadMenus();
-    read_write();
     $("#datepicker").datepicker({
         format: "mm-yyyy",
         startView: "months",

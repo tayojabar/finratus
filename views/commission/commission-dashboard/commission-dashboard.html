@@ -46,74 +46,13 @@
 </head>
 <body>
 <!-- Left Panel -->
-<aside id="left-panel" class="left-panel">
-    <nav class="navbar navbar-expand-sm navbar-default">
-
-        <div class="navbar-header">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fa fa-bars"></i>
-            </button>
-            <a class="navbar-brand" href="/dashboard">Loanratus</a>
-            <a class="navbar-brand hidden" href="/dashboard">LR</a>
-        </div>
-
-        <div id="main-menu" class="main-menu collapse navbar-collapse">
-            <ul id="sidebar" class="nav navbar-nav">
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </nav>
-</aside><!-- /#left-panel -->
+<aside id="left-panel" class="left-panel" include-html="/menus/menu-items.html"></aside><!-- /#left-panel -->
 <!-- Left Panel -->
 
 <!-- Right Panel -->
 <div id="right-panel" class="right-panel">
-
     <!-- Header-->
-    <header id="header" class="header">
-
-        <div class="header-menu">
-
-            <div class="col-sm-7">
-                <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
-                <div class="header-left">
-                    <button class="search-trigger"><i class="fa fa-search"></i></button>
-                    <div class="form-inline">
-                        <form class="search-form">
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
-                            <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-5">
-                <div class="user-area dropdown float-right">
-                    <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
-                    </a>
-
-                    <div class="user-menu dropdown-menu">
-                        <!-- <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
-
-                        <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
-
-                        <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a> -->
-
-                        <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>
-                        <script type="text/javascript">
-                            function logout() {
-                                localStorage.login = "0";
-                                window.location.href = "/logout";
-                            }
-                        </script>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </header><!-- /header -->
+    <header id="header" class="header" include-html="/menus/header.html"></header><!-- /header -->
     <!-- Header-->
 
     <div class="breadcrumbs">
@@ -244,7 +183,7 @@
                             <strong><label class=" form-control-label">Amount Paid</label></strong><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
                             <div class="input-group">
                                 <div class="input-group-addon">₦</div>
-                                <input id="amount" type="number" placeholder="0" class="form-control" required="required">
+                                <input id="amount" type="text" placeholder="0" class="form-control" required="required">
                             </div>
                         </div>
                     </div>
@@ -274,7 +213,7 @@
 </div>
 
 <div class="modal fade" id="processCommissionModal" role="dialog" aria-labelledby="processCommissionModalLabel">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="min-width: 50%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="processCommissionModalLabel">Commission Process</h4>
@@ -290,7 +229,7 @@
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <strong><label class=" form-control-label">Amount</label></strong><strong style="color:red"> *</strong><span id="process-type-error" style="padding-left:50px; text-align: center"></span>
+                            <strong><label class=" form-control-label">Type</label></strong><strong style="color:red"> *</strong><span id="process-type-error" style="padding-left:50px; text-align: center"></span>
                             <select id="process-type" class="form-control" required="required">
                                 <option value="-- Select Type --" selected="selected">-- Select Type --</option>
                                 <option value="addition">Addition</option>
@@ -301,14 +240,31 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <strong><label class=" form-control-label">Amount</label></strong><strong style="color:red"> *</strong><span id="process-amount-error" style="padding-left:50px; text-align: center"></span>
-                            <input id="process-amount" type="number" placeholder="0" class="form-control" required="required">
+                            <input id="process-amount" type="text" placeholder="0" class="form-control" required="required">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <button id="save-process-btn" type="button" class="btn btn-block btn-success processCommission" onclick="saveProcess()">Save</button>
                         </div>
                     </div>
                 </div>
+                <hr>
+                <table id="process-history" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button id="save-process-btn" type="button" class="btn btn-success processCommission" onclick="saveProcess()">Save</button>
             </div>
         </div>
     </div>

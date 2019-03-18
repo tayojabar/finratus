@@ -1,7 +1,5 @@
 $(document).ready(function() {
     $('#bootstrap-data-table-export').DataTable();
-    check();
-    loadMenus();
     read_write_custom();
 });
 

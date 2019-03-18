@@ -1,8 +1,6 @@
 $(document).ready(function() {
     loadUsers();
     loadComments();
-    check();
-    loadMenus();
 });
 
 $(document).ajaxStart(function(){

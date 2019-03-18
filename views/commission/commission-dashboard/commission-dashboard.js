@@ -4,8 +4,6 @@ $(document).ready(function() {
     getCommissionList();
     getTargetList();
     getUserList();
-    check();
-    loadMenus();
     read_write_custom();
 });
 
@@ -252,7 +250,8 @@ function openCommissionModal(owner) {
                     earnings = (parseInt(rate)/100) * parseFloat(data.total);
                 }
             }
-            $('#commission-earned').text('₦'+earnings.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            earnings = earnings.toFixed(2);
+            $('#commission-earned').text('₦'+earnings.replace(/\d(?=(\d{3})+\.)/g, '$&,'));
             processCommission(ID,earnings,paid);
         }
     });
@@ -265,43 +264,52 @@ function processCommission(id,earnings,paid) {
         type: "GET",
         url: "/user/commission/processes/"+id,
         success: function (data) {
-            let process = data.response,
-                $type = $('#process-type'),
-                $title = $('#process-title'),
-                $amount = $('#process-amount'),
-                $button = $('#save-process-btn');
-            if (process){
-                $type.val(process.type);
-                $title.val(process.title);
-                $amount.val(process.amount);
-                $type.prop('disabled',true);
-                $title.prop('disabled',true);
-                $amount.prop('disabled',true);
-                $button.prop('disabled',true);
-                processed_commission = earnings - parseFloat(paid) + parseFloat(process.amount);
-            } else {
-                $type.val('-- Select Type --');
-                $title.val('');
-                $amount.val('');
-                $type.prop('disabled',false);
-                $title.prop('disabled',false);
-                $amount.prop('disabled',false);
-                $button.prop('disabled',false);
-            }
-            $('#commission-processed').text('₦'+processed_commission.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            let process_amount = 0;
+            $("#process-history").dataTable().fnClearTable();
+            $.each(data.response, function(k, v){
+                let amount = parseFloat((parseFloat(v.amount)).toFixed(2)),
+                    table = [
+                        v.title,
+                        v.type,
+                        '₦'+numberToCurrencyformatter(Math.abs(amount)),
+                        v.date_created
+                    ];
+                if (v.status === 0){
+                    table.push('Payment Reversed');
+                } else if (v.status === 1){
+                    table.push('<button class="btn btn-danger reversePayment" onclick="reverseCommissionProcess('+v.ID+')"><i class="fa fa-remove"></i> Reverse</button>');
+                }
+                $('#process-history').dataTable().fnAddData(table);
+                $('#process-history').dataTable().fnSort([[1,'desc']]);
+                process_amount += amount;
+            });
+            if (process_amount !== 0)
+                processed_commission = parseFloat(earnings) - parseFloat(paid) + process_amount;
+            processed_commission = processed_commission.toFixed(2);
+            $('#commission-processed').text('₦'+processed_commission.replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         }
     });
 }
+
+$("#amount").on("keyup", function () {
+    let val = $("#amount").val();
+    $("#amount").val(numberToCurrencyformatter(val));
+});
+
+$("#process-amount").on("keyup", function () {
+    let val = $("#process-amount").val();
+    $("#process-amount").val(numberToCurrencyformatter(val));
+});
 
 function payCommission() {
     let obj = {};
     obj.userID = user_id;
     obj.commissionID = commission_id;
     obj.user_commissionID = user_commission_id;
-    obj.total_earned = earnings.toFixed(2);
-    obj.total_processed = processed_commission.toFixed(2);
+    obj.total_earned = earnings;
+    obj.total_processed = processed_commission;
     obj.total_paid = amount_paid.toFixed(2);
-    obj.amount = $('#amount').val();
+    obj.amount = currencyToNumberformatter($('#amount').val());
     if (!obj.amount)
         return notification('Kindly fill all required field(s)','','warning');
     obj.amount = parseFloat(obj.amount);
@@ -356,7 +364,7 @@ function saveProcess() {
     obj.user_commissionID = user_commission_id;
     obj.title = $('#process-title').val();
     obj.type = $('#process-type').val();
-    obj.amount = $('#process-amount').val();
+    obj.amount = currencyToNumberformatter($('#process-amount').val());
     if (!obj.amount || !obj.title || obj.amount === '-- Select Type --')
         return notification('Kindly fill all required field(s)','','warning');
     obj.amount = parseFloat(obj.amount);
@@ -383,15 +391,51 @@ function saveProcess() {
 }
 
 function reverseCommissionPayment(payment_id) {
-    $.ajax({
-        'url': '/user/application/commission-payment-reversal/'+payment_id,
-        'type': 'get',
-        'success': function (data) {
-            notification('Payment reversed successfully','','success');
-            window.location.reload();
-        },
-        'error': function (err) {
-            notification('No internet connection','','error');
-        }
-    });
+    swal({
+        title: "Are you sure?",
+        text: "Once cancelled, this process is not reversible!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    })
+        .then((yes) => {
+            if (yes) {
+                $.ajax({
+                    'url': '/user/application/commission-payment-reversal/'+payment_id,
+                    'type': 'get',
+                    'success': function (data) {
+                        notification('Payment reversed successfully','','success');
+                        window.location.reload();
+                    },
+                    'error': function (err) {
+                        notification('No internet connection','','error');
+                    }
+                });
+            }
+        });
+}
+
+function reverseCommissionProcess(process_id) {
+    swal({
+        title: "Are you sure?",
+        text: "Once cancelled, this process is not reversible!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    })
+        .then((yes) => {
+            if (yes) {
+                $.ajax({
+                    'url': '/user/application/commission-process-reversal/'+process_id,
+                    'type': 'get',
+                    'success': function (data) {
+                        notification('Process reversed successfully','','success');
+                        window.location.reload();
+                    },
+                    'error': function (err) {
+                        notification('No internet connection','','error');
+                    }
+                });
+            }
+        });
 }

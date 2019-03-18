@@ -1,9 +1,6 @@
 $(document).ready(function() {
     $('#bootstrap-data-table-export').DataTable();
     loadCollections();
-    check();
-    loadMenus();
-    read_write();
 });
 
 $(document).ajaxStart(function(){

@@ -1,7 +1,4 @@
 jQuery(document).ready(function($){
-    check();
-    loadMenus();
-    read_write();
     localStorage.list_index = '';
     localStorage.list_type = '';
 
