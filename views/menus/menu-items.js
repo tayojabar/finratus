@@ -1,5 +1,19 @@
 $(document).ready(function () {
     includeHTML();
+    const $body = $('body');
+    $body.delegate('#menuToggle','click', function(event) {
+        $('body').toggleClass('open');
+    });
+    $body.delegate('.search-trigger','click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        $('.search-trigger').parent('.header-left').addClass('open');
+    });
+    $body.delegate('.search-close','click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        $('.search-trigger').parent('.header-left').removeClass('open');
+    });
 });
 
 function check() {
