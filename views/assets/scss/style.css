@@ -1,6 +1,10 @@
 /* Bootstrap */
 @import url(../css/animate.css);
 
+#main-menu{
+    padding: 0;
+}
+
 .gaugejs-wrap {
     position: relative;
     margin: 0 auto;
