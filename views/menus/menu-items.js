@@ -109,95 +109,68 @@ function logout() {
     localStorage.login = "0";
     window.location.href = "/logout";
 }
-//        right side-menu-bar
+
+// notifications bar
+const $body = $('body');
 $(function () {
-
-    //        notification side-menu-bar
-
-    $(".close").click(function () {
+    $body.delegate('.close', 'click', function () {
         $("#notification-pane").addClass("d-none")
     });
-
-    // on clicking body, side nav should slide back inside
-
-    $('.notification-tab-toggler').click(function (e) {
-
+    $body.delegate('.notification-tab-toggler', 'click', function (e) {
         e.preventDefault(); // stops link from making page jump to the top
         e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
         $("#notification-pane").toggleClass("d-none")
 
     });
-
-    $('#notification-pane').click(function (e) {
-
+    $body.delegate('#notification-pane', 'click', function (e) {
         e.stopPropagation(); // when you click within the content area, it stops the page from seeing it as clicking the body too
 
     });
-
-    $('body').click(function () {
-
+    $body.click(function () {
         $('#notification-pane').addClass("d-none");
     });
-
-    //        message side-menu-bar
-
-    $(".close").click(function () {
+    $body.delegate('.close', '.click', function () {
         $("#message-pane").addClass("d-none")
     });
-
-    // on clicking body, side nav should slide back inside
-
-    $('.message-tab-toggler').click(function (e) {
-
+    $body.delegate('.message-tab-toggler', 'click', function (e) {
         e.preventDefault(); // stops link from making page jump to the top
         e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
         $("#message-pane").toggleClass("d-none")
 
     });
-
-    $('#message-pane').click(function (e) {
-
+    $body.delegate('#message-pane', '.click', function (e) {
         e.stopPropagation(); // when you click within the content area, it stops the page from seeing it as clicking the body too
-
     });
-
-    $('body').click(function () {
-
+    $body.click(function () {
         $('#message-pane').addClass("d-none");
     });
-
-
-//notification bar menu dropdown
-    $(".feed-content-menu").click(function (e) {
+    $body.delegate('.feed-content-menu', 'click', function (e) {
         e.preventDefault(); // stops link from making page jump to the top
         e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
         $("#feed-content-menu-drp-dwn").toggleClass("d-none")
     });
-    $('body').click(function () {
-
+    $body.click(function () {
         $('.feed-content-menu-drp-dwn').addClass("d-none");
     });
-    $('.dropdown-item').click(function () {
+    $body.delegate('.dropdown-item', 'click', function () {
         $('.feed-content-menu-drp-dwn').addClass("d-none");
     });
-    $('.tab-content').click(function () {
+    $body.delegate('.tab-content', 'click', function () {
         $('.feed-content-menu-drp-dwn').addClass("d-none");
     });
 });
 
-//message bar menu dropdown
-$(".message-content-menu").click(function (e) {
+$body.delegate('.message-content-menu', 'click', function (e) {
     e.preventDefault(); // stops link from making page jump to the top
     e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
     $("#message-content-menu-drp-dwn").toggleClass("d-none")
 });
-$('body').click(function () {
-
+$body.click(function () {
     $('.message-content-menu-drp-dwn').addClass("d-none");
 });
-$('.dropdown-item').click(function () {
+$body.delegate('.dropdown-item', 'click', function () {
     $('.message-content-menu-drp-dwn').addClass("d-none");
 });
-$('.tab-content').click(function () {
+$body.delegate('.tab-content', 'click', function () {
     $('.message-content-menu-drp-dwn').addClass("d-none");
 });
