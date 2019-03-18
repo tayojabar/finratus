@@ -45,7 +45,7 @@ router.post('/create', function (req, res, next) {
                     }, err => {
                         res.send({
                             status: 500,
-                            error: error,
+                            error: err,
                             response: null
                         });
                     })
@@ -59,7 +59,7 @@ router.post('/create', function (req, res, next) {
             }, err => {
                 res.send({
                     status: 500,
-                    error: error,
+                    error: err,
                     response: null
                 });
             })
