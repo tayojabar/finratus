@@ -17,30 +17,24 @@ function notifications(){
                 count++;
                 switch (val.category){
                     case 'Activity':
-                        icon = '<i class="fa fa-tasks"></i>'
+                        icon = '<i class="fa fa-tasks fa-4x"></i>'
                         break;
                     case 'Clients':
-                        icon = '<i class="fa fa-users"></i>'
+                        icon = '<i class="fa fa-users fa-4x"></i>'
                         break;
                     case 'Users':
-                        icon = '<i class="fa fa-user"></i>'
+                        icon = '<i class="fa fa-user fa-4x"></i>'
                         break;
                 }
-                // item = '<a class="dropdown-item" href="/dashboard">'+icon+'\n' +
-                //     '<p style="width: auto">'+val.description+'</p>\n' +
-                //     '</a>' +
-                //     // '<button class="fa-pull-right" style="margin-top: -30px; margin-right: 15px">Mark as viewed!</button>'+
-                //     '<input class="fa-pull-right" style="margin-top: -25px; margin-right: 15px" type="checkbox" />'+
-                //     '<hr/>';
                 item = '<div class="feed-body-content">\n' +
-'                            <p class="feed-body-header">Just Now</p>\n' +
+'                            <p class="feed-body-header">'+$.timeago(val.date_created)+'</time></p>\n' +
 '                            <div class="row">\n' +
-'                                <span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>\n' +
-'                                <span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven\'t heard of them jean shorts Austin.\n' +
+'                                <span class="col-md-3" style="padding-right: 0">'+icon+'</span>\n' +
+'                                <span class="col-md-9" style="padding-left: 10px;font-size: 14px">'+val.description+'\n' +
 '                                    <div class="client-notification">\n' +
 '                                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"\n' +
 '                                             style="">\n' +
-'                                            <p>David Becham</p>\n' +
+'                                            <p>'+val.user+'</p>\n' +
 '                                        <div class="feed-content-menu float-right" id=""\n' +
 '                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>\n' +
 '                                    </div>\n' +
@@ -48,8 +42,8 @@ function notifications(){
 '                            </div>\n' +
 '                            <div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"\n' +
 '                                 aria-labelledby="dropdownMenuButton">\n' +
-'                                <a class="dropdown-item" href="#">Action</a>\n' +
-'                                <a class="dropdown-item" href="#">Another action</a>\n' +
+'                                <a class="dropdown-item" href="#">Hide</a>\n' +
+'                                <a class="dropdown-item" href="#">Mark as Viewed</a>\n' +
 '                                <a class="dropdown-item" href="#">Something else here</a>\n' +
 '                            </div>\n' +
 '                        </div>'
@@ -69,5 +63,4 @@ function notifications(){
         }
     });
 }
-
 setInterval(notifications, 5000);

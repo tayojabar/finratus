@@ -20,7 +20,7 @@ mac.getMac(function(err, macAddress){
 
 route.get('/new-updates', function(req, res) {
     const HOST = 'http://localhost:4000'
-    let query = `select notification_id, category, description from pending_records inner join notifications on notification_id = notifications.id where status = 1 and view_status in (1,2) order by notification_id desc`;
+    let query = `select notification_id, category, description, date_created, (select fullname from users where users.id = userid) user from pending_records inner join notifications on notification_id = notifications.id where status = 1 and view_status in (1,2) order by notification_id desc`;
     const endpoint = `/core-service/get?query=${query}`;
     const url = `${HOST}${endpoint}`;
     axios.get(url)

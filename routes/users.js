@@ -1278,11 +1278,11 @@ users.post('/edit-client/:id', function(req, res, next) {
     postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     let payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.email,
     postData.gender, postData.dob, postData.marital_status, postData.loan_officer, postData.branch , postData.client_state, postData.postcode, postData.client_country,
-    postData.years_add, postData.ownership , postData.employer_name ,postData.industry ,postData.job, postData.job_country , postData.off_address, postData.off_state,
+    postData.years_add, postData.ownership , postData.employer_name ,postData.industry ,postData.job, postData.salary, postData.job_country , postData.off_address, postData.off_state,
     postData.doe, postData.guarantor_name, postData.guarantor_occupation, postData.relationship, postData.years_known, postData.guarantor_phone, postData.guarantor_email,
     postData.guarantor_address, postData.gua_country, postData.date_modified, req.params.id];
     let query = 'Update clients SET username = ?, fullname=?, phone=?, address = ?, email=?, gender=?, dob = ?, marital_status=?, loan_officer=?, branch=?, ' +
-                'client_state=?, postcode=?, client_country=?, years_add=?, ownership=?, employer_name=?, industry=?, job=?, job_country=?, off_address=?, off_state=?, ' +
+                'client_state=?, postcode=?, client_country=?, years_add=?, ownership=?, employer_name=?, industry=?, job=?, salary=?, job_country=?, off_address=?, off_state=?, ' +
                 'doe=?, guarantor_name=?, guarantor_occupation=?, relationship=?, years_known=?, guarantor_phone=?, guarantor_email=?, guarantor_address=?, gua_country=?, ' +
                 'date_modified = ? where ID=?';
     db.query(query, payload, function (error, results, fields) {
@@ -4621,8 +4621,8 @@ users.post('/new-activity', function(req, res, next) {
                         connection.release();
                         let payload = {}
                         payload.category = 'Activity'
-                        payload.userid = ''
-                        payload.description = 'New Activity'
+                        payload.userid = postData.for_
+                        payload.description = 'New Activity Created'
                         notificationsService.log(req,payload)
                         res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created", "result": id}));
                     });
