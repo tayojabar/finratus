@@ -18,7 +18,8 @@ middlewares.log = function log(req,payload) {
     // const HOST = 'http://localhost:4000'
     payload.status = 1;
     payload.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-    payload.ip_address = req.header('x-forwarded-for');
+    payload.ip_address = req.header('x-forwarded-for') || req.connection.remoteAddress;;
+    console.log(payload.ip_address);
     let query = `INSERT INTO notifications SET ?`;
     const endpoint = `/core-service/post?query=${query}`;
     const url = `${HOST}${endpoint}`;
