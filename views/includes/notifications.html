@@ -1,30 +1,241 @@
-<script src="jquery.timeago.js" type="text/javascript"></script>
-<!--Notification side panel-->
+<!--<script src="jquery.timeago.js" type="text/javascript"></script>-->
+<!--&lt;!&ndash;Notification side panel&ndash;&gt;-->
 
-<div class="notification-pane d-none" id="notification-pane">
-    <button type="button" class="close" data-dismiss="dropdown" aria-label="Close">
-        <span aria-hidden="true">×</span>
-    </button>
-    <div class="row" style="margin-right: 0; float: right;">
-        <div class="col-md-12">
-            <div class="feeds notification-pane-content">
-                <div class="feed-header">
-                    <h4>Notifications</h4>
-                    <div class="row">
-                        <div class="col-md-9">
-                            <h6 id="noti-info" style="margin-top: 15px; color: #878787;">You have a new notification</h6>
-                        </div>
-                        <div class="col-md-3" style="padding-top: 8px;">
-                            <button id="noti-settings" class="btn refresh-btn"><i class="fa fa-gear"></i> Settings</button>
-                        </div>
+<!--<div class="notification-pane d-none" id="notification-pane">-->
+    <!--<button type="button" class="close" data-dismiss="dropdown" aria-label="Close">-->
+        <!--<span aria-hidden="true">×</span>-->
+    <!--</button>-->
+    <!--<div class="row" style="margin-right: 0; float: right;">-->
+        <!--<div class="col-md-12">-->
+            <!--<div class="feeds notification-pane-content">-->
+                <!--<div class="feed-header">-->
+                    <!--<h4>Notifications</h4>-->
+                    <!--<div class="row">-->
+                        <!--<div class="col-md-9">-->
+                            <!--<h6 id="noti-info" style="margin-top: 15px; color: #878787;">You have a new notification</h6>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-3" style="padding-top: 8px;">-->
+                            <!--<button onclick="manage()" id="noti-settings" class="btn refresh-btn"><i class="fa fa-gear"></i> Settings</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
 
-                    </div>
+                <!--</div>-->
+                <!--<hr class="divider">-->
+                <!--<div class="tab-content " id="" style="padding: 10px 15px;">-->
+                    <!--<div class="tab-pane fade show active" id="n-dropdown" role="tabpanel" aria-labelledby="all-tab">-->
+                        <!--<div>-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id="dropdownMenuButton"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id=""&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id=""&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id=""&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id=""&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id=""&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id=""&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="feed-body-content">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<p class="feed-body-header">Just Now</p>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="client-notification">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"&ndash;&gt;-->
+                                             <!--&lt;!&ndash;style="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<p>David Becham</p>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="feed-content-menu float-right" id=""&ndash;&gt;-->
+                                             <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                 <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"&ndash;&gt;-->
+                                 <!--&lt;!&ndash;aria-labelledby="dropdownMenuButton">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Another action</a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a class="dropdown-item" href="#">Something else here</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div id="n-settings-panel" style="display: none">-->
+                        <!--<h6>Manage Notifications</h6><br/>-->
+                        <!--<input type="checkbox" id='Activity'/>&nbsp;&nbsp;<label for = "clients">Activity</label><hr/>-->
+                        <!--<input type="checkbox" id='clients'/>&nbsp;&nbsp;<label for = "clients">Clients</label><hr/>-->
+                        <!--<input type="checkbox" id='Users'/>&nbsp;&nbsp;<label for = "clients">Users</label><hr/>-->
+                        <!--<input type="checkbox" id='Loan Applications'/>&nbsp;&nbsp;<label for = "clients">Loan Applications</label><hr/>-->
+                        <!--<input type="checkbox" id='targets'/>&nbsp;&nbsp;<label for = "clients">Targets</label><hr/>-->
+                        <!--<button id="submit-settings" class="btn btn-info fa-pull-right">Save <i class="fa fa-save"></i></button>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<hr class="divider">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
-                </div>
-                <hr class="divider">
-                <div class="tab-content " id="" style="padding: 10px 15px;">
-                    <div class="tab-pane fade show active" id="n-dropdown" role="tabpanel" aria-labelledby="all-tab">
-                        <div>
+
+<!--&lt;!&ndash;Message side panel&ndash;&gt;-->
+<!--<div class="notification-pane d-none" id="message-pane">-->
+    <!--<button type="button" class="close" data-dismiss="dropdown" aria-label="Close">-->
+        <!--<span aria-hidden="true">×</span>-->
+    <!--</button>-->
+    <!--<div class="row" style="margin-right: 0; float: right;">-->
+        <!--<div class="col-md-12">-->
+            <!--<div class="feeds notification-pane-content">-->
+                <!--<div class="feed-header">-->
+                    <!--<h4>Messages</h4>-->
+                    <!--<div class="row">-->
+                        <!--<div class="col-md-9">-->
+                            <!--<h6 style="margin-top: 15px; color: #878787;">You have a new message</h6>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-3" style="padding-top: 8px;">-->
+                            <!--<button class="btn refresh-btn">Refresh</button>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+
+                <!--</div>-->
+                <!--<hr class="divider">-->
+                <!--<div class="tab-content " id=""-->
+                     <!--style="padding: 10px 15px;">-->
+                    <!--<div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">-->
                         <!--<div class="feed-body-content">-->
                             <!--<p class="feed-body-header">Just Now</p>-->
                             <!--<div class="row">-->
@@ -34,7 +245,28 @@
                                         <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
                                              <!--style="">-->
                                             <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id="dropdownMenuButton"-->
+                                        <!--<div class="message-content-menu float-right" id=""-->
+                                             <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
+                                    <!--</div>-->
+                                 <!--</span>-->
+                            <!--</div>-->
+                            <!--<div class="feed-content-menu-drp-dwn d-none" id="message-content-menu-drp-dwn"-->
+                                 <!--aria-labelledby="dropdownMenuButton">-->
+                                <!--<a class="dropdown-item" href="#">Action</a>-->
+                                <!--<a class="dropdown-item" href="#">Another action</a>-->
+                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="feed-body-content">-->
+                            <!--<p class="feed-body-header">Just Now</p>-->
+                            <!--<div class="row">-->
+                                <!--<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>-->
+                                <!--<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.-->
+                                    <!--<div class="client-notification">-->
+                                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
+                                             <!--style="">-->
+                                            <!--<p>David Becham</p>-->
+                                        <!--<div class="message-content-menu float-right" id=""-->
                                              <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
                                     <!--</div>-->
                                  <!--</span>-->
@@ -55,7 +287,7 @@
                                         <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
                                              <!--style="">-->
                                             <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id=""-->
+                                        <!--<div class="message-content-menu float-right" id=""-->
                                              <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
                                     <!--</div>-->
                                  <!--</span>-->
@@ -67,247 +299,13 @@
                                 <!--<a class="dropdown-item" href="#">Something else here</a>-->
                             <!--</div>-->
                         <!--</div>-->
-                        <!--<div class="feed-body-content">-->
-                            <!--<p class="feed-body-header">Just Now</p>-->
-                            <!--<div class="row">-->
-                                <!--<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>-->
-                                <!--<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.-->
-                                    <!--<div class="client-notification">-->
-                                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
-                                             <!--style="">-->
-                                            <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id=""-->
-                                             <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
-                                    <!--</div>-->
-                                 <!--</span>-->
-                            <!--</div>-->
-                            <!--<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"-->
-                                 <!--aria-labelledby="dropdownMenuButton">-->
-                                <!--<a class="dropdown-item" href="#">Action</a>-->
-                                <!--<a class="dropdown-item" href="#">Another action</a>-->
-                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="feed-body-content">-->
-                            <!--<p class="feed-body-header">Just Now</p>-->
-                            <!--<div class="row">-->
-                                <!--<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>-->
-                                <!--<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.-->
-                                    <!--<div class="client-notification">-->
-                                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
-                                             <!--style="">-->
-                                            <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id=""-->
-                                             <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
-                                    <!--</div>-->
-                                 <!--</span>-->
-                            <!--</div>-->
-                            <!--<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"-->
-                                 <!--aria-labelledby="dropdownMenuButton">-->
-                                <!--<a class="dropdown-item" href="#">Action</a>-->
-                                <!--<a class="dropdown-item" href="#">Another action</a>-->
-                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="feed-body-content">-->
-                            <!--<p class="feed-body-header">Just Now</p>-->
-                            <!--<div class="row">-->
-                                <!--<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>-->
-                                <!--<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.-->
-                                    <!--<div class="client-notification">-->
-                                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
-                                             <!--style="">-->
-                                            <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id=""-->
-                                             <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
-                                    <!--</div>-->
-                                 <!--</span>-->
-                            <!--</div>-->
-                            <!--<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"-->
-                                 <!--aria-labelledby="dropdownMenuButton">-->
-                                <!--<a class="dropdown-item" href="#">Action</a>-->
-                                <!--<a class="dropdown-item" href="#">Another action</a>-->
-                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="feed-body-content">-->
-                            <!--<p class="feed-body-header">Just Now</p>-->
-                            <!--<div class="row">-->
-                                <!--<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>-->
-                                <!--<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.-->
-                                    <!--<div class="client-notification">-->
-                                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
-                                             <!--style="">-->
-                                            <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id=""-->
-                                             <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
-                                    <!--</div>-->
-                                 <!--</span>-->
-                            <!--</div>-->
-                            <!--<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"-->
-                                 <!--aria-labelledby="dropdownMenuButton">-->
-                                <!--<a class="dropdown-item" href="#">Action</a>-->
-                                <!--<a class="dropdown-item" href="#">Another action</a>-->
-                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="feed-body-content">-->
-                            <!--<p class="feed-body-header">Just Now</p>-->
-                            <!--<div class="row">-->
-                                <!--<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>-->
-                                <!--<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.-->
-                                    <!--<div class="client-notification">-->
-                                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
-                                             <!--style="">-->
-                                            <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id=""-->
-                                             <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
-                                    <!--</div>-->
-                                 <!--</span>-->
-                            <!--</div>-->
-                            <!--<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"-->
-                                 <!--aria-labelledby="dropdownMenuButton">-->
-                                <!--<a class="dropdown-item" href="#">Action</a>-->
-                                <!--<a class="dropdown-item" href="#">Another action</a>-->
-                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="feed-body-content">-->
-                            <!--<p class="feed-body-header">Just Now</p>-->
-                            <!--<div class="row">-->
-                                <!--<span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>-->
-                                <!--<span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.-->
-                                    <!--<div class="client-notification">-->
-                                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"-->
-                                             <!--style="">-->
-                                            <!--<p>David Becham</p>-->
-                                        <!--<div class="feed-content-menu float-right" id=""-->
-                                             <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>-->
-                                    <!--</div>-->
-                                 <!--</span>-->
-                            <!--</div>-->
-                            <!--<div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"-->
-                                 <!--aria-labelledby="dropdownMenuButton">-->
-                                <!--<a class="dropdown-item" href="#">Action</a>-->
-                                <!--<a class="dropdown-item" href="#">Another action</a>-->
-                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        </div>
-                    </div>
-                    <div id="n-settings-panel" ></div>
-                </div>
-                <hr class="divider">
-            </div>
-        </div>
-    </div>
-</div>
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<hr class="divider">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
-
-<!--Message side panel-->
-<div class="notification-pane d-none" id="message-pane">
-    <button type="button" class="close" data-dismiss="dropdown" aria-label="Close">
-        <span aria-hidden="true">×</span>
-    </button>
-    <div class="row" style="margin-right: 0; float: right;">
-        <div class="col-md-12">
-            <div class="feeds notification-pane-content">
-                <div class="feed-header">
-                    <h4>Messages</h4>
-                    <div class="row">
-                        <div class="col-md-9">
-                            <h6 style="margin-top: 15px; color: #878787;">You have a new message</h6>
-                        </div>
-                        <div class="col-md-3" style="padding-top: 8px;">
-                            <button class="btn refresh-btn">Refresh</button>
-                        </div>
-
-                    </div>
-
-                </div>
-                <hr class="divider">
-                <div class="tab-content " id=""
-                     style="padding: 10px 15px;">
-                    <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
-                        <div class="feed-body-content">
-                            <p class="feed-body-header">Just Now</p>
-                            <div class="row">
-                                <span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>
-                                <span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.
-                                    <div class="client-notification">
-                                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"
-                                             style="">
-                                            <p>David Becham</p>
-                                        <div class="message-content-menu float-right" id=""
-                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>
-                                    </div>
-                                 </span>
-                            </div>
-                            <div class="feed-content-menu-drp-dwn d-none" id="message-content-menu-drp-dwn"
-                                 aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                        <div class="feed-body-content">
-                            <p class="feed-body-header">Just Now</p>
-                            <div class="row">
-                                <span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>
-                                <span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.
-                                    <div class="client-notification">
-                                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"
-                                             style="">
-                                            <p>David Becham</p>
-                                        <div class="message-content-menu float-right" id=""
-                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>
-                                    </div>
-                                 </span>
-                            </div>
-                            <div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"
-                                 aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                        <div class="feed-body-content">
-                            <p class="feed-body-header">Just Now</p>
-                            <div class="row">
-                                <span class="col-md-3" style="padding-right: 0"><img src="atb-logo.png"></span>
-                                <span class="col-md-9" style="padding-left: 10px;font-size: 14px"> Rawdenim youprobably haven't heard of them jean shorts Austin.
-                                    <div class="client-notification">
-                                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"
-                                             style="">
-                                            <p>David Becham</p>
-                                        <div class="message-content-menu float-right" id=""
-                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>
-                                    </div>
-                                 </span>
-                            </div>
-                            <div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"
-                                 aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <hr class="divider">
-            </div>
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript">
-    $(document).on("click", "#allActivities", function (e) {
-        $('#all-list').slideUp();
-//            $('#details').show();
-        $('#new').hide();
-        $('#all-list').show();
-        $('#default-table').show();
-        $('#filtered-table').hide();
-        $('#user-name').html('');
-    });
-</script>
+<!--<script type="text/javascript">-->
+<!--</script>-->

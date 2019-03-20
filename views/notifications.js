@@ -8,7 +8,7 @@ function notifications(){
             status = true;
             $('#noti-info').html('You have '+((init === 0)? 0 : (response.length - init))+ ' new notifications');
             init = response.length;
-            $('#noti-count').html(response.length);
+            $('#noti-count').html(((init === 0)? 0 : (response.length - init)));
             let count = 0,
                 icon,
                 item;
@@ -26,6 +26,7 @@ function notifications(){
                         icon = '<i class="fa fa-user fa-4x"></i>'
                         break;
                 }
+                let buttonid = 'but'+val.notification_id;
                 item = '<div class="feed-body-content">\n' +
 '                            <p class="feed-body-header">'+$.timeago(val.date_created)+'</time></p>\n' +
 '                            <div class="row">\n' +
@@ -35,17 +36,16 @@ function notifications(){
 '                                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"\n' +
 '                                             style="">\n' +
 '                                            <p>'+val.user+'</p>\n' +
-'                                        <div class="feed-content-menu float-right" id=""\n' +
-'                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>\n' +
+                    '                         <small class="feed-content-menu float-right" style="margin-top: 50px" id="'+buttonid+'">Mark as Viewed</small>\n'+
+// '                                        <div class="feed-content-menu float-right" id="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</div>\n' +
 '                                    </div>\n' +
 '                                 </span>\n' +
 '                            </div>\n' +
-'                            <div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"\n' +
-'                                 aria-labelledby="dropdownMenuButton">\n' +
-'                                <a class="dropdown-item" href="#">Hide</a>\n' +
-'                                <a class="dropdown-item" href="#">Mark as Viewed</a>\n' +
-'                                <a class="dropdown-item" href="#">Something else here</a>\n' +
-'                            </div>\n' +
+// '                            <div class="feed-content-menu-drp-dwn d-none" id="feed-content-menu-drp-dwn"\n' +
+// '                                 aria-labelledby="dropdownMenuButton">\n' +
+// '                                <a class="dropdown-item" href="#">Mark as Viewed</a>\n' +
+// '                                <a class="dropdown-item" href="#">Something else here</a>\n' +
+// '                            </div>\n' +
 '                        </div>'
                 $('#n-dropdown').append(item);
                 let obj = {};
@@ -55,7 +55,7 @@ function notifications(){
                        url: "/notifications/update-pr",
                        data:obj,
                        success: function (response) {
-                           console.log('Success');
+                           // console.log('Success');
                        }
                    });
             });
@@ -64,3 +64,9 @@ function notifications(){
     });
 }
 setInterval(notifications, 5000);
+
+function manage(){
+    // alert('Here');
+    $('#n-settings-panel').slideDown('slow');
+    $('#n-dropdown').hide();
+}
