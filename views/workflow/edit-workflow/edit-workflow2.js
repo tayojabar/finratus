@@ -140,7 +140,7 @@ function addProcess() {
 //                window.location.href = "/all-workflow";
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
             $('#wait').hide();
             notification('No internet connection','','error');
         }
@@ -156,7 +156,7 @@ function init(stages){
             $('#process-name').val(workflow.name);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
     $.ajax({
@@ -190,7 +190,7 @@ function init(stages){
             });
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }

@@ -50,6 +50,7 @@ let app = express(),
     client_service = require('./routes/service/custom-services/client-service'),
     investment_product_service = require('./routes/service/custom-services/investment-product.service'),
     investment_service = require('./routes/service/custom-services/investment.service'),
+    preapproved_loan_service = require('./routes/service/custom-services/preapproved-loan.service'),
     notification = require('./routes/notifications'),
     notification_service = require('./routes/notifications-service'),
     index = require('./routes/index');
@@ -196,6 +197,7 @@ app.use('/core-service', core_service);
 app.use('/client-service', client_service);
 app.use('/investment-service', investment_service);
 app.use('/investment-products', investment_product_service);
+app.use('/preapproved-loan', preapproved_loan_service);
 // app.use('/notification-service', notification_service);
 app.use('/notifications', notification);
 app.use('/files', express.static(__dirname + '/files'));
@@ -478,6 +480,36 @@ app.get('/all-commissions', requireLogin, function (req, res) {
 
 app.get('/application-settings', requireLogin, function (req, res) {
     res.sendFile('settings/application-settings/application-settings.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/all-suggested-loans', requireLogin, function (req, res) {
+    res.sendFile('preapproved-loan/all-suggested-loans/all-suggested-loans.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/all-preapproved-loans', requireLogin, function (req, res) {
+    res.sendFile('preapproved-loan/all-preapproved-loans/all-preapproved-loans.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/edit-preapproved-loan/:id?', requireLogin, function (req, res) {
+    res.sendFile('preapproved-loan/edit-preapproved-loan/edit-preapproved-loan.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/view-preapproved-loan/:id?', requireLogin, function (req, res) {
+    res.sendFile('preapproved-loan/view-preapproved-loan/view-preapproved-loan.html', {
+        root: __dirname + '/views'
+    });
+});
+
+app.get('/offer/:id?', function (req, res) {
+    res.sendFile('preapproved-loan/offer/offer.html', {
         root: __dirname + '/views'
     });
 });
