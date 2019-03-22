@@ -426,8 +426,8 @@ function set_investment_product() {
     product_obj.acct_allows_withdrawal = $('#acct_allows_withdrawal').is(':checked') ? 1 : 0;
     product_obj.inv_moves_wallet = $('#inv_moves_wallet').is(':checked') ? 1 : 0;
     product_obj.interest_moves_wallet = $('#interest_moves_wallet').is(':checked') ? 1 : 0;
-    product_obj.min_term = $('#min_term').val();
-    product_obj.max_term = $('#max_term').val();
+    product_obj.min_term = parseInt($('#min_term').val());
+    product_obj.max_term = parseInt($('#max_term').val());
     product_obj.histories = (product_obj.histories == null) ? [] : product_obj.histories;
 
     product_obj.premature_interest_rate = $('#premature_interest_rate').val();
@@ -458,6 +458,7 @@ function set_investment_product() {
                 }
             },
             'error': function (err) {
+                console.log(err);
                 $('#wait').hide();
                 swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
                     '', 'error');

@@ -354,7 +354,7 @@
                                                     <div class="form-group col-sm-4 col-md-4">
                                                         <label class="form-control-label">Years at Address </label>
                                                         <div class="input-group">
-                                                            <input type="number" id="years_add" class="form-control"placeholder="Number of Years" required="">
+                                                            <input type="number" min=1 id="years_add" class="form-control"placeholder="Number of Years" required="">
                                                             <!-- ngIf: idForm.email.$dirty -->
                                                         </div>
                                                     </div>
@@ -536,16 +536,22 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-sm-6 col-md-6">
-                                                        <label class="form-control-label">Country</label>
+                                                        <label class="form-control-label">Salary</label>
                                                         <div class="input-group">
-                                                            <select id="job_country" class="form-control" required="" >
-                                                            </select>
+                                                            <input type="number" min=1 id="salary" class="form-control" placeholder="Enter Client's Salary" required="">
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row">
 
+                                                    <div class="form-group col-sm-6 col-md-6">
+                                                        <label class="form-control-label">Country</label>
+                                                        <div class="input-group">
+                                                            <select id="job_country" class="form-control" required="" >
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Address</label>
                                                         <div class="input-group">
@@ -556,6 +562,9 @@
                                                             <!-- ngIf: idForm.dob.$dirty -->
                                                         </div>
                                                     </div>
+                                                </div>
+
+                                                <div class="row">
 
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">State</label>
@@ -568,9 +577,6 @@
                                                             <!-- ngIf: idForm.marital_status.$dirty -->
                                                         </div>
                                                     </div>
-                                                </div>
-
-                                                <div class="row">
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Date of Employment</label>
                                                         <div class="input-group">
@@ -969,6 +975,7 @@
         obj.employer_name = $("#employer_name").val();
         obj.industry = $('#industry').find('option:selected').text();
         obj.job = $("#job").val();
+        obj.salary = $("#salary").val();
         obj.job_country = $('#job_country').find('option:selected').attr('id');
         obj.off_address = $("#off_address").val();
         obj.off_state = $('#off_state').find('option:selected').attr('id');
