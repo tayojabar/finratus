@@ -932,7 +932,7 @@
             if ($('#loan_officer_status').is(':checked'))
                 obj.loan_officer_status = 1;
             $.ajax({
-                'url': '/user/edit-user/'+localStorage.getItem("user_id"),
+                'url': '/user/edit-user/'+localStorage.getItem("user_id")+'/'+JSON.parse(localStorage.user_obj).ID,
                 'type': 'post',
                 'data': obj,
                 'success': function (data) {

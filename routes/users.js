@@ -1257,7 +1257,7 @@ users.get('/user/:id', function(req, res, next) {
 });
 
 /* Edit User Info */
-users.post('/edit-user/:id', function(req, res, next) {
+users.post('/edit-user/:id/:user', function(req, res, next) {
 	let date = Date.now(),
         postData = req.body;
 	postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
@@ -1267,6 +1267,12 @@ users.post('/edit-user/:id', function(req, res, next) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
 	  	} else {
+                // let load = {}
+                // load.category = 'Activity'
+                // load.userid = req.params.user
+                // load.description = 'User Details Updated'
+                // load.affected_client =
+                // notificationsService.log(req, res, load)
   			res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
 	  	}
   	});
@@ -4623,7 +4629,7 @@ users.post('/new-activity', function(req, res, next) {
                         payload.category = 'Activity'
                         payload.userid = postData.for_
                         payload.description = 'New Activity Created'
-                        notificationsService.log(req,payload)
+                        notificationsService.log(req, res, payload)
                         res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created", "result": id}));
                     });
                 });

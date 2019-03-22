@@ -13,13 +13,14 @@ router.get('/get', function (req, res, next) {
                 "response": null
             });
         } else {
+            // console.log(results)
             res.send(results);
         }
     });
 });
 
 router.post('/post', function (req, res, next) {
-    let data = req.body;
+    let data = req.body; console.log(data)
     let query = req.query.query;
     db.query(query, data, function (error, results, fields) {
         if (error) {
