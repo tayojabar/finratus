@@ -131,7 +131,7 @@ function addProcess() {
             window.location.href = "/all-workflow";
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
             $('#wait').hide();
             swal('No internet connection','','error');
         }

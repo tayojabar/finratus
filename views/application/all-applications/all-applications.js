@@ -47,7 +47,7 @@ function loadApplications(id){
         },
         'error': function (err) {
             $('#wait').hide();
-            console.log('Error');
+            console.log(err);
         }
     });
 }

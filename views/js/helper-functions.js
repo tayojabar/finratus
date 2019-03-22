@@ -1,5 +1,5 @@
 function numberToCurrencyformatter(value) {
-    if (!value && isNaN(value))
+    if (!value || isNaN(value) || value === null)
         return value;
     if (typeof value !== "string")
         value = value.toString();
@@ -46,7 +46,12 @@ Number.prototype.roundTo = function(n) {
 
 Number.prototype.round = function(p) {
     p = p || 10;
-    return parseFloat( this.toFixed(p) );
+    return parseFloat(this.toFixed(p));
+};
+
+String.prototype.round = function(p) {
+    p = p || 10;
+    return parseFloat(this).toFixed(p);
 };
 
 Number.prototype.trunc = function(p) {

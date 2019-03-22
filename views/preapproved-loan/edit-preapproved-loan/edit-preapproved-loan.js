@@ -1,6 +1,5 @@
 (function( $ ) {
     jQuery(document).ready(function() {
-        getUsers();
         getWorkflows();
         getLoanPurposes();
         getApplicationSettings();
@@ -14,15 +13,57 @@
         $("#wait").css("display", "none");
     });
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const user_id = urlParams.get('id');
+    let recommendation = {};
+
+    function getRecommendation(){
+        $.ajax({
+            type: "GET",
+            url: `/preapproved-loan/recommendations/get/${user_id}`,
+            success: function (response) {
+                recommendation = response.data;
+                if (recommendation){
+                    $('#user-list').val($("#user-list option:contains('"+recommendation.client+"')").val());
+                    $('#user-list').prop('disabled', true);
+                    $('#amount').val(numberToCurrencyformatter(recommendation.loan_amount));
+                    $('#amortization').val('standard').trigger('change');
+                    $('#client-text').text(recommendation.client);
+                    $('#loan-amount-text').text(`₦${numberToCurrencyformatter(recommendation.loan_amount)}`);
+                    $('#credit-score-text').text(`${recommendation.credit_score}%`);
+                    $('#default-frequency-text').text(numberToCurrencyformatter(recommendation.defaults));
+                    recommendation.months_left = recommendation.duration - recommendation.invoices_due;
+                    let percent_completion = ((recommendation.invoices_due/recommendation.duration).toFixed(2)) * 100;
+                    if (percent_completion >= 75) {
+                        $('#remark-very-good-text').show();
+                    } else if (percent_completion < 75 && percent_completion >= 50) {
+                        $('#remark-good-text').show();
+                    } else if (percent_completion < 50 && percent_completion >= 25) {
+                        $('#remark-average-text').show();
+                    } else {
+                        $('#remark-fair-text').show();
+                    }
+                    $('#reason').html(`
+                        <p>1. Client has only ${numberToCurrencyformatter(recommendation.months_left)} repayment(s) left.</p>
+                        <p>2. Client has only defaulted ${recommendation.defaults} out of ${numberToCurrencyformatter(recommendation.invoices_due)} due payment(s).</p>
+                        <p>3. Client has borrowed an average loan of ₦${numberToCurrencyformatter(recommendation.average_loan)}.</p>
+                        <p>4. Client has been an active customer for ${numberToCurrencyformatter(recommendation.duration)} month(s).</p>
+                        <p>5. Client is eligible for a loan of ₦${numberToCurrencyformatter(recommendation.loan_amount)} to be repaid over 12 month(s).</p>
+                    `);
+                }
+            }
+        });
+    }
+
     function getUsers(){
         $.ajax({
             type: "GET",
             url: "/user/users-list-v2",
             success: function (response) {
                 $.each(JSON.parse(response), function (key, val) {
-                    $("#user-list").append('<option value = "' + encodeURIComponent(JSON.stringify(val)) + '">' + val.fullname + ' &nbsp; (' + val.username + ')</option>');
+                    $("#user-list").append('<option value = "' + encodeURIComponent(JSON.stringify(val)) + '">' + val.fullname + '</option>');
                 });
-                $("#user-list").select2();
+                getRecommendation();
             }
         });
     }
@@ -87,12 +128,18 @@
     }
 
     $('#term').keyup(function () {
+        let val = $("#term").val();
+        $("#term").val(numberToCurrencyformatter(val));
         triggerAmortization();
     });
     $('#amount').keyup(function () {
+        let val = $("#amount").val();
+        $("#amount").val(numberToCurrencyformatter(val));
         triggerAmortization();
     });
     $('#interest-rate').keyup(function () {
+        let val = $("#interest-rate").val();
+        $("#interest-rate").val(numberToCurrencyformatter(val));
         triggerAmortization();
     });
     $('#repayment-date').change(function () {
@@ -107,7 +154,7 @@
     function processSchedule(schedule) {
         let result = [],
             total_principal = 0,
-            amount = $('#amount').val(),
+            amount = currencyToNumberformatter($('#amount').val()),
             date = $('#repayment-date').val();
         for (let i=-2; i<schedule.length-1; i++){
             if (i === -2){
@@ -165,6 +212,7 @@
     }
 
     function initCSVUpload2(settings) {
+        getUsers();
         let schedule = [],
             loan_amount = 0,
             $dvCSV = $("#dvCSV2"),
@@ -180,9 +228,9 @@
                 $message.show();
                 $('.amortization-div').hide();
                 $('#payment-amount-div').show();
-                let loanAmount = $('#amount').val(),
-                    interestRate = $('#interest-rate').val(),
-                    duration = $('#term').val();
+                let loanAmount = currencyToNumberformatter($('#amount').val()),
+                    interestRate = currencyToNumberformatter($('#interest-rate').val()),
+                    duration = currencyToNumberformatter($('#term').val());
                 if (!loanAmount || !interestRate || !duration)
                     return $message.text('Kindly fill all required fields!','','warning');
                 duration = parseFloat(duration);
@@ -207,7 +255,7 @@
                     schedule_ = computeSchedule(loanAmount, interestRate, paymentsPerYear, years, parseFloat(payment)),
                     table = $("<table border='1' style='text-align: center; width: 100%;'/>"),
                     rows = processSchedule(schedule_);
-                $('#payment-amount').val(payment);
+                $('#payment-amount').val(numberToCurrencyformatter(payment));
                 for (let i = 0; i < rows.length; i++) {
                     let invoice = {},
                         row = $("<tr />"),
@@ -339,7 +387,7 @@
             }
         });
 
-        $("#addApplication").click(function () {
+        $("#approveApplication").click(function () {
             if (!schedule[0])
                 return notification('Please upload a valid CSV file.','','warning');
             validateSchedule(schedule, function (validation) {
@@ -350,12 +398,10 @@
                         $user_list = $('#user-list'),
                         user = ($user_list.val() !== '-- Choose Client --')? JSON.parse(decodeURIComponent($user_list.val())) : false;
                     obj.userID = user.ID;
-                    obj.email = user.email;
-                    obj.username = user.username;
                     obj.workflowID = $('#workflows').val();
-                    obj.loan_amount = $('#amount').val();
-                    obj.interest_rate = $('#interest-rate').val();
-                    obj.duration = $('#term').val();
+                    obj.loan_amount = currencyToNumberformatter($('#amount').val());
+                    obj.interest_rate = currencyToNumberformatter($('#interest-rate').val());
+                    obj.duration = currencyToNumberformatter($('#term').val());
                     obj.repayment_date = $('#repayment-date').val();
                     if ($purposes.val() !== '-- Choose Loan Purpose --')
                         obj.loan_purpose = $purposes.val();
@@ -374,11 +420,29 @@
                     if (loan_amount !== parseFloat(obj.loan_amount))
                         return notification('Loan amount ('+parseFloat(obj.loan_amount)+') and schedule ('+loan_amount+') mismatch','','warning');
 
+                    let preapproved_loan = Object.assign({}, obj);
+                    delete preapproved_loan.agentID;
+                    preapproved_loan.client = recommendation.client;
+                    preapproved_loan.average_loan = recommendation.average_loan;
+                    preapproved_loan.credit_score = recommendation.credit_score;
+                    preapproved_loan.defaults = recommendation.defaults;
+                    preapproved_loan.offer_duration = recommendation.duration;
+                    preapproved_loan.invoices_due = recommendation.invoices_due;
+                    preapproved_loan.offer_loan_amount = recommendation.loan_amount;
+                    preapproved_loan.months_left = recommendation.months_left;
+                    preapproved_loan.salary_loan = recommendation.salary_loan;
+                    preapproved_loan.created_by = (JSON.parse(localStorage.getItem("user_obj"))).ID;
+
                     $('#wait').show();
                     $.ajax({
-                        'url': '/user/apply',
+                        'url': '/preapproved-loan/create',
                         'type': 'post',
-                        'data': obj,
+                        'data': {
+                            application: obj,
+                            email: user.email,
+                            fullname: user.fullname,
+                            preapproved_loan: preapproved_loan
+                        },
                         'success': function (data) {
                             $purposes.val("");
                             $user_list.val("");
@@ -387,7 +451,7 @@
                             $('#interest-rate').val("");
                             $('#term').val("");
                             $('#repayment-date').val("");
-                            uploadSchedule(schedule, data.response.ID);
+                            uploadSchedule(schedule, data.ID);
                         },
                         'error': function (err) {
                             console.log(err);
@@ -400,6 +464,62 @@
                 }
             });
         });
+
+        $("#rejectApplication").click(function () {
+            let obj = {},
+                $purposes = $('#purposes'),
+                $user_list = $('#user-list'),
+                $workflow = $('#workflows'),
+                user = ($user_list.val() !== '-- Choose Client --')? JSON.parse(decodeURIComponent($user_list.val())) : false,
+                workflow = ($workflow.val() !== '-- Choose Workflow --')? $workflow.val() : false;
+            obj.userID = user.ID;
+            if (workflow)
+                obj.workflowID = workflow;
+            obj.loan_amount = currencyToNumberformatter($('#amount').val());
+            obj.interest_rate = currencyToNumberformatter($('#interest-rate').val());
+            obj.duration = currencyToNumberformatter($('#term').val());
+            obj.repayment_date = $('#repayment-date').val();
+            if ($purposes.val() !== '-- Choose Loan Purpose --')
+                obj.loan_purpose = $purposes.val();
+
+            let preapproved_loan = Object.assign({}, obj);
+            preapproved_loan.client = recommendation.client;
+            preapproved_loan.average_loan = recommendation.average_loan;
+            preapproved_loan.credit_score = recommendation.credit_score;
+            preapproved_loan.defaults = recommendation.defaults;
+            preapproved_loan.offer_duration = recommendation.duration;
+            preapproved_loan.invoices_due = recommendation.invoices_due;
+            preapproved_loan.offer_loan_amount = recommendation.loan_amount;
+            preapproved_loan.months_left = recommendation.months_left;
+            preapproved_loan.salary_loan = recommendation.salary_loan;
+            preapproved_loan.created_by = (JSON.parse(localStorage.getItem("user_obj"))).ID;
+
+            $('#wait').show();
+            $.ajax({
+                'url': '/preapproved-loan/reject',
+                'type': 'post',
+                'data': {
+                    preapproved_loan: preapproved_loan
+                },
+                'success': function (data) {
+                    $purposes.val("");
+                    $user_list.val("");
+                    $workflow.val("");
+                    $('#amount').val("");
+                    $('#interest-rate').val("");
+                    $('#term').val("");
+                    $('#repayment-date').val("");
+                    $('#wait').hide();
+                    notification('Loan Application rejected successfully!','','success');
+                    window.location.href = '/all-suggested-loans';
+                },
+                'error': function (err) {
+                    console.log(err);
+                    $('#wait').hide();
+                    notification('No internet connection','','error');
+                }
+            });
+        });
     }
 
     function uploadSchedule(schedule, application_id) {
@@ -409,8 +529,8 @@
             'data': {schedule:schedule},
             'success': function (data) {
                 $('#wait').hide();
-                notification('Loan Application created successfully!','','success');
-                window.location.href = '/application?id='+application_id;
+                notification('Loan Application approved successfully!','','success');
+                window.location.href = '/all-suggested-loans';
             },
             'error': function (err) {
                 $('#wait').hide();

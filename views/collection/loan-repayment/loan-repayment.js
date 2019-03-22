@@ -35,7 +35,7 @@ function loadUsers(){
             $("#workflow-div-title").text(fullname.toUpperCase());
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }
@@ -86,7 +86,7 @@ function loadComments(comments) {
                 });
             },
             'error': function (err) {
-                console.log('Error');
+                console.log(err);
                 notification('No internet connection','','error');
             }
         });

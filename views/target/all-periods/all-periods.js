@@ -51,7 +51,7 @@ function getPeriods(){
             populateDataTable(periods);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }
