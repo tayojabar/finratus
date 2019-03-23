@@ -18,7 +18,7 @@
     function getPreapprovedLoan(){
         $.ajax({
             type: "GET",
-            url: `/preapproved-loan/get/${user_id}`,
+            url: `/preapproved-loan/get/${encodeURIComponent(user_id)}`,
             success: function (response) {
                 preapproved_loan = response.data;
                 if (preapproved_loan){
@@ -53,6 +53,17 @@
                         $('.card-body').html(message);
                         return swal('This offer is no longer available!','','error');
                     }
+                } else {
+                    $('#acceptApplication').hide();
+                    $('#declineApplication').hide();
+                    let message = '<div class="text-muted" style="text-align: center" >\n' +
+                        '    <div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent">' +
+                        '       <i class="fa fa-exclamation-circle fa-lg" style="font-size: 10em; margin: 60px 0 30px 0;"></i>'+
+                        '    <h2>No Offer Available!</h2>\n' +
+                        '    <p><br/>You will be contacted when next we have an offer available for you.</p><br/>\n' +
+                        '</div>';
+                    $('.card-body').html(message);
+                    return swal('This offer is no longer available!','','error');
                 }
             }
         });
