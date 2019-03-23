@@ -109,7 +109,7 @@
                     <ol class="breadcrumb text-right">
                         <li><a href="#">Dashboard</a></li>
                         <li><a href="#">Settings</a></li>
-                        <li class="active">Permissions</li>
+                        <li class="active">Notifications</li>
                     </ol>
                 </div>
             </div>
@@ -121,6 +121,32 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="widget-title lighter smaller">Notification Categories</h4>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="widget-main padding-8">
+                                        <div>
+                                            <table id="cat-table" class="table table-striped table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody id="rolebody">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-header">
@@ -137,6 +163,13 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <strong><label class=" form-control-label">Compulsory Category? </label></strong>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-star"></i></div>
+                                                <input id="comp-cat" type="checkbox" style="margin-left: 10px; margin-top: 10px">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <button id="submit-activity" type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>
                                         </div>
                                     </div>
@@ -146,28 +179,38 @@
                     </div>
 
                     <div class="col-sm-6">
-                        <div class="col-sm-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="widget-title lighter smaller">Existing Categories</h4>
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="widget-title lighter smaller">Configure Role - Notification <span id="selectedName"></span></h4>
+                            </div>
+
+                            <div class="card-body">
+                                <div>
+                                    <table id="role-table" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Role</th>
+                                            <th>Set</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody id="roleassignmentbody">
+                                        </tbody>
+
+                                    </table>
                                 </div>
 
+                                <hr/>
+
                                 <div class="card-body">
-                                    <div class="widget-main padding-8">
-                                        <div>
-                                            <table id="cat-table" class="table table-striped table-bordered">
-                                                <thead>
-                                                <tr>
-                                                    <th>Category</th>
-                                                    <th>Action</th>
+                                    <div class = "form-group pull-left" >
+                                        <button type="button" id="submit" class="btn btn-sm btn-success write">
+                                            Submit<i class="ace-icon fa fa-check icon-on-right bigger-110"></i>
+                                        </button>
 
-                                                </tr>
-                                                </thead>
 
-                                                <tbody id="rolebody">
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <button type="button" id="resetviews" class="btn btn-sm btn-grey">
+                                            Reset<i class="ace-icon fa fa-arrow-circle-down icon-on-right bigger-110"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -229,6 +272,10 @@
         obj.cat = $('#new-cat').val();
         if (!(obj.cat).replace(/\s/g, '').length)
             return swal('No text entered!', 'Enter a valid category name!', 'warning');
+        if ($('#comp-cat').is(':checked'))
+            obj.compulsory = 1;
+        else
+            obj.compusory = 0;
         var test={};
         $.ajax({
             'url': '/notifications/new-category/',
@@ -256,7 +303,7 @@
         .DataTable({
             bAutoWidth: false,
             "aoColumns": [
-                { "bSortable": true }, { "bSortable": false }
+                { "bSortable": true }, { "bSortable": false }, null
                 //null, null, null, { "bSortable": false },
             ],
             "aaSorting": [],
@@ -264,6 +311,25 @@
             select: {
                 style: 'multi'
             }
+        });
+
+    var myTable2 = $('#role-table')
+        .DataTable({
+            bAutoWidth: false,
+            "aoColumns": [
+                { "bSortable": true },
+                null
+//                , { "bSortable": false },{ "bSortable": false }
+                // , null, { "bSortable": false },
+            ],
+            "aaSorting": [],
+            "bSearchable": false,
+            "bFilter": false,
+            // "bInfo" : false,
+            select: {
+                style: 'multi'
+            },
+            "paging": false
         });
 
     let role = localStorage.getItem("selectedRole");
@@ -328,32 +394,114 @@
         }
     }
 
-    function edit(role, name){
-        $('#selectedName').html(': '+name);
+    function edit(category){
+        $.ajax({
+            'url': '/notifications/category-dets/'+category,
+            'type': 'get',
+            'success': function (data) {
+                $('#new-cat').val(data[0].category_name);
+                if (data[0].compulsory === '1'){
+                    $('#comp-cat').prop('checked','checked');
+                }
+            },
+            'error': function (err) {
+                swal('Oops!', 'An error occurred while retrieving details.','error');
+            }
+        });
     }
 
     let glob={};
-
     function getCats(){
         $.ajax({
             type: "GET",
-            url: "/notifications/categories/",
+            url: "/notifications/categories-list/",
             data: '{}',
             success: function (response) {
-                glob = JSON.parse(response);
+                glob = response;
                 $("#cat-table").dataTable().fnClearTable();
-                $.each(JSON.parse(response), function (key, val) {
-                    let actions;
-                    if (val.status === "1"){
-                        var disable = '<button name="'+val.id+'" onclick="confirm('+val.id+')" class="write btn btn-danger "><i class="fa fa-trash"></i> Disable Category</button>'
+                $.each(response, function (key, val) {
+                    let action, icon, set = '';
+                    action = '<a class="btn btn-info" onclick="edit('+val.id+')" title="Click to edit"><i class="ace-icon fa fa-pencil bigger-130"></i></a> &nbsp; &nbsp;'
+                    if (val.compulsory === "1"){
+                        icon = '<span class="label label-success" style="background-color:green; color:white; padding: 5px; border-radius: 5px">Compulsory</span>';
                     }
                     else {
-                        var disable = '<button name="'+val.id+'" onclick="confirmEnable('+val.id+')" class="write btn btn-success "><i class="fa fa-lightbulb-o"></i> Enable Activity</button>'
+                        set = '<a href="#" class="btn btn-dark" onclick="loadRolesConfig('+val.id+')" title="Click to configure for roles"><i class="ace-icon fa fa-gear bigger-130"></i></a> &nbsp; &nbsp;'
+                        icon = '<span class="label label-success" style="background-color:grey; color:white; padding: 5px; border-radius: 5px">Non - Compulsory</span>';
                     }
                     $('#cat-table').dataTable().fnAddData( [
-                        val.category_name, disable
+                        val.category_name, icon, action+set
                     ]);
                 });
+            }
+        });
+    }
+
+    let cat, roles;
+    function loadRolesConfig(id){
+        cat = id;
+        $.each($.grep(glob, function(e){return e.id === id;}), function(k, v){
+            let name = v.category_name;
+        });
+        if (cat !== 0)
+            $('#selectedName').html('- '+name);
+        $.ajax({
+            type: "GET",
+            url: "/notifications/notification-roles-config?bugger="+id,
+            success: function (response) {
+                roles = response;
+                $('#role-table').dataTable().fnClearTable();
+                let action;
+                $.each(response, function (key, val) {
+                    if (val.state){
+                        if (val.state === '1'){
+                            action = '<input type="checkbox" id="con'+val.role_id+'" checked>';
+                        } else {
+                            action = '<input type="checkbox" id="con'+val.role_id+'" >';
+                        }
+                    } else {
+                        action = '<input type="checkbox" id="con'+val.role_id+'" >';
+                    }
+                    $('#role-table').dataTable().fnAddData( [
+                        val.role_name, action
+                    ]);
+                });
+            }
+        });
+    }
+
+    $(document).on("click", "#submit", function (e) {
+        (cat === 0) ? swal('No category chosen!', 'Please select a category.', 'warning') : saveConfig(cat);
+    });
+
+    function saveConfig(cat){
+        var obj = {};
+        var arr = [];
+        var i = 0; var j = 0;
+        for (let a = 0; a < roles.length; a++){
+            let rd; let wt;
+            let st = ($('#con'+roles[a]["role_id"]).prop('checked')) ? 1 : 0;
+            arr[a]=[roles[a]["role_id"], st];
+        }
+
+        obj.category = cat;
+        obj.cats = arr;
+        var test = [];
+        $.ajax({
+            'url': 'notifications/saveConfig/'+cat,
+            'type': 'post',
+            'data': obj,
+            'success': function (data) {
+                $.each(data, function (key, val) {
+                    test[key] = val;
+                });
+//                console.log(test);
+                if(test.status == 500){
+                    swal("Failed!", "Error encountered. Please try again.", "error");
+                }
+                else{
+                    swal("Success!", "Category Configuration Set!", "success");
+                }
             }
         });
     }

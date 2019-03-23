@@ -49,7 +49,7 @@ function notifications(){
 '                                        <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"\n' +
 '                                             style="">\n' +
 '                                            <p>'+val.user+'</p>\n' +
-                    '                         <small role="button" onclick="markAsViewed('+val.notification_id+')" class="feed-content-menu float-right mark" style="margin-top: 50px" id="'+buttonid+'">Mark as Viewed</small>\n'+
+                    '                         <small onclick="markAsViewed('+val.notification_id+')" class="feed-content-menu float-right" style="margin-top: 50px" id="'+buttonid+'">Mark as Viewed</small>\n'+
 '                                    </div>\n' +
 '                                 </a>\n' +
 '                            </div>\n' +
@@ -68,17 +68,20 @@ function notifications(){
                 //        }
                 //    });
             });
-            $('#noti-info').html(count+ ' unread notifications!');
+            if (count === 0)
+                $('#mark-all').attr("disabled", true);
+            $('#noti-info').html(count+ ' notifications.');
         }
     });
 }
-setInterval(notifications, 5000);
+setInterval(notifications, 3600000);
 
 let cats;
 function list_categories(){
+    status = false;
     $.ajax({
         type: "GET",
-        url: "/notifications/categories",
+        url: "/notifications/categories?bug="+JSON.parse(localStorage.user_obj).ID,
         success: function (response) {
             cats = response;
             let count = response.length,
@@ -88,10 +91,18 @@ function list_categories(){
             for (let i = 0; i < count; i++){
                 let v = response[i];
                 if (v.compulsory === '1'){
-                    item = '<input type="checkbox" id="act'+v.id+'" disabled="disabled"/>&nbsp;&nbsp;<label for = "'+v.category_name+'">'+v.category_name+'</label><hr/>'
+                    item = '<input type="checkbox" id="act'+v.category+'" disabled="disabled" checked/>&nbsp;&nbsp;<label for = "'+v.category_name+'">'+v.category_name+'</label><hr style="padding-top: 0px"/>'
                 }
                 else{
-                    item = '<input type="checkbox" id="act'+v.id+'"/>&nbsp;&nbsp;<label for = "'+v.category_name+'">'+v.category_name+'</label><hr/>'
+                    if (v.state){
+                        if (v.state === '1'){
+                            item = '<input type="checkbox" id="act'+v.category+'" checked/>&nbsp;&nbsp;<label for = "'+v.category_name+'">'+v.category_name+'</label><hr style="padding-top: 0px"/>'
+                        } else {
+                            item = '<input type="checkbox" id="act'+v.category+'"/>&nbsp;&nbsp;<label for = "'+v.category_name+'">'+v.category_name+'</label><hr style="padding-top: 0px"/>'
+                        }
+                    } else {
+                        item = '<input type="checkbox" id="act'+v.category+'"/>&nbsp;&nbsp;<label for = "'+v.category_name+'">'+v.category_name+'</label><hr style="padding-top: 0px"/>'
+                    }
                 }
                 $('#n-settings-panel').append(item);
             }
@@ -113,8 +124,8 @@ function savePreferences(){
     var i = 0; var j = 0;
     for (let a = 0; a < cats.length; a++){
         let rd; let wt;
-        rt = ($('#act'+cats[a]["id"]).prop('checked')) ? 1 : 0;
-        arr[a]=[cats[a]["id"], rt];
+        let rt = ($('#act'+cats[a]["category"]).prop('checked')) ? 1 : 0;
+        arr[a]=[cats[a]["category"], rt];
     }
 
     obj.userid = JSON.parse(localStorage.user_obj).ID;
@@ -145,7 +156,9 @@ $( ".mark" ).click(function() {
 });
 
 function markAsViewed(id){
+    status = false;
     let obj = {};
+    obj.user = JSON.parse(localStorage.user_obj).ID;
     obj.notification_id = id;
     obj.val = 3;
     $.ajax({
@@ -153,6 +166,21 @@ function markAsViewed(id){
         url: "/notifications/update-pr",
         data:obj,
         success: function (response) {
+        }
+    });
+}
+
+function markAll(){
+    status = false;
+    let obj = {};
+    obj.user = JSON.parse(localStorage.user_obj).ID;
+    obj.val = 3;
+    $.ajax({
+        type: "GET",
+        url: "/notifications/update-pr",
+        data:obj,
+        success: function (response) {
+            console.log(response)
         }
     });
 }
