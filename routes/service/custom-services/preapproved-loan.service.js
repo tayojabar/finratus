@@ -253,7 +253,7 @@ router.get('/get', function (req, res, next) {
     let draw = req.query.draw;
     let order = req.query.order;
     let search_string = req.query.search_string.toUpperCase();
-    let query = `SELECT * FROM preapproved_loans p, (SELECT c.salary FROM clients c WHERE c.ID = p.userID) AS salary, 
+    let query = `SELECT * FROM preapproved_loans p, (SELECT c.salary FROM clients c WHERE c.ID = p.userID) AS salary 
                  WHERE upper(p.client) LIKE "${search_string}%" OR upper(p.loan_amount) LIKE "${search_string}%" 
                  OR upper(p.credit_score) LIKE "${search_string}%" ${order} LIMIT ${limit} OFFSET ${offset}`;
     let endpoint = '/core-service/get';
