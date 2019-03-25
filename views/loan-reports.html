@@ -1515,7 +1515,8 @@
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
             let d = []; let processed_data = [];
             var totalhere = 0;
-            const limit = (dets.without_pay.length > dets.with_payments.length)? dets.without_pay.length : dets.with_payments.length;
+            const delimit = (dets.without_pay.length > dets.with_payments.length)? dets.without_pay.length : dets.with_payments.length;
+            const limit = (dets.with_invalid_payments.length > delimit)? dets.with_invalid_payments.length : delimit;
             for (let i=0; i<limit; i++){
                 let v = {};
                 v = dets.without_pay[i];
@@ -1549,6 +1550,24 @@
                     v.principal = formatter.format(parseFloat(v.loan_amount));
                     processed_data.push(v);
                 }
+
+                v={}
+                v = dets.with_invalid_payments[i];
+                if (v){
+                    amount_paid[v.applicationID] = v.valid_payment;
+                    loa += v.loan_amount;
+                    num_all++;
+                    num_paid++;
+                    total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                    pay+=v.valid_payment;
+//                    totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0;
+                    totalbalance += parseFloat(v.loan_amount);
+                    v.id = padWithZeroes(parseInt(v.applicationID),6);
+                    v.balance = formatter.format(parseFloat(v.loan_amount));
+                    v.principal = formatter.format(parseFloat(v.loan_amount));
+                    processed_data.push(v);
+                }
+
                 if (i === limit-1){
                     $('#disbursed-table').DataTable({
                         dom: 'Blfrtip',
@@ -1583,7 +1602,8 @@
             let processed_data = [];
             var total = 0; var totalglp = 0; var totalbalance = 0; var num_all = 0; var num_paid = 0; var pay = 0; var loa = 0;
             var totalhere = 0;
-            const limit = (dets.without_pay.length > dets.with_payments.length)? dets.without_pay.length : dets.with_payments.length;
+            const delimit = (dets.without_pay.length > dets.with_payments.length)? dets.without_pay.length : dets.with_payments.length;
+            const limit = (dets.with_invalid_payments.length > delimit)? dets.with_invalid_payments.length : delimit;
             for (let i=0; i<limit; i++){
                 let v = {};
                 v = dets.without_pay[i];
@@ -1619,6 +1639,24 @@
                         processed_data.push(v);
                     }
                 }
+
+                v={}
+                v = dets.with_invalid_payments[i];
+                if (v){
+                    amount_paid[v.applicationID] = v.valid_payment;
+                    loa += v.loan_amount;
+                    num_all++;
+                    num_paid++;
+                    total += (v.loan_amount) ? parseFloat(v.loan_amount) : 0
+                    pay+=v.valid_payment;
+//                    totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0;
+                    totalbalance += parseFloat(v.loan_amount);
+                    v.id = padWithZeroes(parseInt(v.applicationID),6);
+                    v.balance = formatter.format(parseFloat(v.loan_amount));
+                    v.principal = formatter.format(parseFloat(v.loan_amount));
+                    processed_data.push(v);
+                }
+
                 if (i === limit-1){
                     $('#glp-table').DataTable({
                         dom: 'Blfrtip',
@@ -1677,43 +1715,43 @@
                 console.log(err);
             }
         });
-        $.ajax({
-            'url': urlAn,
-            'type': 'get',
-            'success': function (data) {
-//                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
-                jQuery.each(data.response, function(k, v){
-                    if (v.name)
-                        d.push({label: v.name , value: v.amount_disbursed}, );
-                    if (v.DisburseYearMonth)
-                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, );
-
-                });
-                var chartConfigs = {
-                    type: 'column2d', // The chart type
-                    width: '100%', // Width of the chart
-                    height: '400', // Height of the chart
-                    dataFormat: 'json', // Data type
-                    dataSource: {
-                        // Chart Configuration
-                        "chart": {
-                            "caption": "Disbursements by Loan Officer(s)",
-//                            "subCaption": "In MMbbl = One Million barrels",
-                            "xAxisName": "Loan Officers",
-                            "yAxisName": "Amount Disbursed (Naira)",
-                            "numberSuffix": " Naira",
-                            "theme": "fusion",
-                        },
-                        // Chart Data
-                        "data": d
-                    }
-                };
-                $("#chart-container").insertFusionCharts(chartConfigs);
-            },
-            'error': function (err) {
-                swal('Error in Connection!','','error')
-            }
-        });
+//        $.ajax({
+//            'url': urlAn,
+//            'type': 'get',
+//            'success': function (data) {
+////                (data.status === 200) ? populateDisbursed(data.response) : swal({"icon": "error", "text": 'Database Error'})
+//                jQuery.each(data.response, function(k, v){
+//                    if (v.name)
+//                        d.push({label: v.name , value: v.amount_disbursed}, );
+//                    if (v.DisburseYearMonth)
+//                        d.push({label: v.DisburseMonth , value: v.AmountDisbursed}, );
+//
+//                });
+//                var chartConfigs = {
+//                    type: 'column2d', // The chart type
+//                    width: '100%', // Width of the chart
+//                    height: '400', // Height of the chart
+//                    dataFormat: 'json', // Data type
+//                    dataSource: {
+//                        // Chart Configuration
+//                        "chart": {
+//                            "caption": "Disbursements by Loan Officer(s)",
+////                            "subCaption": "In MMbbl = One Million barrels",
+//                            "xAxisName": "Loan Officers",
+//                            "yAxisName": "Amount Disbursed (Naira)",
+//                            "numberSuffix": " Naira",
+//                            "theme": "fusion",
+//                        },
+//                        // Chart Data
+//                        "data": d
+//                    }
+//                };
+//                $("#chart-container").insertFusionCharts(chartConfigs);
+//            },
+//            'error': function (err) {
+//                swal('Error in Connection!','','error')
+//            }
+//        });
     });
 
     $("#filterglp").submit(function (e) {
