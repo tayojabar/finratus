@@ -2705,6 +2705,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         loan_officer = req.query.officer
     // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
+        queryPart2,
         query,
         query3,
         group
@@ -2738,6 +2739,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         'from schedule_history \n' +
         'where applicationID in (select applicationID from application_schedules\n' +
         '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
+        'and applicationID not in (select applicationID from schedule_history where status = 1)\n'+
         'and status = 0 '
         ;
     group = 'group by applicationID';
@@ -2750,9 +2752,9 @@ users.get('/disbursements/filter', function(req, res, next) {
     var items = {};
     if (loan_officer){
         queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
-        queryPart2 = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
+        queryPart2 = queryPart2.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
         query = queryPart.concat(group);
-        query3 = queryPart.concat(group);
+        query3 = queryPart2.concat(group);
         query2 = query2.concat('and (select loan_officer from clients where clients.ID = userID) = '+loan_officer+' ');
     }
     if (start  && end){
@@ -2760,7 +2762,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         end = "'"+end+"'"
         // query = (queryPart.concat('AND (TIMESTAMP((select date_modified from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query3 = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query3 = (queryPart2.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query2 = query2.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
     db.query(query, [loan_officer], function (error, results, fields) {

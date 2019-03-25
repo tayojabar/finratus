@@ -594,7 +594,7 @@
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Salary</label>
                                                         <div class="input-group">
-                                                            <input type="number" min=1 id="salary" class="form-control" placeholder="Enter Client's Salary" required="">
+                                                            <input type="number" min=1 id="salary" onkeyup="validateSalary()" class="form-control" placeholder="Enter Client's Salary" required="">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -836,6 +836,14 @@
     let currentTab = 0;
     showTab(currentTab);
 
+
+    function validateSalary(){
+        let salary = $('#salary').val();
+        if (parseFloat(salary) <= 0){
+            return swal('', 'Please Enter a Valid Salary Amount', 'warning');
+        }
+    }
+
     function showTab(n) {
         let x = document.getElementsByClassName("tab");
         x[n].style.display = "block";
@@ -858,11 +866,11 @@
 
             if(validateEmail($('#email').val())){
                 if (n === 1 && !validateForm()){
-                    swal('Fill all required fields');
+                    swal('Empty Field(s)!', 'Fill all required fields', 'warning');
                     return false;
                 }
             }else{
-                swal('Invalid Email');
+                swal('', 'Please Enter a Valid Email', '', 'warning');
                 return false;
             }
 
@@ -1380,6 +1388,8 @@
         obj.industry = $('#industry').find('option:selected').text();
         obj.job = $("#job").val();
         obj.salary = $("#salary").val();
+        if (parseFloat(obj.salary) <= 0)
+            ret
         obj.job_country = $('#job_country').find('option:selected').attr('id');
         obj.off_address = $("#off_address").val();
         obj.off_state = $('#off_state').find('option:selected').attr('id');

@@ -538,7 +538,7 @@
                                                     <div class="form-group col-sm-6 col-md-6">
                                                         <label class="form-control-label">Salary</label>
                                                         <div class="input-group">
-                                                            <input type="number" min=1 id="salary" class="form-control" placeholder="Enter Client's Salary" required="">
+                                                            <input type="number" min=1 id="salary" onkeyup="validateSalary()" class="form-control" placeholder="Enter Client's Salary" required="">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -716,6 +716,13 @@
     var currentTab = 0; // Current tab is set to be the first tab (0)
     showTab(currentTab); // Display the current tab
 
+    function validateSalary(){
+        let salary = $('#salary').val();
+        if (parseFloat(salary) <= 0){
+            return swal('', 'Please Enter a Valid Salary Amount', 'warning');
+        }
+    }
+
     function showTab(n) {
         // This function will display the specified tab of the form ...
         var x = document.getElementsByClassName("tab");
@@ -747,7 +754,7 @@
                     return false;
                 }
             }else{
-                swal('Please Enter a Valid Email', '', 'warning');
+                swal('', 'Please Enter a Valid Email', 'warning');
                 return false;
             }
 
@@ -755,7 +762,6 @@
             swal ({"icon": "warning", "text": "Choose a valid Loan Officer & Branch" });
             return false;
         }
-
         //return false;
 //        if (n == 1) return false;
         // Hide the current tab:
