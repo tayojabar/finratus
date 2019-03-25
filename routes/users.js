@@ -3993,7 +3993,7 @@ users.get('/analytics', function(req, res, next) {
             break;
         case 'overdue-loans':
             break;
-    }console.log(query)
+    }
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
