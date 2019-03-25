@@ -44,11 +44,11 @@
                         $('#remark-fair-text').show();
                     }
                     $('#reason').html(`
-                        <p>1. Client has only ${numberToCurrencyformatter(recommendation.months_left)} repayment(s) left.</p>
-                        <p>2. Client has only defaulted ${recommendation.defaults} out of ${numberToCurrencyformatter(recommendation.invoices_due)} due payment(s).</p>
+                        <p>1. Client has ${numberToCurrencyformatter(recommendation.months_left)} repayment(s) left.</p>
+                        <p>2. Client has defaulted ${recommendation.defaults} out of ${numberToCurrencyformatter(recommendation.invoices_due)} due payment(s).</p>
                         <p>3. Client earns ₦${numberToCurrencyformatter(recommendation.salary || 0)} monthly.</p>
                         <p>4. Client has borrowed an average loan of ₦${numberToCurrencyformatter(recommendation.average_loan)}.</p>
-                        <p>5. Client has been an active customer for ${numberToCurrencyformatter(recommendation.duration)} month(s).</p>
+                        <p>5. Client is an active customer for ${numberToCurrencyformatter(recommendation.duration)} month(s).</p>
                         <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(recommendation.loan_amount)} to be repaid over 12 month(s).</p>
                     `);
                 }
