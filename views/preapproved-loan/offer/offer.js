@@ -21,7 +21,8 @@
             url: `/preapproved-loan/get/${encodeURIComponent(user_id)}`,
             success: function (response) {
                 preapproved_loan = response.data;
-                if (preapproved_loan){
+                if (preapproved_loan && !($.isEmptyObject(preapproved_loan)) && preapproved_loan.schedule){
+                    console.log(preapproved_loan.schedule)
                     $('#user-list').val($("#user-list option:contains('"+preapproved_loan.client+"')").val());
                     $('#user-list').prop('disabled', true);
                     $('#workflows').val(preapproved_loan.workflowID);
