@@ -152,7 +152,7 @@ function disburse() {
         return notification('Kindly fill all required fields!','','warning');
     swal({
         title: "Are you sure?",
-        text: "Once deleted, this process is not reversible!",
+        text: "Once disbursed, this process is not reversible!",
         icon: "warning",
         buttons: true,
         dangerMode: true,

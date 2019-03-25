@@ -35,6 +35,7 @@ router.get('/recommendations/get', function (req, res, next) {
             (SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) AS duration, 
             ((SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) -count(a.ID)) AS months_left,
             round(sum(apps.loan_amount)/count(apps.ID),2) as average_loan,
+            (SELECT c.salary FROM clients c WHERE c.ID = apps.userID) AS salary, 
             (SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6 AS salary_loan, 
             sum((CASE
                 WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
@@ -113,6 +114,7 @@ router.get('/recommendations/get/:id', function (req, res, next) {
             (SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) AS duration, 
             ((SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) -count(a.ID)) AS months_left,
             round(sum(apps.loan_amount)/count(apps.ID),2) as average_loan,
+            (SELECT c.salary FROM clients c WHERE c.ID = apps.userID) AS salary, 
             (SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6 AS salary_loan, 
             sum((CASE
                 WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
@@ -192,7 +194,7 @@ router.post('/create', function (req, res, next) {
                     .then(function (response__) {
                         data.name = req.body.fullname;
                         data.date = postData.date_created;
-                        data.offer_url = `${HOST}/offer?t=${preapproved_loan.hash}`;
+                        data.offer_url = `${HOST}/offer?t=${encodeURIComponent(preapproved_loan.hash)}`;
                         let mailOptions = {
                             from: 'no-reply Loanratus <applications@loan35.com>',
                             to: req.body.email,
@@ -285,7 +287,7 @@ router.get('/get', function (req, res, next) {
 router.get('/get/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
     let query = `SELECT *, (SELECT c.email FROM clients c WHERE c.ID = userID) AS email 
-                FROM preapproved_loans WHERE ID = '${req.params.id}' OR hash = '${req.params.id}'`,
+                FROM preapproved_loans WHERE ID = '${decodeURIComponent(req.params.id)}' OR hash = '${decodeURIComponent(req.params.id)}'`,
         endpoint = '/core-service/get',
         url = `${HOST}${endpoint}`;
     axios.get(url, {

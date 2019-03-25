@@ -71,9 +71,10 @@
                     $('#reason').html(`
                         <p>1. Client has only ${numberToCurrencyformatter(preapproved_loan.months_left)} repayment(s) left.</p>
                         <p>2. Client has only defaulted ${preapproved_loan.defaults} out of ${numberToCurrencyformatter(preapproved_loan.invoices_due)} due payment(s).</p>
-                        <p>3. Client has borrowed an average loan of ₦${numberToCurrencyformatter(preapproved_loan.average_loan)}.</p>
-                        <p>4. Client has been an active customer for ${numberToCurrencyformatter(preapproved_loan.duration)} month(s).</p>
-                        <p>5. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.loan_amount)} to be repaid over 12 month(s).</p>
+                        <p>3. Client earns ₦${numberToCurrencyformatter(preapproved_loan.salary || 0)} monthly.</p>
+                        <p>4. Client has borrowed an average loan of ₦${numberToCurrencyformatter(preapproved_loan.average_loan)}.</p>
+                        <p>5. Client has been an active customer for ${numberToCurrencyformatter(preapproved_loan.duration)} month(s).</p>
+                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.loan_amount)} to be repaid over 12 month(s).</p>
                     `);
                     displaySchedule(preapproved_loan.schedule);
                 }
