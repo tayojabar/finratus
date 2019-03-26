@@ -258,7 +258,6 @@ router.get('/get', function (req, res, next) {
                  OR upper(p.credit_score) LIKE "${search_string}%" ${order} LIMIT ${limit} OFFSET ${offset}`;
     let endpoint = '/core-service/get';
     let url = `${HOST}${endpoint}`;
-    var data = [];
     axios.get(url, {
         params: {
             query: query
@@ -286,7 +285,7 @@ router.get('/get', function (req, res, next) {
 
 router.get('/get/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
-    let query = `SELECT *, (SELECT c.email FROM clients c WHERE c.ID = userID) AS email 
+    let query = `SELECT *, (SELECT c.email FROM clients c WHERE c.ID = userID) AS email, (SELECT c.salary FROM clients c WHERE c.ID = userID) AS salary 
                 FROM preapproved_loans WHERE ID = '${decodeURIComponent(req.params.id)}' OR hash = '${decodeURIComponent(req.params.id)}'`,
         endpoint = '/core-service/get',
         url = `${HOST}${endpoint}`;

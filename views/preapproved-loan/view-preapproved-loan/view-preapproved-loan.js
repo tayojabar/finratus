@@ -39,7 +39,7 @@
                     $('#loan-amount-text').text(`₦${numberToCurrencyformatter(preapproved_loan.loan_amount)}`);
                     $('#credit-score-text').text(`${preapproved_loan.credit_score}%`);
                     $('#default-frequency-text').text(numberToCurrencyformatter(preapproved_loan.defaults));
-                    preapproved_loan.months_left = preapproved_loan.duration - preapproved_loan.invoices_due;
+                    preapproved_loan.months_left = preapproved_loan.offer_duration - preapproved_loan.invoices_due;
                     if (preapproved_loan.expiry_date){
                         let today = new Date(),
                             expiry = new Date(preapproved_loan.expiry_date);
@@ -69,12 +69,12 @@
                         }
                     }
                     $('#reason').html(`
-                        <p>1. Client has only ${numberToCurrencyformatter(preapproved_loan.months_left)} repayment(s) left.</p>
-                        <p>2. Client has only defaulted ${preapproved_loan.defaults} out of ${numberToCurrencyformatter(preapproved_loan.invoices_due)} due payment(s).</p>
+                        <p>1. Client has ${numberToCurrencyformatter(preapproved_loan.months_left)} repayment(s) left.</p>
+                        <p>2. Client has defaulted ${preapproved_loan.defaults} out of ${numberToCurrencyformatter(preapproved_loan.invoices_due)} due payment(s).</p>
                         <p>3. Client earns ₦${numberToCurrencyformatter(preapproved_loan.salary || 0)} monthly.</p>
                         <p>4. Client has borrowed an average loan of ₦${numberToCurrencyformatter(preapproved_loan.average_loan)}.</p>
-                        <p>5. Client has been an active customer for ${numberToCurrencyformatter(preapproved_loan.duration)} month(s).</p>
-                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.loan_amount)} to be repaid over 12 month(s).</p>
+                        <p>5. Client is an active customer for ${numberToCurrencyformatter(preapproved_loan.offer_duration)} month(s).</p>
+                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.offer_loan_amount)} to be repaid over 12 month(s).</p>
                     `);
                     displaySchedule(preapproved_loan.schedule);
                 }
