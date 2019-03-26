@@ -12,7 +12,7 @@ let token,
     moment  = require('moment');
 
 let middlewares = {};
-middlewares.log = function log(req, res, payload) {
+middlewares.log = function log(req, payload) {
     let result;
     const HOST = `${req.protocol}://${req.get('host')}`;
     var data = req.body
