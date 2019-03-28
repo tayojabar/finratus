@@ -1530,6 +1530,13 @@ users.post('/apply', function(req, res) {
                         process.agentID = postData.agentID;
                         process.applicationID = application[0]['ID'];
                         process.date_created = postData.date_created;
+
+                        let payload = {}
+                        payload.category = 'Application'
+                        payload.userid = req.cookies.timeout
+                        payload.description = 'New Client Created'
+                        payload.created_application = application[0]['ID']
+                        notificationsService.log(req, payload)
                         db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
                             if(error){
                                 return res.send({"status": 500, "error": error, "response": null});
@@ -4568,7 +4575,7 @@ users.post('/new-activity', function(req, res, next) {
                         payload.category = 'Activity'
                         payload.userid = postData.for_
                         payload.description = 'New Activity Created'
-                        notificationsService.log(req, res, payload)
+                        notificationsService.log(req, payload)
                         res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created", "result": id}));
                     });
                 });

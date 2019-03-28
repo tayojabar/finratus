@@ -406,12 +406,6 @@ app.get('/target-dashboard', requireLogin, function (req, res) {
     });
 });
 
-app.get('/view-activity', requireLogin, function (req, res) {
-    res.sendFile('view-activity.html', {
-        root: __dirname + '/views'
-    });
-});
-
 app.get('/activity-settings', requireLogin, function (req, res) {
     res.sendFile('activity-settings.html', {
         root: __dirname + '/views'

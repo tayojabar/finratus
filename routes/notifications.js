@@ -43,7 +43,7 @@ route.get('/new-updates', function(req, res) {
                     'and category in \n' +
                     '(select category_name from notification_categories nc where nc.id in \n' +
                     '(select np.category from notification_preferences np where status = 1 and np.userid = '+user+'))\n' +
-                    'and (select compulsory from notification_categories where category = category_name) = 0\n' +
+                    'and (select compulsory from notification_categories where category = category_name) = 1\n' +
                     'order by notificationid desc'
             }
             else {
@@ -174,7 +174,7 @@ route.get('/categories', function(req, res, next) {
 
 route.get('/categories-list', function(req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
-    let query = 'select * from notification_categories'
+    let query = 'select * from notification_categories order by id asc'
     const endpoint = `/core-service/get?query=${query}`;
     const url = `${HOST}${endpoint}`;
     axios.get(url)
@@ -341,6 +341,38 @@ route.post('/saveConfig/:user', function(req, res, next) {
                 query = 'INSERT INTO notification_roles_rel SET ?';
             connection.query(query, {role_id:role_id, category:category, state:state, date_created:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
                 if(error){
+                    status = false;
+                    callback({"status": 500, "error": error, "response": null});
+                } else {
+                    count++;
+                }
+                callback();
+            });
+        }, function (data) {
+            connection.release();
+            if(status === false)
+                return res.send(data);
+            res.send({"status": 200, "error": null, "message": "Category Configuration Set!"});
+        })
+    });
+});
+
+route.post('/updateCategories/', function(req, res, next) {
+    let ids = req.body,
+        category = ids.category,
+        count = 0,
+        status = true;
+    db.getConnection(function(err, connection) {
+        if (err) throw err;
+
+        async.forEach(ids.cats, function (id, callback) {
+            let idc = id[0],
+                state = id[1],
+                // query = 'INSERT INTO notification_roles_rel SET ?';
+                query = 'update notification_categories set compulsory = '+state+' where id = '+idc+'';
+            connection.query(query, {date_modified:moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a')}, function (error, results, fields) {
+                if(error){
+                    console.log(error)
                     status = false;
                     callback({"status": 500, "error": error, "response": null});
                 } else {
