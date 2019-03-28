@@ -573,6 +573,8 @@
             $.ajax({
                 'url': '/user/new-user',
                 'type': 'post',
+//                'xhrFields': '{withCredentials: true}',
+//                'crossDomain': true,
                 'data': obj,
                 'success': function (data) {
                     $('#wait').hide();
@@ -594,7 +596,7 @@
                         $('#role').val(0);
                         $('#branch').val(0);
                         $('#supervisor').val(0);
-                        window.location.href = "/all-users";
+//                        window.location.href = "/all-users";
                     }
                 }
             });

@@ -188,7 +188,9 @@ users.post('/new-user', function(req, res, next) {
                             if (!err){
                                 let payload = {}
                                 payload.category = 'Users'
+                                payload.userid = req.cookies.timeout
                                 payload.description = 'New User Created'
+                                payload.created_user = re[0]['ID']
                                 notificationsService.log(req, payload)
                                 res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
                             }
@@ -221,7 +223,21 @@ users.post('/new-client', function(req, res, next) {
                 if(error){
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                 } else {
-                    res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                    connection.query('SELECT * from clients where ID = LAST_INSERT_ID()', function(err, re, fields) {
+                        connection.release();
+                        if (!err){
+                            let payload = {}
+                            payload.category = 'Clients'
+                            payload.userid = req.cookies.timeout
+                            payload.description = 'New Client Created'
+                            payload.created_clients = re[0]['ID']
+                            notificationsService.log(req, payload)
+                            res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                        }
+                        else{
+                            res.send(JSON.stringify({"response": "Error retrieving client details. Please try a new username!"}));
+                        }
+                    });
                 }
             });
         });
@@ -1267,14 +1283,15 @@ users.post('/edit-user/:id/:user', function(req, res, next) {
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-	  	} else {
-                // let load = {}
-                // load.category = 'Activity'
-                // load.userid = req.params.user
-                // load.description = 'User Details Updated'
-                // load.affected_client =
-                // notificationsService.log(req, res, load)
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
+	  	}
+	  	else {
+            let payload = {}
+            payload.category = 'Users'
+            payload.userid = req.cookies.timeout
+            payload.description = 'User details updated.'
+            payload.affected_user = re[0]['ID']
+            notificationsService.log(req, payload)
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
 	  	}
   	});
 });
@@ -1296,7 +1313,13 @@ users.post('/edit-client/:id', function(req, res, next) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
-            res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
+            let payload = {}
+            payload.category = 'Clients'
+            payload.userid = req.cookies.timeout
+            payload.description = 'Client details updated.'
+            payload.affected_client = re[0]['ID']
+            notificationsService.log(req, payload)
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Details Updated"}));
         }
     });
 });
