@@ -1,5 +1,5 @@
 function numberToCurrencyformatter(value) {
-    if (!value || isNaN(value) || value === null)
+    if (!value || value === null)
         return value;
     if (typeof value !== "string")
         value = value.toString();
