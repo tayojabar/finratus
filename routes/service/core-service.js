@@ -4,10 +4,8 @@ const db = require('../../db');
 const router = express.Router();
 
 router.get('/get', function (req, res, next) {
-    console.log(req)
     let query = req.query.query;
     db.query(query, function (error, results, fields) {
-        console.log(results)
         if (error && error !== null) {
             res.send({
                 "status": 500,

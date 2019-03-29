@@ -2,10 +2,12 @@ const
     axios = require('axios'),
     moment = require('moment'),
     db = require('../../../db'),
+    request = require('request'),
     bcrypt = require('bcryptjs'),
     express = require('express'),
     router = express.Router(),
     nodemailer = require('nodemailer'),
+    request_promise = require('request-promise'),
     helperFunctions = require('../../../helper-functions'),
     hbs = require('nodemailer-express-handlebars'),
     smtpTransport = require('nodemailer-smtp-transport'),
@@ -137,30 +139,37 @@ router.get('/recommendations/get', function (req, res, next) {
             /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2
             AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID)),2) * 100),0) desc`;
     let endpoint = '/core-service/get';
-    let url = `${HOST}${endpoint}`;
-    axios.get(url, {
-        params: {
-            query: query
-        }
-    }).then(response => {
-        query = `SELECT count(distinct(apps.userID)) AS recordsTotal FROM application_schedules a, applications apps
-                 WHERE a.status=1 AND apps.status=2 AND (SELECT p.ID FROM preapproved_loans p WHERE p.userID = apps.userID) IS NULL
-                 AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE()`;
-        endpoint = '/core-service/get';
-        url = `${HOST}${endpoint}`;
-        axios.get(url, {
-            params: {
-                query: query
-            }
-        }).then(payload => {
-            res.send({
-                draw: draw,
-                recordsTotal: payload.data[0].recordsTotal,
-                recordsFiltered: payload.data[0].recordsTotal,
-                data: (response.data === undefined) ? [] : response.data
-            });
+    let url = `${HOST}${endpoint}?query=${query}`;
+    request_promise(url)
+        .then(function (data) {
+            console.log(data)
+        })
+        .catch(function (err) {
+            // Crawling failed...
         });
-    });
+    // axios.get(url, {
+    //     params: {
+    //         query: query
+    //     }
+    // }).then(response => {
+    //     query = `SELECT count(distinct(apps.userID)) AS recordsTotal FROM application_schedules a, applications apps
+    //              WHERE a.status=1 AND apps.status=2 AND (SELECT p.ID FROM preapproved_loans p WHERE p.userID = apps.userID) IS NULL
+    //              AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE()`;
+    //     endpoint = '/core-service/get';
+    //     url = `${HOST}${endpoint}`;
+    //     axios.get(url, {
+    //         params: {
+    //             query: query
+    //         }
+    //     }).then(payload => {
+    //         res.send({
+    //             draw: draw,
+    //             recordsTotal: payload.data[0].recordsTotal,
+    //             recordsFiltered: payload.data[0].recordsTotal,
+    //             data: (response.data === undefined) ? [] : response.data
+    //         });
+    //     });
+    // });
 });
 
 // router.get('/recommendations/get', function (req, res, next) {
