@@ -222,13 +222,7 @@ app.get('/all-vehicles', requireLogin, function (req, res) {
 
 app.get('/all-users', requireLogin, function (req, res) {
     res.sendFile('all-users.html', {
-        root: __dirname + '/views'
-    });
-});
-
-app.get('/all-users', requireLogin, function (req, res) {
-    res.sendFile('all-users.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/user/all-users'
     });
 });
 
@@ -252,13 +246,13 @@ app.get('/all-owners', requireLogin, function (req, res) {
 
 app.get('/add-vehicle', requireLogin, function (req, res) {
     res.sendFile('add-vehicles.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/vehicles/add-vehicle'
     });
 });
 
 app.get('/add-user', requireLogin, function (req, res) {
     res.sendFile('add-user.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/user/add-user'
     });
 });
 
@@ -270,13 +264,13 @@ app.get('/add-owner', requireLogin, function (req, res) {
 
 app.get('/add-model', requireLogin, function (req, res) {
     res.sendFile('add-model.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/car-models/add-model'
     });
 });
 
 app.get('/all-models', requireLogin, function (req, res) {
     res.sendFile('all-models.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/car-models/all-models'
     });
 });
 
@@ -318,7 +312,7 @@ app.get('/edit-workflow/:id?', requireLogin, function (req, res) {
 
 app.get('/manage-permissions', requireLogin, function (req, res) {
     res.sendFile('manage-permissions.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/settings/permissions'
     });
 });
 
@@ -342,7 +336,7 @@ app.get('/all-workflow', requireLogin, function (req, res) {
 
 app.get('/all-requests', requireLogin, function (req, res) {
     res.sendFile('all-requests.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/application/all-requests'
     });
 });
 
@@ -354,13 +348,13 @@ app.get('/loan-repayment', requireLogin, function (req, res) {
 
 app.get('/add-client', requireLogin, function (req, res) {
     res.sendFile('add-client.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/client/add-client'
     });
 });
 
 app.get('/all-clients', requireLogin, function (req, res) {
     res.sendFile('all-clients.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/client/all-clients'
     });
 });
 
@@ -383,7 +377,7 @@ app.get('/forgot-password/:id?', function (req, res) {
 });
 
 app.get('/activity', requireLogin, function (req, res) {
-    res.sendFile('activity.html', {
+    res.sendFile('activity/activity.html', {
         root: __dirname + '/views'
     });
 });
@@ -396,7 +390,7 @@ app.get('/all-targets', requireLogin, function (req, res) {
 
 app.get('/all-teams', requireLogin, function (req, res) {
     res.sendFile('all-teams.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/user/teams'
     });
 });
 
@@ -408,13 +402,13 @@ app.get('/target-dashboard', requireLogin, function (req, res) {
 
 app.get('/activity-settings', requireLogin, function (req, res) {
     res.sendFile('activity-settings.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/settings/activity-settings'
     });
 });
 
 app.get('/notification-settings', requireLogin, function (req, res) {
     res.sendFile('notification-settings.html', {
-        root: __dirname + '/views'
+        root: __dirname + '/views/settings/notification-settings'
     });
 });
 

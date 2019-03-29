@@ -40,6 +40,7 @@ route.get('/new-updates', function(req, res) {
                 query = 'select notificationid, category, description, unr.date_created, nt.userid, (select fullname from users where users.id = nt.userid) user \n' +
                     'from user_notification_rel unr inner join notifications nt on notificationid = nt.id \n' +
                     'where status = 1 and view_status = 1 and unr.userid = '+user+'\n' +
+                    'and nt.userid <> '+user+' \n'+
                     'and category in \n' +
                     '(select category_name from notification_categories nc where nc.id in \n' +
                     '(select np.category from notification_preferences np where status = 1 and np.userid = '+user+'))\n' +
@@ -49,7 +50,7 @@ route.get('/new-updates', function(req, res) {
             else {
                 query = 'select notification_id, category, description, date_created, view_status, (select fullname from users where users.id = userid) user \n'+
                 'from pending_records inner join notifications on notification_id = notifications.id \n'+
-                'where status = 1 and view_status in (1,2) order by notification_id desc';
+                'where status = 1 and userid <> '+user+' and view_status in (1,2) order by notification_id desc';
             }
             const api = `/core-service/get?query=${query}`;
             const uri = `${HOST}${api}`;
@@ -57,6 +58,90 @@ route.get('/new-updates', function(req, res) {
                 .then(function (response) {
                     // if (response.data)
                     res.send(response.data);
+                }, err => {
+                    res.send({
+                        status: 500,
+                        error: error,
+                        response: null
+                    });
+                })
+                .catch(function (error) {
+                    res.send({
+                        status: 500,
+                        error: error,
+                        response: null
+                    });
+                });
+        }, err => {
+            res.send({
+                status: 500,
+                error: error,
+                response: null
+            });
+        })
+        .catch(function (error) {
+            res.send({
+                status: 500,
+                error: error,
+                response: null
+            });
+        });
+});
+
+route.get('/application-updates', function(req, res) {
+    const HOST = `${req.protocol}://${req.get('host')}`;
+    let user = req.query.bug
+    let role = req.query.bugger
+    let query_ = 'select id from notification_preferences where userid = '+user+''
+    // let query = `select notification_id, category, description, date_created, (select fullname from users where users.id = userid) user from pending_records inner join notifications on notification_id = notifications.id where status = 1 and view_status in (1,2) order by notification_id desc`;
+    const endpoint = `/core-service/get?query=${query_}`;
+    const url = `${HOST}${endpoint}`;
+    axios.get(url)
+        .then(function (response) {
+            let query, word = 'Applications'
+            if (response.data.length > 0){
+                // query = 'select notificationid, category, description, ' +
+                //     '(select GROUP_CONCAT(distinct(approverid)) as approvers from workflow_stages where workflowid = (select workflowid from applications where id = created_application) group by workflowid) approvers,\n' +
+                //     'unr.date_created, nt.userid, (select fullname from users where users.id = nt.userid) user \n' +
+                //     'from user_notification_rel unr inner join notifications nt on notificationid = nt.id \n' +
+                //     'where status = 1 and view_status = 1 and unr.userid = '+user+'\n' +
+                //     // 'and nt.userid <> '+user+'\n'+
+                //     'and nt.category = ? and \n' +
+                //     '(select np.status from notification_preferences np where np.category = \n' +
+                //     '   (select nc.id from notification_categories nc where nc.category_name = ?)\n' +
+                //     ' and np.userid = '+user+' and np.date_created = (select max(npf.date_created) from notification_preferences npf where npf.userid = '+user+')) = 1 and \n'+
+                //     '(select compulsory from notification_categories where category = ?) = 1\n' +
+                //     'order by notificationid desc'
+                query = 'select notificationid, category, \n' +
+                    'created_application, \n' +
+                    '(select GROUP_CONCAT(distinct(approverid)) as approvers from workflow_stages where workflowid = (select workflowid from applications where id = created_application) group by workflowid) approvers,\n' +
+                    'description, unr.date_created, nt.userid, (select fullname from users where users.id = nt.userid) user \n' +
+                    'from user_notification_rel unr inner join notifications nt on notificationid = nt.id \n' +
+                    'where status = 1 and view_status = 1 and unr.userid = '+user+'\n' +
+                    'and nt.category = ? and \n' +
+                    '(select np.status from notification_preferences np where np.category = \n' +
+                    '\t(select nc.id from notification_categories nc where nc.category_name = ?) \n' +
+                    'and np.userid = '+user+' and np.date_created = (select max(npf.date_created) from notification_preferences npf where npf.userid = '+user+')) = 1 \n' +
+                    'and (select compulsory from notification_categories where category_name = ?) = 1\n' +
+                    'order by notificationid desc'
+            }
+            else {
+                query = 'select notification_id, category, description, date_created, view_status, (select fullname from users where users.id = userid) user \n'+
+                    'from pending_records inner join notifications on notification_id = notifications.id \n'+
+                    'where status = 1 and userid <> '+user+' and category = '+word+' and view_status in (1,2) order by notification_id desc';
+            }
+            const api = `/core-service/post?query=${query}`;
+            const uri = `${HOST}${api}`;
+            axios.post(uri, [word, word, word])
+                .then(function (response) {
+                    let data = {}
+                    for (let i = 0; i < response.data.length; i++){
+                        let dets = response.data[i]
+                        if (Array.from(new Set(dets.approvers.split(','))).includes(role)){
+                            data[i] = response.data[i]
+                        }
+                    }
+                    res.send(data);
                 }, err => {
                     res.send({
                         status: 500,
