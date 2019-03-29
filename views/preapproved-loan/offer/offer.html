@@ -83,8 +83,8 @@
                                                 <div class="col-sm-3">
                                                     <div class="card text-white bg-flat-color-1">
                                                         <div class="card-body pb-0">
-                                                            <h3 id="interest-rate-text" class="mb-0"></h3>
-                                                            <p class="text-light">Interest Rate</p>
+                                                            <h3 id="payment-amount-text" class="mb-0"></h3>
+                                                            <p class="text-light">Payment Amount (Monthly)</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -98,65 +98,6 @@
                                                 </div>
                                             </div>
                                             <hr />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="panel push-down">
-                                    <div class="panel-body">
-                                        <div class="example-box-wrapper">
-                                            <h6>Loan Application</h6>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-6 form-group">
-                                                    <label class="col-form-label">Client <strong style="color:red"> *</strong></label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
-                                                        <select id="user-list" class="form-control" required="required">
-                                                            <option selected="selected">-- Choose Client --</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6 form-group">
-                                                    <label class="form-control-label">Loan Requested</label><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                                        <input type="text" id="amount" class="form-control" required="required" value="50,000" min="1" max="100000000">
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6 form-group">
-                                                    <label class="form-control-label">Interest Rate</label><strong style="color:red"> *</strong><span id="interest-rate-error" style="padding-left:50px; text-align: center"></span>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon"><i class="fa fa-plus"></i></div>
-                                                        <input type="text" id="interest-rate" class="form-control" required="required" value="120" min="1" max="1000">
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6 form-group">
-                                                    <label class="form-control-label">Tenor (monthly)</label><strong style="color:red"> *</strong><span id="term-error" style="padding-left:50px; text-align: center"></span>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                                        <input type="text" id="term" class="form-control" required="required" value="12" min="1" max="60">
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6 form-group">
-                                                    <label class="form-control-label">First Repayment Date</label><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                                        <input type="date" id="repayment-date" class="form-control" required="required">
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6 form-group">
-                                                    <label class="form-control-label">Payment Amount (Monthly)</label><strong style="color:red"> *</strong><span id="payment-amount-error" style="padding-left:50px; text-align: center"></span>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon"><i class="fa fa-money"></i></div>
-                                                        <input type="text" id="payment-amount" class="form-control" required="required" disabled="disabled">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div id="loanSchedule" style="margin: 30px 0; overflow: auto;"></div>
-                                                </div>
-                                            </div>
                                             <div class="row">
                                                 <div class="col-sm-12 form-group">
                                                     <button id="acceptApplication" class="btn btn-lg btn-success">Accept Offer <i class="fa fa-check"></i></button>

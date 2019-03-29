@@ -357,10 +357,9 @@
                     obj.interest_rate = $('#interest-rate').val();
                     obj.duration = $('#term').val();
                     obj.repayment_date = $('#repayment-date').val();
-                    if ($purposes.val() !== '-- Choose Loan Purpose --')
-                        obj.loan_purpose = $purposes.val();
+                    obj.loan_purpose = $purposes.val();
                     obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
-                    if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
+                    if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration || $purposes.val() === '-- Choose Loan Purpose --')
                         return notification('Kindly fill all required fields!','','warning');
                     if (parseFloat(obj.duration) < settings.tenor_min || parseFloat(obj.duration) > settings.tenor_max)
                         return notification(`Minimum tenor is ${numberToCurrencyformatter(settings.tenor_min)} (month) 

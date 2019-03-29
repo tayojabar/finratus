@@ -22,23 +22,9 @@
             success: function (response) {
                 preapproved_loan = response.data;
                 if (preapproved_loan && !($.isEmptyObject(preapproved_loan)) && preapproved_loan.schedule){
-                    console.log(preapproved_loan.schedule)
-                    $('#user-list').val($("#user-list option:contains('"+preapproved_loan.client+"')").val());
-                    $('#user-list').prop('disabled', true);
-                    $('#workflows').val(preapproved_loan.workflowID);
-                    $('#workflows').prop('disabled', true);
-                    $('#amount').val(numberToCurrencyformatter(preapproved_loan.loan_amount));
-                    $('#amount').prop('disabled', true);
-                    $('#interest-rate').val(numberToCurrencyformatter(preapproved_loan.interest_rate));
-                    $('#interest-rate').prop('disabled', true);
-                    $('#term').val(numberToCurrencyformatter(preapproved_loan.duration));
-                    $('#term').prop('disabled', true);
-                    $('#repayment-date').val(preapproved_loan.repayment_date);
-                    $('#repayment-date').prop('disabled', true);
                     $('#client-text').text(preapproved_loan.client);
                     $('#loan-amount-text').text(`₦${numberToCurrencyformatter(preapproved_loan.loan_amount)}`);
                     $('#tenor-text').text(`${numberToCurrencyformatter(preapproved_loan.duration)} month(s)`);
-                    $('#interest-rate-text').text(`${numberToCurrencyformatter(preapproved_loan.interest_rate)}%`);
                     $('#first-repayment-text').text(preapproved_loan.repayment_date);
                     $('#expiry-text').html(`Please note that this loan offer is only valid till <strong>${preapproved_loan.expiry_date}</strong>`);
                     displaySchedule(preapproved_loan.schedule);
@@ -111,7 +97,7 @@
                 cells[5] = schedule[i - 2]['interest_amount'];
                 cells[6] = schedule[i - 2]['balance'];
                 cells[7] = (parseFloat(cells[2]) + parseFloat(cells[5])).round(2);
-                $('#payment-amount').val(numberToCurrencyformatter(cells[7]));
+                $('#payment-amount-text').text(numberToCurrencyformatter(cells[7]));
             }
             for (let j = 0; j < cells.length; j++) {
                 let cell = $("<td />");
