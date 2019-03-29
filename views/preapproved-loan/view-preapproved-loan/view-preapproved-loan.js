@@ -76,7 +76,11 @@
                         <p>5. Client is an active customer for ${numberToCurrencyformatter(preapproved_loan.offer_duration)} month(s).</p>
                         <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.offer_loan_amount)} to be repaid over 12 month(s).</p>
                     `);
-                    displaySchedule(preapproved_loan.schedule);
+                    if (preapproved_loan.schedule && preapproved_loan.schedule[0]){
+                        displaySchedule(preapproved_loan.schedule);
+                    } else {
+                        $('#loanSchedule').hide();
+                    }
                 }
             }
         });

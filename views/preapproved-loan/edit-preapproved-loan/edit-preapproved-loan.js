@@ -26,22 +26,20 @@
                 if (recommendation){
                     $('#user-list').val($("#user-list option:contains('"+recommendation.client+"')").val());
                     $('#user-list').prop('disabled', true);
+                    $('#term').val(numberToCurrencyformatter(recommendation.tenor));
                     $('#amount').val(numberToCurrencyformatter(recommendation.loan_amount));
+                    $('#interest-rate').val(numberToCurrencyformatter(recommendation.interest_rate));
+                    $('#repayment-date').val(recommendation.first_repayment_date);
                     $('#amortization').val('standard').trigger('change');
                     $('#client-text').text(recommendation.client);
                     $('#loan-amount-text').text(`₦${numberToCurrencyformatter(recommendation.loan_amount)}`);
                     $('#credit-score-text').text(`${recommendation.credit_score}%`);
                     $('#default-frequency-text').text(numberToCurrencyformatter(recommendation.defaults));
-                    recommendation.months_left = recommendation.duration - recommendation.invoices_due;
-                    let percent_completion = ((recommendation.invoices_due/recommendation.duration).toFixed(2)) * 100;
+                    let percent_completion = recommendation.percentage_completion;
                     if (percent_completion >= 75) {
                         $('#remark-very-good-text').show();
                     } else if (percent_completion < 75 && percent_completion >= 50) {
                         $('#remark-good-text').show();
-                    } else if (percent_completion < 50 && percent_completion >= 25) {
-                        $('#remark-average-text').show();
-                    } else {
-                        $('#remark-fair-text').show();
                     }
                     $('#reason').html(`
                         <p>1. Client has ${numberToCurrencyformatter(recommendation.months_left)} repayment(s) left.</p>
@@ -404,10 +402,9 @@
                     obj.interest_rate = currencyToNumberformatter($('#interest-rate').val());
                     obj.duration = currencyToNumberformatter($('#term').val());
                     obj.repayment_date = $('#repayment-date').val();
-                    if ($purposes.val() !== '-- Choose Loan Purpose --')
-                        obj.loan_purpose = $purposes.val();
+                    obj.loan_purpose = $purposes.val();
                     obj.agentID = (JSON.parse(localStorage.getItem("user_obj"))).ID;
-                    if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration)
+                    if (!user || isNaN(obj.workflowID) || !obj.loan_amount || !obj.interest_rate || !obj.duration || $purposes.val() === '-- Choose Loan Purpose --')
                         return notification('Kindly fill all required fields!','','warning');
                     if (parseFloat(obj.duration) < settings.tenor_min || parseFloat(obj.duration) > settings.tenor_max)
                         return notification(`Minimum tenor is ${numberToCurrencyformatter(settings.tenor_min)} (month) 
@@ -427,9 +424,11 @@
                     preapproved_loan.average_loan = recommendation.average_loan;
                     preapproved_loan.credit_score = recommendation.credit_score;
                     preapproved_loan.defaults = recommendation.defaults;
-                    preapproved_loan.offer_duration = recommendation.duration;
                     preapproved_loan.invoices_due = recommendation.invoices_due;
+                    preapproved_loan.offer_duration = recommendation.tenor;
                     preapproved_loan.offer_loan_amount = recommendation.loan_amount;
+                    preapproved_loan.offer_first_repayment_date = recommendation.first_repayment_date;
+                    preapproved_loan.offer_interest_rate = recommendation.interest_rate;
                     preapproved_loan.months_left = recommendation.months_left;
                     preapproved_loan.salary_loan = recommendation.salary_loan;
                     preapproved_loan.created_by = (JSON.parse(localStorage.getItem("user_obj"))).ID;
@@ -488,9 +487,11 @@
             preapproved_loan.average_loan = recommendation.average_loan;
             preapproved_loan.credit_score = recommendation.credit_score;
             preapproved_loan.defaults = recommendation.defaults;
-            preapproved_loan.offer_duration = recommendation.duration;
             preapproved_loan.invoices_due = recommendation.invoices_due;
+            preapproved_loan.offer_duration = recommendation.tenor;
             preapproved_loan.offer_loan_amount = recommendation.loan_amount;
+            preapproved_loan.offer_first_repayment_date = recommendation.first_repayment_date;
+            preapproved_loan.offer_interest_rate = recommendation.interest_rate;
             preapproved_loan.months_left = recommendation.months_left;
             preapproved_loan.salary_loan = recommendation.salary_loan;
             preapproved_loan.created_by = (JSON.parse(localStorage.getItem("user_obj"))).ID;

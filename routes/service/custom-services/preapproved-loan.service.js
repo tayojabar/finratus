@@ -31,28 +31,57 @@ router.get('/recommendations/get', function (req, res, next) {
     let query =
         `SELECT 
             apps.userID, 
-            count(a.ID) AS invoices_due, 
-            (SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) AS duration, 
-            ((SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) -count(a.ID)) AS months_left,
-            round(sum(apps.loan_amount)/count(apps.ID),2) as average_loan,
+            (SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID) AS invoices_due, 
+            
+            (SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID) AS duration, 
+            
+            round((round(((SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+            /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID)),2) * 100),0) AS percentage_completion, 
+            
+            ((SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID) 
+            -(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)) AS months_left, 
+            
+            round(sum(apps.loan_amount)/count(apps.ID),2) as average_loan, 
             (SELECT c.salary FROM clients c WHERE c.ID = apps.userID) AS salary, 
             (SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6 AS salary_loan, 
+            
+            (SELECT sum((CASE
+						WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
+						AND timestamp(s.payment_date)<=timestamp(date_add(a2.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a2.ID) IS NULL THEN 1
+					ELSE 0
+					END)) 
+            FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID) AS defaults2, 
+            
             sum((CASE
                 WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
-                AND s.payment_date=a.payment_collect_date AND s.invoiceID = a.ID) IS NULL THEN 1
+                AND timestamp(s.payment_date)<=timestamp(date_add(a.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a.ID) IS NULL 
+				THEN 1
             ELSE
                 0
             END)) AS defaults,
+            
             (SELECT c.fullname FROM clients c WHERE c.ID = apps.userID) AS client,
-            round((1-(round((sum((CASE
-                            WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1 
-                            AND s.payment_date=a.payment_collect_date AND s.invoiceID = a.ID) IS NULL THEN 1
-                        ELSE
-                            0
-                        END))
-                    /count(a.ID)),2))
+            
+            round((1-(round(((SELECT sum((CASE
+									WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
+									AND timestamp(s.payment_date)<=timestamp(date_add(a2.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a2.ID) IS NULL THEN 1
+								ELSE 0
+								END)) 
+						FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+						AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+                    /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+					AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+					),2))
                 )*100
-            ,0) AS credit_score,
+            ,0) AS credit_score, 
+            
             round((CASE
                     WHEN ((SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6) > (round(sum(apps.loan_amount)/count(apps.ID),2))
                     THEN ((SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6)
@@ -61,24 +90,51 @@ router.get('/recommendations/get', function (req, res, next) {
                 END)
                 *(round((1-(sum((CASE
                             WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1 
-                            AND s.payment_date=a.payment_collect_date AND s.invoiceID = a.ID) IS NULL THEN 1
+                            AND timestamp(s.payment_date)<=timestamp(date_add(a.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a.ID) IS NULL THEN 1
                         ELSE
                             0
                         END))
-                    /count(a.ID))),2))
-                ,2) AS loan_amount
+                    /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+					AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+				)),2))
+			,2) AS loan_amount
+                
         FROM application_schedules a, applications apps WHERE a.status=1 AND apps.status=2 
         AND (SELECT p.ID FROM preapproved_loans p WHERE p.userID = apps.userID) IS NULL 
-        AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE() GROUP BY apps.userID
-        ORDER BY round((1-(round((sum((CASE
-                            WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1 
-                            AND s.payment_date=a.payment_collect_date AND s.invoiceID = a.ID) IS NULL THEN 1
-                        ELSE
-                            0
-                        END))
-                    /count(a.ID)),2))
+        AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE() 
+        AND round((round(((SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+            /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID)),2) * 100),0) > 50 
+		AND round((1-(round(((SELECT sum((CASE
+									WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
+									AND timestamp(s.payment_date)<=timestamp(date_add(a2.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a2.ID) IS NULL THEN 1
+								ELSE 0
+								END)) 
+						FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+						AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+                    /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+					AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+					),2))
                 )*100
-            ,0) desc LIMIT 20`;
+            ,0) > 50 
+        GROUP BY apps.userID
+        ORDER BY round((1-(round(((SELECT sum((CASE
+									WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
+									AND timestamp(s.payment_date)<=timestamp(date_add(a2.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a2.ID) IS NULL THEN 1
+								ELSE 0
+								END)) 
+						FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+						AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+                    /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+					AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+					),2))
+                )*100
+            ,0) desc, 
+		round((round(((SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+            /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID)),2) * 100),0) desc`;
     let endpoint = '/core-service/get';
     let url = `${HOST}${endpoint}`;
     axios.get(url, {
@@ -110,44 +166,92 @@ router.get('/recommendations/get/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
     let query = `SELECT 
             apps.userID, 
-            count(a.ID) AS invoices_due, 
-            (SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) AS duration, 
-            ((SELECT sum(duration) FROM applications WHERE status = 2 AND userID = apps.userID) -count(a.ID)) AS months_left,
-            round(sum(apps.loan_amount)/count(apps.ID),2) as average_loan,
+            (SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID) AS invoices_due, 
+            
+            (SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID) AS duration, 
+            
+            round((SELECT count(a2.ID)/count(distinct(apps2.ID)) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID),0) AS tenor, 
+            
+            round((SELECT sum(apps2.interest_rate)/count(apps2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID),0) AS interest_rate, 
+            
+            date_format(date_add(CURDATE(), INTERVAL 1 month), '%Y-%m-%d') AS first_repayment_date,
+            
+            round((round(((SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+            /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID)),2) * 100),0) AS percentage_completion, 
+            
+            ((SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID) 
+            -(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)) AS months_left, 
+            
+            round(sum(apps.loan_amount)/count(apps.ID),2) as average_loan, 
             (SELECT c.salary FROM clients c WHERE c.ID = apps.userID) AS salary, 
-            (SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6 AS salary_loan, 
+            (SELECT c.salary FROM clients c WHERE c.ID = apps.userID)
+            *(round((SELECT count(a2.ID)/count(distinct(apps2.ID)) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID),0)/2) AS salary_loan, 
+            
+            (SELECT sum((CASE
+						WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
+						AND timestamp(s.payment_date)<=timestamp(date_add(a2.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a2.ID) IS NULL THEN 1
+					ELSE 0
+					END)) 
+            FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+            AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID) AS defaults2, 
+            
             sum((CASE
                 WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
-                AND s.payment_date=a.payment_collect_date AND s.invoiceID = a.ID) IS NULL THEN 1
+                AND timestamp(s.payment_date)<=timestamp(date_add(a.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a.ID) IS NULL 
+				THEN 1
             ELSE
                 0
             END)) AS defaults,
+            
             (SELECT c.fullname FROM clients c WHERE c.ID = apps.userID) AS client,
-            round((1-(round((sum((CASE
-                            WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1 
-                            AND s.payment_date=a.payment_collect_date AND s.invoiceID = a.ID) IS NULL THEN 1
-                        ELSE
-                            0
-                        END))
-                    /count(a.ID)),2))
+            
+            round((1-(round(((SELECT sum((CASE
+									WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1  
+									AND timestamp(s.payment_date)<=timestamp(date_add(a2.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a2.ID) IS NULL THEN 1
+								ELSE 0
+								END)) 
+						FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+						AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+                    /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+					AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+					),2))
                 )*100
-            ,0) AS credit_score,
+            ,0) AS credit_score, 
+            
             round((CASE
-                    WHEN ((SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6) > (round(sum(apps.loan_amount)/count(apps.ID),2))
-                    THEN ((SELECT c.salary FROM clients c WHERE c.ID = apps.userID)*6)
+                    WHEN ((SELECT c.salary FROM clients c WHERE c.ID = apps.userID)
+						*(round((SELECT count(a2.ID)/count(distinct(apps2.ID)) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+							AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID),0)/2)) 
+						> (round(sum(apps.loan_amount)/count(apps.ID),2))
+                    THEN ((SELECT c.salary FROM clients c WHERE c.ID = apps.userID)
+						*(round((SELECT count(a2.ID)/count(distinct(apps2.ID)) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+							AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID),0)/2))
                 ELSE
                     (round(sum(apps.loan_amount)/count(apps.ID),2))
                 END)
                 *(round((1-(sum((CASE
                             WHEN (SELECT sum(s.payment_amount) FROM schedule_history s WHERE s.status=1 
-                            AND s.payment_date=a.payment_collect_date AND s.invoiceID = a.ID) IS NULL THEN 1
+                            AND timestamp(s.payment_date)<=timestamp(date_add(a.payment_collect_date, INTERVAL 3 DAY)) AND s.invoiceID = a.ID) IS NULL THEN 1
                         ELSE
                             0
                         END))
-                    /count(a.ID))),2))
-                ,2) AS loan_amount
-        FROM application_schedules a, applications apps WHERE a.status=1 AND apps.status=2 AND (SELECT p.ID FROM preapproved_loans p WHERE p.userID = apps.userID) IS NULL 
-        AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE() AND apps.userID = ${req.params.id}`;
+                    /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2 
+					AND a2.applicationID = apps2.ID AND a2.payment_collect_date < CURDATE() AND apps2.userID = apps.userID)
+				)),2))
+			,2) AS loan_amount
+                
+        FROM application_schedules a, applications apps WHERE a.status=1 AND apps.status=2 
+        AND (SELECT p.ID FROM preapproved_loans p WHERE p.userID = apps.userID) IS NULL 
+        AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE()  AND apps.userID = ${req.params.id}`;
     let endpoint = '/core-service/get';
     let url = `${HOST}${endpoint}`;
     axios.get(url, {
