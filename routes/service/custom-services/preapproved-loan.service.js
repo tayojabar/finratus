@@ -140,8 +140,10 @@ router.get('/recommendations/get', function (req, res, next) {
             AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID)),2) * 100),0) desc`;
     let endpoint = '/core-service/get';
     let url = `${HOST}${endpoint}?query=${query}`;
+    console.log('started')
     request_promise(url)
         .then(function (data) {
+            console.log('complete')
             console.log(data)
         })
         .catch(function (err) {
