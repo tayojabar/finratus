@@ -139,9 +139,16 @@ router.get('/recommendations/get', function (req, res, next) {
             /(SELECT count(a2.ID) FROM application_schedules a2, applications apps2 WHERE a2.status=1 AND apps2.status=2
             AND a2.applicationID = apps2.ID AND apps2.userID = apps.userID)),2) * 100),0) desc`;
     let endpoint = '/core-service/get';
-    let url = `${HOST}${endpoint}?query=${query}`;
+    let url = `${HOST}${endpoint}`;
     console.log('started')
-    request_promise(url)
+    var options = {
+        uri: url,
+        qs: {
+            query: query
+        }
+    };
+
+    request_promise(options)
         .then(function (data) {
             console.log('complete')
             console.log(data)
