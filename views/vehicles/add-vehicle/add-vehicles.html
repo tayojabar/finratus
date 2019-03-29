@@ -11,23 +11,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="../../favicon.ico">
 
-    <link rel="stylesheet" href="assets/css/normalize.css">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/themify-icons.css">
-    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
-    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
-    <link rel="stylesheet" href="assets/scss/style.css">
-    <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
+    <link rel="stylesheet" href="../../assets/css/normalize.css">
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../assets/css/themify-icons.css">
+    <link rel="stylesheet" href="../../assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="../../assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="../../assets/scss/style.css">
+    <link rel="stylesheet" href="../../assets/css/lib/chosen/chosen.min.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
         <!-- Left Panel -->
-        <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+        <script src="../../assets/js/vendor/jquery-2.1.4.min.js"></script>
         <script type="text/javascript">
             jQuery(document).ready(function($){ check(); loadMenus(); read_write()});
         </script>
@@ -252,7 +252,7 @@
 
 
             </div><!-- .animated -->
-            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='../../spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
         </div><!-- .content -->
 
 
@@ -262,205 +262,19 @@
     <!-- Right Panel -->
 
 
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-    <script src="assets/js/popper.min.js"></script>
-    <script src="assets/js/plugins.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
+    <script src="../../assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="../../assets/js/popper.min.js"></script>
+    <script src="../../assets/js/plugins.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/lib/chosen/chosen.jquery.min.js"></script>
         <script src="../../menus/menu-items.js"></script>
-        <script src="loader.js"></script>
-        <script src="notifications.js"></script>
-        <script src="js/jquery.timeago.js" type="text/javascript"></script>
+        <script src="../../loader.js"></script>
+        <script src="../../notifications.js"></script>
+        <script src="../../js/jquery.timeago.js" type="text/javascript"></script>
+        <script src=../../vehicles/add-vehicle/add-vehicles.js></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            // jQuery(".standardSelect").chosen({
-            //     disable_search_threshold: 10,
-            //     no_results_text: "Oops, nothing found!",
-            //     width: "100%"
-            // });
-            getOwners();
-            getMakes();
-        });
 
-        $(document).ajaxStart(function(){
-            $("#wait").css("display", "block");
-        });
-
-        $(document).ajaxComplete(function(){
-            $("#wait").css("display", "none");
-        });
-
-
-        $("#make").on('change', function () {
-            var selectedID = $(this).find('option:selected').attr('id');
-            getModels(selectedID);
-        });
-
-        $("#registerVehicle").click(function () {
-            validate();
-        });
-
-        function validate(){
-            if ($('#number_plate').val() == "" || $('#number_plate-error').val() == null){
-                $('#number_plate-error').html("Vehicle Must Have Number Plate");
-                $('#number_plate-error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else if ($('#owner').find('option:selected').attr('id') == 0){
-                $('#owner_error').html("Choose a Vehicle Owner");
-                $('#owner_error').css("color", "red");
-                $('#submit-error').css("color", "red");
-                $('#submit-error').html("Unable to submit. Check information entered.");
-            }
-            else{
-                registerVehicle();
-            }
-        }
-
-        function getOwners(){
-            $.ajax({
-                type: "GET",
-                url: "/user/owners/",
-                data: '{}',
-                success: function (response) {
-                    var owner = $("[id*=owner]");
-                    owner.empty().append('<option selected="selected" id="0">-- Select Vehicle Owner --</option>');
-                    $.each(JSON.parse(response), function (key, val) {
-                        $("#owner").append('<option class="deptSp" value = "' + val.fullname + '" id="' + val.ID + '">' + val.fullname + '</option>');
-                    });
-                }
-            });
-        }
-
-        function getMakes(){
-            $.ajax({
-                'url': '/makes-list',
-                'type': 'get',
-                'data': {},
-                'success': function (data) {
-                    var make = $("[id*=make]");
-                    make.empty().append('<option selected="selected" id="0">-- Choose Vehicle Make --</option>');
-                    $.each(JSON.parse(data), function (key, val) {
-                        $("#make").append('<option class="deptSp" value = "' + val.make + '" ID="' + val.make + '" spec="' + val.ID + '">' + val.make + '</option>');
-                    });
-                }
-            });
-        }
-
-        function getModels(make){
-            var id = make;
-            $.ajax({
-                'url': '/models-list/'+id,
-                'type': 'get',
-                'data': {},
-                'success': function (data) {
-                    var model = $("[id*=model]");
-                    model.empty().append('<option selected="selected" id="0">-- Choose Vehicle Make --</option>');
-                    $.each(JSON.parse(data), function (key, val) {
-                        $("#model").append('<option class="deptSp" value = "' + val.model + '" ID="' + val.ID + '" spec="' + val.ID + '">' + val.model + ' ( '+val.year+ ' )</option>');
-                    });
-                }
-            });
-        }
-    
-        function registerVehicle(){
-            var obj = {};
-            obj.Mileage = $('#mileage').val();
-            obj.Number_Plate = $('#number_plate').val();
-            obj.Price = $('#price').val();
-            obj.owner = $('#owner').find('option:selected').attr('id');
-            obj.Make = $('#make').find('option:selected').text();
-            obj.Model = $('#model').find('option:selected').text();
-            obj.Year = $('#year').find('option:selected').text();
-            obj.Bought_Condition = $('#condition').find('option:selected').text();
-            obj.Transmission = $('#transmission').find('option:selected').text();
-            obj.Fuel_Type = $('#fuel_type').find('option:selected').text();
-            obj.Engine_Capacity = $('#capacity').find('option:selected').text();
-            obj.Color = $('#color').find('option:selected').text();
-            obj.Registered_City = $('#reg-city').find('option:selected').text();
-            obj.Location = $('#location').find('option:selected').text();
-
-            var vehiclePayload = JSON.stringify(obj);
-            var test = {};
-            //console.log(obj);
-            $.ajax({
-                'url': '/addVehicle',
-                'type': 'post',
-                'data': obj,
-                'success': function (data) {
-                    $.each(JSON.parse(data), function (key, val) {
-                        test[key] = val;
-                    });
-                    if(test.status == 500){
-                        swal("Please recheck entered values","","error");
-                    }
-                    else
-                        swal("Vehicle Registered!","","success");
-                }
-            });
-        }
-
-        function check(){
-            if (localStorage.getItem('role') !== 1){
-                jQuery('#car-models').hide();
-                jQuery('#new-user').hide();
-                jQuery('#models-card').hide();
-                jQuery('#user').html(localStorage.getItem("name"));
-            }
-            else{
-                jQuery('#user').html(localStorage.getItem("name"));
-            }
-        }
-
-        function loadMenus(){
-            let modules = {};
-            modules = JSON.parse(localStorage.getItem("modules"));
-            modules.forEach(function(k, v){
-                if (k.menu_name === 'Sub Menu'){
-                    let main = $.grep(modules, function(e){return e.id === parseInt(k.main_menu);});
-                    $('#'+$(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
-                }else if(k.menu_name === 'Main Menu'){
-                    $('#sidebar').append(k.module_tag);
-                    $('#'+$(k.module_tag).attr('id')).append('<ul class="sub-menu children dropdown-menu"></ul>');
-                }else{
-                    $('#'+k.module_name).show();
-                }
-            });
-            $.ajax({
-                type: "GET",
-                url: "/user/all-requests",
-                success: function (response) {
-                    $.each(response, function(k,v){
-                        $('#requests-badge').html(v.requests);
-                    });
-                }
-            });
-            $.ajax({
-                type: "GET",
-                url: "/user/all-applications",
-                success: function (response) {
-                    $.each(response, function(k,v){
-                        $('#applications-badge').html(v.applications);
-                    });
-                }
-            });
-        }
-
-        function read_write(){
-            let w;
-            var perms = JSON.parse(localStorage.getItem("permissions"));
-            var page = (window.location.pathname.split('/')[1].split('.'))[0];
-            perms.forEach(function (k,v){
-                if (k.module_name === page){
-                    w = $.grep(perms, function(e){return e.id === parseInt(k.id);});
-                }
-            });
-            if (w && w[0] && (parseInt(w[0]['editable']) !== 1)){
-                $(".write").hide();
-            }
-        }
 
     </script>
 
