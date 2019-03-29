@@ -157,23 +157,6 @@
 <!-- Left Panel -->
 <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-<!--<aside id="left-panel" class="left-panel">-->
-    <!--<nav class="navbar navbar-expand-sm navbar-default">-->
-
-        <!--<div class="navbar-header">-->
-            <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">-->
-                <!--<i class="fa fa-bars"></i>-->
-            <!--</button>-->
-            <!--<a class="navbar-brand" href="/dashboard">Loanratus</a>-->
-            <!--<a class="navbar-brand hidden" href="/dashboard">LR</a>-->
-        <!--</div>-->
-
-        <!--<div id="main-menu" class="main-menu collapse navbar-collapse">-->
-            <!--<ul id="sidebar" class="nav navbar-nav">-->
-            <!--</ul>-->
-        <!--</div>&lt;!&ndash; /.navbar-collapse &ndash;&gt;-->
-    <!--</nav>-->
-</aside>
 <aside id="left-panel" class="left-panel" include-html="/includes/sidebar.html">
 </aside>
 <!-- /#left-panel -->
@@ -186,151 +169,8 @@
 <div id="right-panel" class="right-panel">
 
     <!-- Header-->
-    <header id="header" class="header">
-        <div class="header-menu">
-            <div class="col-sm-7">
-                <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
-                <div class="header-left">
-                    <button class="search-trigger"><i class="fa fa-search"></i></button>
-                    <div class="form-inline">
-                        <form class="search-form">
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
-                            <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="user-area dropdown float-right">
-                    <div class="header-left fa-pull-left">
-                        <div class="dropdown for-notification">
-                            <button class="btn btn-secondary notification-tab-toggler dropdown-toggle" type="button" id="notification" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-bell" data-toggle="modal" data-target="#exampleModal2"></i>
-                                <span id="noti-count" class="count bg-danger">5</span>
-                            </button>
-                        </div>
-                    </div>&nbsp;&nbsp;&nbsp;
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="user-avatar rounded-circle" src="/images/admin.jpg" alt="User Avatar">
-                    </a>
-                    <div class="user-menu dropdown-menu" style="max-width: 300px !important;">
-                        <h6 id="user" style="margin-right:10px; vertical-align: sub"></h6><hr/>
-                        <a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i>
-                            Logout
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--<div class="header-menu">-->
-
-            <!--<div class="col-sm-7">-->
-                <!--<a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>-->
-                <!--<div class="header-left">-->
-                    <!--<button class="search-trigger"><i class="fa fa-search"></i></button>-->
-                    <!--<div class="form-inline">-->
-                        <!--<form class="search-form">-->
-                        <!--<input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">-->
-                        <!--<button class="search-close" type="submit"><i class="fa fa-close"></i></button>-->
-                        <!--</form>-->
-                    <!--</div>-->
-
-                    <!--<div class="dropdown for-notification">-->
-                      <!--<button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-                        <!--<i class="fa fa-bell"></i>-->
-                        <!--<span id="noti-count" class="count bg-danger"></span>-->
-                      <!--</button>-->
-                      <!--<div id="noti-dropdown" class="dropdown-menu" aria-labelledby="notification" style="width: 500px; background: #e9ecef">-->
-                        <!--<p id="noti-info" class="red" style="background: rgba(255,255,255,0.01); color: black"></p><hr/>-->
-                        <!--<div id="n-dropdown" class="panel-body" style="padding: 5px; overflow: scroll;">-->
-                        <!--&lt;!&ndash;<a class="dropdown-item media bg-flat-color-1" href="/dashboard">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<i class="fa fa-check"></i>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<p style="width: auto">Server #1 overloaded.</p>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="dropdown-item media bg-flat-color-4" href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<i class="fa fa-info"></i>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<p>Server #2 overloaded.</p>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="dropdown-item media bg-flat-color-5" href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<i class="fa fa-warning"></i>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<p>Server #3 overloaded.</p>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                        <!--</div>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                    <!--<div>-->
-                    <!--&lt;!&ndash;<div class="dropdown for-message">&ndash;&gt;-->
-                      <!--&lt;!&ndash;<button class="btn btn-secondary dropdown-toggle" type="button"&ndash;&gt;-->
-                            <!--&lt;!&ndash;id="message"&ndash;&gt;-->
-                            <!--&lt;!&ndash;data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<i class="ti-email"></i>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span class="count bg-primary">9</span>&ndash;&gt;-->
-                      <!--&lt;!&ndash;</button>&ndash;&gt;-->
-                      <!--&lt;!&ndash;<div class="dropdown-menu" aria-labelledby="message">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<p class="red">You have 4 Mails</p>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="dropdown-item media bg-flat-color-1" href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="photo media-left"><img alt="avatar" src="images/avatar/1.jpg"></span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="message media-body">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="name float-left">Jonathan Smith</span>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="time float-right">Just now</span>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<p>Hello, this is an example msg</p>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="dropdown-item media bg-flat-color-4" href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="photo media-left"><img alt="avatar" src="images/avatar/2.jpg"></span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="message media-body">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="name float-left">Jack Sanders</span>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="time float-right">5 minutes ago</span>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<p>Lorem ipsum dolor sit amet, consectetur</p>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="dropdown-item media bg-flat-color-5" href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="photo media-left"><img alt="avatar" src="images/avatar/3.jpg"></span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="message media-body">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="name float-left">Cheryl Wheeler</span>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="time float-right">10 minutes ago</span>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<p>Hello, this is an example msg</p>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="dropdown-item media bg-flat-color-3" href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="photo media-left"><img alt="avatar" src="images/avatar/4.jpg"></span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<span class="message media-body">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="name float-left">Rachel Santos</span>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="time float-right">15 minutes ago</span>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<p>Lorem ipsum dolor sit amet, consectetur</p>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                      <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-
-            <!--<div class="col-sm-5">-->
-                <!--<div class="user-area dropdown float-right">-->
-                    <!--<strong id="user" style="margin-right:10px; vertical-align: sub"></strong>-->
-                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-                        <!--<img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">-->
-                    <!--</a>-->
-
-                    <!--<div class="user-menu dropdown-menu">-->
-
-                        <!--<a class="nav-link pull-right" href="#" onclick="logout()"><i class="fa fa-power-off"></i> Logout</a>-->
-                        <!--<script type="text/javascript">-->
-                            <!--function logout() {-->
-                                <!--localStorage.login = "0";-->
-                                <!--window.location.href = "/logout";-->
-                            <!--}-->
-                        <!--</script>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
+    <header id="header" class="header" include-html="/includes/header.html">
     </header>
-    <!--<header id="header" class="header" include-html="/menus/header.html">-->
-    <!--</header>-->
-    <!-- /header -->
     <!-- Header-->
 
     <div class="breadcrumbs">
@@ -530,9 +370,9 @@
 <script src="assets/js/plugins.js"></script>
 <!--<script src="assets/js/main.js"></script>-->
 <script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
-<script src="/menus/menu-items.js"></script>
-<script src="notifications.js"></script>
+<script src="../../menus/menu-items.js"></script>
 <script src="loader.js"></script>
+<script src="notifications.js"></script>
 <script src="js/jquery.timeago.js" type="text/javascript"></script>
 <div>
 <!--<script src="assets/js/lib/data-table/datatables.min.js"></script>-->
@@ -552,11 +392,11 @@
 <script>
     //    (function( $ ) {
     jQuery(document).ready(function() {
+//        notifications();
         checkForEdit();
         window.emojiPicker.discover();
         getClients(JSON.parse(localStorage.user_obj).ID, 0);
         getTeams();
-//            loadActivities();
         getActivityTypes();
         check();
         loadMenus();

@@ -134,7 +134,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>Category</th>
-                                                    <th>Status</th>
+                                                    <th>Mandatory</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -144,37 +144,47 @@
                                             </table>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="widget-title lighter smaller">New Notification Category</h4>
-                                </div>
 
-                                <div class="card-body">
-                                    <div class="widget-main padding-8">
-                                        <div class="form-group">
-                                            <strong><label class=" form-control-label">Category Name</label></strong><strong style="color:red"> *</strong><span id="activity-error" style="padding-left:50px; text-align: center"></span>
-                                            <div class="input-group">
-                                                <div class="input-group-addon"><i class="fa fa-tasks"></i></div>
-                                                <input id="new-cat" type="text" class="form-control" required="required">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <strong><label class=" form-control-label">Compulsory Category? </label></strong>
-                                            <div class="input-group">
-                                                <div class="input-group-addon"><i class="fa fa-star"></i></div>
-                                                <input id="comp-cat" type="checkbox" style="margin-left: 10px; margin-top: 10px">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <button id="submit-activity" type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>
+                                    <div class="card-body">
+                                        <div class = "form-group pull-left" >
+                                            <button type="button" id="save-cat" class="btn btn-sm btn-success write fa-pull-right">
+                                                Update <i class="ace-icon fa fa-check icon-on-right bigger-110"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div>
+                        <!--<div class="col-sm-12">-->
+                            <!--<div class="card">-->
+                                <!--<div class="card-header">-->
+                                    <!--<h4 class="widget-title lighter smaller">New Notification Category</h4>-->
+                                <!--</div>-->
+
+                                <!--<div class="card-body">-->
+                                    <!--<div class="widget-main padding-8">-->
+                                        <!--<div class="form-group">-->
+                                            <!--<strong><label class=" form-control-label">Category Name</label></strong><strong style="color:red"> *</strong><span id="activity-error" style="padding-left:50px; text-align: center"></span>-->
+                                            <!--<div class="input-group">-->
+                                                <!--<div class="input-group-addon"><i class="fa fa-tasks"></i></div>-->
+                                                <!--<input id="new-cat" type="text" class="form-control" required="required">-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="form-group">-->
+                                            <!--<strong><label class=" form-control-label">Compulsory Category? </label></strong>-->
+                                            <!--<div class="input-group">-->
+                                                <!--<div class="input-group-addon"><i class="fa fa-star"></i></div>-->
+                                                <!--<input id="comp-cat" type="checkbox" style="margin-left: 10px; margin-top: 10px">-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="form-group">-->
+                                            <!--<button id="submit-activity" type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         </div>
                     </div>
 
@@ -209,8 +219,8 @@
                                         </button>
 
 
-                                        <button type="button" id="resetviews" class="btn btn-sm btn-grey">
-                                            Reset<i class="ace-icon fa fa-arrow-circle-down icon-on-right bigger-110"></i></button>
+                                        <!--<button type="button" id="resetviews" class="btn btn-sm btn-grey">-->
+                                            <!--Reset<i class="ace-icon fa fa-arrow-circle-down icon-on-right bigger-110"></i></button>-->
                                     </div>
                                 </div>
                             </div>
@@ -423,14 +433,16 @@
                     let action, icon, set = '';
                     action = '<a class="btn btn-info" onclick="edit('+val.id+')" title="Click to edit"><i class="ace-icon fa fa-pencil bigger-130"></i></a> &nbsp; &nbsp;'
                     if (val.compulsory === "1"){
-                        icon = '<span class="label label-success" style="background-color:green; color:white; padding: 5px; border-radius: 5px">Compulsory</span>';
+                        icon = '<input type="checkbox" id="cat'+val.id+'" checked>';
+//                        icon = '<span class="label label-success" style="background-color:green; color:white; padding: 5px; border-radius: 5px">Compulsory</span>';
                     }
                     else {
-                        set = '<a href="#" class="btn btn-dark" onclick="loadRolesConfig('+val.id+')" title="Click to configure for roles"><i class="ace-icon fa fa-gear bigger-130"></i></a> &nbsp; &nbsp;'
-                        icon = '<span class="label label-success" style="background-color:grey; color:white; padding: 5px; border-radius: 5px">Non - Compulsory</span>';
+                        set = '<a href="#" class="btn btn-info" onclick="loadRolesConfig('+val.id+')" title="Click to configure for roles"><i class="ace-icon fa fa-gear bigger-130"></i></a> &nbsp; &nbsp;';
+                        icon = '<input type="checkbox" id="cat'+val.id+'">';
+//                        icon = '<span class="label label-success" style="background-color:grey; color:white; padding: 5px; border-radius: 5px">Non - Compulsory</span>';
                     }
                     $('#cat-table').dataTable().fnAddData( [
-                        val.category_name, icon, action+set
+                        val.category_name, icon, set
                     ]);
                 });
             }
@@ -474,6 +486,10 @@
         (cat === 0) ? swal('No category chosen!', 'Please select a category.', 'warning') : saveConfig(cat);
     });
 
+    $(document).on("click", "#save-cat", function (e) {
+        updateCategories();
+    });
+
     function saveConfig(cat){
         var obj = {};
         var arr = [];
@@ -501,6 +517,38 @@
                 }
                 else{
                     swal("Success!", "Category Configuration Set!", "success");
+                }
+            }
+        });
+    }
+
+    function updateCategories(){
+        var obj = {};
+        var arr = [];
+        var i = 0; var j = 0;
+        for (let a = parseInt(glob[1]['id']), b = 0; a < parseInt(parseInt(glob[1]['id']) + glob.length), b < glob.length; a++, b++){
+            console.log('a: '+a);
+            let mand = ($('#cat'+glob[b]["id"]).prop('checked')) ? 1 : 0;
+            arr[b]=[glob[b]["id"], mand];
+            console.log(arr);
+        }
+        obj.cats = arr;
+        var test = [];
+        $.ajax({
+            'url': 'notifications/updateCategories/',
+            'type': 'post',
+            'data': obj,
+            'success': function (data) {
+                $.each(data, function (key, val) {
+                    test[key] = val;
+                });
+//                console.log(test);
+                if(test.status == 500){
+                    swal("Failed!", "Error encountered. Please try again.", "error");
+                }
+                else{
+                    swal("Success!", "Categories Updated!", "success");
+                    getCats();
                 }
             }
         });
