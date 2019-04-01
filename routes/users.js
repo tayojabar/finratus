@@ -1311,14 +1311,17 @@ users.post('/edit-client/:id', function(req, res, next) {
                 'date_modified = ? where ID=?';
     db.query(query, payload, function (error, results, fields) {
         if(error){
+            console.log('error'); console.log(error)
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
+            console.log('here')
             let payload = {}
             payload.category = 'Clients'
             payload.userid = req.cookies.timeout
             payload.description = 'Client details updated.'
             payload.affected_client = re[0]['ID']
             notificationsService.log(req, payload)
+            console.log('Got here')
             res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Details Updated"}));
         }
     });
