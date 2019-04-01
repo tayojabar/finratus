@@ -1138,7 +1138,7 @@ users.get('/clients-list-full/:officerID', function(req, res, next) {
                     if(error){
                         res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                     } else {
-                        let results = results1.concat(results2);
+                        let results = _.unionBy(results1,results2,'ID');
                         res.send(JSON.stringify(results));
                     }
                 });
