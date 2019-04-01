@@ -298,13 +298,7 @@ function edit(){
             $('#address').val(data[0].address);
             $('#email').val(data[0].email);
             $('#role').val(data[0].user_role);
-            console.log(data[0]);
-//                    console.log(data[0].user_role);
-//                    setSelectedIndex(document.getElementById('role'), data[0].user_role);
             $('#branch').val(data[0].branch);
-//                    setSelectedIndex(document.getElementById('branch'), data[0].branch);
-//                    setSelectedIndex(document.getElementById('supervisor'), data[0].supervisor);
-//             $('#supervisor').select2().select2("val", data[0].supervisor);
             $('.select2-selection__rendered').html(data[0].Super);
             if (data[0].loan_officer_status === 1)
                 $('#loan_officer_status').prop('checked','checked');
