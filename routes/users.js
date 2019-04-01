@@ -1167,7 +1167,7 @@ users.get('/users-list-v2', function(req, res, next) {
 });
 
 users.get('/user-dets/:id', function(req, res, next) {
-    let query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where id = ? order by ID desc ';
+    let query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role, (select fullname from users where users.ID = u.supervisor) as Super from users u where id = ? order by ID desc ';
 	db.query(query, req.params.id, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -1289,7 +1289,7 @@ users.post('/edit-user/:id/:user', function(req, res, next) {
             payload.category = 'Users'
             payload.userid = req.cookies.timeout
             payload.description = 'User details updated.'
-            payload.affected_user = re[0]['ID']
+            payload.affected_user = req.params.id
             notificationsService.log(req, payload)
             res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
 	  	}
@@ -1319,7 +1319,7 @@ users.post('/edit-client/:id', function(req, res, next) {
             payload.category = 'Clients'
             payload.userid = req.cookies.timeout
             payload.description = 'Client details updated.'
-            payload.affected_client = re[0]['ID']
+            payload.affected_client = req.params.id
             notificationsService.log(req, payload)
             console.log('Got here')
             res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Details Updated"}));
@@ -3158,8 +3158,8 @@ users.get('/analytics', function(req, res, next) {
                     '         SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') agent,\n' +
                     '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
-                    'WHERE    EXTRACT(YEAR_MONTH FROM Disbursement_date) >= EXTRACT(YEAR_MONTH FROM CURDATE())-102\n' +
-                    'AND      status =2\n'+
+                    // 'WHERE    EXTRACT(YEAR_MONTH FROM Disbursement_date) >= EXTRACT(YEAR_MONTH FROM CURDATE())-102\n' +
+                    'WHERE      status =2\n'+
                     'AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
                     'GROUP BY agent\n' +
                     'ORDER BY DisburseYearMonth';
@@ -4026,7 +4026,7 @@ users.get('/analytics', function(req, res, next) {
             break;
         case 'overdue-loans':
             break;
-    }
+    }console.log(query)
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
