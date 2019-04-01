@@ -41,7 +41,7 @@ function notifications(){
                     default:
                         icon = '<img src="atb-logo.png">'
                 }
-                let buttonid = 'but'+val.notification_id;
+                let buttonid = 'but'+val.notificationid;
                 item = '<div class="feed-body-content">\n' +
 '                            <p class="feed-body-header">'+jQuery.timeago(val.date_created)+'</time></p>\n' +
 '                            <div class="row">\n' +
@@ -102,7 +102,7 @@ function loan_notifications(){
             $.each(response, function (key, val) {
                 console.log('here')
                 count++;
-                let buttonid = 'but'+val.notification_id;
+                let buttonid = 'but'+val.notificationid;
                 item = '<div class="feed-body-content">\n' +
 '                            <p class="feed-body-header">'+jQuery.timeago(val.date_created)+'</time></p>\n' +
 '                            <div class="row">\n' +
@@ -237,5 +237,5 @@ function markAll(){
 
 jQuery(document).ready(function() {
     notifications();
-    loan_notifications();
+    // loan_notifications();
 });

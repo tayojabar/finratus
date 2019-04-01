@@ -1509,7 +1509,7 @@
                     pay+=v.valid_payment;
                     totalbalance += (v.paid) ? ((v.invalid_payment === null) ? parseFloat(v.balance) :  v.loan_amount - (parseFloat(v.paid) - parseFloat(v.invalid_payment))) : 0;
                     v.id = padWithZeroes(parseInt(v.applicationID),6);
-                    v.balance = formatter.format(parseFloat(v.loan_amount - v.valid_payment));
+                    v.balance = formatter.format(parseFloat((v.loan_amount - v.valid_payment) < 0 ? 0 : v.loan_amount - v.valid_payment));
                     v.principal = formatter.format(parseFloat(v.loan_amount));
                     processed_data.push(v);
                 }
