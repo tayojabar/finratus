@@ -40,6 +40,9 @@
         .alert-success, .alert-success p {color: #155724;}
         table{width: 100%;}
         table th{text-align: center;}
+        .danger {
+            color: red;
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -61,7 +64,7 @@
                                 <div class="panel push-down">
                                     <div class="panel-body">
                                         <div class="example-box-wrapper">
-                                            <h6>Basic Details</h6>
+                                            <h6>Loan Offer Details</h6>
                                             <hr>
                                             <div class="row setup-content">
                                                 <div class="col-sm-3">
@@ -94,6 +97,60 @@
                                                             <h3 id="first-repayment-text" class="mb-0"></h3>
                                                             <p class="text-light">First Repayment</p>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel push-down">
+                                    <div class="panel-body">
+                                        <div class="example-box-wrapper">
+                                            <h6>Client Profile Details</h6>
+                                            <hr>
+                                            <div class="row setup-content">
+                                                <div class="col-sm-12">
+                                                    <div width="100%">
+                                                        <table class="table table-bordered">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Fullname</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="fullname"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Email</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="email"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Phone</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="phone"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Bank</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="bank"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Account</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="account"></span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>

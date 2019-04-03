@@ -1301,11 +1301,11 @@ users.post('/edit-client/:id', function(req, res, next) {
         postData = req.body;
     postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     let payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.email,
-    postData.gender, postData.dob, postData.marital_status, postData.loan_officer, postData.branch , postData.client_state, postData.postcode, postData.client_country,
+    postData.gender, postData.dob, postData.marital_status, postData.loan_officer, postData.branch, postData.bank, postData.account , postData.client_state, postData.postcode, postData.client_country,
     postData.years_add, postData.ownership , postData.employer_name ,postData.industry ,postData.job, postData.salary, postData.job_country , postData.off_address, postData.off_state,
     postData.doe, postData.guarantor_name, postData.guarantor_occupation, postData.relationship, postData.years_known, postData.guarantor_phone, postData.guarantor_email,
     postData.guarantor_address, postData.gua_country, postData.date_modified, req.params.id];
-    let query = 'Update clients SET username = ?, fullname=?, phone=?, address = ?, email=?, gender=?, dob = ?, marital_status=?, loan_officer=?, branch=?, ' +
+    let query = 'Update clients SET username = ?, fullname=?, phone=?, address = ?, email=?, gender=?, dob = ?, marital_status=?, loan_officer=?, branch=?, bank=?, account=?, ' +
                 'client_state=?, postcode=?, client_country=?, years_add=?, ownership=?, employer_name=?, industry=?, job=?, salary=?, job_country=?, off_address=?, off_state=?, ' +
                 'doe=?, guarantor_name=?, guarantor_occupation=?, relationship=?, years_known=?, guarantor_phone=?, guarantor_email=?, guarantor_address=?, gua_country=?, ' +
                 'date_modified = ? where ID=?';
@@ -1319,7 +1319,7 @@ users.post('/edit-client/:id', function(req, res, next) {
             payload.category = 'Clients'
             payload.userid = req.cookies.timeout
             payload.description = 'Client details updated.'
-            payload.affected_client = re[0]['ID']
+            // payload.affected_client = re[0]['ID']
             notificationsService.log(req, payload)
             console.log('Got here')
             res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Details Updated"}));
@@ -5111,6 +5111,10 @@ users.get('/target-mail', function(req, res) {
             return res.send("Error");
         return res.send("OK");
     });
+});
+
+users.get('/banks', function(req, res) {
+    res.send(require('../banks.json'));
 });
 
 module.exports = users;

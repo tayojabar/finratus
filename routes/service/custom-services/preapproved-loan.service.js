@@ -227,7 +227,7 @@ router.get('/recommendations/get/:id', function (req, res, next) {
                 
         FROM application_schedules a, applications apps WHERE a.status=1 AND apps.status=2 
         AND (SELECT p.ID FROM preapproved_loans p WHERE p.userID = apps.userID) IS NULL 
-        AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE()  AND apps.userID = ${req.params.id}`;
+        AND a.applicationID = apps.ID AND a.payment_collect_date < CURDATE() AND apps.userID = ${req.params.id}`;
     let endpoint = '/core-service/get';
     let url = `${HOST}${endpoint}`;
     axios.get(url, {
@@ -268,7 +268,7 @@ router.post('/create', function (req, res, next) {
                 url = `${HOST}${endpoint}`;
                 preapproved_loan.applicationID = response_['data'][0]['ID'];
                 preapproved_loan.date_created = postData.date_created;
-                preapproved_loan.expiry_date = moment().add(1, 'days').utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+                preapproved_loan.expiry_date = moment().add(5, 'days').utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
                 preapproved_loan.hash = bcrypt.hashSync(postData.userID, parseInt(process.env.SALT_ROUNDS));
                 axios.post(url, preapproved_loan)
                     .then(function (response__) {
@@ -365,8 +365,8 @@ router.get('/get', function (req, res, next) {
 
 router.get('/get/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
-    let query = `SELECT *, (SELECT c.email FROM clients c WHERE c.ID = userID) AS email, (SELECT c.salary FROM clients c WHERE c.ID = userID) AS salary 
-                FROM preapproved_loans WHERE ID = '${decodeURIComponent(req.params.id)}' OR hash = '${decodeURIComponent(req.params.id)}'`,
+    let query = `SELECT p.*, c.fullname, c.email, c.salary, c.phone, c.bank, c.account FROM preapproved_loans p INNER JOIN clients c ON p.userID = c.ID 
+                WHERE (p.ID = '${decodeURIComponent(req.params.id)}' OR p.hash = '${decodeURIComponent(req.params.id)}')`,
         endpoint = '/core-service/get',
         url = `${HOST}${endpoint}`;
     axios.get(url, {
@@ -417,8 +417,14 @@ router.post('/offer/accept/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
     let offer = {},
         id = req.params.id,
+        end = req.body.end,
+        bank = req.body.bank,
         email = req.body.email,
-        fullname = req.body.client,
+        start = req.body.start,
+        phone = req.body.phone,
+        amount = req.body.amount,
+        account = req.body.account,
+        fullname = req.body.fullname,
         created_by = req.body.created_by,
         workflow_id = req.body.workflow_id,
         application_id = req.body.application_id,
@@ -428,60 +434,96 @@ router.post('/offer/accept/:id', function (req, res, next) {
         url = `${HOST}${endpoint}`;
     offer.status = 2;
     offer.date_modified = date;
-    axios.post(url, offer)
-        .then(function (response) {
-            let application = {};
-            query =  `UPDATE applications Set ? WHERE ID = ${application_id}`;
+
+    helperFunctions.setUpMandate({
+        payerName: fullname,
+        payerEmail: email,
+        payerPhone: phone,
+        payerBankCode: bank,
+        payerAccount: account,
+        amount: amount,
+        startDate: start,
+        endDate: end,
+        mandateType: 'DD',
+        maxNoOfDebits: '100'
+    }, function (payload, response) {
+        console.log(payload)
+        console.log(response)
+        if (response && response.mandateId) {
+            query =  'INSERT INTO remita_mandates Set ?';
             endpoint = `/core-service/post?query=${query}`;
+            payload.mandateId = response.mandateId;
+            payload.applicationID = application_id;
             url = `${HOST}${endpoint}`;
-            application.status = 1;
-            application.date_modified = date;
-            axios.post(url, application)
-                .then(function (response_) {
-                    let mailOptions = {
-                        from: 'no-reply Loanratus <applications@loan35.com>',
-                        to: email,
-                        subject: 'Loanratus Application Successful',
-                        template: 'main',
-                        context: {
-                            name: fullname,
-                            date: date
-                        }
-                    };
-                    transporter.sendMail(mailOptions, function(error, info){
-                        if(error)
-                            res.send({status: 500, error: error, response: null});
-                        helperFunctions.getNextWorkflowProcess(false,workflow_id,false, function (process) {
-                            query =  'INSERT INTO workflow_processes Set ?';
+            payload.date_created = date;
+            console.log(payload)
+            axios.post(url, payload)
+                .then(function (response___) {
+                    return console.log(response___)
+                    axios.post(url, offer)
+                        .then(function (response) {
+                            let application = {};
+                            query =  `UPDATE applications Set ? WHERE ID = ${application_id}`;
                             endpoint = `/core-service/post?query=${query}`;
                             url = `${HOST}${endpoint}`;
-                            process.workflowID = workflow_id;
-                            process.agentID = created_by;
-                            process.applicationID = application_id;
-                            process.date_created = date;
-                            axios.post(url, process)
-                                .then(function (response__) {
-                                    res.send(response__.data);
+                            application.status = 1;
+                            application.date_modified = date;
+                            axios.post(url, application)
+                                .then(function (response_) {
+                                    let mailOptions = {
+                                        from: 'no-reply Loanratus <applications@loan35.com>',
+                                        to: email,
+                                        subject: 'Loanratus Application Successful',
+                                        template: 'main',
+                                        context: {
+                                            name: fullname,
+                                            date: date
+                                        }
+                                    };
+                                    transporter.sendMail(mailOptions, function(error, info){
+                                        if(error)
+                                            res.send({status: 500, error: error, response: null});
+                                        helperFunctions.getNextWorkflowProcess(false,workflow_id,false, function (process) {
+                                            query =  'INSERT INTO workflow_processes Set ?';
+                                            endpoint = `/core-service/post?query=${query}`;
+                                            url = `${HOST}${endpoint}`;
+                                            process.workflowID = workflow_id;
+                                            process.agentID = created_by;
+                                            process.applicationID = application_id;
+                                            process.date_created = date;
+                                            axios.post(url, process)
+                                                .then(function (response__) {
+                                                    res.send(response__.data);
+                                                }, err => {
+                                                    res.send({status: 500, error: error, response: null});
+                                                })
+                                                .catch(function (error) {
+                                                    res.send({status: 500, error: error, response: null});
+                                                });
+                                        });
+                                    });
                                 }, err => {
                                     res.send({status: 500, error: error, response: null});
                                 })
                                 .catch(function (error) {
                                     res.send({status: 500, error: error, response: null});
                                 });
+                        }, err => {
+                            res.send({status: 500, error: error, response: null});
+                        })
+                        .catch(function (error) {
+                            res.send({status: 500, error: error, response: null});
                         });
-                    });
                 }, err => {
                     res.send({status: 500, error: error, response: null});
                 })
                 .catch(function (error) {
                     res.send({status: 500, error: error, response: null});
                 });
-        }, err => {
-            res.send({status: 500, error: error, response: null});
-        })
-        .catch(function (error) {
-            res.send({status: 500, error: error, response: null});
-        });
+        } else {
+            res.send({status: 500, error: response, response: null});
+        }
+    });
 });
 
 router.get('/offer/decline/:id', function (req, res, next) {

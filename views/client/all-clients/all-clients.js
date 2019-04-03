@@ -386,6 +386,21 @@ function getBranches(){
             $.each(JSON.parse(response), function (key, val) {
                 $("#branch").append('<option value = "' + val.id + '" id="' + val.id + '">' + val.branch_name + '</option>');
             });
+            getBanks();
+        }
+    });
+}
+
+function getBanks(){
+    $.ajax({
+        type: "GET",
+        url: "/user/banks/",
+        success: function (response) {
+            let bank = $("[id=bank]");
+            bank.empty().append('<option id="0" value ="0">-- Select a Bank --</option>');
+            $.each(response, function (key, val) {
+                $("#bank").append('<option value = "' + val.code + '" id="' + val.code + '">' + val.name + '</option>');
+            });
             getCountries();
         }
     });
@@ -443,6 +458,8 @@ function edit(){
             $('#gender').val(data[0].gender);
             $('#postcode').val(data[0].postcode);
             $('#branch').val(data[0].branch);
+            $('#bank').val(data[0].bank);
+            $('#account').val(data[0].account);
             $('#client_country').val(data[0].client_country);
             $('#marital_status').val(data[0].marital_status);
             $('#loan_officer').val(data[0].loan_officer);
@@ -501,6 +518,8 @@ function checkForEdit(){
                 $('#gender').val(data[0].gender);
                 $('#postcode').val(data[0].postcode);
                 $('#branch').val(data[0].branch);
+                $('#bank').val(data[0].bank);
+                $('#account').val(data[0].account);
                 $('#client_country').val(data[0].client_country);
                 $('#marital_status').val(data[0].marital_status);
                 $('#loan_officer').val(data[0].loan_officer);
@@ -550,6 +569,8 @@ function submitDetails(){
     obj.marital_status = $('#marital_status').find('option:selected').attr('value');
     obj.loan_officer = $('#loan_officer').find('option:selected').attr('id');
     obj.branch = $('#branch').find('option:selected').attr('id');
+    obj.account= $("#account").val();
+    obj.bank = $('#bank').find('option:selected').attr('id');
     obj.client_state = $('#client_state').find('option:selected').attr('id');
     obj.postcode = $("#postcode").val();
     obj.client_country = $('#client_country').find('option:selected').attr('id');

@@ -13,7 +13,8 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const user_id = urlParams.get('t');
-    let preapproved_loan = {};
+    let banks,
+        preapproved_loan = {};
 
     function getPreapprovedLoan(){
         $.ajax({
@@ -27,6 +28,13 @@
                     $('#tenor-text').text(`${numberToCurrencyformatter(preapproved_loan.duration)} month(s)`);
                     $('#first-repayment-text').text(preapproved_loan.repayment_date);
                     $('#expiry-text').html(`Please note that this loan offer is only valid till <strong>${preapproved_loan.expiry_date}</strong>`);
+                    $('#fullname').text(preapproved_loan.fullname);
+                    $('#email').text(preapproved_loan.email);
+                    $('#phone').text(preapproved_loan.phone);
+                    preapproved_loan.bank_name = ($.grep(banks, function (e) { return e.code === preapproved_loan.bank }))[0]['name'];
+                    $('#bank').text(preapproved_loan.bank_name);
+                    $('#account').text(preapproved_loan.account);
+                    validateProfile(preapproved_loan);
                     displaySchedule(preapproved_loan.schedule);
                     if (preapproved_loan.status !== 1){
                         $('#acceptApplication').hide();
@@ -56,7 +64,7 @@
         });
     }
 
-    function getUsers(){
+    function getUsers() {
         $.ajax({
             type: "GET",
             url: "/user/users-list-v2",
@@ -64,9 +72,51 @@
                 $.each(JSON.parse(response), function (key, val) {
                     $("#user-list").append('<option value = "' + encodeURIComponent(JSON.stringify(val)) + '">' + val.fullname + '</option>');
                 });
+                getBanks();
+            }
+        });
+    }
+
+    function getBanks() {
+        $.ajax({
+            type: "GET",
+            url: "/user/banks",
+            success: function (response) {
+                banks = response;
                 getPreapprovedLoan();
             }
         });
+    }
+
+    function validateProfile(profile) {
+        let status = true;
+        if (!profile.fullname){
+            status = false;
+            validationError('fullname');
+        }
+        if (!profile.email){
+            status = false;
+            validationError('email');
+        }
+        if (!profile.phone){
+            status = false;
+            validationError('phone');
+        }
+        if (!profile.bank){
+            status = false;
+            validationError('bank');
+        }
+        if (!profile.account){
+            status = false;
+            validationError('account');
+        }
+        if (!status){
+            $('#acceptApplication').prop('disabled', true);
+        }
+    }
+
+    function validationError(field) {
+        $(`#${field}`).text(`N/A (Contact your loan officer to update your ${field}!)`).addClass('danger');
     }
 
     function displaySchedule(schedule) {
@@ -121,6 +171,9 @@
     }
 
     $("#acceptApplication").click(function () {
+        if (!preapproved_loan.bank || !preapproved_loan.email || !preapproved_loan.phone || !preapproved_loan.account
+                || !preapproved_loan.client || !preapproved_loan.loan_amount)
+            return notification('Contact your loan officer to verify your profile!', '', 'warning');
         swal({
             title: "Are you sure?",
             text: "Once accepted, this process is not reversible!",
@@ -134,15 +187,26 @@
                         'url': `/preapproved-loan/offer/accept/${preapproved_loan.ID}`,
                         'type': 'post',
                         'data': {
+                            bank: preapproved_loan.bank,
                             email: preapproved_loan.email,
+                            phone: preapproved_loan.phone,
+                            account: preapproved_loan.account,
                             fullname: preapproved_loan.client,
+                            amount: preapproved_loan.loan_amount,
                             created_by: preapproved_loan.created_by,
                             workflow_id: preapproved_loan.workflowID,
-                            application_id: preapproved_loan.applicationID
+                            application_id: preapproved_loan.applicationID,
+                            start: remitaDateFormat(preapproved_loan.schedule[0]['payment_collect_date']),
+                            end: remitaDateFormat(preapproved_loan.schedule[preapproved_loan.schedule.length-1]['payment_collect_date'])
                         },
                         'success': function (data) {
-                            notification('Loan accepted successfully','','success');
-                            window.location.reload();
+                            if (data.status !== 500){
+                                notification('Loan accepted successfully','','success');
+                                window.location.reload();
+                            } else {
+                                console.log(data);
+                                notification('No internet connection','','error');
+                            }
                         },
                         'error': function (err) {
                             console.log(err);

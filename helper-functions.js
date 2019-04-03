@@ -1,5 +1,8 @@
 let functions = {},
-    db = require('./db');
+    db = require('./db'),
+    request = require('request'),
+    SHA512 = require('js-sha512');
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 functions.getNextWorkflowProcess = function(application_id, workflow_id, stage, callback) {
     db.query('SELECT * FROM workflow_stages WHERE workflowID=? ORDER BY ID asc',[workflow_id], function (error, stages, fields) {
@@ -53,6 +56,43 @@ functions.getNextWorkflowProcess = function(application_id, workflow_id, stage, 
             callback({})
         }
     });
+};
+
+functions.formatJSONP = function (body) {
+    const jsonpData = body;
+    let json;
+    try
+    {
+        json = JSON.parse(jsonpData);
+    }
+    catch(e)
+    {
+        const startPos = jsonpData.indexOf('({'),
+            endPos = jsonpData.indexOf('})'),
+            jsonString = jsonpData.substring(startPos+1, endPos+1);
+        json = JSON.parse(jsonString);
+    }
+    return json;
+};
+
+functions.setUpMandate = function (payload, callback) {
+    let date = new Date();
+    payload.merchantId = process.env.REMITA_MERCHANT_ID;
+    payload.serviceTypeId = process.env.REMITA_SERVICE_TYPE_ID;
+    payload.requestId = date.getTime();
+    payload.hash = SHA512(payload.merchantId + payload.serviceTypeId + payload.requestId + payload.amount + process.env.REMITA_API_KEY);
+    request.post(
+        {
+            url: `${process.env.REMITA_BASE_URL}/setup`,
+            body: payload,
+            json: true
+        },
+        (error, res, body) => {
+            if (error) {
+                return callback(error);
+            }
+            callback(payload, functions.formatJSONP(body));
+    })
 };
 
 module.exports = functions;
