@@ -334,6 +334,7 @@ function submitDetails(){
                 swal("Communication Error! Please try again","","error");
             }
             else{
+                notification();
                 swal("User Details Updated!","","success");
                 window.location.href = "./all-users";
             }

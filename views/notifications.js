@@ -76,7 +76,7 @@ function notifications(){
         }
     });
 }
-setInterval(notifications, 10000000);
+// setInterval(notifications, 1000);
 
 function loan_notifications(){
     ids.length = 0;
