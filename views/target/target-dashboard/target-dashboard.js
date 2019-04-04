@@ -45,7 +45,7 @@ function getTargets(id){
             populateDataTable(targets);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }

@@ -20,7 +20,7 @@ function loadCollections(){
             populateDataTable(collections);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }

@@ -57,7 +57,7 @@ function getCommissions(){
             populateDataTable(commissions);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }

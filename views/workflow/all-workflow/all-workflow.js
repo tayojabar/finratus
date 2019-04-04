@@ -25,7 +25,7 @@ function loadProcesses(){
             populateDataTable(processes);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }

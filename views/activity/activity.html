@@ -1,0 +1,405 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../assets/css/normalize.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/themify-icons.css">
+    <link rel="stylesheet" href="../assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="../assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="../assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/scss/style.css">
+    <link rel="stylesheet" href="../assets/css/lib/chosen/chosen.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="../assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <link href="../assets/lib/css/emoji.css" rel="stylesheet">
+    <style type="text/css">
+        .select2-container{
+            width: 92% !important;
+        }
+        .select2-selection{
+            padding-top: 10px !important;;
+            height: 49px !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            border: none !important;
+            border-bottom: 2px solid #c8ccd4 !important;
+            background: none !important;
+            border-radius: 0 !important;
+            color: #223254 !important;
+            transition: all 0.15s ease !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow{
+            display: none;
+        }
+        input.invalid, span.invalid {
+            border: 2px dashed red;
+        }
+        div.dataTables_wrapper div.dataTables_filter{
+            float: right;
+            margin-right: 15px;
+        }
+        div.dataTables_length{
+            float: left;
+        }
+        .dt-buttons.btn-group{
+            float: right;
+        }
+        .btn-default{
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #666e76;
+        }
+        .inp {
+            position: relative;
+            margin: auto;
+            width: 100%;
+            max-width: 280px;
+        }
+        .inp .label {
+            position: absolute;
+            top: 16px;
+            left: 0;
+            font-size: 16px;
+            color: #9098a9;
+            font-weight: 500;
+            transform-origin: 0 0;
+            transition: all 0.2s ease;
+        }
+        .inp .border {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            width: 100%;
+            background: #07f;
+            transform: scaleX(0);
+            transform-origin: 0 0;
+            transition: all 0.15s ease;
+        }
+        .inp input {
+            -webkit-appearance: none;
+            width: 100%;
+            border: 0;
+            font-family: inherit;
+            padding: 12px 0;
+            height: 48px;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 2px solid #c8ccd4;
+            background: none;
+            border-radius: 0;
+            color: #223254;
+            transition: all 0.15s ease;
+        }
+        .inp select {
+            -webkit-appearance: none;
+            width: 100%;
+            border: 0;
+            font-family: inherit;
+            padding: 12px 0;
+            height: 48px;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 2px solid #c8ccd4;
+            background: none;
+            border-radius: 0;
+            color: #223254;
+            transition: all 0.15s ease;
+        }
+        .inp input:hover {
+            background: rgba(34,50,84,0.03);
+        }
+        .inp input:not(:placeholder-shown) + span {
+            color: #5a667f;
+            transform: translateY(-26px) scale(0.75);
+        }
+        .inp input:focus {
+            background: none;
+            outline: none;
+        }
+        .inp input:focus + span {
+            color: #07f;
+            transform: translateY(-26px) scale(0.75);
+        }
+        .inp input:focus + span + .border {
+            transform: scaleX(1);
+        }
+        #attachment-list img{
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            border-radius: 5px;
+        }
+        #client-list{
+            font-family: 'FontAwesome', 'Second Font name';
+        }
+        .inp option span {
+            color: red; !important;
+        }
+    </style>
+
+</head>
+<body>
+<!-- Left Panel -->
+<script src="../assets/js/vendor/jquery-2.1.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<aside id="left-panel" class="left-panel" include-html="/includes/sidebar.html">
+</aside>
+<!-- /#left-panel -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>-->
+
+<!-- Left Panel -->
+
+<!-- Right Panel -->
+
+<div id="right-panel" class="right-panel">
+
+    <!-- Header-->
+    <header id="header" class="header" include-html="/includes/header.html">
+    </header>
+    <!-- Header-->
+
+    <div class="breadcrumbs">
+        <div class="col-sm-6">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    <h1 id="title-text">User Activity</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="page-header float-right">
+                <div class="page-title">
+                    <ol class="breadcrumb text-right">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Users</a></li>
+                        <li class="active"><a href="/activity">Activity Feed</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content mt-3">
+        <div id="container" class="animated fadeIn">
+            <div id="all-list" class="row card">
+                <div id="cover-new" class="col-sm-12" style="padding: 10px; padding-bottom: 5px">
+                    <div class="input-group">
+                        <textarea contenteditable="true" style="border-radius: 10px" type="text" id="temp-desc" class="form-control fields" rows="1" placeholder="Type here to create a new activity" data-emojiable="true" data-emoji-input="unicode"></textarea>
+                    </div>
+                    <br/>
+                    <div id="form" class="row" style="display: none; padding-top: 5px">
+                        <div id="team-div" class="col-sm-2 form-group">
+                            <div class="input-group">
+                                <!--<div class="input-group-addon"><i class="fa fa-users"></i></div>-->
+                                <!--<select id="team-list" class="form-control" required="required">-->
+                                <!--<option id="0">Personal</option>-->
+                                <!--</select>-->
+                                <label for="team-list" class="inp">
+                                    <select id="team-list" class="fields" required="required">
+                                        <option id="-1">Choose Team</option>
+                                        <option value="0" id="0">Personal</option>
+                                    </select>
+                                    <span style="left: -10px" class="label text-danger">*</span>
+                                    <span class="border"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <div class="input-group">
+                                <!--<div class="input-group-addon"><i class="fa fa-user"></i></div>-->
+                                <!--<select id="client-list" class="form-control select fields" required="required">-->
+                                <!--<option value="-1">Client</option>-->
+                                <!--</select>-->
+                                <label for="client-list" class="inp">
+                                    <select id="client-list" class="fields" required="required">
+                                        <option value="-1">&#xf17b; Client</option>
+                                    </select>
+                                    <span class="label text-danger">*</span>
+                                    <span class="border"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 form-group">
+                            <div class="input-group">
+                                <!--<div class="input-group-addon"><i class="fa fa-filter"></i></div>-->
+                                <!--<select id="activity-type" class="form-control fields" required="required">-->
+                                <!--<option>Type</option>-->
+                                <!--</select>-->
+                                <label for="activity-type" class="inp">
+                                    <select id="activity-type" class="fields" required="required">
+                                        <option value="-1">   Type</option>
+                                    </select>
+                                    <span style="left: -10px"  class="label text-danger">*</span>
+                                    <span class="border"></span>
+                                </label>
+                                <!--<input type="button" class="btn btn-dark write" data-toggle="modal" data-target="#myModal" value="New"/>-->
+                            </div>
+                        </div>
+                        <div class="col-sm-2 form-group">
+                            <div class="input-group">
+                                <!--<div class="input-group-addon"><i class="fa fa-calendar"></i></div>-->
+                                <!--<input type="date" id="activity-date" class="form-control fields" required="required"/>-->
+                                <label for="activity-date" class="inp">
+                                    <input type="date" class="fields" id="activity-date">
+                                    <span class="label"><span class="text-danger">*</span>Date</span>
+                                    <span class="border"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 form-group">
+                            <div class="input-group">
+                                <!--<div class="input-group-addon"><i class="fa fa-history"></i></div>-->
+                                <!--<input type="number" id="activity-duration" class="form-control fields col-sm-4" placeholder="Duration" required="required" min=0 >-->
+                                <label for="activity-duration" class="inp">
+                                    <input type="number" class="fields" min=1 id="activity-duration">
+                                    <span class="label"><span class="text-danger">*</span>Duration(Min)</span>
+                                    <span class="border"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <!--<div class="col-sm-1 form-group">-->
+                            <!--<div class="input-group">-->
+                            <!--<label for="time-unit" class="inp">-->
+                            <!--<select id="time-unit" class="fields">-->
+                            <!--<option value="Minutes">Minutes</option>-->
+                            <!--<option value="Hours">Hours</option>-->
+                            <!--<option value="Day(s)">Day(s)</option>-->
+                            <!--<option value="Years">Years</option>-->
+                            <!--</select>-->
+                            <!--<span class="label"></span>-->
+                            <!--<span class="border"></span>-->
+                            <!--</label>-->
+                            <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                        <div class="col-sm-2 form-group">
+                            <!--<label><strong>Attach Document</strong></label>-->
+                            <div class="input-group">
+                                <!--<div class="input-group-addon"><i class="fa fa-file-pdf-o"></i></div>-->
+                                <!--<input class="form-control" type="file"/>-->
+                                <label for="activity-files" class="inp">
+                                    <input type="file" id="activity-files" multiple name="files" accept=".jpg,.jpeg, .png">
+                                    <span class="label">Attachment(s)</span>
+                                    <span class="border"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding-top: 5px" class="pull-right col-sm-2">
+                    <input id="continue" style="display: none" type="button" class="btn btn-default write" data-toggle="modal" data-target="#myModal1" value="Post Activity"/>
+                </div>
+                <hr/>
+                <div id="feed" class="card-body" style="border-radius: 0px; padding-top: 0px">
+                    <!--<div class="text-muted" style="text-align: center" >-->
+                    <!--<div width="100px" height="100px" class="img-thumbnail" style="text-align: center; border: transparent; font-size: 24px">-->
+                    <!--&lt;!&ndash;<img class="img-responsive user-photo" src="not-found.jpg">&ndash;&gt;-->
+                    <!--<i class="fa fa-exclamation-circle fa-lg" style="font-size: 10em"></i><br/>-->
+                    <!--</div><br/>-->
+                    <!--<h2>No activities to display!</h2>-->
+                    <!--<p><br/>This could be a network error. If you think so, click the button below.</p><br/>-->
+                    <!--<button onclick="checkForEdit()" class="btn btn-primary"><i class="fa fa-refresh"></i> Load Activities</button>-->
+                    <!--</div>-->
+                </div>
+
+            </div>
+        </div><!-- .animated -->
+        <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;"><img src='../spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+    </div><!-- .content -->
+
+
+</div><!-- /#right-panel -->
+<div id="panels" include-html="/includes/notifications.html"></div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Attachments</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div id="attachment-list" class="modal-body">
+            </div>
+            <!--<div class="modal-footer">-->
+            <!--<span id="submit-activity-error" style="padding-left:50px; text-align: center"></span><button id="submit" type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>-->
+            <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+
+
+<!--<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>-->
+<!-- Begin emoji-picker JavaScript -->
+<script src="../assets/lib/js/config.js"></script>
+<script src="../assets/lib/js/util.js"></script>
+<script src="../assets/lib/js/jquery.emojiarea.js"></script>
+<script src="../assets/lib/js/emoji-picker.js"></script>
+<!-- End emoji-picker JavaScript -->
+<script>
+    $(function() {
+        // Initializes and creates emoji set from sprite sheet
+        window.emojiPicker = new EmojiPicker({
+            emojiable_selector: '[data-emojiable=true]',
+            assetsPath: '/assets/lib/img/',
+            popupButtonClasses: 'fa fa-smile-o'
+        });
+        // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields
+        // You may want to delay this step if you have dynamically created input fields that appear later in the loading process
+        // It can be called as many times as necessary; previously converted input fields will not be converted again
+        window.emojiPicker.discover();
+    });
+</script>
+
+<script src="activity.js"></script>
+<script src="../assets/js/popper.min.js"></script>
+<script src="../assets/js/plugins.js"></script>
+<!--<script src="assets/js/main.js"></script>-->
+<script src="../assets/js/lib/chosen/chosen.jquery.min.js"></script>
+<script src="../../menus/menu-items.js"></script>
+<script src="../loader.js"></script>
+<script src="../notifications.js"></script>
+<script src="../js/jquery.timeago.js" type="text/javascript"></script>
+<div>
+<!--<script src="assets/js/lib/data-table/datatables.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/jszip.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/pdfmake.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/vfs_fonts.js"></script>-->
+<!--<script src="assets/js/lib/data-table/buttons.html5.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/buttons.print.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>-->
+<!--<script src="assets/js/lib/data-table/datatables-init.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>-->
+</div>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
+<script>
+</script>
+<style>
+
+    .inp select option div {
+        color: red; !important;
+    }
+    /*<!--.inp option:not(:first-of-type) {-->*/
+    /*<!--color: black;-->*/
+    /*<!--}-->*/
+</style>
+</body>
+</html>

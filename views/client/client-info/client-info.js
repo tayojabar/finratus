@@ -140,7 +140,7 @@ function loadInfo() {
         },
         'error': function (err) {
             //alert ('Error');
-            console.log('Error');
+            console.log(err);
         }
     });
 }
@@ -217,7 +217,7 @@ function loadApplications() {
         },
         'error': function (err) {
             //alert ('Error');
-            console.log('Error');
+            console.log(err);
         }
     });
 }
@@ -232,7 +232,7 @@ function loadActivities() {
         },
         'error': function (err) {
             //alert ('Error');
-            console.log('Error');
+            console.log(err);
         }
     });
 }

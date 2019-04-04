@@ -112,7 +112,7 @@ function loadLoanPurposes(){
             populateLoanPurposes(purposes);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }

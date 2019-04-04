@@ -1,0 +1,188 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Offer</title>
+    <meta name="description" content="Loanratus Offer">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="assets/scss/style.css">
+    <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <style type="text/css">
+        .select2-container{
+            width: 92% !important;
+        }
+        .select2-selection{
+            height: 100% !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+            color: #495057 !important;
+        }
+        .pb-0{
+            text-align: center;
+        }
+        .alert-success, .alert-success p {color: #155724;}
+        table{width: 100%;}
+        table th{text-align: center;}
+        .danger {
+            color: red;
+        }
+    </style>
+</head>
+<body class="bg-dark">
+<div class="login-logo">
+    <img class="align-content" src="loan-35-w.png" alt="" style="margin-top: 20px;">
+</div>
+<div class="content mt-3">
+    <div class="animated fadeIn">
+        <div class="row">
+            <div id="user-form" class="col-xs-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong id="client-text"></strong> <small> Loan Information</small>
+                    </div>
+                    <div class="card-body card-block">
+                        <p id="expiry-text" style="color: red; font-style: italic;"></p>
+                        <div style="padding: 20px;">
+                            <div class="tab">
+                                <div class="panel push-down">
+                                    <div class="panel-body">
+                                        <div class="example-box-wrapper">
+                                            <h6>Loan Offer Details</h6>
+                                            <hr>
+                                            <div class="row setup-content">
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-1">
+                                                        <div class="card-body pb-0">
+                                                            <h3 id="loan-amount-text" class="mb-0"></h3>
+                                                            <p class="text-light">Loan Amount</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-1">
+                                                        <div class="card-body pb-0">
+                                                            <h3 id="tenor-text" class="mb-0"></h3>
+                                                            <p class="text-light">Loan Tenor</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-1">
+                                                        <div class="card-body pb-0">
+                                                            <h3 id="payment-amount-text" class="mb-0"></h3>
+                                                            <p class="text-light">Payment Amount (Monthly)</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-1">
+                                                        <div class="card-body pb-0">
+                                                            <h3 id="first-repayment-text" class="mb-0"></h3>
+                                                            <p class="text-light">First Repayment</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel push-down">
+                                    <div class="panel-body">
+                                        <div class="example-box-wrapper">
+                                            <h6>Client Profile Details</h6>
+                                            <hr>
+                                            <div class="row setup-content">
+                                                <div class="col-sm-12">
+                                                    <div width="100%">
+                                                        <table class="table table-bordered">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Fullname</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="fullname"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Email</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="email"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Phone</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="phone"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Bank</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="bank"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Account</strong> (required)
+                                                                        <strong class="danger"> *</strong>
+                                                                    </td>
+                                                                    <td><span id="account"></span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="col-sm-12 form-group">
+                                                    <button id="acceptApplication" class="btn btn-lg btn-success">Accept Offer <i class="fa fa-check"></i></button>
+                                                    <button id="declineApplication" class="btn btn-lg btn-danger">Decline Offer <i class="fa fa-remove"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .animated -->
+    <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+</div><!-- .content -->
+
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/cookie.js"></script>
+<script src="assets/js/lib/chosen/chosen.jquery.min.js"></script>
+<script src="assets/js/lib/data-table/datatables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="../../js/helper-functions.js"></script>
+<script src="../../menus/menu-items.js"></script>
+<script type="text/javascript" src="../../preapproved-loan/offer/offer.js"></script>
+</body>
+</html>

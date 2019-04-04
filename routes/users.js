@@ -10,6 +10,7 @@ let token,
     bcrypt = require('bcryptjs'),
     jwt = require('jsonwebtoken'),
     nodemailer = require('nodemailer'),
+    helperFunctions = require('../helper-functions'),
     notificationsService = require('./notifications-service'),
 	hbs = require('nodemailer-express-handlebars'),
     smtpTransport = require('nodemailer-smtp-transport'),
@@ -187,7 +188,9 @@ users.post('/new-user', function(req, res, next) {
                             if (!err){
                                 let payload = {}
                                 payload.category = 'Users'
+                                payload.userid = req.cookies.timeout
                                 payload.description = 'New User Created'
+                                payload.created_user = re[0]['ID']
                                 notificationsService.log(req, payload)
                                 res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
                             }
@@ -220,7 +223,21 @@ users.post('/new-client', function(req, res, next) {
                 if(error){
                     res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                 } else {
-                    res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                    connection.query('SELECT * from clients where ID = LAST_INSERT_ID()', function(err, re, fields) {
+                        connection.release();
+                        if (!err){
+                            let payload = {}
+                            payload.category = 'Clients'
+                            payload.userid = req.cookies.timeout
+                            payload.description = 'New Client Created'
+                            payload.created_clients = re[0]['ID']
+                            notificationsService.log(req, payload)
+                            res.send(JSON.stringify({"status": 200, "error": null, "response": re}));
+                        }
+                        else{
+                            res.send(JSON.stringify({"response": "Error retrieving client details. Please try a new username!"}));
+                        }
+                    });
                 }
             });
         });
@@ -1121,7 +1138,7 @@ users.get('/clients-list-full/:officerID', function(req, res, next) {
                     if(error){
                         res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
                     } else {
-                        let results = results1.concat(results2);
+                        let results = _.unionBy(results1,results2,'ID');
                         res.send(JSON.stringify(results));
                     }
                 });
@@ -1150,7 +1167,7 @@ users.get('/users-list-v2', function(req, res, next) {
 });
 
 users.get('/user-dets/:id', function(req, res, next) {
-    let query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role from users where id = ? order by ID desc ';
+    let query = 'SELECT *, (select u.role_name from user_roles u where u.ID = user_role) as Role, (select fullname from users where users.ID = u.supervisor) as Super from users u where id = ? order by ID desc ';
 	db.query(query, req.params.id, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -1257,7 +1274,7 @@ users.get('/user/:id', function(req, res, next) {
 });
 
 /* Edit User Info */
-users.post('/edit-user/:id', function(req, res, next) {
+users.post('/edit-user/:id/:user', function(req, res, next) {
 	let date = Date.now(),
         postData = req.body;
 	postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
@@ -1266,8 +1283,15 @@ users.post('/edit-user/:id', function(req, res, next) {
     db.query(query, payload, function (error, results, fields) {
 	  	if(error){
 	  		res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
-	  	} else {
-  			res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
+	  	}
+	  	else {
+            let payload = {}
+            payload.category = 'Users'
+            payload.userid = req.cookies.timeout
+            payload.description = 'User details updated.'
+            payload.affected_user = req.params.id
+            notificationsService.log(req, payload)
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
 	  	}
   	});
 });
@@ -1277,19 +1301,28 @@ users.post('/edit-client/:id', function(req, res, next) {
         postData = req.body;
     postData.date_modified = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
     let payload = [postData.username, postData.fullname, postData.phone, postData.address, postData.email,
-    postData.gender, postData.dob, postData.marital_status, postData.loan_officer, postData.branch , postData.client_state, postData.postcode, postData.client_country,
-    postData.years_add, postData.ownership , postData.employer_name ,postData.industry ,postData.job, postData.job_country , postData.off_address, postData.off_state,
+    postData.gender, postData.dob, postData.marital_status, postData.loan_officer, postData.branch, postData.bank, postData.account , postData.client_state, postData.postcode, postData.client_country,
+    postData.years_add, postData.ownership , postData.employer_name ,postData.industry ,postData.job, postData.salary, postData.job_country , postData.off_address, postData.off_state,
     postData.doe, postData.guarantor_name, postData.guarantor_occupation, postData.relationship, postData.years_known, postData.guarantor_phone, postData.guarantor_email,
     postData.guarantor_address, postData.gua_country, postData.date_modified, req.params.id];
-    let query = 'Update clients SET username = ?, fullname=?, phone=?, address = ?, email=?, gender=?, dob = ?, marital_status=?, loan_officer=?, branch=?, ' +
-                'client_state=?, postcode=?, client_country=?, years_add=?, ownership=?, employer_name=?, industry=?, job=?, job_country=?, off_address=?, off_state=?, ' +
+    let query = 'Update clients SET username = ?, fullname=?, phone=?, address = ?, email=?, gender=?, dob = ?, marital_status=?, loan_officer=?, branch=?, bank=?, account=?, ' +
+                'client_state=?, postcode=?, client_country=?, years_add=?, ownership=?, employer_name=?, industry=?, job=?, salary=?, job_country=?, off_address=?, off_state=?, ' +
                 'doe=?, guarantor_name=?, guarantor_occupation=?, relationship=?, years_known=?, guarantor_phone=?, guarantor_email=?, guarantor_address=?, gua_country=?, ' +
                 'date_modified = ? where ID=?';
     db.query(query, payload, function (error, results, fields) {
         if(error){
+            console.log('error'); console.log(error)
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
         } else {
-            res.send(JSON.stringify({"status": 200, "error": null, "response": "User Details Updated"}));
+            console.log('here')
+            let payload = {}
+            payload.category = 'Clients'
+            payload.userid = req.cookies.timeout
+            payload.description = 'Client details updated.'
+            payload.affected_client = req.params.id
+            notificationsService.log(req, payload)
+            console.log('Got here')
+            res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Details Updated"}));
         }
     });
 });
@@ -1481,7 +1514,7 @@ users.post('/apply', function(req, res) {
             res.send({"status": 500, "error": error, "response": null});
         } else {
             data.name = req.body.username;
-            data.date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
+            data.date = postData.date_created;
             let mailOptions = {
                 from: 'no-reply Loanratus <applications@loan35.com>',
                 to: req.body.email,
@@ -1494,12 +1527,19 @@ users.post('/apply', function(req, res) {
                     console.log({"status": 500, "message": "Error occurred!", "response": error});
                 if (!workflow_id)
                     return res.send({"status": 200, "message": "New Application Added!"});
-                getNextWorkflowProcess(false,workflow_id,false, function (process) {
+                helperFunctions.getNextWorkflowProcess(false,workflow_id,false, function (process) {
                     db.query('SELECT MAX(ID) AS ID from applications', function(err, application, fields) {
                         process.workflowID = workflow_id;
                         process.agentID = postData.agentID;
                         process.applicationID = application[0]['ID'];
                         process.date_created = postData.date_created;
+
+                        let payload = {}
+                        payload.category = 'Application'
+                        payload.userid = req.cookies.timeout
+                        payload.description = 'New Client Created'
+                        payload.created_application = application[0]['ID']
+                        notificationsService.log(req, payload)
                         db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
                             if(error){
                                 return res.send({"status": 500, "error": error, "response": null});
@@ -2002,7 +2042,7 @@ users.get('/application/assign_workflow/:id/:workflow_id/:agent_id', function(re
         if(error){
             res.send({"status": 500, "error": error, "response": null});
         } else {
-            getNextWorkflowProcess(false,workflow_id,false, function (process) {
+            helperFunctions.getNextWorkflowProcess(false,workflow_id,false, function (process) {
                 process.workflowID = workflow_id;
                 process.applicationID = id;
                 process.agentID = agent_id;
@@ -2027,39 +2067,6 @@ users.get('/application/assign_workflow/:id/:workflow_id/:agent_id', function(re
     });
 });
 
-// users.get('/request/assign_workflow/:id/:workflow_id', function(req, res, next) {
-//     let id = req.params.id,
-//         workflow_id = req.params.workflow_id,
-//         date_modified = Date.now(),
-//         query =  'UPDATE requests SET workflowID=?, date_modified=? where ID=?';
-//     db.query(query,[workflow_id, date_modified, id], function (error, results, fields) {
-//         if(error){
-//             res.send({"status": 500, "error": error, "response": null});
-//         } else {
-//             getNextWorkflowProcess(false,workflow_id,false, function (process) {
-//                 process.workflowID = workflow_id;
-//                 process.applicationID = id;
-//                 process.date_created = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a');
-//                 db.query('INSERT INTO workflow_processes SET ?',process, function (error, results, fields) {
-//                     if(error){
-//                         res.send({"status": 500, "error": error, "response": null});
-//                     } else {
-//                         let query = 'SELECT u.fullname, u.phone, u.email, u.address, a.ID, a.status, a.collateral, a.brand, a.model, a.year, a.jewelry, a.date_created, ' +
-//                             'a.loan_amount, a.date_modified, a.comment FROM clients AS u, requests AS a WHERE u.ID=a.userID AND a.status <> 0 ORDER BY a.ID desc';
-//                         db.query(query, function (error, results, fields) {
-//                             if(error){
-//                                 res.send({"status": 500, "error": error, "response": null});
-//                             } else {
-//                                 res.send({"status": 200, "message": "Workflow assigned successfully!", "response": results});
-//                             }
-//                         });
-//                     }
-//                 });
-//             });
-//         }
-//     });
-// });
-
 users.post('/workflow_process/:application_id/:workflow_id', function(req, res, next) {
     let stage = req.body.stage,
         agent_id = req.body.agentID,
@@ -2070,7 +2077,7 @@ users.post('/workflow_process/:application_id/:workflow_id', function(req, res, 
         return res.send({"status": 500, "error": "Required Parameter(s) not sent!"});
     if (!stage || (Object.keys(stage).length === 0 && stage.constructor === Object))
         stage = false;
-    getNextWorkflowProcess(application_id,workflow_id,stage, function (process) {
+    helperFunctions.getNextWorkflowProcess(application_id,workflow_id,stage, function (process) {
         process.workflowID = workflow_id;
         process.applicationID = application_id;
         if (!process.approver_id || (process.approver_id === 0))
@@ -2141,60 +2148,6 @@ users.get('/workflow_process_all/:application_id', function(req, res, next) {
         }
     });
 });
-
-function getNextWorkflowProcess(application_id,workflow_id,stage, callback){
-    db.query('SELECT * FROM workflow_stages WHERE workflowID=? ORDER BY ID asc',[workflow_id], function (error, stages, fields) {
-        if(stages){
-            stages.push({name:"Denied",stageID:4,stage_name:"Denied",workflowID:workflow_id,approverID:1});
-            if(application_id && !stage){
-                db.query('SELECT * FROM workflow_processes WHERE ID = (SELECT MAX(ID) FROM workflow_processes WHERE applicationID=? AND status=1)',[application_id], function (error, application_last_process, fields) {
-                    if (application_last_process){
-                        let next_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(application_last_process[0]['next_stage'])),
-                            current_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(application_last_process[0]['current_stage']));
-                        if (stages[next_stage_index+1]){
-                            if (application_last_process[0]['next_stage'] !== stages[next_stage_index+1]['stageID']){//current stage must not be equal to next stage
-                                callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[current_stage_index]['approverID']});
-                            } else {
-                                if (stages[next_stage_index+2]){
-                                    callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'],next_stage:stages[next_stage_index+2]['stageID'], approver_id:stages[current_stage_index]['approverID']});
-                                } else {
-                                    callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'], approver_id:stages[current_stage_index]['approverID']});
-                                }
-                            }
-                        } else {
-                            callback({previous_stage:application_last_process[0]['current_stage'],current_stage:application_last_process[0]['next_stage'], approver_id:stages[current_stage_index]['approverID']});
-                        }
-                    } else {
-                        callback({});
-                    }
-                });
-            } else if(application_id && stage){
-                let previous_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(stage['previous_stage'])),
-                    current_stage_index = stages.map(function(e) { return e.stageID; }).indexOf(parseInt(stage['current_stage'])),
-                    next_stage_index = current_stage_index+1;
-                if (stage['next_stage']){
-                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stage['next_stage'], approver_id:stages[previous_stage_index]['approverID']});
-                }else if (stages[next_stage_index]){
-                    if (stage['current_stage'] !== stages[next_stage_index]['stageID']){
-                        callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index]['stageID'], approver_id:stages[previous_stage_index]['approverID']});
-                    } else {
-                        if (stages[next_stage_index+1]){
-                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'],next_stage:stages[next_stage_index+1]['stageID'], approver_id:stages[previous_stage_index]['approverID']});
-                        } else {
-                            callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[previous_stage_index]['approverID']});
-                        }
-                    }
-                } else {
-                    callback({previous_stage:stage['previous_stage'],current_stage:stage['current_stage'], approver_id:stages[previous_stage_index]['approverID']});
-                }
-            } else {
-                callback({current_stage:stages[0]['stageID'],next_stage:stages[1]['stageID']});
-            }
-        } else {
-            callback({})
-        }
-    });
-}
 
 users.post('/application/comments/:id/:user_id', function(req, res, next) {
     db.query('SELECT * FROM applications WHERE ID = ?', [req.params.id], function (error, application, fields) {
@@ -2785,6 +2738,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         loan_officer = req.query.officer
     // end = moment(end).add(1, 'days').format("YYYY-MM-DD");
     let queryPart,
+        queryPart2,
         query,
         query3,
         group
@@ -2818,6 +2772,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         'from schedule_history \n' +
         'where applicationID in (select applicationID from application_schedules\n' +
         '\t\t\t\t\t\twhere applicationID in (select ID from applications where status = 2) and status = 1)\n'+
+        'and applicationID not in (select applicationID from schedule_history where status = 1)\n'+
         'and status = 0 '
         ;
     group = 'group by applicationID';
@@ -2830,9 +2785,9 @@ users.get('/disbursements/filter', function(req, res, next) {
     var items = {};
     if (loan_officer){
         queryPart = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
-        queryPart2 = queryPart.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
+        queryPart2 = queryPart2.concat('and (select loan_officer from clients where clients.ID = (select userID from applications where applications.ID = applicationID)) = ?')
         query = queryPart.concat(group);
-        query3 = queryPart.concat(group);
+        query3 = queryPart2.concat(group);
         query2 = query2.concat('and (select loan_officer from clients where clients.ID = userID) = '+loan_officer+' ');
     }
     if (start  && end){
@@ -2840,7 +2795,7 @@ users.get('/disbursements/filter', function(req, res, next) {
         end = "'"+end+"'"
         // query = (queryPart.concat('AND (TIMESTAMP((select date_modified from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
-        query3 = (queryPart.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
+        query3 = (queryPart2.concat('AND (TIMESTAMP((select disbursement_date from applications ap where ap.ID = applicationID)) between TIMESTAMP('+start+') and TIMESTAMP('+end+')) ')).concat(group);
         query2 = query2.concat('AND (TIMESTAMP(disbursement_date) between TIMESTAMP('+start+') AND TIMESTAMP('+end+')) ');
     }
     db.query(query, [loan_officer], function (error, results, fields) {
@@ -3203,8 +3158,8 @@ users.get('/analytics', function(req, res, next) {
                     '         SUM(loan_amount) AmountDisbursed, (select fullname from users where users.id = '+officer+') agent,\n' +
                     '         EXTRACT(YEAR_MONTH FROM Disbursement_date) As DisburseYearMonth\n' +
                     'FROM     applications \n' +
-                    'WHERE    EXTRACT(YEAR_MONTH FROM Disbursement_date) >= EXTRACT(YEAR_MONTH FROM CURDATE())-102\n' +
-                    'AND      status =2\n'+
+                    // 'WHERE    EXTRACT(YEAR_MONTH FROM Disbursement_date) >= EXTRACT(YEAR_MONTH FROM CURDATE())-102\n' +
+                    'WHERE      status =2\n'+
                     'AND      (select loan_officer from clients where clients.ID = userID) = '+officer+'\n' +
                     'GROUP BY agent\n' +
                     'ORDER BY DisburseYearMonth';
@@ -4071,7 +4026,7 @@ users.get('/analytics', function(req, res, next) {
             break;
         case 'overdue-loans':
             break;
-    }
+    }console.log(query)
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
@@ -4621,9 +4576,9 @@ users.post('/new-activity', function(req, res, next) {
                         connection.release();
                         let payload = {}
                         payload.category = 'Activity'
-                        payload.userid = ''
-                        payload.description = 'New Activity'
-                        notificationsService.log(req,payload)
+                        payload.userid = postData.for_
+                        payload.description = 'New Activity Created'
+                        notificationsService.log(req, payload)
                         res.send(JSON.stringify({"status": 200, "error": null, "response": "New Activity Created", "result": id}));
                     });
                 });
@@ -5156,6 +5111,10 @@ users.get('/target-mail', function(req, res) {
             return res.send("Error");
         return res.send("OK");
     });
+});
+
+users.get('/banks', function(req, res) {
+    res.send(require('../banks.json'));
 });
 
 module.exports = users;

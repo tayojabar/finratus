@@ -1,5 +1,5 @@
 function numberToCurrencyformatter(value) {
-    if (!value && isNaN(value))
+    if (!value || value === null)
         return value;
     if (typeof value !== "string")
         value = value.toString();
@@ -46,7 +46,12 @@ Number.prototype.roundTo = function(n) {
 
 Number.prototype.round = function(p) {
     p = p || 10;
-    return parseFloat( this.toFixed(p) );
+    return parseFloat(this.toFixed(p));
+};
+
+String.prototype.round = function(p) {
+    p = p || 10;
+    return parseFloat(this).toFixed(p);
 };
 
 Number.prototype.trunc = function(p) {
@@ -71,6 +76,18 @@ function formatDate(date) {
     if (day.length < 2) day = '0' + day;
 
     return [year, month, day].join('-');
+}
+
+function remitaDateFormat(date) {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [day, month, year].join('/');
 }
 
 function padWithZeroes(n, width, z) {

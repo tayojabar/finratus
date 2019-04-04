@@ -1,0 +1,21 @@
+/*
+*/
+
+{
+  "Activity": {
+    "code": "001",
+    "apis": {
+      "create": {
+        "url": ""
+      },
+      "update": {},
+      "delete": {}
+    }
+  },
+  "Activity": {},
+  "Activity": {},
+  "Activity": {},
+  "Activity": {},
+  "Activity": {},
+  "Activity": {}
+}

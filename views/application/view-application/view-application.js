@@ -127,7 +127,7 @@ function loadApplication(user_id){
             getApplicationSettings(application);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
         }
     });
 }
@@ -191,7 +191,7 @@ function loadComments(comments) {
                 });
             },
             'error': function (err) {
-                console.log('Error');
+                console.log(err);
                 notification('No internet connection','','error');
             }
         });
@@ -314,51 +314,52 @@ function loadWorkflowStages(state) {
             if (stage.stage_name === 'Final Approval')
                 $('.next').text('Disbursal (Disbursal)');
 
-            if (stage.stage_name === 'Disbursal'){
-                if (application.status === 2){
-                    $('#collect-payment-button').show();
-                    $('#generate-schedule-v2').show();
-                    $('#principal-total-text').hide();
-                    $('#disbursement-cards').show();
-                    $('#disburse-alert').show();
-                    $("#current_stage").hide();
-                    $("#next-actions").hide();
-                    $(".previous").hide();
-                    $(".cancel").hide();
-                    $(".next").hide();
-
-                    if (application.close_status === 0){
-                        $('#close_loan').show();
-                    } else {
-                        $('#loan_closed').show();
-                        $('#collect-payment-button').text('View Collection');
-                        $('#collect-payment-button').addClass('btn-secondary');
-                        $('#collect-payment-button').removeClass('btn-primary');
-                        switch (application.close_status){
-                            case 1: {
-                                $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
-                                break;
-                            }
-                            case 2: {
-                                $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
-                                break;
-                            }
-                            case 3: {
-                                $('#loan_closed').html('<strong>CLOSED </strong>');
-                                break;
-                            }
-                        }
-                    }
-                    checkTotalDue();
-                }
+            if (stage.stage_name === 'Disbursal' || application.status === 2){
                 $('#disbursement-amount').val((parseFloat(application.loan_amount)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 $('#stage-actions').append('<a href="#" id="stage-action-0" class="dropdown-item" data-toggle="modal" data-target="#disburseModal">Disburse Loan</a>');
+            }
+
+            if (application.status === 2){
+                $('#collect-payment-button').show();
+                $('#generate-schedule-v2').show();
+                $('#principal-total-text').hide();
+                $('#disbursement-cards').show();
+                $('#disburse-alert').show();
+                $("#current_stage").hide();
+                $("#next-actions").hide();
+                $(".previous").hide();
+                $(".cancel").hide();
+                $(".next").hide();
+
+                if (application.close_status === 0){
+                    $('#close_loan').show();
+                } else {
+                    $('#loan_closed').show();
+                    $('#collect-payment-button').text('View Collection');
+                    $('#collect-payment-button').addClass('btn-secondary');
+                    $('#collect-payment-button').removeClass('btn-primary');
+                    switch (application.close_status){
+                        case 1: {
+                            $('#loan_closed').html('<strong>CLOSED </strong> | PAID OFF');
+                            break;
+                        }
+                        case 2: {
+                            $('#loan_closed').html('<strong>CLOSED </strong> | WRITTEN OFF');
+                            break;
+                        }
+                        case 3: {
+                            $('#loan_closed').html('<strong>CLOSED </strong>');
+                            break;
+                        }
+                    }
+                }
+                checkTotalDue();
             }
 
             loadAllWorkflowState(workflow_stages);
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
             notification('No internet connection','','error');
         }
     });
@@ -382,7 +383,7 @@ $('.cancel').on('click', function(e) {
                         window.location.reload();
                     },
                     'error': function (err) {
-                        console.log('Error');
+                        console.log(err);
                         notification('No internet connection','','error');
                     }
                 });
@@ -411,7 +412,7 @@ function loadWorkflowState() {
             $('#files').show();
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
             notification('No internet connection','','error');
         }
     });
@@ -442,7 +443,7 @@ function loadAllWorkflowState(workflow_stages) {
             read_write_2();
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
             notification('No internet connection','','error');
         }
     });
@@ -481,7 +482,7 @@ function nextStage(state, workflow_stages, action_stage) {
             }
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
             notification('No internet connection','','error');
         }
     });
@@ -506,7 +507,7 @@ function previousStage(state,states) {
             }
         },
         'error': function (err) {
-            console.log('Error');
+            console.log(err);
             notification('No internet connection','','error');
         }
     });

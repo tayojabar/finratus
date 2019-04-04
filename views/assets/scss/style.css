@@ -3113,22 +3113,22 @@ header .form-inline .search-form.close {
     height: 40px;
 }
 /* width */
-::-webkit-scrollbar {
+.tab-content::-webkit-scrollbar {
     width: 3px !important;
 }
 
 /* Track */
-::-webkit-scrollbar-track {
+.tab-content::-webkit-scrollbar-track {
     background: #F0F6FB;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+.tab-content::-webkit-scrollbar-thumb {
     background: #e0e0e0;
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.tab-content::-webkit-scrollbar-thumb:hover {
     background: #158DED;
     transition: 0.5s ease;
 }
