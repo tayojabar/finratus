@@ -50,6 +50,7 @@ let app = express(),
     client_service = require('./routes/service/custom-services/client-service'),
     investment_product_service = require('./routes/service/custom-services/investment-product.service'),
     investment_service = require('./routes/service/custom-services/investment.service'),
+    inv_transaction_service = require('./routes/service/custom-services/transaction.service'),
     notification = require('./routes/notifications'),
     notification_service = require('./routes/notifications-service'),
     index = require('./routes/index');
@@ -195,7 +196,8 @@ app.use('/investment', investment);
 app.use('/core-service', core_service);
 app.use('/client-service', client_service);
 app.use('/investment-service', investment_service);
-app.use('/investment-products', investment_product_service);
+app.use('/investment-products', investment_product_service);//inv_transaction_service
+app.use('/investment-txns', inv_transaction_service);//inv_transaction_service
 // app.use('/notification-service', notification_service);
 app.use('/notifications', notification);
 app.use('/files', express.static(__dirname + '/files'));

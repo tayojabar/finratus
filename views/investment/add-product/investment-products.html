@@ -49,23 +49,17 @@
     <!-- Left Panel -->
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
     <script src="../../menus/menu-items.js"></script>
-    <script type="text/javascript">
-        jQuery(document).ready(function ($) {
-            check();
-            loadMenus();
-            read_write();
-        });
-    </script>
+
 
     <style>
         #regForm {
-        background-color: rgba(255, 255, 255, 0.44);
-        /*margin: 100px auto;*/
-        padding: 20px;
-        /*width: 70%;*/
-        /*!*min-width: 300px;*!*/
-    }   
-</style>
+            background-color: rgba(255, 255, 255, 0.44);
+            /*margin: 100px auto;*/
+            padding: 20px;
+            /*width: 70%;*/
+            /*!*min-width: 300px;*!*/
+        }
+    </style>
 
     <aside id="left-panel" class="left-panel">
         <nav class="navbar navbar-expand-sm navbar-default">
@@ -105,7 +99,8 @@
                 <div class="col-sm-5">
                     <div class="user-area dropdown float-right">
                         <strong id="user" style="margin-right:10px; vertical-align: sub"></strong>
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
                             <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar">
                         </a>
 
@@ -168,17 +163,20 @@
                                                     <hr>
                                                     <div class="row">
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label">Name<span class="text-danger">*</span></label>
+                                                            <label class="form-control-label">Name<span
+                                                                    class="text-danger">*</span></label>
                                                             <div class="input-group">
-                                                                <input type="text" id="product_name" class="form-control imp"
-                                                                    placeholder="Product Name" tabindex="1" required="">
+                                                                <input type="text" id="product_name"
+                                                                    class="form-control imp" placeholder="Product Name"
+                                                                    tabindex="1" required="">
                                                             </div>
                                                         </div>
 
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label">Code</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="product_code" class="form-control"
+                                                                <input type="text" id="product_code"
+                                                                    class="form-control" maxlength="4"
                                                                     placeholder="Product Code">
                                                             </div>
                                                         </div>
@@ -197,30 +195,34 @@
                                                     <div class="row">
 
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label">Min. Amount <span class="text-danger">*</span></label>
+                                                            <label class="form-control-label">Min. Amount <span
+                                                                    class="text-danger">*</span></label>
                                                             <div class="input-group">
                                                                 <input type="text" id="product_investment_amount_min"
-                                                                    class="form-control imp" placeholder="Minimum Amount"
-                                                                    min="0">
+                                                                    class="form-control imp"
+                                                                    placeholder="Minimum Amount" min="0">
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label">Max. Amount <span class="text-danger">*</span></label>
+                                                            <label class="form-control-label">Max. Amount <span
+                                                                    class="text-danger">*</span></label>
                                                             <div class="input-group">
                                                                 <input type="text" id="product_investment_amount_max"
-                                                                    class="form-control imp" placeholder="Maximum Amount"
-                                                                    min="0">
+                                                                    class="form-control imp"
+                                                                    placeholder="Maximum Amount" min="0">
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label">Charges on Investment
                                                             </label>
                                                             <div class="input-group">
-                                                                <input type="text" id="saving_fees" class="form-control imp"
+                                                                <input type="text" id="saving_fees"
+                                                                    class="form-control imp"
                                                                     placeholder="Deposit Charge" min="0">
                                                                 <select id="opt_on_deposit" class="form-control"
                                                                     required="required">
-                                                                    <option value="Fixed" selected="selected">Fixed</option>
+                                                                    <option value="Fixed" selected="selected">Fixed
+                                                                    </option>
                                                                     <option value="Percentage">Percentage</option>
                                                                 </select>
                                                             </div>
@@ -237,24 +239,29 @@
                                                     <hr><br>
                                                     <div class="row">
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label"> Amount <span class="text-danger">*</span></label>
+                                                            <label class="form-control-label"> Amount <span
+                                                                    class="text-danger">*</span></label>
                                                             <div class="input-group">
-                                                                <input type="text" id="minimum_bal" class="form-control imp"
+                                                                <input type="text" id="minimum_bal"
+                                                                    class="form-control imp"
                                                                     placeholder="Minimum Amount" min="0.00">
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label"><input type="checkbox" id="chk_min_bal_penalty">
+                                                            <label class="form-control-label"><input type="checkbox"
+                                                                    id="chk_min_bal_penalty">
                                                                 Penalty Amount</label>
                                                             <span class="text-danger" style="font-size: 1.0em">(below
                                                                 minimum balance)</span>
                                                             <div class="input-group">
-                                                                <input type="text" id="minimum_bal_penalty_amount" name="minimum_bal_penalty_amount"
-                                                                    class="form-control imp" placeholder="Penalty Charge"
-                                                                    min="0" disabled>
-                                                                <select id="opt_on_minimum_bal_penalty_amount" class="form-control"
-                                                                    disabled required="required">
-                                                                    <option value="Fixed" selected="selected">Fixed</option>
+                                                                <input type="text" id="minimum_bal_penalty_amount"
+                                                                    name="minimum_bal_penalty_amount"
+                                                                    class="form-control imp"
+                                                                    placeholder="Penalty Charge" min="0" disabled>
+                                                                <select id="opt_on_minimum_bal_penalty_amount"
+                                                                    class="form-control" disabled required="required">
+                                                                    <option value="Fixed" selected="selected">Fixed
+                                                                    </option>
                                                                     <option value="Percentage">Percentage</option>
                                                                 </select>
                                                             </div>
@@ -268,34 +275,39 @@
                                             <div class="panel-body">
 
                                                 <div class="example-box-wrapper">
-                                                    <h6>Maturity Term <input type="checkbox" id="chk_maturity_term"></h6>
+                                                    <h6>Maturity Term <input type="checkbox" id="chk_maturity_term">
+                                                    </h6>
                                                     <hr><br>
                                                     <div class="row">
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label"> Min. Term(Month) </label>
                                                             <div class="input-group">
-                                                                <input type="number" id="min_term" class="form-control imp"
-                                                                    placeholder="Minimum Term" min="0" disabled>
+                                                                <input type="number" id="min_term"
+                                                                    class="form-control imp" placeholder="Minimum Term"
+                                                                    min="0" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label"> Max. Term(Month) </label>
                                                             <div class="input-group">
-                                                                <input type="number" id="max_term" class="form-control imp"
-                                                                    placeholder="Max. Term" min="0" disabled>
+                                                                <input type="number" id="max_term"
+                                                                    class="form-control imp" placeholder="Max. Term"
+                                                                    min="0" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label"><input type="checkbox" id="forfeit_interest_on_withdrawal">Penalty
+                                                            <label class="form-control-label"><input type="checkbox"
+                                                                    id="forfeit_interest_on_withdrawal">Penalty
                                                                 for Premature
                                                                 Investment </label>
                                                             <div class="input-group">
                                                                 <input type="text" id="charge_interest_on_withdrawal"
-                                                                    class="form-control imp" placeholder="Penalty Charge"
-                                                                    min="0" disabled>
-                                                                <select id="opt_on_charge_interest_on_withdrawal" class="form-control"
-                                                                    required="required" disabled>
-                                                                    <option value="Fixed" selected="selected">Fixed</option>
+                                                                    class="form-control imp"
+                                                                    placeholder="Penalty Charge" min="0" disabled>
+                                                                <select id="opt_on_charge_interest_on_withdrawal"
+                                                                    class="form-control" required="required" disabled>
+                                                                    <option value="Fixed" selected="selected">Fixed
+                                                                    </option>
                                                                     <option value="Percentage">Percentage</option>
                                                                 </select>
                                                             </div>
@@ -341,23 +353,28 @@
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label">Interest Rate(%)</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="interest_rate" class="form-control imp"
-                                                                    placeholder="Interest Rate" min="0" disabled>
+                                                                <input type="text" id="interest_rate"
+                                                                    class="form-control imp" placeholder="Interest Rate"
+                                                                    min="0" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label">Interest Payment Circle</label>
+                                                            <label class="form-control-label">Interest Payment
+                                                                Circle</label>
                                                             <div class="input-group">
                                                                 <select id="condition_for_interest" class="form-control"
                                                                     required="required" disabled>
-                                                                    <option value="0" selected="selected">-- Select --</option>
+                                                                    <option value="0" selected="selected">-- Select --
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label">Premature Interest Rate</label>
+                                                            <label class="form-control-label">Premature Interest
+                                                                Rate</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="premature_interest_rate" class="form-control imp"
+                                                                <input type="text" id="premature_interest_rate"
+                                                                    class="form-control imp"
                                                                     placeholder="Penalty Charge" min="0" disabled>
                                                             </div>
                                                         </div>
@@ -375,10 +392,12 @@
                                                     <hr><br>
                                                     <div class="row">
                                                         <div class="form-group col-sm-4 col-md-4">
-                                                            <label class="form-control-label"> Count (e.g: 3 Times of)</label>
+                                                            <label class="form-control-label"> Count (e.g: 3 Times
+                                                                of)</label>
                                                             <div class="input-group">
                                                                 <input type="number" id="withdrawal_conditions_value"
-                                                                    class="form-control imp" placeholder="Count" min="0">
+                                                                    class="form-control imp" placeholder="Count"
+                                                                    min="0">
                                                             </div>
                                                             <div><input type="checkbox" id="chk_enforce_count">Enforce
                                                                 Count</div>
@@ -387,9 +406,10 @@
                                                             <label class="form-control-label"> Duration
                                                             </label>
                                                             <div class="input-group">
-                                                                <select id="withdrawal_charge_duration" class="form-control"
-                                                                    required="required">
-                                                                    <option value="0" selected="selected">-- Select --</option>
+                                                                <select id="withdrawal_charge_duration"
+                                                                    class="form-control" required="required">
+                                                                    <option value="0" selected="selected">-- Select --
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -397,11 +417,13 @@
                                                             <label class="form-control-label">Charge For Exceeding
                                                                 Freq.</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="withdrawal_charge_freq" class="form-control imp"
-                                                                    placeholder="Freq. Charge" data-mask="#,##0.00">
+                                                                <input type="text" id="withdrawal_charge_freq"
+                                                                    class="form-control imp" placeholder="Freq. Charge"
+                                                                    data-mask="#,##0.00">
                                                                 <select id="opt_on_freq_charge" class="form-control"
                                                                     required="required">
-                                                                    <option value="Fixed" selected="selected">Fixed</option>
+                                                                    <option value="Fixed" selected="selected">Fixed
+                                                                    </option>
                                                                     <option value="Percentage">Percentage</option>
                                                                 </select>
                                                             </div>
@@ -415,14 +437,16 @@
                                             <div class="panel-body">
 
                                                 <div class="example-box-wrapper">
-                                                    <h6>Termination Notice <input type="checkbox" id="chk_liquidation"></h6>
+                                                    <h6>Termination Notice <input type="checkbox" id="chk_liquidation">
+                                                    </h6>
                                                     <hr><br>
                                                     <div class="row">
                                                         <div class="form-group col-sm-4 col-md-4">
                                                             <label class="form-control-label"> Min. Day(s) </label>
                                                             <div class="input-group">
-                                                                <input type="number" id="min_days_termination" class="form-control imp"
-                                                                    placeholder="Min. Day(s)" min="0" disabled>
+                                                                <input type="number" id="min_days_termination"
+                                                                    class="form-control imp" placeholder="Min. Day(s)"
+                                                                    min="0" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-sm-4 col-md-4">
@@ -430,11 +454,12 @@
                                                                 (Less than termination day(s))</label>
                                                             <div class="input-group">
                                                                 <input type="text" id="min_days_termination_charge"
-                                                                    class="form-control imp" placeholder="Charge" min="0"
-                                                                    disabled>
-                                                                <select id="opt_on_min_days_termination" class="form-control"
-                                                                    disabled required="required">
-                                                                    <option value="Fixed" selected="selected">Fixed</option>
+                                                                    class="form-control imp" placeholder="Charge"
+                                                                    min="0" disabled>
+                                                                <select id="opt_on_min_days_termination"
+                                                                    class="form-control" disabled required="required">
+                                                                    <option value="Fixed" selected="selected">Fixed
+                                                                    </option>
                                                                     <option value="Percentage">Percentage</option>
                                                                 </select>
                                                             </div>
@@ -447,7 +472,8 @@
                                     </div>
                                     <div style="overflow:auto;">
                                         <div style="float:right;">
-                                            <button class="btn btn-success" id="btnSaveProduct" type="button" onclick="set_investment_product()">Create
+                                            <button class="btn btn-success" id="btnSaveProduct" type="button"
+                                                onclick="set_investment_product()">Create
                                                 New Product</button>
                                         </div>
                                     </div>
@@ -458,8 +484,8 @@
 
                 </div>
             </div><!-- .animated -->
-            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img
-                    src='spinner.gif' width="100" height="100" style="background-color: transparent" /></div>
+            <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;">
+                <img src='spinner.gif' width="100" height="100" style="background-color: transparent" /></div>
         </div><!-- .content -->
 
 
