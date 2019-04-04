@@ -2,12 +2,11 @@ const
     axios = require('axios'),
     moment = require('moment'),
     db = require('../../../db'),
-    request = require('request'),
     bcrypt = require('bcryptjs'),
     express = require('express'),
     router = express.Router(),
+    SHA512 = require('js-sha512'),
     nodemailer = require('nodemailer'),
-    request_promise = require('request-promise'),
     helperFunctions = require('../../../helper-functions'),
     hbs = require('nodemailer-express-handlebars'),
     smtpTransport = require('nodemailer-smtp-transport'),
@@ -365,8 +364,8 @@ router.get('/get', function (req, res, next) {
 
 router.get('/get/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
-    let query = `SELECT p.*, c.fullname, c.email, c.salary, c.phone, c.bank, c.account FROM preapproved_loans p INNER JOIN clients c ON p.userID = c.ID 
-                WHERE (p.ID = '${decodeURIComponent(req.params.id)}' OR p.hash = '${decodeURIComponent(req.params.id)}')`,
+    let query = `SELECT p.*, c.fullname, c.email, c.salary, c.phone, c.bank, c.account, r.mandateId, r.requestId, r.remitaTransRef FROM preapproved_loans p INNER JOIN clients c ON p.userID = c.ID 
+                LEFT JOIN remita_mandates r ON r.applicationID = p.applicationID WHERE (p.ID = '${decodeURIComponent(req.params.id)}' OR p.hash = '${decodeURIComponent(req.params.id)}')`,
         endpoint = '/core-service/get',
         url = `${HOST}${endpoint}`;
     axios.get(url, {
@@ -375,18 +374,27 @@ router.get('/get/:id', function (req, res, next) {
         }
     }).then(response => {
         if (response['data'][0]){
-            query = `SELECT * FROM application_schedules WHERE applicationID = ${response['data'][0]['applicationID']} AND status = 1`;
-            endpoint = '/core-service/get';
-            url = `${HOST}${endpoint}`;
-            axios.get(url, {
-                params: {
-                    query: query
-                }
-            }).then(response_ => {
-                let preapproved_loan = (response.data === undefined) ? {} : response.data[0];
-                preapproved_loan.schedule = (response_.data === undefined) ? [] : response_.data;
-                res.send({
-                    data: preapproved_loan
+            const status_payload = {
+                mandateId: response['data'][0]['mandateId'],
+                requestId: response['data'][0]['requestId']
+            };
+            helperFunctions.mandateStatus(status_payload, function (remita_mandate_status) {
+                query = `SELECT * FROM application_schedules WHERE applicationID = ${response['data'][0]['applicationID']} AND status = 1`;
+                endpoint = '/core-service/get';
+                url = `${HOST}${endpoint}`;
+                axios.get(url, {
+                    params: {
+                        query: query
+                    }
+                }).then(response_ => {
+                    let preapproved_loan = (response.data === undefined) ? {} : response.data[0];
+                    preapproved_loan.schedule = (response_.data === undefined) ? [] : response_.data;
+                    preapproved_loan.remita = remita_mandate_status;
+                    preapproved_loan.merchantId = process.env.REMITA_MERCHANT_ID;
+                    preapproved_loan.hash = SHA512(preapproved_loan.merchantId + process.env.REMITA_API_KEY + response['data'][0]['requestId']);
+                    res.send({
+                        data: preapproved_loan
+                    });
                 });
             });
         } else {
@@ -416,98 +424,84 @@ router.get('/delete/:id', function (req, res, next) {
 router.post('/offer/accept/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
     let offer = {},
+        otp = req.body.otp,
         id = req.params.id,
-        end = req.body.end,
-        bank = req.body.bank,
+        card = req.body.card,
         email = req.body.email,
-        start = req.body.start,
-        phone = req.body.phone,
-        amount = req.body.amount,
-        account = req.body.account,
         fullname = req.body.fullname,
         created_by = req.body.created_by,
         workflow_id = req.body.workflow_id,
+        authorization = req.body.authorization,
+        remitaTransRef = req.body.remitaTransRef,
         application_id = req.body.application_id,
         date = moment().utcOffset('+0100').format('YYYY-MM-DD h:mm:ss a'),
         query =  `UPDATE preapproved_loans Set ? WHERE ID = ${id}`,
         endpoint = `/core-service/post?query=${query}`,
-        url = `${HOST}${endpoint}`;
-    offer.status = 2;
-    offer.date_modified = date;
+        url = `${HOST}${endpoint}`,
+        validate_payload = {
+            id: id,
+            host: HOST,
+            remitaTransRef: remitaTransRef,
+            authParams: [
+                {
+                    param1: 'OTP',
+                    value: otp
+                },
+                {
+                    param2: 'CARD',
+                    value: card
+                }
+            ]
+        };
 
-    helperFunctions.setUpMandate({
-        payerName: fullname,
-        payerEmail: email,
-        payerPhone: phone,
-        payerBankCode: bank,
-        payerAccount: account,
-        amount: amount,
-        startDate: start,
-        endDate: end,
-        mandateType: 'DD',
-        maxNoOfDebits: '100'
-    }, function (payload, response) {
-        console.log(payload)
-        console.log(response)
-        if (response && response.mandateId) {
-            query =  'INSERT INTO remita_mandates Set ?';
-            endpoint = `/core-service/post?query=${query}`;
-            payload.mandateId = response.mandateId;
-            payload.applicationID = application_id;
-            url = `${HOST}${endpoint}`;
-            payload.date_created = date;
-            console.log(payload)
-            axios.post(url, payload)
-                .then(function (response___) {
-                    return console.log(response___)
-                    axios.post(url, offer)
-                        .then(function (response) {
-                            let application = {};
-                            query =  `UPDATE applications Set ? WHERE ID = ${application_id}`;
-                            endpoint = `/core-service/post?query=${query}`;
-                            url = `${HOST}${endpoint}`;
-                            application.status = 1;
-                            application.date_modified = date;
-                            axios.post(url, application)
-                                .then(function (response_) {
-                                    let mailOptions = {
-                                        from: 'no-reply Loanratus <applications@loan35.com>',
-                                        to: email,
-                                        subject: 'Loanratus Application Successful',
-                                        template: 'main',
-                                        context: {
-                                            name: fullname,
-                                            date: date
-                                        }
-                                    };
-                                    transporter.sendMail(mailOptions, function(error, info){
-                                        if(error)
+    helperFunctions.validateMandate(validate_payload, authorization, function (validation_response) {
+        if (validation_response.statuscode === '00') {
+            if (authorization === 'FORM' && !validation_response.isActive)
+                return res.send({status: 500, error: {status: 'Your direct debit mandate is still pending activation.'}, response: null});
+            offer.status = 2;
+            offer.date_modified = date;
+            axios.post(url, offer)
+                .then(function (preapproved_response) {
+                    let application = {};
+                    query =  `UPDATE applications Set ? WHERE ID = ${application_id}`;
+                    endpoint = `/core-service/post?query=${query}`;
+                    url = `${HOST}${endpoint}`;
+                    application.status = 1;
+                    application.date_modified = date;
+                    axios.post(url, application)
+                        .then(function (application_response) {
+                            let mailOptions = {
+                                from: 'no-reply Loanratus <applications@loan35.com>',
+                                to: email,
+                                subject: 'Loanratus Application Successful',
+                                template: 'main',
+                                context: {
+                                    name: fullname,
+                                    date: date
+                                }
+                            };
+                            transporter.sendMail(mailOptions, function(error, info){
+                                if(error)
+                                    res.send({status: 500, error: error, response: null});
+                                helperFunctions.getNextWorkflowProcess(false,workflow_id,false, function (process) {
+                                    query =  'INSERT INTO workflow_processes Set ?';
+                                    endpoint = `/core-service/post?query=${query}`;
+                                    url = `${HOST}${endpoint}`;
+                                    process.workflowID = workflow_id;
+                                    process.agentID = created_by;
+                                    process.applicationID = application_id;
+                                    process.date_created = date;
+                                    axios.post(url, process)
+                                        .then(function (process_response) {
+                                            res.send(process_response.data);
+                                        }, err => {
                                             res.send({status: 500, error: error, response: null});
-                                        helperFunctions.getNextWorkflowProcess(false,workflow_id,false, function (process) {
-                                            query =  'INSERT INTO workflow_processes Set ?';
-                                            endpoint = `/core-service/post?query=${query}`;
-                                            url = `${HOST}${endpoint}`;
-                                            process.workflowID = workflow_id;
-                                            process.agentID = created_by;
-                                            process.applicationID = application_id;
-                                            process.date_created = date;
-                                            axios.post(url, process)
-                                                .then(function (response__) {
-                                                    res.send(response__.data);
-                                                }, err => {
-                                                    res.send({status: 500, error: error, response: null});
-                                                })
-                                                .catch(function (error) {
-                                                    res.send({status: 500, error: error, response: null});
-                                                });
+                                        })
+                                        .catch(function (error) {
+                                            res.send({status: 500, error: error, response: null});
                                         });
-                                    });
-                                }, err => {
-                                    res.send({status: 500, error: error, response: null});
-                                })
-                                .catch(function (error) {
-                                    res.send({status: 500, error: error, response: null});
                                 });
+                            });
                         }, err => {
                             res.send({status: 500, error: error, response: null});
                         })
@@ -521,7 +515,7 @@ router.post('/offer/accept/:id', function (req, res, next) {
                     res.send({status: 500, error: error, response: null});
                 });
         } else {
-            res.send({status: 500, error: response, response: null});
+            res.send({status: 500, error: validation_response, response: null});
         }
     });
 });

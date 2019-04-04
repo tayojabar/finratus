@@ -89,10 +89,109 @@ functions.setUpMandate = function (payload, callback) {
         },
         (error, res, body) => {
             if (error) {
-                return callback(error);
+                return callback(payload, error);
             }
             callback(payload, functions.formatJSONP(body));
     })
+};
+
+functions.mandateStatus = function (payload, callback) {
+    payload.merchantId = process.env.REMITA_MERCHANT_ID;
+    payload.hash = SHA512(payload.mandateId + payload.merchantId + payload.requestId + process.env.REMITA_API_KEY);
+    request.post(
+        {
+            url: `${process.env.REMITA_BASE_URL}/status`,
+            body: payload,
+            json: true
+        },
+        (error, res, body) => {
+            if (error) {
+                return callback(error);
+            }
+            callback(functions.formatJSONP(body));
+        })
+};
+
+functions.padWithZeroes = function (n, width, z) {
+    z = z || '0';
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+};
+
+functions.remitaTimeStampFormat = function (date) {
+    let dd = functions.padWithZeroes(date.getDate(), 2),
+        mm = functions.padWithZeroes(date.getMonth() + 1, 2),
+        yyyy = date.getFullYear(),
+        hours = date.getUTCHours(),
+        minutes = date.getUTCMinutes(),
+        seconds = date.getUTCSeconds();
+    return yyyy+'-'+mm+'-'+dd+'T'+hours+':'+minutes+':'+seconds+'+000000';
+};
+
+functions.authorizeMandate = function (payload, callback) {
+    let headers = {},
+        date = new Date();
+    headers.REQUEST_ID = date.getTime();
+    headers.API_KEY = process.env.REMITA_API_KEY;
+    headers.MERCHANT_ID = process.env.REMITA_MERCHANT_ID;
+    headers.API_DETAILS_HASH = SHA512(headers.API_KEY + headers.REQUEST_ID + process.env.REMITA_API_TOKEN);
+    headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
+    request.post(
+        {
+            url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
+            headers: headers,
+            body: payload,
+            json: true
+        },
+        (error, res, body) => {
+            if (error) {
+                return callback(error);
+            }
+            return callback(functions.formatJSONP(body));
+        })
+};
+
+functions.validateMandate = function (payload, type, callback) {
+    let headers = {},
+        date = new Date();
+    headers.REQUEST_ID = date.getTime();
+    headers.API_KEY = process.env.REMITA_API_KEY;
+    headers.MERCHANT_ID = process.env.REMITA_MERCHANT_ID;
+    headers.API_DETAILS_HASH = SHA512(headers.API_KEY + headers.REQUEST_ID + process.env.REMITA_API_TOKEN);
+    headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
+    switch (type) {
+        case 'OTP': {
+            delete payload.id;
+            delete payload.host;
+            request.post(
+                {
+                    url: `${process.env.REMITA_BASE_URL}/validateAuthorization`,
+                    headers: headers,
+                    body: payload,
+                    json: true
+                },
+                (error, res, body) => {
+                    if (error) {
+                        return callback(error);
+                    }
+                    return callback(functions.formatJSONP(body));
+                });
+            break;
+        }
+        case 'FORM': {
+            request.get(
+                {
+                    url: `${payload.host}/client/mandate/get/${payload.id}`
+                },
+                (error, res, body) => {
+                    if (error) {
+                        return callback(error);
+                    }
+                    return callback((JSON.parse(body)).data);
+                });
+            break;
+        }
+    }
 };
 
 module.exports = functions;
