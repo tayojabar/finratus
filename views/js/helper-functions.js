@@ -1,3 +1,7 @@
+function getBaseUrl() {
+    return 'https://www.remitademo.net/remita/ecomm/mandate';
+}
+
 function numberToCurrencyformatter(value) {
     if (!value || value === null)
         return value;
@@ -140,4 +144,29 @@ function generateColour() {
     for (let i = 0; i < 6; i++)
         color += letters[(Math.floor(Math.random() * 16))];
     return color;
+}
+
+function creditCardFormat(value) {
+    if (!value)
+        return value;
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, ''),
+        matches = v.match(/\d{4,16}/g),
+        match = matches && matches[0] || '';
+    let parts = [];
+
+    for (let i=0; i<match.length; i+=4) {
+        parts.push(match.substring(i, i+4))
+    }
+
+    if (parts.length) {
+        return parts.join(' ')
+    } else {
+        return v
+    }
+}
+
+function integerFormat(value) {
+    if (!value && isNaN(value))
+        return value;
+    return value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
 }

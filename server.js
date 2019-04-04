@@ -47,7 +47,7 @@ let app = express(),
     settings = require('./routes/settings'),
     investment = require('./routes/investment'),
     core_service = require('./routes/service/core-service'),
-    client_service = require('./routes/service/custom-services/client-service'),
+    client_service = require('./routes/service/custom-services/client.service'),
     investment_product_service = require('./routes/service/custom-services/investment-product.service'),
     investment_service = require('./routes/service/custom-services/investment.service'),
     preapproved_loan_service = require('./routes/service/custom-services/preapproved-loan.service'),
@@ -193,8 +193,8 @@ app.use('/', index);
 app.use('/user', user);
 app.use('/settings', settings);
 app.use('/investment', investment);
+app.use('/client', client_service);
 app.use('/core-service', core_service);
-app.use('/client-service', client_service);
 app.use('/investment-service', investment_service);
 app.use('/investment-products', investment_product_service);
 app.use('/preapproved-loan', preapproved_loan_service);

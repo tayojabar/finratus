@@ -43,6 +43,12 @@
         .danger {
             color: red;
         }
+        iframe {
+            width: 100%;
+            min-height: 2300px;
+            border: none;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -155,13 +161,35 @@
                                                 </div>
                                             </div>
                                             <hr />
-                                            <div class="row">
-                                                <div class="col-sm-12 form-group">
-                                                    <button id="acceptApplication" class="btn btn-lg btn-success">Accept Offer <i class="fa fa-check"></i></button>
-                                                    <button id="declineApplication" class="btn btn-lg btn-danger">Decline Offer <i class="fa fa-remove"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="remitaDirectDebit" class="panel push-down">
+                                    <div class="panel-body">
+                                        <div class="example-box-wrapper">
+                                            <h6>Remita Direct Debit Setup</h6>
+                                            <hr>
+                                            <div class="row setup-content">
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">OTP</label><strong style="color:red"> *</strong>
+                                                    <input type="text" id="otp" class="form-control" required="required" placeholder="123456" maxlength="6">
+                                                    <small class="form-text text-muted">E.g. 1234</small>
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label class="form-control-label">Card</label><strong style="color:red"> *</strong>
+                                                    <input type="text" id="card" class="form-control" required="required" placeholder="0000 0000 0000 0000">
+                                                    <small class="form-text text-muted">E.g. 0441 2345 6789 0</small>
                                                 </div>
                                             </div>
+                                            <hr />
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 form-group">
+                                        <button id="setupMandate" class="btn btn-lg btn-primary">Proceed <i class="fa fa-forward"></i></button>
+                                        <button id="acceptApplication" class="btn btn-lg btn-success">Accept Offer <i class="fa fa-check"></i></button>
+                                        <button id="declineApplication" class="btn btn-lg btn-danger">Decline Offer <i class="fa fa-remove"></i></button>
                                     </div>
                                 </div>
                             </div>
