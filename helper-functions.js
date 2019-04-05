@@ -70,7 +70,6 @@ functions.formatJSONP = function (body) {
         const startPos = jsonpData.indexOf('({'),
             endPos = jsonpData.indexOf('})'),
             jsonString = jsonpData.substring(startPos+1, endPos+1);
-        console.log(jsonString);
         json = JSON.parse(jsonString);
     }
     return json;
@@ -145,7 +144,7 @@ functions.authorizeMandate = function (payload, callback) {
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
             headers: headers,
-            body: payload,
+            body: { mandateId: '210007740602', requestId: '1554469400455' },
             json: true
         },
         (error, res, body) => {
