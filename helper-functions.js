@@ -70,6 +70,7 @@ functions.formatJSONP = function (body) {
         const startPos = jsonpData.indexOf('({'),
             endPos = jsonpData.indexOf('})'),
             jsonString = jsonpData.substring(startPos+1, endPos+1);
+        console.log(jsonString)
         json = JSON.parse(jsonString);
     }
     return json;
@@ -98,6 +99,7 @@ functions.setUpMandate = function (payload, callback) {
 functions.mandateStatus = function (payload, callback) {
     payload.merchantId = process.env.REMITA_MERCHANT_ID;
     payload.hash = SHA512(payload.mandateId + payload.merchantId + payload.requestId + process.env.REMITA_API_KEY);
+    console.log(payload)
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/status`,
