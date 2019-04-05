@@ -380,7 +380,6 @@ router.get('/get/:id', function (req, res, next) {
             };
             helperFunctions.mandateStatus(status_payload, function (remita_mandate_status) {
                 query = `SELECT * FROM application_schedules WHERE applicationID = ${response['data'][0]['applicationID']} AND status = 1`;
-                console.log(query)
                 endpoint = '/core-service/get';
                 url = `${HOST}${endpoint}`;
                 axios.get(url, {
@@ -388,8 +387,6 @@ router.get('/get/:id', function (req, res, next) {
                         query: query
                     }
                 }).then(response_ => {
-                    console.log('here1')
-                    console.log(response_)
                     let preapproved_loan = (response.data === undefined) ? {} : response.data[0];
                     preapproved_loan.schedule = (response_.data === undefined) ? [] : response_.data;
                     preapproved_loan.remita = remita_mandate_status;
