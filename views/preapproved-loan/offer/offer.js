@@ -43,7 +43,8 @@
                     $('#email').text(preapproved_loan.email);
                     $('#phone').text(preapproved_loan.phone);
                     bank = ($.grep(banks, function (e) { return e.code === preapproved_loan.bank }))[0];
-                    preapproved_loan.bank_name = bank.name;
+                    if (bank)
+                        preapproved_loan.bank_name = bank.name;
                     $('#bank').text(preapproved_loan.bank_name);
                     $('#account').text(preapproved_loan.account);
                     validateProfile(preapproved_loan);
