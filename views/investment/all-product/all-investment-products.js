@@ -48,7 +48,6 @@ function onCloseDialog() {
 
 function onRequirement(value, id) {
     reqObject.productId = id;
-    console.log(id);
     $("#viewRequirementModalHeader").html(`${value} APPROVAL SETTINGS`);
 
     $('#list_user_roles').select2({
@@ -67,7 +66,6 @@ function onRequirement(value, id) {
                 };
             },
             processResults: function (data, params) {
-                console.log(data);
                 params.page = params.page || 1;
                 if (data.error) {
                     return {
@@ -95,7 +93,6 @@ function onRequirement(value, id) {
 
 function onReview(value, id) {
     reqObject.productId = id;
-    console.log(id);
     $("#viewReviewModalHeader").html(`${value} REVIEWER SETTINGS`);
 
     $('#list_review_roles').select2({
@@ -114,7 +111,6 @@ function onReview(value, id) {
                 };
             },
             processResults: function (data, params) {
-                console.log(data);
                 params.page = params.page || 1;
                 if (data.error) {
                     return {
@@ -159,7 +155,6 @@ function onPost(value, id) {
                 };
             },
             processResults: function (data, params) {
-                console.log(data);
                 params.page = params.page || 1;
                 if (data.error) {
                     return {
@@ -273,7 +268,6 @@ function bindDataTable() {
             {
                 width: "15%",
                 "mRender": function (data, type, full) {
-                    console.log(full);
                     let status_ = (full.status === 1) ? 0 : 1;
                     let status_label = (full.status === 1) ? "Deactivate" : "Activate";
                     let status_class = (full.status === 1) ? "active-status" :
@@ -286,7 +280,7 @@ function bindDataTable() {
                         More
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <button class="dropdown-item" type="button" href="./add-investment-products?id=${full.ID}">Edit</button> 
+                    <a class="dropdown-item" href="./add-investment-products?id=${full.ID}">Edit</a> 
                     <button type="button" class="dropdown-item ${status_class}" onclick="updateStatus(${full.ID},${status_})">${status_label}</button>
                     <button class="dropdown-item" type="button" data-toggle="modal" data-target="#viewRequirementModal" onclick="onRequirement('${full.name}','${full.ID}')">Set Approval</button>
                     <button class="dropdown-item" type="button" data-toggle="modal" data-target="#viewReviewModal" onclick="onReview('${full.name}','${full.ID}')">Set Reviewer</button>
@@ -304,7 +298,6 @@ function ceateRequirement() {
         reqObject.operationId = $("#list_operations").val();
         reqObject.roleId = JSON.stringify($("#list_user_roles").on('select2:select').val());
         reqObject.createdBy = (JSON.parse(localStorage.getItem("user_obj"))).ID;
-        console.log($("#list_user_roles").on('select2:select').val());
         $.ajax({
             url: `investment-products/requirements`,
             'type': 'post',
@@ -334,7 +327,6 @@ function ceateRequirement() {
             'type': 'post',
             'data': reqObject,
             'success': function (data) {
-                console.log(data);
                 if (data.status === undefined) {
                     $('#wait').hide();
                     $("#list_user_roles").val(null).trigger('change');
@@ -365,13 +357,11 @@ function ceateReview() {
             'type': 'post',
             'data': reqObject,
             'success': function (data) {
-                console.log(data);
                 if (data.status === undefined) {
                     $('#wait').hide();
                     $("#list_review_roles").val(null).trigger('change');
                     $("#list_operations_review").val('');
                     swal('Reviewer set-up successfully!', '', 'success');
-                    console.log(reqObject);
                     getProductReview(reqObject.productId);
                 } else {
                     $('#wait').hide();
@@ -379,7 +369,6 @@ function ceateReview() {
                 }
             },
             'error': function (err) {
-                console.log(err);
                 $('#wait').hide();
                 swal('Oops! An error occurred while setting reviewer', '', 'error');
             }
@@ -392,7 +381,6 @@ function ceateReview() {
             'type': 'post',
             'data': reqObject,
             'success': function (data) {
-                console.log(data);
                 if (data.status === undefined) {
                     $('#wait').hide();
                     $("#list_review_roles").val(null).trigger('change');
@@ -423,13 +411,11 @@ function ceatePost() {
             'type': 'post',
             'data': reqObject,
             'success': function (data) {
-                console.log(data);
                 if (data.status === undefined) {
                     $('#wait').hide();
                     $("#list_post_roles").val(null).trigger('change');
                     $("#list_operations_post").val('');
                     swal('Post role(s) set-up successfully!', '', 'success');
-                    console.log(reqObject);
                     getProductPost(reqObject.productId);
                 } else {
                     $('#wait').hide();
@@ -437,7 +423,6 @@ function ceatePost() {
                 }
             },
             'error': function (err) {
-                console.log(err);
                 $('#wait').hide();
                 swal('Oops! An error occurred while setting reviewer', '', 'error');
             }
@@ -450,7 +435,6 @@ function ceatePost() {
             'type': 'post',
             'data': reqObject,
             'success': function (data) {
-                console.log(data);
                 if (data.status === undefined) {
                     $('#wait').hide();
                     $("#list_post_roles").val(null).trigger('change');
@@ -562,7 +546,6 @@ function getProductRequirement(id) {
 }
 
 function getProductReview(id) {
-    console.log(reqObject);
     table2 = $('#product_req_table_review').DataTable({
         dom: 'Blfrtip_',
         bProcessing: true,
@@ -600,7 +583,6 @@ function getProductReview(id) {
                 },
                 success: function (data) {
                     roleObject = data.data;
-                    console.log(roleObject);
                     fnCallback(data)
                 }
             });
@@ -653,7 +635,6 @@ function getProductReview(id) {
 }
 
 function getProductPost(id) {
-    console.log(reqObject);
     table2 = $('#product_req_table_post').DataTable({
         dom: 'Blfrtip_',
         bProcessing: true,
@@ -691,7 +672,6 @@ function getProductPost(id) {
                 },
                 success: function (data) {
                     roleObject = data.data;
-                    console.log(roleObject);
                     fnCallback(data)
                 }
             });
@@ -745,20 +725,16 @@ function getProductPost(id) {
 
 $("#list_operations").on('change',
     function () {
-        console.log($("#list_user_roles").on('select2:select').val());
         $.ajax({
             url: `investment-products/required-roles?productId=${reqObject.productId}&operationId=${$("#list_operations").val()}`,
             'type': 'get',
             'success': function (data) {
-                console.log(data);
-                console.log(`investment-products/required-roles?productId=${reqObject.productId}&operationId=${$("#list_operations").val()}`);
                 if (data.status === undefined) {
                     $('#wait').hide();
                     $("#list_user_roles").val(null).trigger('change');
                     data.forEach(element => {
                         $("#list_user_roles").append(new Option(element.text, element.id, true, true)).trigger('change');
                     });
-                    console.log(data);
                     reqObject.ID = data[0].reqId;
                     $("#btn_requirement").html('Update Approval');
                 } else {
@@ -785,7 +761,6 @@ function onRemoveItemReq(value) {
                     url: `investment-products/remove-requirements/${value}`,
                     'type': 'get',
                     'success': function (data) {
-                        console.log(data);
                         if (data.status === undefined) {
                             $('#wait').hide();
                             swal('Approval remove successfully!', '', 'success');
@@ -821,7 +796,6 @@ function onRemoveItemReview(value) {
                     url: `investment-products/remove-requirements/${value}`,
                     'type': 'get',
                     'success': function (data) {
-                        console.log(data);
                         if (data.status === undefined) {
                             $('#wait').hide();
                             swal('Approval remove successfully!', '', 'success');
@@ -857,7 +831,6 @@ function onRemoveItemPost(value) {
                     url: `investment-products/remove-posts/${value}`,
                     'type': 'get',
                     'success': function (data) {
-                        console.log(data);
                         if (data.status === undefined) {
                             $('#wait').hide();
                             swal('Post role(s) remove successfully!', '', 'success');
@@ -881,12 +854,10 @@ function onRemoveItemPost(value) {
 
 $('#product_req_table tbody').on('click', '.dropdown-item', function () {
     selectedRow = table2.row($(this).parents('tr')).data();
-    console.log(selectedRow);
 });
 
 $('#product_req_table_review tbody').on('click', '.dropdown-item', function () {
     selectedRow = table2.row($(this).parents('tr')).data();
-    console.log(selectedRow);
 });
 
 
@@ -902,7 +873,6 @@ $('#product_req_table tbody').on('click', '.custom-control-input', function () {
             isAllRoles: checkboxStatus
         },
         'success': function (data) {
-            console.log(data);
             if (data.status === undefined) {
                 $('#wait').hide();
                 swal(`Approval criteria updated updated successfully!. ${(checkboxStatus===1)?'All role(s) must approve':'Either one of the role(s) must approve'} `, '', 'success');
@@ -931,7 +901,6 @@ function onSelectedPariority(operationId) {
     movedToItems.map(x => {
         movedFromItems = movedFromItems.filter(y => y.id !== x.id);
     });
-    console.log(movedFromItems, movedToItems);
     $("#lstRoles_1").html('');
     movedFromItems.map(x => {
         $("#lstRoles_1").append(`
@@ -959,7 +928,6 @@ function onSelectedReviewPariority(operationId) {
     movedToItems.map(x => {
         movedFromItems = movedFromItems.filter(y => y.id !== x.id);
     });
-    console.log(movedFromItems, movedToItems);
     $("#lstRolesReview_1").html('');
     movedFromItems.map(x => {
         $("#lstRolesReview_1").append(`
@@ -987,7 +955,6 @@ function onSelectedReviewPost(operationId) {
     movedToItems.map(x => {
         movedFromItems = movedFromItems.filter(y => y.id !== x.id);
     });
-    console.log(movedFromItems, movedToItems);
     $("#lstRolesPost_1").html('');
     movedFromItems.map(x => {
         $("#lstRolesPost_1").append(`
@@ -1006,7 +973,6 @@ function onSelectedReviewPost(operationId) {
 
 
 function onChoosePariority(id) {
-    console.log(id);
     let item = movedFromItems.filter(x => x.id === id);
     movedToItems.push(item[0]);
     movedFromItems = movedFromItems.filter(x => x.id !== id);
@@ -1018,7 +984,6 @@ function onChoosePariority(id) {
     });
 
     $("#lstRoles_2").html('');
-    console.log(movedToItems);
     movedToItems.map(x => {
         $("#lstRoles_2").append(`
             <button type="button" id="${x.id}" class="list-group-item list-group-item-action" onclick="onRemovePariority(${x.id})">${x.name}</button>
@@ -1029,7 +994,6 @@ function onChoosePariority(id) {
 }
 
 function onChooseReviewPariority(id) {
-    console.log(id);
     let item = movedFromItems.filter(x => x.id === id);
     movedToItems.push(item[0]);
     movedFromItems = movedFromItems.filter(x => x.id !== id);
@@ -1041,7 +1005,6 @@ function onChooseReviewPariority(id) {
     });
 
     $("#lstRolesReview_2").html('');
-    console.log(movedToItems);
     movedToItems.map(x => {
         $("#lstRolesReview_2").append(`
             <button type="button" id="${x.id}" class="list-group-item list-group-item-action" onclick="onRemoveReviewPariority(${x.id})">${x.name}</button>
@@ -1063,7 +1026,6 @@ function onChoosePostPariority(id) {
     });
 
     $("#lstRolesPost_2").html('');
-    console.log(movedToItems);
     movedToItems.map(x => {
         $("#lstRolesPost_2").append(`
             <button type="button" id="${x.id}" class="list-group-item list-group-item-action" onclick="onRemoveReviewPariority(${x.id})">${x.name}</button>
@@ -1074,7 +1036,6 @@ function onChoosePostPariority(id) {
 }
 
 function onRemovePariority(id) {
-    console.log(id);
     let item = movedToItems.filter(x => x.id === id);
     movedFromItems.push(item[0]);
     movedToItems = movedToItems.filter(x => x.id !== id);
@@ -1096,7 +1057,6 @@ function onRemovePariority(id) {
 }
 
 function onRemoveReviewPariority(id) {
-    console.log(id);
     let item = movedToItems.filter(x => x.id === id);
     movedFromItems.push(item[0]);
     movedToItems = movedToItems.filter(x => x.id !== id);
@@ -1113,12 +1073,10 @@ function onRemoveReviewPariority(id) {
             <button type="button" id="${x.id}" class="list-group-item list-group-item-action" onclick="onRemoveReviewPariority(${x.id})">${x.name}</button>
         `);
     });
-    console.log(selectedRow);
     setReviewPriority(selectedRow.ID, movedToItems);
 }
 
 function onRemovePostPariority(id) {
-    console.log(id);
     let item = movedToItems.filter(x => x.id === id);
     movedFromItems.push(item[0]);
     movedToItems = movedToItems.filter(x => x.id !== id);
@@ -1135,12 +1093,10 @@ function onRemovePostPariority(id) {
             <button type="button" id="${x.id}" class="list-group-item list-group-item-action" onclick="onRemovePostPariority(${x.id})">${x.name}</button>
         `);
     });
-    console.log(selectedRow);
     setPostPriority(selectedRow.ID, movedToItems);
 }
 
 function setPriority(id, priority) {
-    console.log(selectedRow);
     $.ajax({
         url: `/investment-products/update-approval/${id}`,
         'type': 'post',
@@ -1148,7 +1104,6 @@ function setPriority(id, priority) {
             priority: JSON.stringify(priority)
         },
         'success': function (data) {
-            console.log(data);
             if (data.status === undefined) {
                 $('#wait').hide();
                 swal(`Approval priority updated updated successfully`, '', 'success');
@@ -1165,7 +1120,6 @@ function setPriority(id, priority) {
 }
 
 function setReviewPriority(id, priority) {
-    console.log(selectedRow);
     $.ajax({
         url: `/investment-products/update-review-priority/${id}`,
         'type': 'post',
@@ -1173,7 +1127,6 @@ function setReviewPriority(id, priority) {
             priority: JSON.stringify(priority)
         },
         'success': function (data) {
-            console.log(data);
             if (data.status === undefined) {
                 $('#wait').hide();
                 swal(`Review priority updated updated successfully`, '', 'success');
@@ -1183,7 +1136,6 @@ function setReviewPriority(id, priority) {
             }
         },
         'error': function (err) {
-            console.log(err);
             $('#wait').hide();
             swal('Oops! An error occurred while updating review priority', '', 'error');
         }
@@ -1191,7 +1143,6 @@ function setReviewPriority(id, priority) {
 }
 
 function setPostPriority(id, priority) {
-    console.log(selectedRow);
     $.ajax({
         url: `/investment-products/update-post-priority/${id}`,
         'type': 'post',
@@ -1199,7 +1150,6 @@ function setPostPriority(id, priority) {
             priority: JSON.stringify(priority)
         },
         'success': function (data) {
-            console.log(data);
             if (data.status === undefined) {
                 $('#wait').hide();
                 swal(`Post priority updated updated successfully`, '', 'success');
@@ -1209,7 +1159,6 @@ function setPostPriority(id, priority) {
             }
         },
         'error': function (err) {
-            console.log(err);
             $('#wait').hide();
             swal('Oops! An error occurred while updating post priority', '', 'error');
         }
