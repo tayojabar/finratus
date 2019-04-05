@@ -50,6 +50,8 @@ function loadMenus() {
             let main = $.grep(modules, function (e) {
                 return e.id === parseInt(k.main_menu);
             });
+            console.log(k)
+            console.log(main)
             if (main && main[0])
                 $('#' + $(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
         } else if (k.menu_name === 'Main Menu') {
