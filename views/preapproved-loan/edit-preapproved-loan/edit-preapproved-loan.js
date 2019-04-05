@@ -47,7 +47,7 @@
                         <p>3. Client earns ₦${numberToCurrencyformatter(recommendation.salary || 0)} monthly.</p>
                         <p>4. Client has borrowed an average loan of ₦${numberToCurrencyformatter(recommendation.average_loan)}.</p>
                         <p>5. Client is an active customer for ${numberToCurrencyformatter(recommendation.duration)} month(s).</p>
-                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(recommendation.loan_amount)} to be repaid over 12 month(s).</p>
+                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(recommendation.loan_amount)} to be repaid over ${numberToCurrencyformatter(recommendation.tenor)} month(s).</p>
                     `);
                 }
             }

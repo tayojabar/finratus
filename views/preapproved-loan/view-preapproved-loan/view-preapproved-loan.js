@@ -81,7 +81,7 @@
                         <p>3. Client earns ₦${numberToCurrencyformatter(preapproved_loan.salary || 0)} monthly.</p>
                         <p>4. Client has borrowed an average loan of ₦${numberToCurrencyformatter(preapproved_loan.average_loan)}.</p>
                         <p>5. Client is an active customer for ${numberToCurrencyformatter(preapproved_loan.offer_duration)} month(s).</p>
-                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.offer_loan_amount)} to be repaid over 12 month(s).</p>
+                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.offer_loan_amount)} to be repaid over ${numberToCurrencyformatter(recommendation.tenor)} month(s).</p>
                     `);
                     if (preapproved_loan.schedule && preapproved_loan.schedule[0]){
                         displaySchedule(preapproved_loan.schedule);
