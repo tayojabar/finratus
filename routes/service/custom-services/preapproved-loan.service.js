@@ -364,6 +364,7 @@ router.get('/get', function (req, res, next) {
 
 router.get('/get/:id', function (req, res, next) {
     const HOST = `${req.protocol}://${req.get('host')}`;
+    console.log('here')
     let query = `SELECT p.*, c.fullname, c.email, c.salary, c.phone, c.bank, c.account, r.mandateId, r.requestId, r.remitaTransRef FROM preapproved_loans p INNER JOIN clients c ON p.userID = c.ID 
                 LEFT JOIN remita_mandates r ON r.applicationID = p.applicationID WHERE (p.ID = '${decodeURIComponent(req.params.id)}' OR p.hash = '${decodeURIComponent(req.params.id)}')`,
         endpoint = '/core-service/get',
@@ -378,7 +379,7 @@ router.get('/get/:id', function (req, res, next) {
                 mandateId: response['data'][0]['mandateId'],
                 requestId: response['data'][0]['requestId']
             };
-            console.log('here')
+            console.log('here1')
             console.log(response)
             helperFunctions.mandateStatus(status_payload, function (remita_mandate_status) {
                 query = `SELECT * FROM application_schedules WHERE applicationID = ${response['data'][0]['applicationID']} AND status = 1`;
