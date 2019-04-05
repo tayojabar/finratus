@@ -99,7 +99,8 @@ functions.setUpMandate = function (payload, callback) {
 functions.mandateStatus = function (payload, callback) {
     payload.merchantId = process.env.REMITA_MERCHANT_ID;
     payload.hash = SHA512(payload.mandateId + payload.merchantId + payload.requestId + process.env.REMITA_API_KEY);
-    console.log(payload)
+    if (!payload.mandateId || !payload.requestId)
+        return callback({});
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/status`,
@@ -110,7 +111,6 @@ functions.mandateStatus = function (payload, callback) {
             if (error) {
                 return callback(error);
             }
-            console.log(body)
             callback(functions.formatJSONP(body));
         })
 };
