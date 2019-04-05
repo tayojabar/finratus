@@ -147,12 +147,7 @@ functions.authorizeMandate = function (payload, callback) {
             json: true
         },
         (error, res, body) => {
-            console.log('Error=================')
-            console.log(error)
-            console.log('Body==================')
-            console.log(body)
-            console.log('Res===================')
-            console.log(res)
+            console.log(body);
             if (error) {
                 return callback(error);
             }
