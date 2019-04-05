@@ -437,60 +437,64 @@ function set_investment_product() {
     product_obj.min_days_termination_charge = $('#min_days_termination_charge').val();
     product_obj.opt_on_min_days_termination = $('#opt_on_min_days_termination').val();
     product_obj.createdBy = (JSON.parse(localStorage.getItem("user_obj"))).ID;
-
-    if (product_obj.ID === undefined) {
-        $.ajax({
-            'url': '/investment/products',
-            'type': 'post',
-            'data': product_obj,
-            'success': function (data) {
-                if (data.status === 200) {
-                    $('#wait').hide();
-                    swal('Investment Product created successfully!', '', 'success');
-                    var url = "./all-investment-products";
-                    $(location).attr('href', url);
-                    $('input').val("");
-                    $('input').attr("checked", false);
-                } else {
+    if (product_obj.code !== '' && product_obj.name !== '' && product_obj.investment_max !== '' && product_obj.investment_min && product_obj.minimum_bal !== '') {
+        if (product_obj.ID === undefined) {
+            $.ajax({
+                'url': '/investment/products',
+                'type': 'post',
+                'data': product_obj,
+                'success': function (data) {
+                    if (data.status === 200) {
+                        $('#wait').hide();
+                        swal('Investment Product created successfully!', '', 'success');
+                        var url = "./all-investment-products";
+                        $(location).attr('href', url);
+                        $('input').val("");
+                        $('input').attr("checked", false);
+                    } else {
+                        $('#wait').hide();
+                        swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
+                            '', 'error');
+                    }
+                },
+                'error': function (err) {
                     $('#wait').hide();
                     swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
                         '', 'error');
                 }
-            },
-            'error': function (err) {
-                $('#wait').hide();
-                swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
-                    '', 'error');
-            }
-        });
-    } else {
-        product_obj.histories.push({
-            createdBy: (JSON.parse(localStorage.getItem("user_obj"))).ID,
-            rate: product_obj.interest_rate
-        });
-        $.ajax({
-            url: `/investment/products/${product_obj.ID}`,
-            'type': 'post',
-            'data': product_obj,
-            'success': function (data) {
-                if (data.status === 200) {
-                    $('#wait').hide();
-                    swal('Investment Product updated successfully!', '', 'success');
-                    var url = "./all-investment-products";
-                    $(location).attr('href', url);
-                    $('input').val("");
-                    $('input').attr("checked", false);
-                } else {
+            });
+        } else {
+            product_obj.histories.push({
+                createdBy: (JSON.parse(localStorage.getItem("user_obj"))).ID,
+                rate: product_obj.interest_rate
+            });
+            $.ajax({
+                url: `/investment/products/${product_obj.ID}`,
+                'type': 'post',
+                'data': product_obj,
+                'success': function (data) {
+                    if (data.status === 200) {
+                        $('#wait').hide();
+                        swal('Investment Product updated successfully!', '', 'success');
+                        var url = "./all-investment-products";
+                        $(location).attr('href', url);
+                        $('input').val("");
+                        $('input').attr("checked", false);
+                    } else {
+                        $('#wait').hide();
+                        swal('Oops! An error occurred while updating Investment Product; Required field(s) missing',
+                            '', 'error');
+                    }
+                },
+                'error': function (err) {
                     $('#wait').hide();
                     swal('Oops! An error occurred while updating Investment Product; Required field(s) missing',
                         '', 'error');
                 }
-            },
-            'error': function (err) {
-                $('#wait').hide();
-                swal('Oops! An error occurred while updating Investment Product; Required field(s) missing',
-                    '', 'error');
-            }
-        });
+            });
+        }
+    } else {
+        swal('Required field(s) missing',
+            '', 'error');
     }
 }

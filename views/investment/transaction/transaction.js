@@ -114,18 +114,23 @@ function bindDataTable(id) {
             {
                 width: "auto",
                 "mRender": function (data, type, full) {
-                    return `<span style="color:green">${(full.is_credit === 1) ? formater(full.amount.split(',').join('')) : ""}</span>`;
+                    return `<span style="color:green">${(full.is_credit === 1) ? 
+                        (formater(full.amount.split(',').join('')).includes('.')?formater(full.amount.split(',').join('')):
+                        formater(full.amount.split(',').join(''))+'.00') : ""}</span>`;
                 }
             }, {
                 width: "auto",
                 "mRender": function (data, type, full) {
-                    return `<span style="color:red">${(full.is_credit === 0) ? formater(full.amount.split(',').join('')) : ""}</span>`;
+                    return `<span style="color:red;float: right">${(full.is_credit === 0) ? 
+                        (formater(full.amount.split(',').join('')).includes('.')?formater(full.amount.split(',').join('')):
+                        formater(full.amount.split(',').join(''))+'.00') : ""}</span>`;
                 }
             },
             {
                 width: "auto",
                 "mRender": function (data, type, full) {
-                    return `<span><strong>${formater(full.balance.split(',').join(''))}</strong></span>`;
+                    return `<span><strong>${(formater(full.balance.split(',').join('')).includes('.')?formater(full.balance.split(',').join('')):
+                        formater(full.balance.split(',').join(''))+'.00')}</strong></span>`;
                 }
             },
             {
@@ -512,6 +517,7 @@ function onPost(value, approvedId, txnId) {
         isCredit: data_row.is_credit,
         amount: data_row.amount,
         balance: data_row.balance,
+        investmentId: data_row.investmentId,
         userId: (JSON.parse(localStorage.getItem("user_obj"))).ID
     }
     $.ajax({
