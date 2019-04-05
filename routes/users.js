@@ -2801,9 +2801,33 @@ users.post('/forgot-password', function(req, res) {
     });
 });
 
-///////////////////////////////////////////////////////////////// REPORTS
+///////////////////////////////////////////////////////////////// REPORTS //////////////////////////////////////////////////////
 
-
+/* GET Client Loan Details */
+users.get('/client-loan-details/:id', function(req, res, next) {
+    let id = req.params.id;
+    let query, query1, query2;
+    query = 'select sum(loan_amount) from applications where userID = 5 and not (status = 0 and close_status = 0)'
+    query1 = ''
+    var items = {}; var num;
+    var den;
+    db.query(query, function (error, results, fields) {
+        items.total_loans = results;
+        db.query(query1, function (error, results, fields) {
+            items.loan_officers = results;
+            db.query(query2, function (error, results, fields) {
+                items.active_loans = results;
+                db.query(query3, function (error, results, fields) {
+                    den = parseInt(items.loan_officers[0]["loan_officers"]);
+                    num = parseInt(results[0]["apps"])
+                    avg_loan_per_officers = parseInt(num/den)
+                    items.avg_loan_per_officers = avg_loan_per_officers;
+                    res.send({"status": 200, "response": items})
+                });
+            });
+        });
+    });
+});
 
 /* GET Report Cards. */
 users.get('/report-cards', function(req, res, next) {
