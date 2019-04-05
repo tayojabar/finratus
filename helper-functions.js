@@ -142,7 +142,11 @@ functions.authorizeMandate = function (payload, callback) {
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
-            headers: headers,
+            headers: { REQUEST_ID: 1554481941993,
+                    API_KEY: 'Q1dHREVNTzEyMzR8Q1dHREVNTw==',
+                    MERCHANT_ID: '27768931',
+                    API_DETAILS_HASH: '3289ac8215f96b257f99af145923607e522a77093dd3c4fa62f8fc170b017cc18b1cf0a0847592ec7684465bc6260262839d216ed69e65f1905d905f8b8fd061',
+                    REQUEST_TS: '2019-04-05T16:32:21+000000' },
             body: payload,
             json: true
         },
