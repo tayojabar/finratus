@@ -326,11 +326,12 @@ function createClient(){
                 window.location.href = "./add-client";
             }
             else if(test.status == 500){
-                swal("Please recheck entered values");
-                window.location.href = "./add-client";
+                swal('Failed!', "Unable to Create Client.", 'error');
+                // window.location.href = "./add-client";
             }
             else{
-                swal("Client Information Registered!");
+                console.log('Done');
+                swal('Success!', "Client Information Registered!", 'success');
                 window.location.href = "./add-client";
             }
         }
