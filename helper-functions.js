@@ -142,7 +142,7 @@ functions.authorizeMandate = function (payload, callback) {
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
-            // headers: headers,
+            headers: headers,
             body: payload,
             json: true
         },
