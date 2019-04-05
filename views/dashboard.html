@@ -28,12 +28,7 @@
 </head>
 <body>
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
-        jQuery(document).ready(function($){countVehicles(); countOwners(); countCarModels(); countUsers();
-        notifications();
-        loan_notifications();
-        });
     </script>
         <!-- Left Panel -->
 
@@ -184,6 +179,7 @@
     <div id="panels" include-html="/includes/notifications.html"></div>
 
     <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
@@ -207,6 +203,10 @@
 
 
     <script type="text/javascript">
+        jQuery(document).ready(function($){countVehicles(); countOwners(); countCarModels(); countUsers();
+            notifications();
+//            loan_notifications();
+        });
 //
         let mains;
 
