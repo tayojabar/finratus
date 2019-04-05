@@ -234,7 +234,7 @@ function getBanks(){
             let bank = $("[id=bank]");
             bank.empty().append('<option id="0" value ="0">-- Select a Bank --</option>');
             $.each(response, function (key, val) {
-                $("#bank").append('<option value = "' + val.code + '" id="' + val.code + '">' + val.name + '</option>');
+                $("#bank").append(`<option value = "${val.code}" id="${val.code}">${val.name} (${val.authorization})</option>`);
             });
         }
     });
