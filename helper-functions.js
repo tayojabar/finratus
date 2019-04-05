@@ -131,7 +131,10 @@ functions.remitaTimeStampFormat = function (date) {
 };
 
 functions.authorizeMandate = function (data, callback) {
-    let payload = {},
+    let payload = {
+            mandateId: data.mandateId,
+            requestId: data.requestId
+        },
         headers = {},
         date = new Date();
     headers.REQUEST_ID = date.getTime();
@@ -139,9 +142,8 @@ functions.authorizeMandate = function (data, callback) {
     headers.MERCHANT_ID = process.env.REMITA_MERCHANT_ID;
     headers.API_DETAILS_HASH = SHA512(headers.API_KEY + headers.REQUEST_ID + process.env.REMITA_API_TOKEN);
     headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
-    console.log(typeof data)
-    payload = data;
-    console.log(typeof payload)
+    console.log(data)
+    console.log(payload)
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
