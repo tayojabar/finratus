@@ -1178,7 +1178,22 @@ users.get('/user-dets/:id', function(req, res, next) {
 });
 
 users.get('/client-dets/:id', function(req, res, next) {
-    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer, (select branch_name from branches b where b.ID = clients.branch) as branchname, (SELECT sum(amount) FROM escrow WHERE clientID=clients.ID AND status=1) AS escrow   from clients where id = ? order by id desc ';
+    let query = 'SELECT *, (select fullname from users u where u.ID = clients.loan_officer) as officer, \n' +
+        '(select branch_name from branches b where b.ID = clients.branch) as branchname, \n' +
+        '(SELECT sum(amount) FROM escrow WHERE clientID=clients.ID AND status=1) AS escrow ,  \n' +
+        '(select sum(loan_amount) from applications where userID = clients.ID and not (status = 0 and close_status = 0)) as total_loans, \n'+
+        '(select \n' +
+        '(select sum(loan_amount) from applications where userID = clients.ID and not (status = 0 and close_status = 0)) - \n' +
+        'sum(payment_amount)\n' +
+        'from schedule_history\n' +
+        'where applicationID in (select id from applications where userid = clients.ID and not (status = 0 and close_status = 0))\n' +
+        'and status = 1) as total_balance, \n'+
+        '(select \n' +
+        'sum(interest_amount)\n' +
+        'from schedule_history\n' +
+        'where applicationID in (select id from applications where userid = clients.ID and not (status = 0 and close_status = 0))\n' +
+        'and status = 1) as total_interests\n'+
+        'from clients where id = ? order by id desc \n';
     db.query(query, req.params.id, function (error, results, fields) {
         if(error){
             res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
@@ -2807,23 +2822,26 @@ users.post('/forgot-password', function(req, res) {
 users.get('/client-loan-details/:id', function(req, res, next) {
     let id = req.params.id;
     let query, query1, query2;
-    query = 'select sum(loan_amount) from applications where userID = 5 and not (status = 0 and close_status = 0)'
-    query1 = ''
-    var items = {}; var num;
-    var den;
+    query = 'select sum(loan_amount) as total_loans from applications where userID = '+id+' and not (status = 0 and close_status = 0)'
+    query1 = 'select \n' +
+        '(select sum(loan_amount) from applications where userID = '+id+' and not (status = 0 and close_status = 0)) - \n' +
+        'sum(payment_amount) as total_balance\n' +
+        'from schedule_history\n' +
+        'where applicationID in (select id from applications where userid = '+id+' and not (status = 0 and close_status = 0))\n' +
+        'and status = 1'
+    query2 = 'select \n' +
+        'sum(interest_amount) as total_interests\n' +
+        'from schedule_history\n' +
+        'where applicationID in (select id from applications where userid = '+id+' and not (status = 0 and close_status = 0))\n' +
+        'and status = 1'
+    var items = {};
     db.query(query, function (error, results, fields) {
         items.total_loans = results;
         db.query(query1, function (error, results, fields) {
-            items.loan_officers = results;
+            items.total_balance = results;
             db.query(query2, function (error, results, fields) {
-                items.active_loans = results;
-                db.query(query3, function (error, results, fields) {
-                    den = parseInt(items.loan_officers[0]["loan_officers"]);
-                    num = parseInt(results[0]["apps"])
-                    avg_loan_per_officers = parseInt(num/den)
-                    items.avg_loan_per_officers = avg_loan_per_officers;
-                    res.send({"status": 200, "response": items})
-                });
+                items.total_interest = results;
+                res.send({"status": 200, "response": items})
             });
         });
     });

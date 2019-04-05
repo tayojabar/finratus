@@ -157,6 +157,9 @@ function populateCards(data) {
     $('#client_id').html(padWithZeroes(obj.ID, 6));
     $('#loan_officer').html(obj.officer);
     $('#branch').html(obj.branchname);
+    $('#total_loans').html(formatter.format(parseFloat(obj.total_loans)));
+    $('#total_balance').html(formatter.format(parseFloat(obj.total_balance)));
+    $('#total_interest').html(formatter.format(parseFloat(obj.total_interests)));
     let pbody = $("#personal");
     let ebody = $("#employment");
     let rbody = $("#reference"),
