@@ -233,8 +233,8 @@
                                     generateMandateForm(preapproved_loan);
                                 }
                             } else {
-                                console.log(data);
-                                notification('No internet connection','','error');
+                                const error = data.error.status || 'No internet connection';
+                                notification(error,'','error');
                             }
                         },
                         'error': function (err) {
