@@ -141,8 +141,8 @@ functions.authorizeMandate = function (payload, callback) {
     headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
     request.post(
         {
-            url: `${process.env.REMITA_BASE_URL}/validateAuthorization`,
-            headers: headers,
+            url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
+            // headers: headers,
             body: payload,
             json: true
         },
