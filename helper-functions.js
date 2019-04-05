@@ -141,37 +141,37 @@ functions.authorizeMandate = function (payload, callback) {
     headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
     console.log(headers)
     console.log(payload)
+    // request.post(
+    //     {
+    //         url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
+    //         headers: headers,
+    //         body: payload,
+    //         json: true
+    //     },
+    //     (error, res, body) => {
+    //         console.log(body);
+    //         if (error) {
+    //             return callback(error);
+    //         }
+    //         return callback(functions.formatJSONP(body));
+    //     })
+
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
-            headers: headers,
-            body: payload,
+            headers: { REQUEST_ID: 1554469402217,
+                API_KEY: 'Q1dHREVNTzEyMzR8Q1dHREVNTw==',
+                MERCHANT_ID: '27768931',
+                API_DETAILS_HASH: 'ce731a31c491631dfb0feb6aadd62cd1f0a0f70084c56c99ee8c6d6f7584ab48ff8dc885c48ad1318a937c086d72584c2487d43fbd8f3e7797222a6286bec3d9',
+                REQUEST_TS: '2019-04-05T13:3:22+000000' },
+            body: { mandateId: '210007740602', requestId: '1554469400455' },
             json: true
         },
         (error, res, body) => {
+            console.log(error);
             console.log(body);
-            if (error) {
-                return callback(error);
-            }
-            return callback(functions.formatJSONP(body));
-        })
+        });
 };
-
-request.post(
-    {
-        url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
-        headers: { REQUEST_ID: 1554469402217,
-            API_KEY: 'Q1dHREVNTzEyMzR8Q1dHREVNTw==',
-            MERCHANT_ID: '27768931',
-            API_DETAILS_HASH: 'ce731a31c491631dfb0feb6aadd62cd1f0a0f70084c56c99ee8c6d6f7584ab48ff8dc885c48ad1318a937c086d72584c2487d43fbd8f3e7797222a6286bec3d9',
-            REQUEST_TS: '2019-04-05T13:3:22+000000' },
-        body: { mandateId: '210007740602', requestId: '1554469400455' },
-        json: true
-    },
-    (error, res, body) => {
-        console.log(error);
-        console.log(body);
-    });
 
 functions.validateMandate = function (payload, type, callback) {
     let headers = {},
