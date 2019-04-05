@@ -108,6 +108,7 @@ functions.mandateStatus = function (payload, callback) {
             if (error) {
                 return callback(error);
             }
+            console.log(body)
             callback(functions.formatJSONP(body));
         })
 };
