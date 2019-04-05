@@ -190,6 +190,9 @@ function bindDataTable() {
         ],
         fnServerData: function (sSource, aoData, fnCallback) {
             let tableHeaders = [{
+                    name: "Status",
+                    query: `ORDER BY ID desc`
+                }, {
                     name: "code",
                     query: `ORDER BY ID desc`
                 },
@@ -235,10 +238,16 @@ function bindDataTable() {
         },
         aoColumnDefs: [{
             sClass: "numericCol",
-            aTargets: [2, 3, 4],
+            aTargets: [3, 4, 5],
             sType: "numeric"
         }],
         columns: [{
+                width: "15%",
+                "mRender": function (data, type, full) {
+                    return `<span class="badge badge-pill ${(full.status===1)?'badge-primary':'badge-danger'}">${(full.status===1)?'Active':'Inactive'}</span>`;
+                }
+            },
+            {
                 data: "code",
                 width: "15%"
             },
