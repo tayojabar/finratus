@@ -139,8 +139,7 @@ functions.authorizeMandate = function (payload, callback) {
     headers.MERCHANT_ID = process.env.REMITA_MERCHANT_ID;
     headers.API_DETAILS_HASH = SHA512(headers.API_KEY + headers.REQUEST_ID + process.env.REMITA_API_TOKEN);
     headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
-    console.log(headers);
-    console.log(payload);
+    console.log(`${process.env.REMITA_BASE_URL}/requestAuthorization`)
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
@@ -151,6 +150,7 @@ functions.authorizeMandate = function (payload, callback) {
         (error, res, body) => {
             console.log(error)
             console.log(body)
+            console.log(res)
             if (error) {
                 return callback(error);
             }
