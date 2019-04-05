@@ -378,6 +378,8 @@ router.get('/get/:id', function (req, res, next) {
                 mandateId: response['data'][0]['mandateId'],
                 requestId: response['data'][0]['requestId']
             };
+            console.log('here')
+            console.log(response)
             helperFunctions.mandateStatus(status_payload, function (remita_mandate_status) {
                 query = `SELECT * FROM application_schedules WHERE applicationID = ${response['data'][0]['applicationID']} AND status = 1`;
                 endpoint = '/core-service/get';
@@ -387,6 +389,8 @@ router.get('/get/:id', function (req, res, next) {
                         query: query
                     }
                 }).then(response_ => {
+                    console.log('here2')
+                    console.log(response_)
                     let preapproved_loan = (response.data === undefined) ? {} : response.data[0];
                     preapproved_loan.schedule = (response_.data === undefined) ? [] : response_.data;
                     preapproved_loan.remita = remita_mandate_status;
