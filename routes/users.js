@@ -1321,7 +1321,6 @@ users.post('/edit-client/:id', function(req, res, next) {
             payload.description = 'Client details updated.'
             payload.affected_client = req.params.id
             notificationsService.log(req, payload)
-            console.log('Got here')
             res.send(JSON.stringify({"status": 200, "error": null, "response": "Client Details Updated"}));
         }
     });
@@ -4128,7 +4127,7 @@ users.get('/analytics', function(req, res, next) {
             break;
         case 'overdue-loans':
             break;
-    }console.log(query)
+    }
     db.query(query, function (error, results, fields) {
         if(error){
             res.send({"status": 500, "error": error, "response": null});
