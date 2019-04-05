@@ -16,7 +16,7 @@
     const user_id = urlParams.get('id');
     let preapproved_loan = {};
 
-    function getPreapprovedLoan(){
+    function getPreapprovedLoan() {
         $.ajax({
             type: "GET",
             url: `/preapproved-loan/get/${user_id}`,
@@ -39,6 +39,11 @@
                     $('#loan-amount-text').text(`₦${numberToCurrencyformatter(preapproved_loan.loan_amount)}`);
                     $('#credit-score-text').text(`${preapproved_loan.credit_score}%`);
                     $('#default-frequency-text').text(numberToCurrencyformatter(preapproved_loan.defaults));
+                    $('#isActive').text(preapproved_loan.remita.isActive || 'N/A');
+                    $('#mandateId').text(preapproved_loan.mandateId || 'N/A');
+                    $('#registrationDate').text(preapproved_loan.remita.registrationDate || 'N/A');
+                    $('#requestId').text(preapproved_loan.requestId || 'N/A');
+                    $('#remitaTransRef').text(preapproved_loan.remitaTransRef || 'N/A');
                     preapproved_loan.months_left = preapproved_loan.offer_duration - preapproved_loan.invoices_due;
                     if (preapproved_loan.expiry_date){
                         let today = new Date(),
@@ -56,7 +61,9 @@
                             break;
                         }
                         case 2: {
+                            $('#deletePreapprovedLoan').hide();
                             $('#status-accepted-text').show();
+                            $('#disbursePreapprovedLoan').show();
                             break;
                         }
                         case 3: {
@@ -74,7 +81,7 @@
                         <p>3. Client earns ₦${numberToCurrencyformatter(preapproved_loan.salary || 0)} monthly.</p>
                         <p>4. Client has borrowed an average loan of ₦${numberToCurrencyformatter(preapproved_loan.average_loan)}.</p>
                         <p>5. Client is an active customer for ${numberToCurrencyformatter(preapproved_loan.offer_duration)} month(s).</p>
-                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.offer_loan_amount)} to be repaid over 12 month(s).</p>
+                        <p>6. Client is eligible for a loan of ₦${numberToCurrencyformatter(preapproved_loan.offer_loan_amount)} to be repaid over ${numberToCurrencyformatter(preapproved_loan.tenor)} month(s).</p>
                     `);
                     if (preapproved_loan.schedule && preapproved_loan.schedule[0]){
                         displaySchedule(preapproved_loan.schedule);
@@ -181,6 +188,56 @@
                         'error': function (err) {
                             console.log(err);
                             notification('No internet connection','','error');
+                        }
+                    });
+                }
+            });
+    });
+
+    $("#disbursePreapprovedLoan").click(function () {
+        $('#disbursement-amount').val(numberToCurrencyformatter(preapproved_loan.loan_amount));
+    });
+
+    $("#disburse").click(function () {
+        let disbursal = {};
+        disbursal.funding_source = $('#funding').val();
+        disbursal.disbursement_channel = $('#channel').val();
+        disbursal.disbursement_date = $('#disbursement-date')  .val();
+        if (disbursal.funding_source === "-- Select a Funding Source --" || disbursal.disbursement_channel === "-- Select a Channel --" || !disbursal.disbursement_date)
+            return notification('Kindly fill all required fields!','','warning');
+        swal({
+            title: "Are you sure?",
+            text: "Once disbursed, this process is not reversible!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((yes) => {
+                if (yes) {
+                    $('#wait').show();
+                    $('#disburseModal').modal('hide');
+                    $.ajax({
+                        'url': `/user/application/disburse/${preapproved_loan.applicationID}`,
+                        'type': 'post',
+                        'data': disbursal,
+                        'success': function (data) {
+                            $.ajax({
+                                'url': `/preapproved-loan/delete/${preapproved_loan.ID}`,
+                                'type': 'get',
+                                'success': function (data) {
+                                    $('#wait').hide();
+                                    notification('Loan disbursed successfully','','success');
+                                    window.location.href = '/all-preapproved-loans';
+                                },
+                                'error': function (err) {
+                                    console.log(err);
+                                    notification('No internet connection','','error');
+                                }
+                            });
+                        },
+                        'error': function (err) {
+                            $('#wait').hide();
+                            notification('Oops! An error occurred while disbursing loan','','error');
                         }
                     });
                 }

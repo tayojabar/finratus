@@ -12,7 +12,7 @@ function component_initializer() {
         allowClear: true,
         placeholder: "Search by Email/Fullname",
         ajax: {
-            url: "/client-service/all",
+            url: "/client/all",
             dataType: "json",
             delay: 250,
             data: function (params) {

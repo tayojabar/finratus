@@ -10,7 +10,7 @@
     <meta name="description" content="Loanratus Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" href="apple-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
     <link rel="stylesheet" href="assets/css/normalize.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
@@ -83,6 +83,9 @@
                     <div class="card">
                         <div class="card-header">
                             <strong id="client-text"></strong> <small> Loan Information</small>
+                            <button id="disbursePreapprovedLoan" class="btn btn-sm btn-success write" style="float: right; display: none;"
+                                    data-toggle="modal" data-target="#disburseModal">Disburse
+                                <i class="fa fa-check"></i></button>
                             <button id="deletePreapprovedLoan" class="btn btn-sm btn-danger write" style="float: right;">Delete
                             <i class="fa fa-trash"></i></button>
                         </div>
@@ -225,6 +228,55 @@
                                                         <div id="loanSchedule" style="margin: 30px 0;"></div>
                                                     </div>
                                                 </div>
+                                                <hr />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel push-down">
+                                        <div class="panel-body">
+                                            <div class="example-box-wrapper">
+                                                <h6>Remita Direct Debit Setup</h6>
+                                                <hr>
+                                                <div class="row setup-content">
+                                                    <div class="col-sm-12">
+                                                        <div width="100%">
+                                                            <table class="table table-bordered">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Activated</strong>
+                                                                    </td>
+                                                                    <td><span id="isActive"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Mandate ID</strong>
+                                                                    </td>
+                                                                    <td><span id="mandateId"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Request ID</strong>
+                                                                    </td>
+                                                                    <td><span id="requestId"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Transaction Reference</strong>
+                                                                    </td>
+                                                                    <td><span id="remitaTransRef"></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Registration Date</strong>
+                                                                    </td>
+                                                                    <td><span id="registrationDate"></span></td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -241,6 +293,61 @@
 
 </div><!-- /#right-panel -->
 <!-- Right Panel -->
+
+<!-- Modal -->
+<div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="disburseModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="disburseModalLabel">Disburse Loan</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Actual Disbursement Amount</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="disbursement-amount" type="text" class="form-control" placeholder="0" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Choose a Funding Source</label><strong style="color:red"> *</strong><span id="funding-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <select id="funding" class="form-control" required="required">
+                                <option selected="selected">-- Select a Funding Source --</option>
+                                <option value="Default">Default</option>
+                                <option value="Secondary">Secondary</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Choose a Disbursement Channel</label><strong style="color:red"> *</strong><span id="channel-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <select id="channel" class="form-control" required="required">
+                                <option selected="selected">-- Select a Channel --</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Disbursement Date</label><strong style="color:red"> *</strong><span id="disbursement-date-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input type="date" id="disbursement-date" class="form-control" required="required">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="disburse" type="button" class="btn btn-primary">Disburse</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Notification Panel -->
 <div id="panels" include-html="/includes/notifications.html"></div>

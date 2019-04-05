@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
     <link rel="stylesheet" href="assets/css/normalize.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
@@ -173,27 +173,33 @@
                         <div class="card-body">
                             <div class="col-sm-12">
                                 <div class="card" style="border-color: transparent">
-                                    <!--<div class="card-header">-->
-                                    <!--<h4>Overview</h4>-->
-                                    <!--</div>-->
-                                    <!--<div class="card-body">-->
-                                    <!--</div>-->
                                     <div class="row">
                                         <div id="pic" class="col-sm-2" style="padding-right: 0px">
 
                                         </div>
                                         <div class="col-sm-8" style="padding: 15px 0 0 15px;">
-                                            <strong id="fullname"></strong><br />
-                                            <strong>Client ID#: </strong><span id="client_id"></span><br />
-                                            <i class="fa fa-phone"></i><span id="phone"></span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span
-                                                id="email"></span><br />
-                                            <strong>Loan Officer: </strong><span id="loan_officer"></span><br />
-                                            <strong>Branch: </strong><span id="branch"></span><br />
-                                            <a href="#" style="text-decoration: underline;" data-toggle="modal"
-                                                data-target="#escrowHistory" onclick="escrowHistory()">Escrow Balance:
-                                                ₦<span class="escrow-balance"></span></a>
+                                            <div class="col-sm-12">
+                                                <div class="col-sm-6">
+                                                    <strong id="fullname"></strong><br />
+                                                    <strong>Client ID#: </strong><span id="client_id"></span><br />
+                                                    <i class="fa fa-phone"></i><span id="phone"></span>&nbsp;|&nbsp;<i class="fa fa-envelope"></i><span
+                                                        id="email"></span><br />
+                                                    <strong>Loan Officer: </strong><span id="loan_officer"></span><br />
+                                                    <strong>Branch: </strong><span id="branch"></span><br />
+                                                    <a href="#" style="text-decoration: underline;" data-toggle="modal"
+                                                        data-target="#escrowHistory" onclick="escrowHistory()">Escrow Balance:
+                                                        ₦<span class="escrow-balance"></span></a>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <br/>
+                                                    <strong>Total Loans Taken: </strong><span id="total_loans"></span><br/>
+                                                    <strong>Total Loan Balance: </strong><span id="total_balance"></span><br/>
+                                                    <strong>Total Interest Paid: </strong><span id="total_interest"></span>
+                                                    <strong></strong><br/>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-2" style="padding-top: 70px">
+                                        <div class="col-sm-2" style="padding-top: 40px">
                                             <button onclick="newApplication()" class="btn btn-success"><i class="fa fa-plus"></i>
                                                 New Application</button><br /><br />
                                             <button onclick="editUser()" class="btn btn-primary"><i class="fa fa-pencil"

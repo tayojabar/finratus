@@ -118,6 +118,7 @@ route.get('/application-updates', function(req, res) {
                     'description, unr.date_created, nt.userid, (select fullname from users where users.id = nt.userid) user \n' +
                     'from user_notification_rel unr inner join notifications nt on notificationid = nt.id \n' +
                     'where status = 1 and view_status = 1 and unr.userid = '+user+'\n' +
+                    'and nt.userid <> '+user+' \n'+
                     'and nt.category = ? and \n' +
                     '(select np.status from notification_preferences np where np.category = \n' +
                     '\t(select nc.id from notification_categories nc where nc.category_name = ?) \n' +

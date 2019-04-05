@@ -429,7 +429,6 @@ function savecomment(id){
     obj.comment = $(comment).val();
     obj.activityID = id;
     obj.commenter = JSON.parse(localStorage.user_obj).ID;
-//            console.log($('comment').val());
     if (obj.comment == "" || obj.comment == "undefined"){
         swal("Please leave a comment!", "", "warning");
     }
@@ -573,7 +572,6 @@ function validateComment(){
 }
 
 $("#continue").click(function () {
-//            console.log($('#temp-desc').text());
     validate();
 });
 
@@ -604,10 +602,6 @@ function saveNewActivityType(){
 }
 
 function validate(){
-//            console.log($('#activity-files')[0].files.length);
-//            for (var i = 0; i < $('#activity-files')[0].files.length; i++){
-//                console.log($('#activity-files')[0].files[i]);
-//            }
     let valid = true;
     let y = document.getElementsByClassName("fields");
 //        y = x[currentTab].getElementsByTagName("input");
@@ -674,7 +668,6 @@ function createActivity(){
 }
 
 function upload(id, files, num){
-    console.log('I got here');
     let folder_name = 'activity'+id;
     if (!files) {
         return swal ("", "No attachments!", 'info');

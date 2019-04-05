@@ -2,6 +2,7 @@ jQuery(document).ready(function() {
 //        notifications();
     getOfficers();
     getBranches();
+    getBanks();
     getCountries();
     getStates();
 });
@@ -225,6 +226,20 @@ function getBranches(){
     });
 }
 
+function getBanks(){
+    $.ajax({
+        type: "GET",
+        url: "/user/banks/",
+        success: function (response) {
+            let bank = $("[id=bank]");
+            bank.empty().append('<option id="0" value ="0">-- Select a Bank --</option>');
+            $.each(response, function (key, val) {
+                $("#bank").append(`<option value = "${val.code}" id="${val.code}">${val.name} (${val.authorization})</option>`);
+            });
+        }
+    });
+}
+
 function getCountries(){
     $.ajax({
         type: "GET",
@@ -267,6 +282,9 @@ function createClient(){
     obj.marital_status = $('#marital_status').find('option:selected').attr('value');
     obj.loan_officer = $('#loan_officer').find('option:selected').attr('id');
     obj.branch = $('#branch').find('option:selected').attr('id');
+    obj.bvn= $("#bvn").val();
+    obj.account= $("#account").val();
+    obj.bank = $('#bank').find('option:selected').attr('id');
     obj.client_state = $('#client_state').find('option:selected').attr('id');
     obj.postcode = $("#postcode").val();
     obj.client_country = $('#client_country').find('option:selected').attr('id');
