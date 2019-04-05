@@ -24,9 +24,7 @@ function component_initializer() {
                 };
             },
             processResults: function (data, params) {
-                console.log(params);
                 params.page = params.page || 1;
-                console.log(data);
                 if (data.error) {
                     return {
                         results: []
@@ -69,7 +67,6 @@ function component_initializer() {
                     products.push(...data);
                 }
                 params.page = params.page || 1;
-                console.log(products);
                 if (data.error) {
                     return {
                         results: []
@@ -110,7 +107,6 @@ $("#investment_amount").on("focusout", function (event) {
         let amount = $("#investment_amount").val().split(',').join('');
         let amt_min = selectedValue.investment_min.split(',').join('');
         let amt_max = selectedValue.investment_max.split(',').join('');
-        console.log(amount, amt_min, amt_max);
         if (parseFloat(amount) < parseFloat(amt_min) || parseFloat(amount) > parseFloat(amt_max)) {
             $("#investment_amount").val("");
             $("#amount_info_error").html(" - Amount can not be below or above configured investment value");
@@ -161,10 +157,8 @@ let start_with = "";
 $("#investment_date_start").on("change", function (event) {
     let val = $("#investment_date_start").val();
     start_with = val;
-    console.log(start_with);
     const selectedID = $("#investment_product").val();
     let selectedValue = products.find(x => x.ID.toString() === selectedID.toString());
-    console.log(selectedValue);
     var min_date = new Date(start_with);
     var max_date = new Date(start_with);
     if (selectedValue !== undefined && selectedValue !== undefined) {
@@ -186,12 +180,15 @@ $("#investment_date_start").on("change", function (event) {
 });
 
 $("#btn_save_product").on("click", function (event) {
+    let selectedValue = products.find(x => x.ID.toString() === $("#investment_product").val().toString());
     var data = {
         clientId: $('#client').on('select2:select').val(),
         productId: $('#investment_product').on('select2:select').val(),
         amount: $('#investment_amount').val().split('.'),
         investment_start_date: $('#investment_date_start').val(),
-        investment_mature_date: $('#investment_mature_date').val()
+        investment_mature_date: $('#investment_mature_date').val(),
+        code: selectedValue.code,
+        createdBy: (JSON.parse(localStorage.getItem("user_obj"))).ID
     };
     $.ajax({
         'url': '/investment-service/create',
@@ -199,7 +196,6 @@ $("#btn_save_product").on("click", function (event) {
         'data': data,
         'success': function (data) {
             if (data.error) {
-                console.log(data.error);
                 $('#wait').hide();
                 swal('Oops! An error occurred while creating Investment; Required field(s) missing',
                     '', 'error');
@@ -213,7 +209,6 @@ $("#btn_save_product").on("click", function (event) {
             }
         },
         'error': function (err) {
-            console.log(err);
             $('#wait').hide();
             swal('Oops! An error occurred while creating Investment; ', '', 'error');
         }

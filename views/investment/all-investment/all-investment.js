@@ -3,6 +3,14 @@ $(document).ready(function () {
     $('#bootstrap-data-table-export').DataTable();
     bindDataTable();
 });
+
+function padReferenceNo(value) {
+    if (value.length < 8) {
+        value = String('00000000' + value).slice(-8);
+    }
+    return value;
+}
+
 let _table = $('#bootstrap-data-table-export').DataTable();
 
 function bindDataTable() {
@@ -14,9 +22,10 @@ function bindDataTable() {
             'copy', 'csv', 'excel', 'pdf', 'print'
         ],
         fnServerData: function (sSource, aoData, fnCallback) {
-            console.log(aoData);
-
             let tableHeaders = [{
+                    name: "ID",
+                    query: `ORDER BY ID desc`
+                }, {
                     name: "client",
                     query: `ORDER BY client ${aoData[2].value[0].dir}`
                 },
@@ -57,10 +66,16 @@ function bindDataTable() {
         },
         aoColumnDefs: [{
             sClass: "numericCol",
-            aTargets: [2],
+            aTargets: [3],
             sType: "numeric"
         }],
         columns: [{
+                width: "auto",
+                "mRender": function (data, type, full) {
+                    return full.code;
+                }
+            },
+            {
                 data: "client",
                 width: "15%"
             },

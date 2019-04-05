@@ -21,7 +21,6 @@ function get_global_items() {
     var sPageURL = window.location.search.substring(1);
     if (sPageURL !== "") {
         var sURLVariables = sPageURL.split('=')[1];
-        console.log(sURLVariables);
         if (sURLVariables !== "") {
             getInvestmentProducts(sURLVariables);
         }
@@ -109,6 +108,14 @@ $('#premature_interest_rate').on("keyup", function (event) {
     $("#premature_interest_rate").val(formater(val));
 });
 
+$('#product_code').keypress(function (e) {
+    var k = e.keyCode,
+        $return = ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+    if (!$return) {
+        return false;
+    }
+});
+
 function getInvestmentProducts(id) {
     $.ajax({
         type: "GET",
@@ -117,7 +124,6 @@ function getInvestmentProducts(id) {
             if (data.status === undefined) {
                 $("li_sub_dir").html("Update Product");
                 product_obj = data[0];
-                console.log(product_obj.saving_charge_opt);
                 product_obj.histories = JSON.parse(product_obj.histories);
                 $('#product_name').val(product_obj.name);
                 $('#product_investment_amount_min').val(product_obj.investment_min);
@@ -198,7 +204,6 @@ $("#interest_moves_wallet").on('change',
 $("#chk_interest_rate").on('change',
     function () {
         let status = $('#chk_interest_rate').is(':checked');
-        console.log(status);
         if (!status) {
             $('#interest_rate').val('');
             $('#condition_for_interest').val('');
@@ -286,7 +291,6 @@ function validate_values(val1, val2, message) {
     if (val1.val() !== '') {
         let _val1 = parseInt(val1.val().split(',').join(''));
         let _val2 = parseInt(val2.val().split(',').join(''));
-        console.log(_val1, _val2);
         if (_val1 <= _val2) {
             val1.val('');
             swal(message, '', 'error');
@@ -298,7 +302,6 @@ function validate_values_(val1, val2, message) {
     if (val1.val() !== '') {
         let _val1 = parseInt(val1.val().split(',').join(''));
         let _val2 = parseInt(val2.val().split(',').join(''));
-        console.log(_val1, _val2);
         if (_val1 > _val2) {
             val1.val('');
             swal(message, '', 'error');
@@ -403,7 +406,6 @@ $("#chk_enforce_count").on('change',
 
 
 function set_investment_product() {
-    console.log(product_obj.histories);
     product_obj.name = $('#product_name').val();
     product_obj.investment_max = $('#product_investment_amount_max').val();
     product_obj.investment_min = $('#product_investment_amount_min').val();
@@ -436,7 +438,6 @@ function set_investment_product() {
     product_obj.opt_on_min_days_termination = $('#opt_on_min_days_termination').val();
     product_obj.createdBy = (JSON.parse(localStorage.getItem("user_obj"))).ID;
 
-    console.log(product_obj);
     if (product_obj.ID === undefined) {
         $.ajax({
             'url': '/investment/products',
@@ -452,13 +453,11 @@ function set_investment_product() {
                     $('input').attr("checked", false);
                 } else {
                     $('#wait').hide();
-                    console.log(data.error);
                     swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
                         '', 'error');
                 }
             },
             'error': function (err) {
-                console.log(err);
                 $('#wait').hide();
                 swal('Oops! An error occurred while saving Investment Product; Required field(s) missing',
                     '', 'error');
@@ -475,7 +474,6 @@ function set_investment_product() {
             'data': product_obj,
             'success': function (data) {
                 if (data.status === 200) {
-                    console.log(product_obj);
                     $('#wait').hide();
                     swal('Investment Product updated successfully!', '', 'success');
                     var url = "./all-investment-products";

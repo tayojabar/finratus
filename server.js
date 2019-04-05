@@ -50,6 +50,7 @@ let app = express(),
     client_service = require('./routes/service/custom-services/client.service'),
     investment_product_service = require('./routes/service/custom-services/investment-product.service'),
     investment_service = require('./routes/service/custom-services/investment.service'),
+    inv_transaction_service = require('./routes/service/custom-services/transaction.service'),
     preapproved_loan_service = require('./routes/service/custom-services/preapproved-loan.service'),
     notification = require('./routes/notifications'),
     notification_service = require('./routes/notifications-service'),
@@ -197,6 +198,7 @@ app.use('/client', client_service);
 app.use('/core-service', core_service);
 app.use('/investment-service', investment_service);
 app.use('/investment-products', investment_product_service);
+app.use('/investment-txns', inv_transaction_service);
 app.use('/preapproved-loan', preapproved_loan_service);
 // app.use('/notification-service', notification_service);
 app.use('/notifications', notification);
