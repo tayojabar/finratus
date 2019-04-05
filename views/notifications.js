@@ -57,6 +57,7 @@ function notifications(){
 '                            </div>\n' +
 '                        </div>'
                 $('#n-dropdown').append(item);
+
                 // let obj = {};
                 // obj.notification_id = val.notification_id;
                 // obj.val = 2;

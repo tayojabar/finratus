@@ -605,14 +605,14 @@ function submitDetails(){
                 test[key] = val;
             });
             if(test.response === null){
-                swal("Communication Error! Please try again");
+                swal('Error!', "Action could not be completed! Please try again", 'error');
             }
             else
-                swal("Client Details Updated!");
+                swal('Success!', "Client Details Updated!", 'success');
             window.location.href = "./all-clients";
         },
         'error': function (err) {
-            swal('Connection Error. Please try again.');
+            swal('Error!', 'No Internet Connection.', 'error');
         }
     });
 }
