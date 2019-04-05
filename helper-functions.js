@@ -148,7 +148,7 @@ functions.authorizeMandate = function (data, callback) {
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
             headers: headers,
-            body: payload,
+            body:  { mandateId: '290007740644', requestId: '1554481382970' },
             json: true
         },
         (error, res, body) => {
