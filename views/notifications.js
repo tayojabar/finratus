@@ -1,7 +1,7 @@
 let init = 0,
     count = 0,
     ids = [];
-
+$('#n-dropdown').text('Yes1========================');
 function notifications(){
     ids.length = 0;
     count = 0;
@@ -22,7 +22,8 @@ function notifications(){
             let icon,
                 link,
                 item;
-            $('#n-dropdown').empty();
+            $('#n-dropdown').text('Yes2========================');
+            // $('#n-dropdown').empty();
             $.each(response, function (key, val) {
                 count++;
                 switch (val.category){
@@ -41,6 +42,7 @@ function notifications(){
                     default:
                         icon = '<img src="atb-logo.png">'
                 }
+                $('#n-dropdown').text('Yes3========================');
                 item = '<div class="feed-body-content">\n' +
 '                            <p class="feed-body-header">'+jQuery.timeago(val.date_created)+'</time></p>\n' +
 '                            <div class="row">\n' +
@@ -55,8 +57,6 @@ function notifications(){
 '                                 </a>\n' +
 '                            </div>\n' +
 '                        </div>'
-                console.log(item)
-                console.log($('#n-dropdown'))
                 $('#n-dropdown').append(item);
 
                 // let obj = {};
