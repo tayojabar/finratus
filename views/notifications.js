@@ -23,9 +23,7 @@ function notifications(){
                 link,
                 item;
             $('#n-dropdown').empty();
-            console.log(response)
             $.each(response, function (key, val) {
-                console.log(val)
                 count++;
                 switch (val.category){
                     case 'Activity':
@@ -43,7 +41,6 @@ function notifications(){
                     default:
                         icon = '<img src="atb-logo.png">'
                 }
-                let buttonid = 'but'+val.notificationid;
                 item = '<div class="feed-body-content">\n' +
 '                            <p class="feed-body-header">'+jQuery.timeago(val.date_created)+'</time></p>\n' +
 '                            <div class="row">\n' +
@@ -53,16 +50,18 @@ function notifications(){
 '                                        <img class="user-avatar rounded-circle" src="/images/admin.jpg" alt="User Avatar"\n' +
 '                                             style="">\n' +
 '                                            <p>'+val.user+'</p>\n' +
-                    '                         <small onclick="markAsViewed('+val.notification_id+')" class="feed-content-menu float-right" style="margin-top: 50px" id="'+buttonid+'">Mark as Viewed</small>\n'+
+                    '                         <small onclick="markAsViewed('+val.notification_id+')" class="feed-content-menu float-right" style="margin-top: 50px">Mark as Viewed</small>\n'+
 '                                    </div>\n' +
 '                                 </a>\n' +
 '                            </div>\n' +
 '                        </div>'
+                console.log(item)
+                console.log($('#n-dropdown'))
                 $('#n-dropdown').append(item);
 
                 // let obj = {};
                 // obj.notification_id = val.notification_id;
-                // obj.val = 2;
+                // obj.val = 2;s
                 //    $.ajax({
                 //        type: "GET",
                 //        url: "/notifications/update-pr",
