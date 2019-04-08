@@ -1,0 +1,555 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-icon.png">
+    <link rel="shortcut icon" href="favicon.png">
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="assets/scss/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="css/jquery.fileupload.css">
+    <link rel="stylesheet" href="css/jquery.fileupload-ui.css">
+    <noscript><link rel="stylesheet" href="css/jquery.fileupload-noscript.css"></noscript>
+    <noscript><link rel="stylesheet" href="css/jquery.fileupload-ui-noscript.css"></noscript>
+    <style type="text/css">
+        ul.nav li.active p{color: #ffffff;}
+        a, a p, a h4, a:hover{color: rgb(66, 139, 202);}
+        li.disabled a p, li.disabled a h4 {color: #878787;}
+        li.active a h4 {color: #ffffff;}
+        table{width: 100%;}
+        table th{text-align: center;}
+        .modal-dialog{
+            left: 0;
+        }
+        .thumbnail {
+            padding:0px;
+        }
+        .panel {
+            position:relative;
+        }
+        .panel>.panel-heading:after,.panel>.panel-heading:before{
+            position:absolute;
+            top:11px;left:-16px;
+            right:100%;
+            width:0;
+            height:0;
+            display:block;
+            content:" ";
+            border-color:transparent;
+            border-style:solid solid outset;
+            pointer-events:none;
+        }
+        .panel>.panel-heading:after{
+            border-width:7px;
+            border-right-color:#f7f7f7;
+            margin-top:1px;
+            margin-left:2px;
+        }
+        .panel>.panel-heading:before{
+            border-right-color:#ddd;
+            border-width:8px;
+        }
+        select.form-control{
+            height: 36px !important;
+        }
+        #loanCollectionSchedule table tr:nth-child(2){
+            font-size: 14px;
+        }
+        #loanCollectionSchedule table tr td{
+            padding: 5px;
+            white-space: nowrap;
+        }
+        #loanCollectionSchedule table tr:nth-child(1) td, table tr:nth-child(2) td{
+            padding: 10px;
+        }
+        .badge-success {
+            background-color: #28a745;
+        }
+        .badge-danger {
+            background-color: #dc3545;
+        }
+        .badge-warning {
+            background-color: #f0ad4e;
+        }
+        #message{
+            font-weight: bold;
+            font-style: italic;
+        }
+        #message.success{
+            color: #28a745;
+        }
+        #message.error{
+            color: #dc3545;
+        }
+        input.error {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body class="open">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+<!-- Left Panel -->
+<aside id="left-panel" class="left-panel" include-html="/includes/sidebar.html"></aside><!-- /#left-panel -->
+<!-- Left Panel -->
+
+<!-- Right Panel -->
+<div id="right-panel" class="right-panel">
+    <!-- Header-->
+    <header id="header" class="header" include-html="/includes/header.html"></header><!-- /header -->
+    <!-- Header-->
+
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    <h1>Loan Repayment</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="page-header float-right">
+                <div class="page-title">
+                    <ol class="breadcrumb text-right">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Users</a></li>
+                        <li class="active"><a href="/all-applications">All Applications</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div style="float: left; margin: 0 15px;">
+                                <strong id="workflow-div-title" class="card-title">Workflow</strong>
+                                <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span></p>
+                            </div>
+                            <button class="btn btn-primary" onclick="goToLoanOverview()" style="float: right;">Loan Overview <i class="fa fa-forward"></i></button>
+                            <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal" style="float: right;">Add Additional Interest</button>
+                            <a href="#" style="float: right; margin: 8px; text-decoration: underline;" data-toggle="modal" data-target="#escrowHistory" onclick="escrowHistory()">Escrow Balance: ₦<span class="escrow-balance">0</span></a>
+                        </div>
+                        <div class="card-body">
+                            <div id="loanCollectionSchedule" style="margin-top: 30px; overflow-x: scroll; max-width: 1200px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span style="margin: 5px;">Comments</span>
+                            <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <div id="comments"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .animated -->
+    <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+</div><!-- .content -->
+<!-- Right Panel -->
+
+<!-- Modal -->
+<div class="modal" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addCommentModalLabel">Post Comment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-comment"></i></div>
+                            <textarea id="comment" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
+                        </div>
+                        <small class="form-text text-muted">Maximum of 250 characters</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="comment()">Comment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="confirmPayment" tabindex="-1" role="dialog" aria-labelledby="confirmPaymentLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="confirmPaymentLabel">Repayment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <h4 id="overpayment-message" style="color: #f0ad4e;"></h4>
+                    <span id="message"></span>
+                    <div class="form-group">
+                        <label class="form-control-label">Payment Source</label><strong style="color:red"> *</strong><span id="source-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-link"></i></div>
+                            <select id="source" class="form-control" required="required">
+                                <option value="0" selected="selected">-- Select Payment Source --</option>
+                                <option value="cash">Cash</option>
+                                <option value="escrow">Escrow</option>
+                            </select>
+                        </div>
+                        <small class="form-text text-muted">Escrow Balance available is ₦<span class="escrow-balance">0</span></small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Actual Payment</label><strong style="color:red"> *</strong><span id="payment-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="payment" type="number" class="form-control validate" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Principal</label><strong style="color:red"> *</strong><span id="principal-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="principal" type="number" class="form-control validate" placeholder="0" required="required">
+                        </div>
+                        <small class="form-text text-muted">Maximum Principal Payable is <span id="principal-payable"></span></small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Interest</label><strong style="color:red"> *</strong><span id="interest-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="interest" type="number" class="form-control validate" placeholder="0" required="required">
+                        </div>
+                        <small class="form-text text-muted">Maximum Interest Payable is <span id="interest-payable"></span></small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Fees</label><strong style="color:red"> *</strong><span id="fees-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="fees" type="number" class="form-control" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Penalty</label><strong style="color:red"> *</strong><span id="penalty-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="penalty" type="number" class="form-control" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Payment date</label><strong style="color:red"> *</strong><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input id="repayment-date" type="date" class="form-control" required="required">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="confirm-payment-button" type="button" class="btn btn-primary" onclick="confirmPayment()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="editSchedule" tabindex="-1" role="dialog" aria-labelledby="editScheduleLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editScheduleLabel">Edit Schedule</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div id="edit-principal-invoice-div" class="form-group">
+                        <label class="form-control-label">Principal Invoice No</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-no-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
+                            <input id="edit-principal-invoice-no" type="text" class="form-control" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div id="edit-interest-invoice-div" class="form-group">
+                        <label class="form-control-label">Interest Invoice No</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-no-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-sticky-note"></i></div>
+                            <input id="edit-interest-invoice-no" type="text" class="form-control" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Principal</label><strong style="color:red"> *</strong><span id="edit-principal-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="edit-principal" type="number" class="form-control" placeholder="0" required="required" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Interest</label><strong style="color:red"> *</strong><span id="edit-interest-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="edit-interest" type="number" class="form-control" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Fees</label><strong style="color:red"> *</strong><span id="edit-fees-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="edit-fees" type="number" class="form-control" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Penalty</label><strong style="color:red"> *</strong><span id="edit-penalty-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="edit-penalty" type="number" class="form-control" placeholder="0" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Principal Payment Date</label><strong style="color:red"> *</strong><span id="edit-principal-payment-date-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input id="edit-principal-payment-date" type="date" class="form-control" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Principal Invoice Date</label><strong style="color:red"> *</strong><span id="edit-principal-invoice-date-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input id="edit-principal-invoice-date" type="date" class="form-control" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Interest Payment Date</label><strong style="color:red"> *</strong><span id="edit-interest-payment-date-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input id="edit-interest-payment-date" type="date" class="form-control" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Interest Invoice Date</label><strong style="color:red"> *</strong><span id="edit-interest-invoice-date-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input id="edit-interest-invoice-date" type="date" class="form-control" required="required">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editSchedule()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="invoiceHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
+    <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="invoiceHistoryLabel">Repayment History</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <table id="invoice-history" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Principal</th>
+                        <th>Interest</th>
+                        <th>Fees</th>
+                        <th>Penalty</th>
+                        <th>Paid By</th>
+                        <th>Payment Date</th>
+                        <th>Posted Date</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="history">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="escrowHistory" tabindex="-1" role="dialog" aria-labelledby="escrowHistoryLabel">
+    <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="escrowHistoryLabel">Escrow History</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <table id="escrow-history" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="escrow_history">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editHistory" tabindex="-1" role="dialog" aria-labelledby="editHistoryLabel">
+    <div class="modal-dialog modal-lg" role="document" style="min-width: 70%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editHistoryLabel">Edit Schedule History</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <table id="edit-history" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Previous Principal</th>
+                        <th>Previous Interest</th>
+                        <th>Previous Fees</th>
+                        <th>Previous Penalty</th>
+                        <th>Previous Date Due</th>
+                        <th>Modified By</th>
+                        <th>Date Modified</th>
+                    </tr>
+                    </thead>
+                    <tbody id="e-history">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPaymentModal" tabindex="-1" role="dialog" aria-labelledby="addPaymentModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addPaymentModalLabel">Add Payment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <!--<div class="form-group">-->
+                    <!--<label class="form-control-label">Payment Amount</label>-->
+                    <!--<div class="input-group">-->
+                    <!--<input id="payment-amount" type="number" class="form-control">-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <div class="form-group">
+                        <label class="form-control-label">Interest Amount</label><strong style="color:red"> *</strong>
+                        <div class="input-group">
+                            <input id="payment-interest" type="number" class="form-control" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Payment Date</label><strong style="color:red"> *</strong>
+                        <div class="input-group">
+                            <input id="payment-date" type="date" class="form-control">
+                        </div>
+                        <small class="form-text text-muted">Note, payment date cannot be a future date</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Notes</label>
+                        <div class="input-group">
+                            <textarea id="payment-notes" class="form-control" maxlength="250" placeholder="Brief message"></textarea>
+                        </div>
+                        <small class="form-text text-muted">Maximum of 250 characters</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addPayment()">Add Payment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Panel -->
+<div id="panels" include-html="/includes/notifications.html"></div>
+
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/lib/data-table/datatables.min.js"></script>
+<script src="assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+<script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+<script src="assets/js/lib/data-table/jszip.min.js"></script>
+<script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+<script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+<script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+<script src="assets/js/lib/data-table/buttons.colVis.min.js"></script>
+<script src="assets/js/lib/data-table/datatables-init.js"></script>
+
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="js/vendor/jquery.ui.widget.js"></script>
+<!-- The Templates plugin is included to render the upload/download listings -->
+<script src="https://blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="js/jquery.fileupload.js"></script>
+<!-- The File Upload processing plugin -->
+<script src="js/jquery.fileupload-process.js"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="js/jquery.fileupload-image.js"></script>
+<!-- The File Upload audio preview plugin -->
+<script src="js/jquery.fileupload-audio.js"></script>
+<!-- The File Upload video preview plugin -->
+<script src="js/jquery.fileupload-video.js"></script>
+<!-- The File Upload validation plugin -->
+<script src="js/jquery.fileupload-validate.js"></script>
+<!-- The File Upload user interface plugin -->
+<script src="js/jquery.fileupload-ui.js"></script>
+<script src="../../js/helper-functions.js"></script>
+<script src="../../menus/menu-items.js"></script>
+<script type="text/javascript" src="../../collection/loan-repayment/loan-repayment.js"></script>
+</body>
+</html>

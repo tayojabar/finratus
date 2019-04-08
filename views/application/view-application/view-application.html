@@ -1,0 +1,905 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Loanratus Admin</title>
+    <meta name="description" content="Loanratus Admin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="/apple-icon.png">
+    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="stylesheet" href="/assets/css/normalize.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="/assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="/assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="/assets/css/lib/datatable/dataTables.bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="/assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="/assets/scss/style.css">
+    <link rel="stylesheet" href="/assets/css/lib/chosen/chosen.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="/assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="/css/jquery.fileupload-ui.css">
+    <!-- CSS adjustments for browsers with JavaScript disabled -->
+    <noscript><link rel="stylesheet" href="/css/jquery.fileupload-noscript.css"></noscript>
+    <noscript><link rel="stylesheet" href="/css/jquery.fileupload-ui-noscript.css"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.3/jquery.fancybox.min.css">
+    <style type="text/css">
+        ul.nav li.active p{color: #ffffff;}
+        a, a p, a h4, a:hover{color: rgb(66, 139, 202);}
+        li.disabled a p, li.disabled a h4 {color: #878787;}
+        li.active a h4 {color: #ffffff;}
+        table{width: 100%;}
+        table th{text-align: center;}
+        .alert-success, .alert-success p {color: #155724;}
+        .modal-dialog{
+            left: 0;
+        }
+        .thumbnail {
+            padding:0px;
+        }
+        .panel {
+            position:relative;
+        }
+        .panel>.panel-heading:after,.panel>.panel-heading:before{
+            position:absolute;
+            top:11px;left:-16px;
+            right:100%;
+            width:0;
+            height:0;
+            display:block;
+            content:" ";
+            border-color:transparent;
+            border-style:solid solid outset;
+            pointer-events:none;
+        }
+        .panel>.panel-heading:after{
+            border-width:7px;
+            border-right-color:#f7f7f7;
+            margin-top:1px;
+            margin-left:2px;
+        }
+        .panel>.panel-heading:before{
+            border-right-color:#ddd;
+            border-width:8px;
+        }
+        select.form-control{
+            height: 36px !important;
+        }
+        ul.timeline {
+            list-style-type: none;
+            position: relative;
+        }
+        ul.timeline:before {
+            content: ' ';
+            background: #d4d9df;
+            display: inline-block;
+            position: absolute;
+            left: 29px;
+            width: 2px;
+            height: 100%;
+            z-index: 400;
+        }
+        ul.timeline > li {
+            margin: 20px 0;
+            padding-left: 60px;
+        }
+        ul.timeline > li:before {
+            content: ' ';
+            background: white;
+            display: inline-block;
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid #22c0e8;
+            left: 20px;
+            width: 20px;
+            height: 20px;
+            z-index: 400;
+        }
+        ul#workflow-ul-list li{
+            padding: 5px 0;
+        }
+        .carousel {
+            margin-bottom: 0;
+            padding: 0 40px 30px 40px;
+        }
+        .carousel-control {
+            left: -12px;
+            height: 40px;
+            width: 40px;
+            background: none repeat scroll 0 0 #222222;
+            border: 4px solid #FFFFFF;
+            border-radius: 23px 23px 23px 23px;
+            margin-top: 90px;
+        }
+        .carousel-control.right {
+            right: -12px;
+        }
+        .carousel-indicators {
+            right: 50%;
+            top: auto;
+            bottom: -10px;
+            margin-right: -19px;
+        }
+        .carousel-indicators li {
+            background: #cecece;
+        }
+        .carousel-indicators .active {
+            background: #428bca;
+        }
+        .badge-success {
+            background-color: #28a745;
+        }
+        .badge-danger {
+            background-color: #dc3545;
+        }
+        .badge-warning {
+            background-color: #f0ad4e;
+        }
+        .pb-0{
+            text-align: center;
+        }
+        input.invalid, span.invalid {
+            border: 2px dashed red;
+        }
+        #schedule-error-message{
+            text-align: center;
+            font-style: italic;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+<!-- Left Panel -->
+<aside id="left-panel" class="left-panel" include-html="/includes/sidebar.html"></aside><!-- /#left-panel -->
+<!-- Left Panel -->
+
+<!-- Right Panel -->
+<div id="right-panel" class="right-panel">
+    <!-- Header-->
+    <header id="header" class="header" include-html="/includes/header.html"></header><!-- /header -->
+    <!-- Header-->
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    <h1>Application</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="page-header float-right">
+                <div class="page-title">
+                    <ol class="breadcrumb text-right">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Users</a></li>
+                        <li class="active"><a href="/all-applications">All Applications</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div style="float: left; margin: 0 15px;">
+                                <strong id="workflow-div-title" class="card-title">Workflow</strong>
+                                <p>Client ID#: <a onclick="goToClientProfile()" style="text-decoration: underline; cursor: pointer;"><span id="client-id"></span></a> | LOAN ID#: <span id="application-id"></span> | L-CIRRUS ID#: <span id="loancirrus-id"></span></p>
+                            </div>
+                            <button id="loan_closed" class ="btn btn-warning btn-lg" style="float: right; margin-top: 5px; display: none;" disabled="disabled"></button>
+                            <div id="close_loan" class="btn-group" style="float: right; display: none; margin-top: 5px;">
+                                <button type="button" class="btn btn-danger btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Close Loan
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#payOffModal" onclick="openPayOffModal()">Pay Off</a>
+                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#writeOffModal" onclick="openWriteOffModal()">Write Off</a>
+                                </div>
+                            </div>
+                            <div id="next-actions" class="btn-group" style="float: right;">
+                                <button type="button" class="btn btn-success btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-forward"></i>
+                                </button>
+                                <div id="stage-actions" class="dropdown-menu">
+                                    <a id="stage-action-default" class="dropdown-item next" href="#">Save & Proceed</a>
+                                </div>
+                            </div>
+                            <button id="current_stage" class ="btn btn-warning btn-lg" style="float: right;" disabled="disabled"></button>
+                            <button class ="previous btn btn-danger btn-lg" style="float: right;"><i class="fa fa-backward"></i></button>
+                            <button class ="cancel btn btn-danger btn-lg" style="float: right; margin-right: 5px;"><i class="fa fa-times"></i></button>
+                            <span style="float: right; margin: 15px;">
+                                    <a href="#" class="pull-right transitions-toggle">Show Transitions <i class="fa fa-chevron-down"></i></a>
+                                    <a href="#" class="pull-right transitions-toggle" style="display: none;">Hide Transitions <i class="fa fa-chevron-up"></i></a>
+                                </span>
+                        </div>
+                        <script type="text/javascript">
+                            let $transitions_toggle = $('.transitions-toggle');
+                            $transitions_toggle.click(function () {
+                                $('#transitions-list').toggle();
+                                $transitions_toggle.toggle();
+                            });
+                        </script>
+                        <div class="card-body">
+                            <div id="transitions-list" class="row form-group" style="display: none;">
+                                <div class="col-xs-12">
+                                    <ul id="workflow-ul-list" class="nav nav-pills nav-justified thumbnail setup-panel"></ul>
+                                </div>
+                            </div>
+                            <div id="disbursement-cards" class="row setup-content" style="display: none;">
+                                <div class="col-sm-3">
+                                    <div class="card text-white bg-flat-color-1">
+                                        <div class="card-body pb-0">
+                                            <h3 id="loan-amount-text" class="mb-0"></h3>
+                                            <p class="text-light">Disbursed Amount</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="card text-white bg-flat-color-1">
+                                        <div class="card-body pb-0">
+                                            <h3 id="total-due-text" class="mb-0"></h3>
+                                            <p class="text-light">Principal Balance</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="card text-white bg-flat-color-1">
+                                        <div class="card-body pb-0">
+                                            <h3 id="last-payment-text" class="mb-0"></h3>
+                                            <p class="text-light">Last Payment</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="card text-white bg-flat-color-1">
+                                        <div class="card-body pb-0">
+                                            <h3 id="next-payment-date-text" class="mb-0"></h3>
+                                            <p class="text-light">Next Payment Due Date</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="document-upload" style="display: none;">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <h3 id="document-upload-text" style="margin-bottom: 5px;"></h3>
+                                        <select id="stage-documents" class="form-control" required="required" style="margin: 15px 0;">
+                                            <option selected="selected">-- Choose Document --</option>
+                                        </select>
+                                        <input id="stage-documents-others" class="form-control" placeholder="Document Title" style="margin: 15px 0; display: none;" />
+                                        <form id="fileupload" method="POST" enctype="multipart/form-data">
+                                            <div class="row fileupload-buttonbar">
+                                                <div class="col-lg-7">
+                                                        <span class="btn btn-success fileinput-button">
+                                                            <i class="glyphicon glyphicon-plus"></i>
+                                                            <span>Add file</span>
+                                                            <input id="document-file" type="file" name="files[]" multiple>
+                                                        </span>
+                                                    <button type="submit" class="btn btn-primary start">
+                                                        <i class="glyphicon glyphicon-upload"></i>
+                                                        <span>Start upload</span>
+                                                    </button>
+                                                    <button type="reset" class="btn btn-warning cancel">
+                                                        <i class="glyphicon glyphicon-ban-circle"></i>
+                                                        <span>Cancel upload</span>
+                                                    </button>
+                                                    <!--<button type="button" class="btn btn-danger delete">-->
+                                                    <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                                    <!--<span>Delete</span>-->
+                                                    <!--</button>-->
+                                                    <!--<input type="checkbox" class="toggle">-->
+                                                    <!-- The global file processing state -->
+                                                    <span class="fileupload-process"></span>
+                                                </div>
+                                                <div class="col-lg-5 fileupload-progress fade">
+                                                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                                                    </div>
+                                                    <div class="progress-extended">&nbsp;</div>
+                                                </div>
+                                            </div>
+                                            <table id="images-preview" role="presentation" class="table table-striped" style="margin: 0"><tbody class="files"></tbody></table>
+                                            <table id="files-preview" role="presentation" class="table table-striped" style="margin: 0; display: none;"><tbody></tbody></table>
+                                        </form>
+                                    </div>
+                                    <!-- The template to display files available for upload -->
+                                    <script id="template-upload" type="text/x-tmpl">
+                                            {% for (var i=0, file; file=o.files[i]; i++) { %}
+                                                <tr class="template-upload fade">
+                                                    <td>
+                                                        <span class="preview"></span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="name">{%=file.name%}</p>
+                                                        <strong class="error text-danger"></strong>
+                                                    </td>
+                                                    <td>
+                                                        <p class="size">Processing...</p>
+                                                        <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+                                                    </td>
+                                                    <td>
+                                                        {% if (!i && !o.options.autoUpload) { %}
+                                                            <button class="btn btn-primary start" disabled>
+                                                                <i class="glyphicon glyphicon-upload"></i>
+                                                                <span>Start</span>
+                                                            </button>
+                                                        {% } %}
+                                                        {% if (!i) { %}
+                                                            <button class="btn btn-warning cancel">
+                                                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                                                <span>Cancel</span>
+                                                            </button>
+                                                        {% } %}
+                                                    </td>
+                                                </tr>
+                                            {% } %}
+                                        </script>
+                                    <!-- The template to display files available for download -->
+                                    <script id="template-download" type="text/x-tmpl">
+                                            {% for (var i=0, file; file=o.files[i]; i++) { %}
+                                                <tr class="template-download fade">
+                                                    <td>
+                                                        <span class="preview">
+                                                            {% if (file.thumbnailUrl) { %}
+                                                                <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                                                            {% } %}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="name">
+                                                            {% if (file.url) { %}
+                                                                <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                                                            {% } else { %}
+                                                                <span>{%=file.name%}</span>
+                                                            {% } %}
+                                                        </p>
+                                                        {% if (file.error) { %}
+                                                            <div><span class="label label-danger">Error</span> {%=file.error%}</div>
+                                                        {% } %}
+                                                    </td>
+                                                    <td>
+                                                        <span class="size">{%=o.formatFileSize(file.size)%}</span>
+                                                    </td>
+                                                    <td>
+                                                       {% if (file.deleteUrl) { %}
+                                                            <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                                                                <i class="glyphicon glyphicon-trash"></i>
+                                                                <span>Delete</span>
+                                                            </button>
+                                                            <input type="checkbox" name="delete" value="1" class="toggle">
+                                                       {% } else { %}
+                                                            <button class="btn btn-warning cancel">
+                                                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                                                <span>Cancel</span>
+                                                            </button>
+                                                       {% } %}
+                                                    </td>
+                                                </tr>
+                                            {% } %}
+                                        </script>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="schedule">
+                                <div class="col-xs-12">
+                                    <div id="disburse-alert" class="alert alert-success" role="alert" style="display: none;">
+                                        <h3 class="alert-heading">Loan has been disbursed!</h3>
+                                        <p>Notifications would be sent to the user accounts related to this loan application to provide updates on this loan application.</p>
+                                        <!--<hr>-->
+                                        <!--<p class="mb-0">Please contact the admin for any issues with disbursement.</p>-->
+                                    </div>
+                                    <div class="col-md-12 well">
+                                        <h2 class="text-center">Loan Overview
+                                            <button id="collect-payment-button" class ="btn btn-primary" style="float: right; display: none;" onclick="goToLoanRepayment()">Collect Payment <i class="fa fa-money"></i></button>
+                                            <span id="principal-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
+                                        </h2>
+                                        <div id="loanSchedule" style="margin-top: 30px;"></div>
+                                        <p id="reschedule-info" style="display: none;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="generate-schedule" style="display: none;">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <h2 class="text-center">Upload Loan Schedule</h2>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="col-sm-8">
+                                                        <input type="file" id="csvUpload" style="display: inline-block"/>
+                                                        <button id="uploadCSV" class="btn btn-info">Upload</button>
+                                                        <button id="saveCSV" class="btn btn-success">Save</button>
+                                                        <i id="csvLoader" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <a href="/Loan Schedule.csv" target="_blank" style="text-decoration: underline;">
+                                                            Download Loan Schedule Template <i class="fa fa-cloud-download"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div id="dvCSV" style="margin-top: 30px;"></div>
+                                                <hr />
+                                                <button id="btn-2" class="next btn btn-primary btn-lg">Save & Proceed</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="generate-schedule-v2" style="display: none;">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <h2 class="text-center" style="margin: 0 0 15px 200px;">Loan Reschedule
+                                            <span id="reschedule-total-text" style="font-size: 20px; float: right; margin: 5px 5px 0 0;"></span>
+                                            <select id="amortization" class="form-control" style="width: 200px; float: right;">
+                                                <option value="custom" selected="selected">Custom (Manual)</option>
+                                                <option value="standard">Standard (Automatic)</option>
+                                            </select>
+                                        </h2>
+                                        <p id="schedule-error-message" class="amortization-div" style="display: none;"></p>
+                                        <div class="row amortization-div" style="display: none;">
+                                            <div class="col-sm-6 form-group">
+                                                <label class="form-control-label">Loan Requested</label><strong style="color:red"> *</strong><span id="amount-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                    <input type="number" id="amount" class="form-control" required="required" value="50000" min="1" max="100000000">
+                                                </div>
+                                                <small class="form-text text-muted">Min: <span id="loan_requested_min">1.00</span>(NGN) Max: <span id="loan_requested_max">100,000,000.00</span>(NGN)</small>
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <label class="form-control-label">Interest Rate</label><strong style="color:red"> *</strong><span id="interest-rate-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-plus"></i></div>
+                                                    <input type="number" id="interest-rate" class="form-control" required="required" value="12" min="1" max="1000">
+                                                </div>
+                                                <small class="form-text text-muted">Min: <span id="interest_rate_min">1</span>%  Max: <span id="interest_rate_max">1000</span>% </small>
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <label class="form-control-label">Tenor (monthly)</label><strong style="color:red"> *</strong><span id="term-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                    <input type="number" id="term" class="form-control" required="required" value="12" min="1" max="60">
+                                                </div>
+                                                <small class="form-text text-muted">Min: <span id="tenor_min">1</span>  Max: <span id="tenor_max">60</span> </small>
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <label class="form-control-label">Payment Amount (Monthly)</label><strong style="color:red"> *</strong><span id="payment-amount-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-money"></i></div>
+                                                    <input type="number" id="payment-amount" class="form-control" required="required" disabled="disabled">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <label class="form-control-label">First Repayment Date</label><span id="repayment-date-error" style="padding-left:50px; text-align: center"></span>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                    <input type="date" id="repayment-date" class="form-control" required="required">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <input type="file" id="csvUpload2" style="display: inline-block"/>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <button id="rejectCSV2" class="btn btn-danger" style="float: right;">Reject <i class="fa fa-times"></i></button>
+                                                <button id="approveCSV2" class="btn btn-success" style="float: right;">Approve <i class="fa fa-check"></i></button>
+                                                <button id="saveCSV2" class="btn btn-primary" style="float: right;">Add <i class="fa fa-plus"></i></button>
+                                                <button id="uploadCSV2" class="btn btn-info" style="float: right;">Preview <i class="fa fa-eye-slash"></i></button>
+                                                <i id="csvLoader2" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <a href="/Loan Schedule.csv" target="_blank" style="text-decoration: underline;">
+                                                    Download Loan Schedule Template <i class="fa fa-cloud-download"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div id="dvCSV2" style="margin-top: 30px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="files">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <h2 class="text-center" style="margin-bottom: 15px;">Uploaded Documents</h2>
+                                        <div id="Carousel" class="carousel slide">
+                                            <ol class="carousel-indicators"></ol>
+
+                                            <!-- Carousel items -->
+                                            <div class="carousel-inner"></div>
+
+                                            <a data-slide="prev" href="#Carousel" class="left carousel-control">‹</a>
+                                            <a data-slide="next" href="#Carousel" class="right carousel-control">›</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script type="text/javascript">
+                                $(document).ready(function() {
+                                    $('#Carousel').carousel({
+                                        interval: 5000
+                                    })
+                                });
+                            </script>
+                            <div class="row setup-content" id="denied" style="display: none;">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <div class="alert alert-danger" role="alert" style="margin-top: 15px;">
+                                            <h3 class="alert-heading">Loan Application has been denied!</h3>
+                                            <p>Notifications would be sent to the user accounts related to this loan application to provide updates on this loan request.</p>
+                                            <hr>
+                                            <p class="mb-0">Please contact the admin for any related issues.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <ul id="processes" class="timeline"></ul>
+                </div>
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <span style="margin: 5px;">Comments</span>
+                            <button class ="btn btn-info" style="float: right;" data-toggle="modal" data-target="#addCommentModal">Add Comment <i class="fa fa-comment"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <div id="comments"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .animated -->
+    <div id="wait" style=";width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='/spinner.gif' width="100" height="100" style="background-color: transparent"/></div>
+</div><!-- .content -->
+<!-- Right Panel -->
+
+<!-- Modal -->
+<div class="modal" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addCommentModalLabel">Post Comment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Comment</label><strong style="color:red"> *</strong><span id="comment-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-comment"></i></div>
+                            <textarea id="comment" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
+                        </div>
+                        <small class="form-text text-muted">Maximum of 250 characters</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="comment()">Comment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addDocumentModal" tabindex="-1" role="dialog" aria-labelledby="addDocumentModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addDocumentModalLabel">Add Document Title</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Document Title</label><strong style="color:red"> *</strong><span id="others-document-title-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-comment"></i></div>
+                            <input id="others-document-title" class="form-control" placeholder="Document Title" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="setDocumentTitle()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="disburseModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="disburseModalLabel">Disburse Loan</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Actual Disbursement Amount</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">₦</div>
+                            <input id="disbursement-amount" type="text" class="form-control" placeholder="0" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Choose a Funding Source</label><strong style="color:red"> *</strong><span id="funding-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <select id="funding" class="form-control" required="required">
+                                <option selected="selected">-- Select a Funding Source --</option>
+                                <option value="Default">Default</option>
+                                <option value="Secondary">Secondary</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Choose a Disbursement Channel</label><strong style="color:red"> *</strong><span id="channel-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <select id="channel" class="form-control" required="required">
+                                <option selected="selected">-- Select a Channel --</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Disbursement Date</label><strong style="color:red"> *</strong><span id="disbursement-date-error" style="padding-left:50px; text-align: center"></span>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input type="date" id="disbursement-date" class="form-control" required="required">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="disburse()">Disburse</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="writeOffModal" tabindex="-1" role="dialog" aria-labelledby="writeOffModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="writeOffModalLabel">Write Off Loan</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Account Holders Name</label>
+                        <div class="input-group">
+                            <input id="writeoff-name" type="text" class="form-control" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Write Off Amount</label>
+                        <div class="input-group">
+                            <input id="writeoff-amount" type="text" class="form-control" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Notes</label>
+                        <div class="input-group">
+                            <textarea id="writeoff-notes" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
+                        </div>
+                        <small class="form-text text-muted">Maximum of 250 characters</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="writeOffLoan()">Write Off</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="payOffModal" tabindex="-1" role="dialog" aria-labelledby="payOffModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="payOffModalLabel">Pay Off Loan</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label">Payoff Amount</label>
+                        <div class="input-group">
+                            <input id="payoff-amount" type="text" class="form-control" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Write off interest amount</label><strong style="color:red"> *</strong>
+                        <div class="input-group">
+                            <input id="payoff-interest" type="number" class="form-control" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Enter Date</label><strong style="color:red"> *</strong>
+                        <div class="input-group">
+                            <input id="payoff-date" type="date" class="form-control" required="required">
+                        </div>
+                        <small class="form-text text-muted">Note, repayment date cannot be a future date</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Choose a Disbursement Channel</label><strong style="color:red"> *</strong>
+                        <div class="input-group">
+                            <select id="payoff-channel" class="form-control" required="required">
+                                <option selected="selected">-- Select a Channel --</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Include on-hand interest</label>
+                        <div class="input-group">
+                            <div class="radio">
+                                <label><input type="radio" name="payoff-include-interest" value="Daily">Daily</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="payoff-include-interest" value="Monthly">Monthly</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="payoff-include-interest" value="All">All</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Notes</label>
+                        <div class="input-group">
+                            <textarea id="payoff-notes" class="form-control" required="required" maxlength="250" placeholder="Brief message"></textarea>
+                        </div>
+                        <small class="form-text text-muted">Maximum of 250 characters</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="payOffLoan()">Pay Off</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="invoiceHistory" tabindex="-1" role="dialog" aria-labelledby="invoiceHistoryLabel">
+    <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="invoiceHistoryLabel">Repayment History</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <table id="invoice-history" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Principal</th>
+                        <th>Interest</th>
+                        <th>Fees</th>
+                        <th>Penalty</th>
+                        <th>Paid By</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody id="history">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editHistory" tabindex="-1" role="dialog" aria-labelledby="editHistoryLabel">
+    <div class="modal-dialog modal-lg" role="document" style="width: 1005%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editHistoryLabel">Edit Schedule History</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <table id="edit-history" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Previous Principal</th>
+                        <th>Previous Interest</th>
+                        <th>Previous Fees</th>
+                        <th>Previous Penalty</th>
+                        <th>Previous Date Due</th>
+                        <th>Modified By</th>
+                        <th>Date Modified</th>
+                    </tr>
+                    </thead>
+                    <tbody id="e-history">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/assets/js/popper.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/js/plugins.js"></script>
+<script src="/assets/js/main.js"></script>
+
+<script src="/assets/js/lib/data-table/datatables.min.js"></script>
+<script src="/assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
+<script src="/assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+<script src="/assets/js/lib/data-table/buttons.bootstrap.min.js"></script>
+<script src="/assets/js/lib/data-table/jszip.min.js"></script>
+<script src="/assets/js/lib/data-table/pdfmake.min.js"></script>
+<script src="/assets/js/lib/data-table/vfs_fonts.js"></script>
+<script src="/assets/js/lib/data-table/buttons.html5.min.js"></script>
+<script src="/assets/js/lib/data-table/buttons.print.min.js"></script>
+<script src="/assets/js/lib/data-table/buttons.colVis.min.js"></script>
+<script src="/assets/js/lib/data-table/datatables-init.js"></script>
+
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="/js/vendor/jquery.ui.widget.js"></script>
+<!-- The Templates plugin is included to render the upload/download listings -->
+<script src="https://blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="/js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="/js/jquery.fileupload.js"></script>
+<!-- The File Upload processing plugin -->
+<script src="/js/jquery.fileupload-process.js"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="/js/jquery.fileupload-image.js"></script>
+<!-- The File Upload audio preview plugin -->
+<script src="/js/jquery.fileupload-audio.js"></script>
+<!-- The File Upload video preview plugin -->
+<script src="/js/jquery.fileupload-video.js"></script>
+<!-- The File Upload validation plugin -->
+<script src="/js/jquery.fileupload-validate.js"></script>
+<!-- The File Upload user interface plugin -->
+<script src="/js/jquery.fileupload-ui.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.3/jquery.fancybox.min.js"></script>
+<script src="/js/helper-functions.js"></script>
+<script src="/../menus/menu-items.js"></script>
+<script type="text/javascript" src="/../application/view-application/view-application.js"></script>
+</body>
+</html>

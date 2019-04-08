@@ -1,3 +1,21 @@
+$(document).ready(function () {
+    includeHTML();
+    const $body = $('body');
+    $body.delegate('#menuToggle','click', function(event) {
+        $('body').toggleClass('open');
+    });
+    $body.delegate('.search-trigger','click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        $('.search-trigger').parent('.header-left').addClass('open');
+    });
+    $body.delegate('.search-close','click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        $('.search-trigger').parent('.header-left').removeClass('open');
+    });
+});
+
 function check() {
     if (localStorage.getItem('role') !== 1) {
         jQuery('#car-models').hide();
@@ -9,35 +27,10 @@ function check() {
     }
 }
 
-function loadUsers(id) {
-    let start = $("#startDate").val(),
-        end = $("#endDate").val(),
-        uid = id || '',
-        url;
-    url = (start === "" || start === null || end === "" || end === null) ? 'user/clients-list-full/' + uid :
-        'user/clients-list-full/' + uid + '?start=' + start + '&&end=' + end;
-    $('#wait').show();
-    $.ajax({
-        'url': url,
-        'type': 'get',
-        'success': function (data) {
-            $('#wait').hide();
-            let users = JSON.parse(data);
-            results = users;
-            populateDataTable(users);
-        },
-        'error': function (err) {
-            $('#wait').hide();
-            console.log('Error');
-        }
-    });
-
-}
-
 function read_write() {
-    let w;
-    var perms = JSON.parse(localStorage.getItem("permissions"));
-    var page = (window.location.pathname.split('/')[1].split('.'))[0];
+    let w,
+        perms = JSON.parse(localStorage.getItem("permissions")),
+        page = (window.location.pathname.split('/')[1].split('.'))[0];
     perms.forEach(function (k, v) {
         if (k.module_name === page) {
             w = $.grep(perms, function (e) {
@@ -45,9 +38,8 @@ function read_write() {
             });
         }
     });
-    if (w && w[0] && (parseInt(w[0]['editable']) !== 1)) {
+    if (w && w[0] && (parseInt(w[0]['editable']) !== 1))
         $(".write").hide();
-    }
 }
 
 function loadMenus() {
@@ -58,7 +50,8 @@ function loadMenus() {
             let main = $.grep(modules, function (e) {
                 return e.id === parseInt(k.main_menu);
             });
-            $('#' + $(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
+            if (main && main[0])
+                $('#' + $(main[0]['module_tag']).attr('id') + ' > .sub-menu').append(k.module_tag);
         } else if (k.menu_name === 'Main Menu') {
             $('#sidebar').append(k.module_tag);
             $('#' + $(k.module_tag).attr('id')).append(
@@ -86,3 +79,99 @@ function loadMenus() {
         }
     });
 }
+
+function includeHTML() {
+    let z, i, elmnt, file, xhttp;
+    z = document.getElementsByTagName("*");
+    for (i = 0; i < z.length; i++) {
+        elmnt = z[i];
+        file = elmnt.getAttribute("include-html");
+        if (file) {
+            xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {elmnt.innerHTML = this.responseText;}
+                    if (this.status === 404) {elmnt.innerHTML = "Page not found.";}
+                    elmnt.removeAttribute("include-html");
+                    includeHTML();
+                }
+            };
+            xhttp.open("GET", file, true);
+            xhttp.send();
+            return;
+        }
+    }
+    check();
+    read_write();
+    loadMenus();
+}
+
+function logout() {
+    localStorage.login = "0";
+    window.location.href = "/logout";
+}
+
+// notifications bar
+const $body = $('body');
+$(function () {
+    $body.delegate('.close', 'click', function () {
+        $("#notification-pane").addClass("d-none")
+    });
+    $body.delegate('.notification-tab-toggler', 'click', function (e) {
+        e.preventDefault(); // stops link from making page jump to the top
+        e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
+        $("#notification-pane").toggleClass("d-none")
+
+    });
+    $body.delegate('#notification-pane', 'click', function (e) {
+        e.stopPropagation(); // when you click within the content area, it stops the page from seeing it as clicking the body too
+
+    });
+    $body.click(function () {
+        $('#notification-pane').addClass("d-none");
+    });
+    $body.delegate('.close', '.click', function () {
+        $("#message-pane").addClass("d-none")
+    });
+    $body.delegate('.message-tab-toggler', 'click', function (e) {
+        e.preventDefault(); // stops link from making page jump to the top
+        e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
+        $("#message-pane").toggleClass("d-none")
+
+    });
+    $body.delegate('#message-pane', '.click', function (e) {
+        e.stopPropagation(); // when you click within the content area, it stops the page from seeing it as clicking the body too
+    });
+    $body.click(function () {
+        $('#message-pane').addClass("d-none");
+    });
+    $body.delegate('.feed-content-menu', 'click', function (e) {
+        e.preventDefault(); // stops link from making page jump to the top
+        e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
+        $("#feed-content-menu-drp-dwn").toggleClass("d-none")
+    });
+    $body.click(function () {
+        $('.feed-content-menu-drp-dwn').addClass("d-none");
+    });
+    $body.delegate('.dropdown-item', 'click', function () {
+        $('.feed-content-menu-drp-dwn').addClass("d-none");
+    });
+    $body.delegate('.tab-content', 'click', function () {
+        $('.feed-content-menu-drp-dwn').addClass("d-none");
+    });
+});
+
+$body.delegate('.message-content-menu', 'click', function (e) {
+    e.preventDefault(); // stops link from making page jump to the top
+    e.stopPropagation(); // when you click the button, it stops the page from seeing it as clicking the body too
+    $("#message-content-menu-drp-dwn").toggleClass("d-none")
+});
+$body.click(function () {
+    $('.message-content-menu-drp-dwn').addClass("d-none");
+});
+$body.delegate('.dropdown-item', 'click', function () {
+    $('.message-content-menu-drp-dwn').addClass("d-none");
+});
+$body.delegate('.tab-content', 'click', function () {
+    $('.message-content-menu-drp-dwn').addClass("d-none");
+});

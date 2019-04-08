@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="apple-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="favicon.png">
 
     <link rel="stylesheet" href="assets/css/normalize.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="assets/css/flag-icon.min.css">
     <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
     <link rel="stylesheet" href="assets/css/lib/datatable/dataTables.bootstrap.min.css">
-    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
     <link rel="stylesheet" href="assets/scss/style.css">
     <link rel="stylesheet" href="assets/css/lib/chosen/chosen.min.css">
 
@@ -28,8 +27,6 @@
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
 <body>
@@ -47,7 +44,7 @@
                 <i class="fa fa-bars"></i>
             </button>
             <a class="navbar-brand" href="/dashboard">Loanratus</a>
-            <a class="navbar-brand hidden" href="/dashboard">35</a>
+            <a class="navbar-brand hidden" href="/dashboard">LR</a>
         </div>
 
         <div id="main-menu" class="main-menu collapse navbar-collapse">
@@ -422,7 +419,7 @@
             },
             'error': function (err) {
                 //alert ('Error');
-                console.log('Error');
+                console.log(err);
             }
         });
 
@@ -471,7 +468,7 @@
             },
             'error': function (err) {
                 //alert ('Error');
-                console.log('Error');
+                console.log(err);
             }
         });
     }
