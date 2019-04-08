@@ -153,9 +153,7 @@ function bindDataTable(id) {
     });
 }
 
-function onRevertTxn(value) {
-    console.log(value);
-}
+
 
 $(document).ready(function () {});
 
@@ -364,9 +362,7 @@ $('#bootstrap-data-table2 tbody').on('click', '#dropdownItemRevert', function ()
         });
     }
     let comment = data_row.description.split(':');
-    console.log(comment);
     let _description = (comment.length > 1) ? comment[1] : data_row.description;
-    console.log(_description);
     let investmentOps = {
         amount: data_row.amount,
         description: 'Reversal: ' + _description,
@@ -386,7 +382,6 @@ $('#bootstrap-data-table2 tbody').on('click', '#dropdownItemRevert', function ()
         'type': 'post',
         'data': investmentOps,
         'success': function (data) {
-            console.log(data)
             if (data.status === undefined) {
                 $('#wait').hide();
                 $("#input_amount").val('');
@@ -408,7 +403,6 @@ $('#bootstrap-data-table2 tbody').on('click', '#dropdownItemRevert', function ()
 
 $('#bootstrap-data-table2 tbody').on('click', '#dropdownItemReview', function () {
     data_row = table.row($(this).parents('tr')).data();
-    console.log(data_row);
     setReviewRequirements(data_row);
 });
 
