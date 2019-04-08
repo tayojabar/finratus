@@ -1,81 +1,80 @@
 let init = 0,
     count = 0,
     ids = [];
-$('#n-dropdown').text('=================================');
 
 function notifications(){
     ids.length = 0;
     count = 0;
     status = false;
-//     $.ajax({
-//         type: "GET",
-//         url: "/notifications/new-updates?bug="+JSON.parse(localStorage.user_obj).ID,
-//         success: function (response) {
-//             status = true;
-//             init = response.length;
-//             if (response.length === 0){
-//                 $('#noti-count').hide();
-//             }
-//             else{
-//                 $('#noti-count').show();
-//                 $('#noti-count').html(response.length);
-//             }
-//             let icon,
-//                 link,
-//                 item;
-//             $('#n-dropdown').empty();
-//             $.each(response, function (key, val) {
-//                 count++;
-//                 switch (val.category){
-//                     case 'Activity':
-//                         icon = '<i class="fa fa-tasks fa-4x"></i>'
-//                         link = '/activity'
-//                         break;
-//                     case 'Clients':
-//                         icon = '<i class="fa fa-users fa-4x"></i>'
-//                         link = '/client-info?id='+val.client;
-//                         break;
-//                     case 'Users':
-//                         icon = '<i class="fa fa-user fa-4x"></i>'
-//                         link = '#';
-//                         break;
-//                     default:
-//                         icon = '<img src="atb-logo.png">'
-//                 }
-//                 item = '<div class="feed-body-content">\n' +
-// '                            <p class="feed-body-header">'+jQuery.timeago(val.date_created)+'</time></p>\n' +
-// '                            <div class="row">\n' +
-// '                                <span class="col-md-3" style="padding-right: 0">'+icon+'</span>\n' +
-// '                                <a href="'+link+'" class="col-md-9" style="padding-left: 10px;font-size: 14px">'+val.description+'\n' +
-// '                                    <div class="client-notification">\n' +
-// '                                        <img class="user-avatar rounded-circle" src="/images/admin.jpg" alt="User Avatar"\n' +
-// '                                             style="">\n' +
-// '                                            <p>'+val.user+'</p>\n' +
-//                     '                         <small onclick="markAsViewed('+val.notification_id+')" class="feed-content-menu float-right" style="margin-top: 50px">Mark as Viewed</small>\n'+
-// '                                    </div>\n' +
-// '                                 </a>\n' +
-// '                            </div>\n' +
-// '                        </div>'
-//                 $('#n-dropdown').append(item);
-//
-//                 // let obj = {};
-//                 // obj.notification_id = val.notification_id;
-//                 // obj.val = 2;s
-//                 //    $.ajax({
-//                 //        type: "GET",
-//                 //        url: "/notifications/update-pr",
-//                 //        data:obj,
-//                 //        success: function (response) {
-//                 //            // console.log('Success');
-//                 //            count = 0;
-//                 //        }
-//                 //    });
-//             });
-//             if (count === 0)
-//                 $('#mark-all').attr("disabled", true);
-//             $('#noti-info').html(count+ ' notifications.');
-//         }
-//     });
+    $.ajax({
+        type: "GET",
+        url: "/notifications/new-updates?bug="+JSON.parse(localStorage.user_obj).ID,
+        success: function (response) {
+            status = true;
+            init = response.length;
+            if (response.length === 0){
+                $('#noti-count').hide();
+            }
+            else{
+                $('#noti-count').show();
+                $('#noti-count').html(response.length);
+            }
+            let icon,
+                link,
+                item;
+            $('#n-dropdown').empty();
+            $.each(response, function (key, val) {
+                count++;
+                switch (val.category){
+                    case 'Activity':
+                        icon = '<i class="fa fa-tasks fa-4x"></i>'
+                        link = '/activity'
+                        break;
+                    case 'Clients':
+                        icon = '<i class="fa fa-users fa-4x"></i>'
+                        link = '/client-info?id='+val.client;
+                        break;
+                    case 'Users':
+                        icon = '<i class="fa fa-user fa-4x"></i>'
+                        link = '#';
+                        break;
+                    default:
+                        icon = '<img src="atb-logo.png">'
+                }
+                item = '<div class="feed-body-content">\n' +
+'                            <p class="feed-body-header">'+jQuery.timeago(val.date_created)+'</time></p>\n' +
+'                            <div class="row">\n' +
+'                                <span class="col-md-3" style="padding-right: 0">'+icon+'</span>\n' +
+'                                <a href="'+link+'" class="col-md-9" style="padding-left: 10px;font-size: 14px">'+val.description+'\n' +
+'                                    <div class="client-notification">\n' +
+'                                        <img class="user-avatar rounded-circle" src="/images/admin.jpg" alt="User Avatar"\n' +
+'                                             style="">\n' +
+'                                            <p>'+val.user+'</p>\n' +
+                    '                         <small onclick="markAsViewed('+val.notification_id+')" class="feed-content-menu float-right" style="margin-top: 50px">Mark as Viewed</small>\n'+
+'                                    </div>\n' +
+'                                 </a>\n' +
+'                            </div>\n' +
+'                        </div>'
+                $('#n-dropdown').append(item);
+
+                // let obj = {};
+                // obj.notification_id = val.notification_id;
+                // obj.val = 2;s
+                //    $.ajax({
+                //        type: "GET",
+                //        url: "/notifications/update-pr",
+                //        data:obj,
+                //        success: function (response) {
+                //            // console.log('Success');
+                //            count = 0;
+                //        }
+                //    });
+            });
+            if (count === 0)
+                $('#mark-all').attr("disabled", true);
+            $('#noti-info').html(count+ ' notifications.');
+        }
+    });
 }
 // setInterval(notifications, 1000);
 
@@ -237,6 +236,11 @@ function markAll(){
 }
 
 jQuery(document).ready(function() {
-    notifications();
+    // notifications();
     // loan_notifications();
 });
+
+setTimeout(function () {
+    console.log('here')
+    notifications();
+}, 10000)
