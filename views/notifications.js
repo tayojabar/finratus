@@ -23,7 +23,9 @@ function notifications(){
                 link,
                 item;
             $('#n-dropdown').empty();
+            console.log(response)
             $.each(response, function (key, val) {
+                console.log(val)
                 count++;
                 switch (val.category){
                     case 'Activity':
