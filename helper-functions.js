@@ -136,10 +136,9 @@ functions.authorizeMandate = function (payload, callback) {
     headers.REQUEST_ID = date.getTime();
     headers.API_KEY = process.env.REMITA_API_KEY;
     headers.MERCHANT_ID = process.env.REMITA_MERCHANT_ID;
-    headers.API_DETAILS_HASH = SHA512(headers.API_KEY + headers.REQUEST_ID + process.env.REMITA_API_TOKEN);
-    headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
+    // headers.API_DETAILS_HASH = SHA512(headers.API_KEY + headers.REQUEST_ID + process.env.REMITA_API_TOKEN);
+    // headers.REQUEST_TS = functions.remitaTimeStampFormat(date);
     console.log(headers)
-    console.log(payload)
     request.post(
         {
             url: `${process.env.REMITA_BASE_URL}/requestAuthorization`,
