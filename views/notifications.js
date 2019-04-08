@@ -236,11 +236,10 @@ function markAll(){
 }
 
 jQuery(document).ready(function() {
-    // notifications();
+    notifications();
     // loan_notifications();
 });
 
 setTimeout(function () {
-    console.log('here')
     notifications();
 }, 10000)
